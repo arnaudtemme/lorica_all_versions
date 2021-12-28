@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="LAPSUS 4.0">
+</Property><Property Name="Solution File" Value="D:\werk\LAPSUS4\4006\LAPSUS 4.0.sln">
+</Property><Property Name="User Options File" Value="D:\werk\LAPSUS4\4006\LAPSUS 4.0.suo">
+</Property><Property Name="Date" Value="maandag 1 november 2010">
+</Property><Property Name="Time" Value="16:31">
+</Property></Properties><Event ErrorLevel="0" Project="" Source="LAPSUS 4.0.sln" Description="File successfully backed up as D:\werk\LAPSUS4\4006\Backup\LAPSUS 4.0.sln">
+</Event><Event ErrorLevel="0" Project="" Source="LAPSUS 4.0.suo" Description="File successfully backed up as D:\werk\LAPSUS4\4006\Backup\LAPSUS 4.0.suo">
+</Event><Event ErrorLevel="0" Project="LAPSUS 4.0" Source="LAPSUS 4.0.csproj" Description="Project file successfully backed up as D:\werk\LAPSUS4\4006\Backup\LAPSUS 4.0.csproj">
+</Event><Event ErrorLevel="0" Project="LAPSUS 4.0" Source="LAPSUS 4.0.csproj.user" Description="Project user file successfully backed up as D:\werk\LAPSUS4\4006\Backup\LAPSUS 4.0.csproj.user">
+</Event><Event ErrorLevel="0" Project="LAPSUS 4.0" Source="About_LAPSUS.cs" Description="File successfully backed up as D:\werk\LAPSUS4\4006\Backup\About_LAPSUS.cs">
+</Event><Event ErrorLevel="0" Project="LAPSUS 4.0" Source="About_LAPSUS.Designer.cs" Description="File successfully backed up as D:\werk\LAPSUS4\4006\Backup\About_LAPSUS.Designer.cs">
+</Event><Event ErrorLevel="0" Project="LAPSUS 4.0" Source="AVIWriter.cs" Description="File successfully backed up as D:\werk\LAPSUS4\4006\Backup\AVIWriter.cs">
+</Event><Event ErrorLevel="0" Project="LAPSUS 4.0" Source="Output_Google_Earth.cs" Description="File successfully backed up as D:\werk\LAPSUS4\4006\Backup\Output_Google_Earth.cs">
+</Event><Event ErrorLevel="0" Project="LAPSUS 4.0" Source="Output_Google_Earth.Designer.cs" Description="File successfully backed up as D:\werk\LAPSUS4\4006\Backup\Output_Google_Earth.Designer.cs">
+</Event><Event ErrorLevel="0" Project="LAPSUS 4.0" Source="Output_profile.cs" Description="File successfully backed up as D:\werk\LAPSUS4\4006\Backup\Output_profile.cs">
+</Event><Event ErrorLevel="0" Project="LAPSUS 4.0" Source="Output_profile.Designer.cs" Description="File successfully backed up as D:\werk\LAPSUS4\4006\Backup\Output_profile.Designer.cs">
+</Event><Event ErrorLevel="0" Project="LAPSUS 4.0" Source="Output_timeseries.cs" Description="File successfully backed up as D:\werk\LAPSUS4\4006\Backup\Output_timeseries.cs">
+</Event><Event ErrorLevel="0" Project="LAPSUS 4.0" Source="Output_timeseries.Designer.cs" Description="File successfully backed up as D:\werk\LAPSUS4\4006\Backup\Output_timeseries.Designer.cs">
+</Event><Event ErrorLevel="0" Project="LAPSUS 4.0" Source="LAPSUS4.0.cs" Description="File successfully backed up as D:\werk\LAPSUS4\4006\Backup\LAPSUS4.0.cs">
+</Event><Event ErrorLevel="0" Project="LAPSUS 4.0" Source="dynamicPlot.cs" Description="File successfully backed up as D:\werk\LAPSUS4\4006\Backup\dynamicPlot.cs">
+</Event><Event ErrorLevel="0" Project="LAPSUS 4.0" Source="dynamicPlot.designer.cs" Description="File successfully backed up as D:\werk\LAPSUS4\4006\Backup\dynamicPlot.designer.cs">
+</Event><Event ErrorLevel="0" Project="LAPSUS 4.0" Source="Output_video.cs" Description="File successfully backed up as D:\werk\LAPSUS4\4006\Backup\Output_video.cs">
+</Event><Event ErrorLevel="0" Project="LAPSUS 4.0" Source="Output_video.Designer.cs" Description="File successfully backed up as D:\werk\LAPSUS4\4006\Backup\Output_video.Designer.cs">
+</Event><Event ErrorLevel="0" Project="LAPSUS 4.0" Source="Properties\AssemblyInfo.cs" Description="File successfully backed up as D:\werk\LAPSUS4\4006\Backup\Properties\AssemblyInfo.cs">
+</Event><Event ErrorLevel="0" Project="LAPSUS 4.0" Source="Properties\Resources.Designer.cs" Description="File successfully backed up as D:\werk\LAPSUS4\4006\Backup\Properties\Resources.Designer.cs">
+</Event><Event ErrorLevel="0" Project="LAPSUS 4.0" Source="Properties\Settings.Designer.cs" Description="File successfully backed up as D:\werk\LAPSUS4\4006\Backup\Properties\Settings.Designer.cs">
+</Event><Event ErrorLevel="0" Project="LAPSUS 4.0" Source="ZoomPanImageBox.cs" Description="File successfully backed up as D:\werk\LAPSUS4\4006\Backup\ZoomPanImageBox.cs">
+</Event><Event ErrorLevel="0" Project="LAPSUS 4.0" Source="LAPSUS 4.0_TemporaryKey.pfx" Description="File successfully backed up as D:\werk\LAPSUS4\4006\Backup\LAPSUS 4.0_TemporaryKey.pfx">
+</Event><Event ErrorLevel="0" Project="LAPSUS 4.0" Source="LAPSUS4.0_TemporaryKey.pfx" Description="File successfully backed up as D:\werk\LAPSUS4\4006\Backup\LAPSUS4.0_TemporaryKey.pfx">
+</Event><Event ErrorLevel="0" Project="LAPSUS 4.0" Source="Properties\Settings.settings" Description="File successfully backed up as D:\werk\LAPSUS4\4006\Backup\Properties\Settings.settings">
+</Event><Event ErrorLevel="0" Project="LAPSUS 4.0" Source="tex_tentdoek.ico" Description="File successfully backed up as D:\werk\LAPSUS4\4006\Backup\tex_tentdoek.ico">
+</Event><Event ErrorLevel="0" Project="LAPSUS 4.0" Source="About_LAPSUS.resx" Description="File successfully backed up as D:\werk\LAPSUS4\4006\Backup\About_LAPSUS.resx">
+</Event><Event ErrorLevel="0" Project="LAPSUS 4.0" Source="Output_profile.resx" Description="File successfully backed up as D:\werk\LAPSUS4\4006\Backup\Output_profile.resx">
+</Event><Event ErrorLevel="0" Project="LAPSUS 4.0" Source="Output_timeseries.resx" Description="File successfully backed up as D:\werk\LAPSUS4\4006\Backup\Output_timeseries.resx">
+</Event><Event ErrorLevel="0" Project="LAPSUS 4.0" Source="LAPSUS4.0.resx" Description="File successfully backed up as D:\werk\LAPSUS4\4006\Backup\LAPSUS4.0.resx">
+</Event><Event ErrorLevel="0" Project="LAPSUS 4.0" Source="dynamicPlot.resx" Description="File successfully backed up as D:\werk\LAPSUS4\4006\Backup\dynamicPlot.resx">
+</Event><Event ErrorLevel="0" Project="LAPSUS 4.0" Source="Properties\Resources.resx" Description="File successfully backed up as D:\werk\LAPSUS4\4006\Backup\Properties\Resources.resx">
+</Event><Event ErrorLevel="0" Project="LAPSUS 4.0" Source="ZoomPanImageBox.resx" Description="File successfully backed up as D:\werk\LAPSUS4\4006\Backup\ZoomPanImageBox.resx">
+</Event><Event ErrorLevel="0" Project="LAPSUS 4.0" Source="LAPSUS 4.0.csproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="LAPSUS 4.0" Source="LAPSUS 4.0.csproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="" Source="LAPSUS 4.0.sln" Description="Solution converted successfully">
+</Event><Event ErrorLevel="3" Project="" Source="LAPSUS 4.0.sln" Description="Converted">
+</Event><Event ErrorLevel="0" Project="LAPSUS 4.0" Source="LAPSUS 4.0.csproj" Description="Scan complete: Upgrade not required for project files.">
+</Event></UpgradeLog>
