@@ -36,8 +36,8 @@ using System.Xml;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Numerics;
-//using MathNet.Numerics;
-//using MathNet.Numerics.IntegralTransforms;
+using MathNet.Numerics;
+using MathNet.Numerics.IntegralTransforms;
 
 
 namespace LORICA4
