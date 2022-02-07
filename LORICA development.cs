@@ -291,6 +291,7 @@ namespace LORICA4
         private Button button2;
         private Button button3;
         private Button button1;
+        private CheckBox view_maps_checkbox; //this was previously missing but its only needed for reading input .xml file currently
         private Label label37;
         private TextBox outputcode_textbox;
         private CheckBox diagnostic_output_checkbox;
@@ -7175,6 +7176,9 @@ namespace LORICA4
                     try { xreader.ReadEndElement(); }
                     catch { read_error = 1; }
 
+                    //this might have been missing but its not needed now:
+                    //try { view_maps_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("maps_required")); }
+                    //catch { read_error = 1; }
 
                     try { xreader.ReadEndElement(); }
                     catch { read_error = 1; }
@@ -7646,7 +7650,11 @@ namespace LORICA4
 
         void findsinks()
         {
-            this.InfoStatusPanel.Text = "findtrouble has been entered";
+            
+            Task.Factory.StartNew(() =>
+            {
+                this.InfoStatusPanel.Text = "findtrouble has been entered";
+            }, CancellationToken.None, TaskCreationOptions.None, guiThread);
             int number, twoequals = 0, threeequals = 0, moreequals = 0;
             int[] intoutlet = new int[9];
             int x;
@@ -11029,7 +11037,7 @@ namespace LORICA4
                 for (int c = 0; c < nc; c++)
                 {
                     //pond_y[r, c] += pond_d[r, c];
-                    if (pond_d[r, c] < -0.00000001) { Debug.WriteLine("negative ponding on row {0} and col {1}. Amount = {2} ", row, col, pond_d[r, c]); }
+                    if (pond_d[r, c] < -0.00000001) { Debug.WriteLine("negative ponding on row {0} and col {1}. Amount = {2} ", r, c, pond_d[r, c]); }
                 }
             }
             // if(negativeponding == true) { out_double(workdir + "\\debug\\" + run_number + "_" + t + "_ "+ pmonth+"_ " + pday + "_out_ponding.asc", pond_d); }
@@ -11075,9 +11083,9 @@ namespace LORICA4
             {
                 for (int col = 0; col < nc; col++)
                 {
-                    for (i = (-1); i <= 1; i++)
+                    for (int i = (-1); i <= 1; i++)
                     {
-                        for (j = (-1); j <= 1; j++)
+                        for (int j = (-1); j <= 1; j++)
                         {
                             if (((row + i) >= 0) && ((row + i) < nr) && ((col + j) >= 0) && ((col + j) < nc) && !((i == 0) && (j == 0)))
                             {
@@ -11215,9 +11223,9 @@ namespace LORICA4
             {
                 //Debug.WriteLine("suscl2");
                 //displaysoil(0, 0);
-                for (row = 0; row < nr; row++)
+                for (int row = 0; row < nr; row++)
                 {
-                    for (col = 0; col < nc; col++)
+                    for (int col = 0; col < nc; col++)
                     {
                         if (dtm[row, col] != -9999)
                         {
@@ -11255,9 +11263,9 @@ namespace LORICA4
 
 
                 //displaysoil(0, 0);
-                for (row = 0; row < nr; row++)
+                for (int row  = 0; row < nr; row++)
                 {
-                    for (col = 0; col < nc; col++)
+                    for (int col = 0; col < nc; col++)
                     {
                         if (dtm[row, col] != -9999)
                         {
@@ -11456,7 +11464,7 @@ namespace LORICA4
                 if (timeseries.total_average_soilthickness_checkbox.Checked) { total_average_soilthickness_m /= number_of_data_cells; }
             }
             catch { }
-            double mass_after = total_catchment_mass();
+            double mass_after = total_catchment_mass(); //called but not used?
             //if (Math.Round(mass_before, 3) != Math.Round(mass_after, 3)) { Debugger.Break(); }
 
 
@@ -11544,9 +11552,9 @@ namespace LORICA4
 
                 //displaysoil(0, 0);
                 depth_m = 0;
-                for (row = 0; row < nr; row++)
+                for (int row  = 0; row < nr; row++)
                 {
-                    for (col = 0; col < nc; col++)
+                    for (int col = 0; col < nc; col++)
                     {
                         if (dtm[row, col] != -9999)
                         {
@@ -11599,7 +11607,8 @@ namespace LORICA4
                                             boolsplit = true;
                                         }
                                     }
-                                    if (layer != 0)
+                                    //if (layer != 0)
+                                    else
                                     {
                                         if (layerthickness_m[row, col, layer] < (dz_standard * (1 - tolerance))) // Lower end, combine
                                         {
@@ -11754,7 +11763,7 @@ namespace LORICA4
             try
             {
                 // double average_property_value = 0, property_difference = 0, sum_property_difference = 0;
-                for (i = 0; i < 5; i++)
+                for (int i = 0; i < 5; i++)
                 {
                     //account for total soil mass
                     average_property_value = (texture_kg[rowwer, coller, lay1, i] + texture_kg[rowwer, coller, lay2, i]) / 2;
@@ -11787,7 +11796,7 @@ namespace LORICA4
                 // Debug.WriteLine("Total soil mass: {0}", old_soil_mass); displaysoil(rowwer, coller); 
                 // Debug.WriteLine("cl0");
                 //Debug.WriteLine("total soil mass = " + total_soil_mass(rowwer, coller));
-                for (i = 0; i < 5; i++)
+                for (int i = 0; i < 5; i++)
                 {
                     texture_kg[rowwer, coller, lay1, i] += texture_kg[rowwer, coller, lay2, i];
                     texture_kg[rowwer, coller, lay2, i] = 0;// set to zero. otherwise the shifting of the layers doesn't work
@@ -11803,12 +11812,12 @@ namespace LORICA4
 
                 //Debug.WriteLine("cl1");
                 //Debug.WriteLine("total soil mass = " + total_soil_mass(rowwer, coller));
-                layerthickness_m[row, col, lay1] = thickness_calc(row, col, lay1);    // thickness_calc uses a pdf to calculate bulk density and hence layer thickness
+                layerthickness_m[rowwer, coller, lay1] = thickness_calc(rowwer, coller, lay1);    // thickness_calc uses a pdf to calculate bulk density and hence layer thickness
 
                 for (int layert = lay2; layert < max_soil_layers - 1; layert++) // for all underlying layers, shift one up (since there is space anyway)
                 {
                     // Debug.WriteLine(layert);
-                    for (i = 0; i < 5; i++)
+                    for (int i = 0; i < 5; i++)
                     {
                         texture_kg[rowwer, coller, layert, i] = texture_kg[rowwer, coller, layert + 1, i];
                     }
@@ -11817,7 +11826,7 @@ namespace LORICA4
                 }
 
                 //now set the last layer to sentinel value of -1
-                for (i = 0; i < 5; i++)
+                for (int i = 0; i < 5; i++)
                 {
                     texture_kg[rowwer, coller, max_soil_layers - 1, i] = 0;
                 }
@@ -11837,7 +11846,7 @@ namespace LORICA4
             }
             catch
             {
-                Debug.WriteLine("Failed at combining layer at row {0}, col {1} at time {2}", row, col, t);
+                Debug.WriteLine("Failed at combining layer at row {0}, col {1} at time {2}", rowwer, coller, t);
             }
         }
 
@@ -12162,7 +12171,7 @@ namespace LORICA4
                     {
                         Debug.WriteLine("sl2a, laynum = " + laynum + ", lay1+2 = " + lay1 + 2 + "tex lay 19 =" + texture_kg[rowwer, coller, 19, 2]);
                     }
-                    for (i = 0; i < 5; i++)
+                    for (int i  = 0; i < 5; i++)
                     {
                         texture_kg[rowwer, coller, laynum, i] = texture_kg[rowwer, coller, laynum - 1, i];
                     }
@@ -12183,9 +12192,9 @@ namespace LORICA4
                 }
                 if ((lay1 + 1) == (max_soil_layers - 1))
                 {
-                    double div = 0.1 / (layerthickness_m[row, col, lay1]); // aim to have the split layer at 0.1 m
+                    double div = 0.1 / (layerthickness_m[rowwer, coller, lay1]); // aim to have the split layer at 0.1 m
                     if (div > 1) { div = 1; }
-                    for (i = 0; i < 5; i++)
+                    for (int i  = 0; i < 5; i++)
                     {
                         texture_kg[rowwer, coller, lay1 + 1, i] += texture_kg[rowwer, coller, lay1, i] * (1 - div); texture_kg[rowwer, coller, lay1, i] *= div;
                         if (double.IsNaN(texture_kg[rowwer, coller, lay1, i]))
@@ -12205,7 +12214,7 @@ namespace LORICA4
                 }
                 else // even splitting
                 {
-                    for (i = 0; i < 5; i++)
+                    for (int i = 0; i < 5; i++)
                     {
                         texture_kg[rowwer, coller, lay1 + 1, i] = texture_kg[rowwer, coller, lay1, i] / 2; texture_kg[rowwer, coller, lay1, i] /= 2;
                     }
@@ -12219,7 +12228,7 @@ namespace LORICA4
             }
             catch
             {
-                Debug.WriteLine("Failed at splitting layer at row {0}, col {1} at time {2}", row, col, t);
+                Debug.WriteLine("Failed at splitting layer at row {0}, col {1} at time {2}", rowwer, coller, t);
             }
             if (t == 44 && rowwer == 11 && coller == 17) { diagnostic_mode = 0; }
         }
@@ -12305,9 +12314,9 @@ namespace LORICA4
             double depth;
             try
             {
-                for (row = 0; row < nr; row++)
+                for (int row  = 0; row < nr; row++)
                 {
-                    for (col = 0; col < nc; col++)
+                    for (int col = 0; col < nc; col++)
                     {
                         int tempcol = col;
                         depth = 0;
@@ -12562,9 +12571,9 @@ namespace LORICA4
                 double total_young_som_kg, total_old_som_kg;
 
 
-                for (row = 0; row < nr; row++)
+                for (int row = 0; row < nr; row++)
                 {
-                    for (col = 0; col < nc; col++)
+                    for (int col = 0; col < nc; col++)
                     {
                         if (t == 7000000 && row == 192 && col == 59) { diagnostic_mode = 1; }
                         else { diagnostic_mode = 0; }
@@ -13629,9 +13638,9 @@ namespace LORICA4
             double[,] mass_difference_input_output = new double[nr, nc];
 
             // 1: set all water and sediment flow to 0
-            for (row = 0; row < nr; row++)
+            for (int row = 0; row < nr; row++)
             {
-                for (col = 0; col < nc; col++)
+                for (int col = 0; col < nc; col++)
                 {
                     {
                         if (only_waterflow_checkbox.Checked == false)
@@ -13688,9 +13697,9 @@ namespace LORICA4
                     {
                         // Debug.WriteLine("Overland flow in col {0}", col);
                         dir = 0;
-                        for (i = (-1); i <= 1; i++)
+                        for (int i = (-1); i <= 1; i++)
                         {
-                            for (j = (-1); j <= 1; j++)
+                            for (int j = (-1); j <= 1; j++)
                             {
                                 if (!((i == 0) && (j == 0))) { dir++; }
 
@@ -14021,9 +14030,9 @@ namespace LORICA4
                       // -> Cell at border of landscape, outflow of all sediments
                       // double mass_temp = total_catchment_mass();
                         bool bool_outflow = false;
-                        for (i = (-1); i <= 1; i++)
+                        for (int i = (-1); i <= 1; i++)
                         {
-                            for (j = (-1); j <= 1; j++)
+                            for (int j = (-1); j <= 1; j++)
                             {
                                 if (i != 0 & j != 0)
                                 {
@@ -14095,9 +14104,9 @@ namespace LORICA4
             total_average_altitude = 0; total_altitude = 0;
             total_rain = 0; total_evap = 0; total_infil = 0; total_outflow = 0;
             wet_cells = 0; eroded_cells = 0; deposited_cells = 0;
-            for (row = 0; row < nr; row++)
+            for (int row = 0; row < nr; row++)
             {
-                for (col = 0; col < nc; col++)
+                for (int col = 0; col < nc; col++)
                 {
                     if (dtm[row, col] != -9999)
                     {
@@ -14218,9 +14227,9 @@ namespace LORICA4
                 }
             }
             if (NA_anywhere_in_soil() == true) { Debug.WriteLine("NA found before row col loop in water erosed"); }
-            for (row = 0; row < nr; row++)
+            for (int row = 0; row < nr; row++)
             {
-                for (col = 0; col < nc; col++)
+                for (int col = 0; col < nc; col++)
                 {
 
                     if (dtm[row, col] != -9999)
@@ -14250,7 +14259,7 @@ namespace LORICA4
                                 outletcounter++;
                                 if (outletcounter == 5) { break; }
                             }
-                            for (i = 0; i < outletcounter; i++)
+                            for (int i = 0; i < outletcounter; i++)
                             {
 
                                 if (check_space_evap.Checked == true) { evap_value_m = evapotranspiration[row, col]; }
@@ -18411,7 +18420,7 @@ Example: rainfall.asc can look like:
                     try { tilc = double.Parse(parameter_tillage_constant_textbox.Text); }
                     catch { input_data_error = true; MessageBox.Show("value for parameter tillage constant is not valid"); }
                 }
-
+                /*
                 //BLOCK PARAMETERS
                 if (blocks_active == 1)
                 {
@@ -18429,7 +18438,7 @@ Example: rainfall.asc can look like:
                     try { blockweatheringratio = Single.Parse(blockweath_textbox.Text); }
                     catch { input_data_error = true; MessageBox.Show("value for parameter block weathering fraction is not valid"); }
                 }
-
+                */
                 //CREEP PARAMETER
                 if (creep_active)
                 {
@@ -18611,16 +18620,17 @@ Example: rainfall.asc can look like:
                     }
                 }
 
-                try
-                {
-                    filename = dtmfilename;             //for directory input
-                    dtm_file(filename);                 // from dtm_file(), almost all memory for the model is claimed
-                }
-                catch { Debug.WriteLine(" failed to initialise dtm "); }
+                
 
                 for (run_number = 0; run_number < maxruns; run_number++) //Maxruns Loop()
                 {
- 
+                    try
+                    {
+                        filename = dtmfilename;             //for directory input
+                        dtm_file(filename);                 // from dtm_file(), almost all memory for the model is claimed
+                    }
+                    catch { Debug.WriteLine(" failed to initialise dtm "); }
+
                     if (input_data_error == false)
                     {
                         try
@@ -18909,7 +18919,7 @@ Example: rainfall.asc can look like:
                 }
                 catch { Debug.WriteLine(" failed during creep calculations"); }
             }
-
+            /*
             if (blocks_active==1)
             {
                 try
@@ -18935,7 +18945,7 @@ Example: rainfall.asc can look like:
                 }
                 catch { Debug.WriteLine(" failed during block calculations"); }
             }
-
+            */
             if (tillage_active)
             {
                 comb_sort();
