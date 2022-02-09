@@ -1596,9 +1596,9 @@ namespace LORICA4
             Landsliding.Controls.Add(this.label18);
             Landsliding.Controls.Add(this.pictureBox4);
             Landsliding.Controls.Add(this.Landslide_checkbox);
-            Landsliding.Location = new System.Drawing.Point(8, 27);
+            Landsliding.Location = new System.Drawing.Point(4, 22);
             Landsliding.Name = "Landsliding";
-            Landsliding.Size = new System.Drawing.Size(724, 241);
+            Landsliding.Size = new System.Drawing.Size(732, 250);
             Landsliding.TabIndex = 2;
             Landsliding.Text = "Landsliding";
             Landsliding.UseVisualStyleBackColor = true;
@@ -1618,7 +1618,7 @@ namespace LORICA4
             this.radio_ls_fraction.Checked = true;
             this.radio_ls_fraction.Location = new System.Drawing.Point(53, 83);
             this.radio_ls_fraction.Name = "radio_ls_fraction";
-            this.radio_ls_fraction.Size = new System.Drawing.Size(27, 26);
+            this.radio_ls_fraction.Size = new System.Drawing.Size(14, 13);
             this.radio_ls_fraction.TabIndex = 29;
             this.radio_ls_fraction.TabStop = true;
             this.radio_ls_fraction.UseVisualStyleBackColor = true;
@@ -1628,7 +1628,7 @@ namespace LORICA4
             this.radio_ls_absolute.AutoSize = true;
             this.radio_ls_absolute.Location = new System.Drawing.Point(53, 57);
             this.radio_ls_absolute.Name = "radio_ls_absolute";
-            this.radio_ls_absolute.Size = new System.Drawing.Size(27, 26);
+            this.radio_ls_absolute.Size = new System.Drawing.Size(14, 13);
             this.radio_ls_absolute.TabIndex = 28;
             this.radio_ls_absolute.UseVisualStyleBackColor = true;
             // 
@@ -1759,7 +1759,7 @@ namespace LORICA4
             this.Landslide_checkbox.AutoSize = true;
             this.Landslide_checkbox.Location = new System.Drawing.Point(26, 14);
             this.Landslide_checkbox.Name = "Landslide_checkbox";
-            this.Landslide_checkbox.Size = new System.Drawing.Size(137, 27);
+            this.Landslide_checkbox.Size = new System.Drawing.Size(124, 17);
             this.Landslide_checkbox.TabIndex = 1;
             this.Landslide_checkbox.Text = "Activate this process";
             this.Landslide_checkbox.UseVisualStyleBackColor = true;
@@ -2371,7 +2371,7 @@ namespace LORICA4
             this.fill_sinks_before_checkbox.AutoSize = true;
             this.fill_sinks_before_checkbox.Location = new System.Drawing.Point(11, 22);
             this.fill_sinks_before_checkbox.Name = "fill_sinks_before_checkbox";
-            this.fill_sinks_before_checkbox.Size = new System.Drawing.Size(144, 27);
+            this.fill_sinks_before_checkbox.Size = new System.Drawing.Size(131, 17);
             this.fill_sinks_before_checkbox.TabIndex = 132;
             this.fill_sinks_before_checkbox.Text = "remove sinks and flats";
             this.toolTip1.SetToolTip(this.fill_sinks_before_checkbox, resources.GetString("fill_sinks_before_checkbox.ToolTip"));
@@ -2392,7 +2392,7 @@ namespace LORICA4
             this.fill_sinks_during_checkbox.AutoSize = true;
             this.fill_sinks_during_checkbox.Location = new System.Drawing.Point(11, 25);
             this.fill_sinks_during_checkbox.Name = "fill_sinks_during_checkbox";
-            this.fill_sinks_during_checkbox.Size = new System.Drawing.Size(144, 27);
+            this.fill_sinks_during_checkbox.Size = new System.Drawing.Size(131, 17);
             this.fill_sinks_during_checkbox.TabIndex = 132;
             this.fill_sinks_during_checkbox.Text = "remove sinks and flats";
             this.toolTip1.SetToolTip(this.fill_sinks_during_checkbox, resources.GetString("fill_sinks_during_checkbox.ToolTip"));
@@ -2562,7 +2562,7 @@ namespace LORICA4
             this.Biological_weathering_checkbox.AutoSize = true;
             this.Biological_weathering_checkbox.Location = new System.Drawing.Point(14, 19);
             this.Biological_weathering_checkbox.Name = "Biological_weathering_checkbox";
-            this.Biological_weathering_checkbox.Size = new System.Drawing.Size(137, 27);
+            this.Biological_weathering_checkbox.Size = new System.Drawing.Size(124, 17);
             this.Biological_weathering_checkbox.TabIndex = 3;
             this.Biological_weathering_checkbox.Text = "Activate this process";
             this.Biological_weathering_checkbox.UseVisualStyleBackColor = true;
@@ -2630,9 +2630,9 @@ namespace LORICA4
             // 
             this.Output.Controls.Add(this.groupBox6);
             this.Output.Controls.Add(this.groupBox5);
-            this.Output.Location = new System.Drawing.Point(8, 27);
+            this.Output.Location = new System.Drawing.Point(4, 22);
             this.Output.Name = "Output";
-            this.Output.Size = new System.Drawing.Size(795, 284);
+            this.Output.Size = new System.Drawing.Size(803, 293);
             this.Output.TabIndex = 7;
             this.Output.Text = "Output";
             this.Output.UseVisualStyleBackColor = true;
@@ -2665,7 +2665,7 @@ namespace LORICA4
             this.annual_output_checkbox.AutoSize = true;
             this.annual_output_checkbox.Location = new System.Drawing.Point(5, 35);
             this.annual_output_checkbox.Name = "annual_output_checkbox";
-            this.annual_output_checkbox.Size = new System.Drawing.Size(70, 26);
+            this.annual_output_checkbox.Size = new System.Drawing.Size(57, 17);
             this.annual_output_checkbox.TabIndex = 1;
             this.annual_output_checkbox.Text = "annual";
             this.annual_output_checkbox.UseVisualStyleBackColor = true;
@@ -2676,7 +2676,7 @@ namespace LORICA4
             this.cumulative_output_checkbox.Checked = true;
             this.cumulative_output_checkbox.Location = new System.Drawing.Point(5, 12);
             this.cumulative_output_checkbox.Name = "cumulative_output_checkbox";
-            this.cumulative_output_checkbox.Size = new System.Drawing.Size(89, 26);
+            this.cumulative_output_checkbox.Size = new System.Drawing.Size(76, 17);
             this.cumulative_output_checkbox.TabIndex = 0;
             this.cumulative_output_checkbox.TabStop = true;
             this.cumulative_output_checkbox.Text = "cumulative";
@@ -2699,7 +2699,7 @@ namespace LORICA4
             this.Regular_output_checkbox.AutoSize = true;
             this.Regular_output_checkbox.Location = new System.Drawing.Point(6, 36);
             this.Regular_output_checkbox.Name = "Regular_output_checkbox";
-            this.Regular_output_checkbox.Size = new System.Drawing.Size(68, 27);
+            this.Regular_output_checkbox.Size = new System.Drawing.Size(55, 17);
             this.Regular_output_checkbox.TabIndex = 221;
             this.Regular_output_checkbox.Text = "every ";
             this.Regular_output_checkbox.UseVisualStyleBackColor = true;
@@ -2711,7 +2711,7 @@ namespace LORICA4
             this.Final_output_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.Final_output_checkbox.Location = new System.Drawing.Point(6, 13);
             this.Final_output_checkbox.Name = "Final_output_checkbox";
-            this.Final_output_checkbox.Size = new System.Drawing.Size(94, 27);
+            this.Final_output_checkbox.Size = new System.Drawing.Size(81, 17);
             this.Final_output_checkbox.TabIndex = 220;
             this.Final_output_checkbox.Text = "when ready";
             this.Final_output_checkbox.UseVisualStyleBackColor = true;
@@ -2749,7 +2749,7 @@ namespace LORICA4
             this.diagnostic_output_checkbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.diagnostic_output_checkbox.Location = new System.Drawing.Point(125, 141);
             this.diagnostic_output_checkbox.Name = "diagnostic_output_checkbox";
-            this.diagnostic_output_checkbox.Size = new System.Drawing.Size(157, 30);
+            this.diagnostic_output_checkbox.Size = new System.Drawing.Size(81, 17);
             this.diagnostic_output_checkbox.TabIndex = 230;
             this.diagnostic_output_checkbox.Text = "Diagnostics";
             this.diagnostic_output_checkbox.UseVisualStyleBackColor = true;
@@ -2778,7 +2778,7 @@ namespace LORICA4
             this.water_output_checkbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.water_output_checkbox.Location = new System.Drawing.Point(24, 118);
             this.water_output_checkbox.Name = "water_output_checkbox";
-            this.water_output_checkbox.Size = new System.Drawing.Size(141, 30);
+            this.water_output_checkbox.Size = new System.Drawing.Size(74, 17);
             this.water_output_checkbox.TabIndex = 227;
             this.water_output_checkbox.Text = "Waterflow";
             this.water_output_checkbox.UseVisualStyleBackColor = true;
@@ -2789,7 +2789,7 @@ namespace LORICA4
             this.depressions_output_checkbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.depressions_output_checkbox.Location = new System.Drawing.Point(24, 141);
             this.depressions_output_checkbox.Name = "depressions_output_checkbox";
-            this.depressions_output_checkbox.Size = new System.Drawing.Size(165, 30);
+            this.depressions_output_checkbox.Size = new System.Drawing.Size(84, 17);
             this.depressions_output_checkbox.TabIndex = 226;
             this.depressions_output_checkbox.Text = "Depressions";
             this.depressions_output_checkbox.UseVisualStyleBackColor = true;
@@ -2801,7 +2801,7 @@ namespace LORICA4
             this.all_process_output_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.all_process_output_checkbox.Location = new System.Drawing.Point(24, 95);
             this.all_process_output_checkbox.Name = "all_process_output_checkbox";
-            this.all_process_output_checkbox.Size = new System.Drawing.Size(147, 27);
+            this.all_process_output_checkbox.Size = new System.Drawing.Size(134, 17);
             this.all_process_output_checkbox.TabIndex = 225;
             this.all_process_output_checkbox.Text = "Indiv. process volumes";
             this.all_process_output_checkbox.UseVisualStyleBackColor = true;
@@ -2813,7 +2813,7 @@ namespace LORICA4
             this.Soildepth_output_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.Soildepth_output_checkbox.Location = new System.Drawing.Point(24, 72);
             this.Soildepth_output_checkbox.Name = "Soildepth_output_checkbox";
-            this.Soildepth_output_checkbox.Size = new System.Drawing.Size(83, 27);
+            this.Soildepth_output_checkbox.Size = new System.Drawing.Size(70, 17);
             this.Soildepth_output_checkbox.TabIndex = 224;
             this.Soildepth_output_checkbox.Text = "Soildepth";
             this.Soildepth_output_checkbox.UseVisualStyleBackColor = true;
@@ -2825,7 +2825,7 @@ namespace LORICA4
             this.Alt_change_output_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.Alt_change_output_checkbox.Location = new System.Drawing.Point(24, 49);
             this.Alt_change_output_checkbox.Name = "Alt_change_output_checkbox";
-            this.Alt_change_output_checkbox.Size = new System.Drawing.Size(113, 27);
+            this.Alt_change_output_checkbox.Size = new System.Drawing.Size(100, 17);
             this.Alt_change_output_checkbox.TabIndex = 223;
             this.Alt_change_output_checkbox.Text = "Altitude change";
             this.Alt_change_output_checkbox.UseVisualStyleBackColor = true;
@@ -2837,7 +2837,7 @@ namespace LORICA4
             this.Altitude_output_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.Altitude_output_checkbox.Location = new System.Drawing.Point(24, 26);
             this.Altitude_output_checkbox.Name = "Altitude_output_checkbox";
-            this.Altitude_output_checkbox.Size = new System.Drawing.Size(74, 27);
+            this.Altitude_output_checkbox.Size = new System.Drawing.Size(61, 17);
             this.Altitude_output_checkbox.TabIndex = 222;
             this.Altitude_output_checkbox.Text = "Altitude";
             this.Altitude_output_checkbox.UseVisualStyleBackColor = true;
@@ -2856,7 +2856,7 @@ namespace LORICA4
             "weathering per process"});
             this.checkedListBox1.Location = new System.Drawing.Point(119, 96);
             this.checkedListBox1.Name = "checkedListBox1";
-            this.checkedListBox1.Size = new System.Drawing.Size(152, 38);
+            this.checkedListBox1.Size = new System.Drawing.Size(152, 34);
             this.checkedListBox1.TabIndex = 0;
             this.checkedListBox1.Visible = false;
             // 
@@ -2954,7 +2954,7 @@ namespace LORICA4
             this.UTMsouthcheck.AutoSize = true;
             this.UTMsouthcheck.Location = new System.Drawing.Point(6, 42);
             this.UTMsouthcheck.Name = "UTMsouthcheck";
-            this.UTMsouthcheck.Size = new System.Drawing.Size(141, 27);
+            this.UTMsouthcheck.Size = new System.Drawing.Size(128, 17);
             this.UTMsouthcheck.TabIndex = 197;
             this.UTMsouthcheck.Text = "Southern Hemisphere";
             this.UTMsouthcheck.UseVisualStyleBackColor = true;
@@ -2964,7 +2964,7 @@ namespace LORICA4
             this.UTMgridcheckbox.AutoSize = true;
             this.UTMgridcheckbox.Location = new System.Drawing.Point(293, 108);
             this.UTMgridcheckbox.Name = "UTMgridcheckbox";
-            this.UTMgridcheckbox.Size = new System.Drawing.Size(95, 27);
+            this.UTMgridcheckbox.Size = new System.Drawing.Size(82, 17);
             this.UTMgridcheckbox.TabIndex = 217;
             this.UTMgridcheckbox.Text = "Grid is UTM";
             this.UTMgridcheckbox.UseVisualStyleBackColor = true;
@@ -3022,9 +3022,9 @@ namespace LORICA4
             this.Run.Controls.Add(this.calibration);
             this.Run.Controls.Add(this.Ik_ben_Marijn);
             this.Run.Controls.Add(this.groupBox7);
-            this.Run.Location = new System.Drawing.Point(8, 27);
+            this.Run.Location = new System.Drawing.Point(4, 22);
             this.Run.Name = "Run";
-            this.Run.Size = new System.Drawing.Size(795, 284);
+            this.Run.Size = new System.Drawing.Size(803, 293);
             this.Run.TabIndex = 8;
             this.Run.Text = "Run";
             this.Run.UseVisualStyleBackColor = true;
@@ -3044,7 +3044,7 @@ namespace LORICA4
             this.version_lux_checkbox.AutoSize = true;
             this.version_lux_checkbox.Location = new System.Drawing.Point(102, 167);
             this.version_lux_checkbox.Name = "version_lux_checkbox";
-            this.version_lux_checkbox.Size = new System.Drawing.Size(128, 27);
+            this.version_lux_checkbox.Size = new System.Drawing.Size(115, 17);
             this.version_lux_checkbox.TabIndex = 6;
             this.version_lux_checkbox.Text = "Luxemburg version";
             this.version_lux_checkbox.UseVisualStyleBackColor = true;
@@ -3155,7 +3155,7 @@ namespace LORICA4
             this.Sensitivity_button.AutoSize = true;
             this.Sensitivity_button.Location = new System.Drawing.Point(22, 179);
             this.Sensitivity_button.Name = "Sensitivity_button";
-            this.Sensitivity_button.Size = new System.Drawing.Size(213, 26);
+            this.Sensitivity_button.Size = new System.Drawing.Size(200, 17);
             this.Sensitivity_button.TabIndex = 3;
             this.Sensitivity_button.Text = "Run sensitivity analysis (non-iterative)";
             this.Sensitivity_button.UseVisualStyleBackColor = true;
@@ -3166,7 +3166,7 @@ namespace LORICA4
             this.Calibration_button.AutoSize = true;
             this.Calibration_button.Location = new System.Drawing.Point(22, 33);
             this.Calibration_button.Name = "Calibration_button";
-            this.Calibration_button.Size = new System.Drawing.Size(155, 26);
+            this.Calibration_button.Size = new System.Drawing.Size(142, 17);
             this.Calibration_button.TabIndex = 2;
             this.Calibration_button.Text = "Run calibration (iterative)";
             this.Calibration_button.UseVisualStyleBackColor = true;
@@ -3193,7 +3193,7 @@ namespace LORICA4
             this.calibration.AutoSize = true;
             this.calibration.Location = new System.Drawing.Point(102, 190);
             this.calibration.Name = "calibration";
-            this.calibration.Size = new System.Drawing.Size(138, 27);
+            this.calibration.Size = new System.Drawing.Size(125, 17);
             this.calibration.TabIndex = 5;
             this.calibration.Text = "Lessivage calibration";
             this.calibration.UseVisualStyleBackColor = true;
@@ -3204,7 +3204,7 @@ namespace LORICA4
             this.Ik_ben_Marijn.AutoSize = true;
             this.Ik_ben_Marijn.Location = new System.Drawing.Point(102, 146);
             this.Ik_ben_Marijn.Name = "Ik_ben_Marijn";
-            this.Ik_ben_Marijn.Size = new System.Drawing.Size(100, 27);
+            this.Ik_ben_Marijn.Size = new System.Drawing.Size(87, 17);
             this.Ik_ben_Marijn.TabIndex = 4;
             this.Ik_ben_Marijn.Text = "Ik ben Marijn";
             this.Ik_ben_Marijn.UseVisualStyleBackColor = true;
@@ -3227,7 +3227,7 @@ namespace LORICA4
             this.runs_checkbox.Checked = true;
             this.runs_checkbox.Location = new System.Drawing.Point(54, 33);
             this.runs_checkbox.Name = "runs_checkbox";
-            this.runs_checkbox.Size = new System.Drawing.Size(92, 26);
+            this.runs_checkbox.Size = new System.Drawing.Size(79, 17);
             this.runs_checkbox.TabIndex = 2;
             this.runs_checkbox.TabStop = true;
             this.runs_checkbox.Text = "runs (years)";
@@ -3298,9 +3298,9 @@ namespace LORICA4
             this.Input.Controls.Add(this.label3);
             this.Input.Controls.Add(this.label25);
             this.Input.Controls.Add(this.label23);
-            this.Input.Location = new System.Drawing.Point(8, 27);
+            this.Input.Location = new System.Drawing.Point(4, 22);
             this.Input.Name = "Input";
-            this.Input.Size = new System.Drawing.Size(795, 284);
+            this.Input.Size = new System.Drawing.Size(803, 293);
             this.Input.TabIndex = 0;
             this.Input.Text = "Inputs";
             this.Input.UseVisualStyleBackColor = true;
@@ -3311,7 +3311,7 @@ namespace LORICA4
             this.check_time_T.Enabled = false;
             this.check_time_T.Location = new System.Drawing.Point(220, 251);
             this.check_time_T.Name = "check_time_T";
-            this.check_time_T.Size = new System.Drawing.Size(28, 27);
+            this.check_time_T.Size = new System.Drawing.Size(15, 14);
             this.check_time_T.TabIndex = 154;
             this.check_time_T.UseVisualStyleBackColor = true;
             // 
@@ -3369,7 +3369,7 @@ namespace LORICA4
             this.check_time_evap.AutoSize = true;
             this.check_time_evap.Location = new System.Drawing.Point(220, 222);
             this.check_time_evap.Name = "check_time_evap";
-            this.check_time_evap.Size = new System.Drawing.Size(28, 27);
+            this.check_time_evap.Size = new System.Drawing.Size(15, 14);
             this.check_time_evap.TabIndex = 145;
             this.check_time_evap.UseVisualStyleBackColor = true;
             this.check_time_evap.CheckedChanged += new System.EventHandler(this.check_time_evap_CheckedChanged);
@@ -3379,7 +3379,7 @@ namespace LORICA4
             this.check_time_infil.AutoSize = true;
             this.check_time_infil.Location = new System.Drawing.Point(220, 198);
             this.check_time_infil.Name = "check_time_infil";
-            this.check_time_infil.Size = new System.Drawing.Size(28, 27);
+            this.check_time_infil.Size = new System.Drawing.Size(15, 14);
             this.check_time_infil.TabIndex = 144;
             this.check_time_infil.UseVisualStyleBackColor = true;
             this.check_time_infil.CheckedChanged += new System.EventHandler(this.check_time_infil_CheckedChanged);
@@ -3389,7 +3389,7 @@ namespace LORICA4
             this.check_time_rain.AutoSize = true;
             this.check_time_rain.Location = new System.Drawing.Point(220, 174);
             this.check_time_rain.Name = "check_time_rain";
-            this.check_time_rain.Size = new System.Drawing.Size(28, 27);
+            this.check_time_rain.Size = new System.Drawing.Size(15, 14);
             this.check_time_rain.TabIndex = 143;
             this.check_time_rain.UseVisualStyleBackColor = true;
             this.check_time_rain.CheckedChanged += new System.EventHandler(this.check_time_rain_CheckedChanged);
@@ -3399,7 +3399,7 @@ namespace LORICA4
             this.check_time_till_fields.AutoSize = true;
             this.check_time_till_fields.Location = new System.Drawing.Point(220, 150);
             this.check_time_till_fields.Name = "check_time_till_fields";
-            this.check_time_till_fields.Size = new System.Drawing.Size(28, 27);
+            this.check_time_till_fields.Size = new System.Drawing.Size(15, 14);
             this.check_time_till_fields.TabIndex = 142;
             this.check_time_till_fields.UseVisualStyleBackColor = true;
             this.check_time_till_fields.CheckedChanged += new System.EventHandler(this.check_time_tillage_CheckedChanged);
@@ -3409,7 +3409,7 @@ namespace LORICA4
             this.check_time_landuse.AutoSize = true;
             this.check_time_landuse.Location = new System.Drawing.Point(220, 123);
             this.check_time_landuse.Name = "check_time_landuse";
-            this.check_time_landuse.Size = new System.Drawing.Size(28, 27);
+            this.check_time_landuse.Size = new System.Drawing.Size(15, 14);
             this.check_time_landuse.TabIndex = 141;
             this.check_time_landuse.UseVisualStyleBackColor = true;
             this.check_time_landuse.CheckedChanged += new System.EventHandler(this.check_time_landuse_CheckedChanged);
@@ -3422,7 +3422,7 @@ namespace LORICA4
             this.check_space_DTM.Enabled = false;
             this.check_space_DTM.Location = new System.Drawing.Point(188, 51);
             this.check_space_DTM.Name = "check_space_DTM";
-            this.check_space_DTM.Size = new System.Drawing.Size(28, 27);
+            this.check_space_DTM.Size = new System.Drawing.Size(15, 14);
             this.check_space_DTM.TabIndex = 138;
             this.check_space_DTM.UseVisualStyleBackColor = true;
             // 
@@ -3566,7 +3566,7 @@ namespace LORICA4
             this.check_space_evap.AutoSize = true;
             this.check_space_evap.Location = new System.Drawing.Point(188, 222);
             this.check_space_evap.Name = "check_space_evap";
-            this.check_space_evap.Size = new System.Drawing.Size(28, 27);
+            this.check_space_evap.Size = new System.Drawing.Size(15, 14);
             this.check_space_evap.TabIndex = 130;
             this.check_space_evap.UseVisualStyleBackColor = true;
             this.check_space_evap.CheckedChanged += new System.EventHandler(this.check_cnst_evap_CheckedChanged);
@@ -3576,7 +3576,7 @@ namespace LORICA4
             this.check_space_infil.AutoSize = true;
             this.check_space_infil.Location = new System.Drawing.Point(188, 198);
             this.check_space_infil.Name = "check_space_infil";
-            this.check_space_infil.Size = new System.Drawing.Size(28, 27);
+            this.check_space_infil.Size = new System.Drawing.Size(15, 14);
             this.check_space_infil.TabIndex = 129;
             this.check_space_infil.UseVisualStyleBackColor = true;
             this.check_space_infil.CheckedChanged += new System.EventHandler(this.check_cnst_infil_CheckedChanged);
@@ -3586,7 +3586,7 @@ namespace LORICA4
             this.check_space_rain.AutoSize = true;
             this.check_space_rain.Location = new System.Drawing.Point(188, 174);
             this.check_space_rain.Name = "check_space_rain";
-            this.check_space_rain.Size = new System.Drawing.Size(28, 27);
+            this.check_space_rain.Size = new System.Drawing.Size(15, 14);
             this.check_space_rain.TabIndex = 128;
             this.check_space_rain.UseVisualStyleBackColor = true;
             this.check_space_rain.CheckedChanged += new System.EventHandler(this.check_cnst_rain_CheckedChanged_1);
@@ -3596,7 +3596,7 @@ namespace LORICA4
             this.check_space_till_fields.AutoSize = true;
             this.check_space_till_fields.Location = new System.Drawing.Point(188, 150);
             this.check_space_till_fields.Name = "check_space_till_fields";
-            this.check_space_till_fields.Size = new System.Drawing.Size(28, 27);
+            this.check_space_till_fields.Size = new System.Drawing.Size(15, 14);
             this.check_space_till_fields.TabIndex = 127;
             this.check_space_till_fields.UseVisualStyleBackColor = true;
             this.check_space_till_fields.CheckedChanged += new System.EventHandler(this.check_cnst_till_fields_CheckedChanged);
@@ -3606,7 +3606,7 @@ namespace LORICA4
             this.check_space_landuse.AutoSize = true;
             this.check_space_landuse.Location = new System.Drawing.Point(188, 123);
             this.check_space_landuse.Name = "check_space_landuse";
-            this.check_space_landuse.Size = new System.Drawing.Size(28, 27);
+            this.check_space_landuse.Size = new System.Drawing.Size(15, 14);
             this.check_space_landuse.TabIndex = 126;
             this.check_space_landuse.UseVisualStyleBackColor = true;
             this.check_space_landuse.CheckedChanged += new System.EventHandler(this.check_cnst_landuse_CheckedChanged_1);
@@ -3616,7 +3616,7 @@ namespace LORICA4
             this.check_space_soildepth.AutoSize = true;
             this.check_space_soildepth.Location = new System.Drawing.Point(188, 76);
             this.check_space_soildepth.Name = "check_space_soildepth";
-            this.check_space_soildepth.Size = new System.Drawing.Size(28, 27);
+            this.check_space_soildepth.Size = new System.Drawing.Size(15, 14);
             this.check_space_soildepth.TabIndex = 125;
             this.check_space_soildepth.UseVisualStyleBackColor = true;
             this.check_space_soildepth.CheckedChanged += new System.EventHandler(this.check_cnst_soildepth_CheckedChanged_1);
@@ -3651,9 +3651,9 @@ namespace LORICA4
             // Processes
             // 
             this.Processes.Controls.Add(this.Process_tabs);
-            this.Processes.Location = new System.Drawing.Point(8, 27);
+            this.Processes.Location = new System.Drawing.Point(4, 22);
             this.Processes.Name = "Processes";
-            this.Processes.Size = new System.Drawing.Size(795, 284);
+            this.Processes.Size = new System.Drawing.Size(803, 293);
             this.Processes.TabIndex = 6;
             this.Processes.Text = "Geomorphic processes";
             this.Processes.UseVisualStyleBackColor = true;
@@ -3699,10 +3699,10 @@ namespace LORICA4
             this.Water.Controls.Add(this.label10);
             this.Water.Controls.Add(this.label9);
             this.Water.Controls.Add(this.Water_ero_checkbox);
-            this.Water.Location = new System.Drawing.Point(8, 27);
+            this.Water.Location = new System.Drawing.Point(4, 22);
             this.Water.Name = "Water";
             this.Water.Padding = new System.Windows.Forms.Padding(3);
-            this.Water.Size = new System.Drawing.Size(724, 241);
+            this.Water.Size = new System.Drawing.Size(732, 250);
             this.Water.TabIndex = 0;
             this.Water.Text = "Water erosion and deposition";
             this.Water.UseVisualStyleBackColor = true;
@@ -3712,7 +3712,7 @@ namespace LORICA4
             this.daily_water.AutoSize = true;
             this.daily_water.Location = new System.Drawing.Point(392, 16);
             this.daily_water.Name = "daily_water";
-            this.daily_water.Size = new System.Drawing.Size(113, 27);
+            this.daily_water.Size = new System.Drawing.Size(100, 17);
             this.daily_water.TabIndex = 29;
             this.daily_water.Text = "Daily water flow";
             this.daily_water.UseVisualStyleBackColor = true;
@@ -3824,7 +3824,7 @@ namespace LORICA4
             this.only_waterflow_checkbox.AutoSize = true;
             this.only_waterflow_checkbox.Location = new System.Drawing.Point(156, 16);
             this.only_waterflow_checkbox.Name = "only_waterflow_checkbox";
-            this.only_waterflow_checkbox.Size = new System.Drawing.Size(232, 27);
+            this.only_waterflow_checkbox.Size = new System.Drawing.Size(219, 17);
             this.only_waterflow_checkbox.TabIndex = 14;
             this.only_waterflow_checkbox.Text = "Only calculate waterflow, no ero and dep";
             this.only_waterflow_checkbox.UseVisualStyleBackColor = true;
@@ -3881,7 +3881,7 @@ namespace LORICA4
             this.Water_ero_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.Water_ero_checkbox.Location = new System.Drawing.Point(26, 16);
             this.Water_ero_checkbox.Name = "Water_ero_checkbox";
-            this.Water_ero_checkbox.Size = new System.Drawing.Size(137, 27);
+            this.Water_ero_checkbox.Size = new System.Drawing.Size(124, 17);
             this.Water_ero_checkbox.TabIndex = 0;
             this.Water_ero_checkbox.Text = "Activate this process";
             this.Water_ero_checkbox.UseVisualStyleBackColor = true;
@@ -3895,10 +3895,10 @@ namespace LORICA4
             this.Tillage.Controls.Add(this.parameter_tillage_constant_textbox);
             this.Tillage.Controls.Add(this.parameter_ploughing_depth_textbox);
             this.Tillage.Controls.Add(this.Tillage_checkbox);
-            this.Tillage.Location = new System.Drawing.Point(8, 27);
+            this.Tillage.Location = new System.Drawing.Point(4, 22);
             this.Tillage.Name = "Tillage";
             this.Tillage.Padding = new System.Windows.Forms.Padding(3);
-            this.Tillage.Size = new System.Drawing.Size(724, 241);
+            this.Tillage.Size = new System.Drawing.Size(732, 250);
             this.Tillage.TabIndex = 1;
             this.Tillage.Text = "Tillage";
             this.Tillage.UseVisualStyleBackColor = true;
@@ -3952,7 +3952,7 @@ namespace LORICA4
             this.Tillage_checkbox.AutoSize = true;
             this.Tillage_checkbox.Location = new System.Drawing.Point(26, 16);
             this.Tillage_checkbox.Name = "Tillage_checkbox";
-            this.Tillage_checkbox.Size = new System.Drawing.Size(137, 27);
+            this.Tillage_checkbox.Size = new System.Drawing.Size(124, 17);
             this.Tillage_checkbox.TabIndex = 1;
             this.Tillage_checkbox.Text = "Activate this process";
             this.Tillage_checkbox.UseVisualStyleBackColor = true;
@@ -3964,9 +3964,9 @@ namespace LORICA4
             this.Creeper.Controls.Add(this.label19);
             this.Creeper.Controls.Add(this.parameter_diffusivity_textbox);
             this.Creeper.Controls.Add(this.creep_active_checkbox);
-            this.Creeper.Location = new System.Drawing.Point(8, 27);
+            this.Creeper.Location = new System.Drawing.Point(4, 22);
             this.Creeper.Name = "Creeper";
-            this.Creeper.Size = new System.Drawing.Size(724, 241);
+            this.Creeper.Size = new System.Drawing.Size(732, 250);
             this.Creeper.TabIndex = 6;
             this.Creeper.Text = "Creep";
             this.Creeper.UseVisualStyleBackColor = true;
@@ -3976,7 +3976,7 @@ namespace LORICA4
             this.creep_testing.AutoSize = true;
             this.creep_testing.Location = new System.Drawing.Point(26, 108);
             this.creep_testing.Name = "creep_testing";
-            this.creep_testing.Size = new System.Drawing.Size(101, 27);
+            this.creep_testing.Size = new System.Drawing.Size(88, 17);
             this.creep_testing.TabIndex = 26;
             this.creep_testing.Text = "Creep testing";
             this.creep_testing.UseVisualStyleBackColor = true;
@@ -4013,7 +4013,7 @@ namespace LORICA4
             this.creep_active_checkbox.AutoSize = true;
             this.creep_active_checkbox.Location = new System.Drawing.Point(26, 18);
             this.creep_active_checkbox.Name = "creep_active_checkbox";
-            this.creep_active_checkbox.Size = new System.Drawing.Size(137, 27);
+            this.creep_active_checkbox.Size = new System.Drawing.Size(124, 17);
             this.creep_active_checkbox.TabIndex = 20;
             this.creep_active_checkbox.Text = "Activate this process";
             this.creep_active_checkbox.UseVisualStyleBackColor = true;
@@ -4022,9 +4022,9 @@ namespace LORICA4
             // 
             this.Solifluction.Controls.Add(this.pictureBox5);
             this.Solifluction.Controls.Add(this.Solifluction_checkbox);
-            this.Solifluction.Location = new System.Drawing.Point(8, 27);
+            this.Solifluction.Location = new System.Drawing.Point(4, 22);
             this.Solifluction.Name = "Solifluction";
-            this.Solifluction.Size = new System.Drawing.Size(724, 241);
+            this.Solifluction.Size = new System.Drawing.Size(732, 250);
             this.Solifluction.TabIndex = 4;
             this.Solifluction.Text = "Solifluction";
             this.Solifluction.UseVisualStyleBackColor = true;
@@ -4044,7 +4044,7 @@ namespace LORICA4
             this.Solifluction_checkbox.Enabled = false;
             this.Solifluction_checkbox.Location = new System.Drawing.Point(36, 24);
             this.Solifluction_checkbox.Name = "Solifluction_checkbox";
-            this.Solifluction_checkbox.Size = new System.Drawing.Size(137, 27);
+            this.Solifluction_checkbox.Size = new System.Drawing.Size(124, 17);
             this.Solifluction_checkbox.TabIndex = 2;
             this.Solifluction_checkbox.Text = "Activate this process";
             this.Solifluction_checkbox.UseVisualStyleBackColor = true;
@@ -4055,9 +4055,9 @@ namespace LORICA4
             this.Rock_weathering.Controls.Add(this.pictureBox6);
             this.Rock_weathering.Controls.Add(this.groupBox10);
             this.Rock_weathering.Controls.Add(this.groupBox9);
-            this.Rock_weathering.Location = new System.Drawing.Point(8, 27);
+            this.Rock_weathering.Location = new System.Drawing.Point(4, 22);
             this.Rock_weathering.Name = "Rock_weathering";
-            this.Rock_weathering.Size = new System.Drawing.Size(724, 241);
+            this.Rock_weathering.Size = new System.Drawing.Size(732, 250);
             this.Rock_weathering.TabIndex = 5;
             this.Rock_weathering.Text = "Rock weathering";
             this.Rock_weathering.UseVisualStyleBackColor = true;
@@ -4104,7 +4104,7 @@ namespace LORICA4
             this.Frost_weathering_checkbox.Enabled = false;
             this.Frost_weathering_checkbox.Location = new System.Drawing.Point(14, 19);
             this.Frost_weathering_checkbox.Name = "Frost_weathering_checkbox";
-            this.Frost_weathering_checkbox.Size = new System.Drawing.Size(137, 27);
+            this.Frost_weathering_checkbox.Size = new System.Drawing.Size(124, 17);
             this.Frost_weathering_checkbox.TabIndex = 3;
             this.Frost_weathering_checkbox.Text = "Activate this process";
             this.Frost_weathering_checkbox.UseVisualStyleBackColor = true;
@@ -4113,10 +4113,10 @@ namespace LORICA4
             // 
             this.Tectonics.Controls.Add(this.groupBox14);
             this.Tectonics.Controls.Add(this.groupBox4);
-            this.Tectonics.Location = new System.Drawing.Point(8, 27);
+            this.Tectonics.Location = new System.Drawing.Point(4, 22);
             this.Tectonics.Name = "Tectonics";
             this.Tectonics.Padding = new System.Windows.Forms.Padding(3);
-            this.Tectonics.Size = new System.Drawing.Size(724, 241);
+            this.Tectonics.Size = new System.Drawing.Size(732, 250);
             this.Tectonics.TabIndex = 7;
             this.Tectonics.Text = "Tectonics";
             this.Tectonics.UseVisualStyleBackColor = true;
@@ -4184,7 +4184,7 @@ namespace LORICA4
             this.radio_lift_col_less_than.AutoSize = true;
             this.radio_lift_col_less_than.Location = new System.Drawing.Point(6, 75);
             this.radio_lift_col_less_than.Name = "radio_lift_col_less_than";
-            this.radio_lift_col_less_than.Size = new System.Drawing.Size(61, 26);
+            this.radio_lift_col_less_than.Size = new System.Drawing.Size(48, 17);
             this.radio_lift_col_less_than.TabIndex = 5;
             this.radio_lift_col_less_than.TabStop = true;
             this.radio_lift_col_less_than.Text = "col <";
@@ -4195,7 +4195,7 @@ namespace LORICA4
             this.radio_lift_row_more_than.AutoSize = true;
             this.radio_lift_row_more_than.Location = new System.Drawing.Point(6, 16);
             this.radio_lift_row_more_than.Name = "radio_lift_row_more_than";
-            this.radio_lift_row_more_than.Size = new System.Drawing.Size(64, 26);
+            this.radio_lift_row_more_than.Size = new System.Drawing.Size(51, 17);
             this.radio_lift_row_more_than.TabIndex = 4;
             this.radio_lift_row_more_than.TabStop = true;
             this.radio_lift_row_more_than.Text = "row >";
@@ -4206,7 +4206,7 @@ namespace LORICA4
             this.radio_lift_col_more_than.AutoSize = true;
             this.radio_lift_col_more_than.Location = new System.Drawing.Point(6, 56);
             this.radio_lift_col_more_than.Name = "radio_lift_col_more_than";
-            this.radio_lift_col_more_than.Size = new System.Drawing.Size(61, 26);
+            this.radio_lift_col_more_than.Size = new System.Drawing.Size(48, 17);
             this.radio_lift_col_more_than.TabIndex = 3;
             this.radio_lift_col_more_than.TabStop = true;
             this.radio_lift_col_more_than.Text = "col >";
@@ -4217,7 +4217,7 @@ namespace LORICA4
             this.radio_lift_row_less_than.AutoSize = true;
             this.radio_lift_row_less_than.Location = new System.Drawing.Point(6, 36);
             this.radio_lift_row_less_than.Name = "radio_lift_row_less_than";
-            this.radio_lift_row_less_than.Size = new System.Drawing.Size(64, 26);
+            this.radio_lift_row_less_than.Size = new System.Drawing.Size(51, 17);
             this.radio_lift_row_less_than.TabIndex = 2;
             this.radio_lift_row_less_than.TabStop = true;
             this.radio_lift_row_less_than.Text = "row <";
@@ -4235,7 +4235,7 @@ namespace LORICA4
             this.uplift_active_checkbox.AutoSize = true;
             this.uplift_active_checkbox.Location = new System.Drawing.Point(13, 19);
             this.uplift_active_checkbox.Name = "uplift_active_checkbox";
-            this.uplift_active_checkbox.Size = new System.Drawing.Size(78, 27);
+            this.uplift_active_checkbox.Size = new System.Drawing.Size(65, 17);
             this.uplift_active_checkbox.TabIndex = 1;
             this.uplift_active_checkbox.Text = "Activate";
             this.uplift_active_checkbox.UseVisualStyleBackColor = true;
@@ -4296,7 +4296,7 @@ namespace LORICA4
             this.radio_tilt_col_max.AutoSize = true;
             this.radio_tilt_col_max.Location = new System.Drawing.Point(6, 79);
             this.radio_tilt_col_max.Name = "radio_tilt_col_max";
-            this.radio_tilt_col_max.Size = new System.Drawing.Size(100, 26);
+            this.radio_tilt_col_max.Size = new System.Drawing.Size(87, 17);
             this.radio_tilt_col_max.TabIndex = 5;
             this.radio_tilt_col_max.TabStop = true;
             this.radio_tilt_col_max.Text = "col = max col";
@@ -4307,7 +4307,7 @@ namespace LORICA4
             this.radio_tilt_row_zero.AutoSize = true;
             this.radio_tilt_row_zero.Location = new System.Drawing.Point(6, 16);
             this.radio_tilt_row_zero.Name = "radio_tilt_row_zero";
-            this.radio_tilt_row_zero.Size = new System.Drawing.Size(73, 26);
+            this.radio_tilt_row_zero.Size = new System.Drawing.Size(60, 17);
             this.radio_tilt_row_zero.TabIndex = 4;
             this.radio_tilt_row_zero.TabStop = true;
             this.radio_tilt_row_zero.Text = "row = 0";
@@ -4318,7 +4318,7 @@ namespace LORICA4
             this.radio_tilt_col_zero.AutoSize = true;
             this.radio_tilt_col_zero.Location = new System.Drawing.Point(6, 56);
             this.radio_tilt_col_zero.Name = "radio_tilt_col_zero";
-            this.radio_tilt_col_zero.Size = new System.Drawing.Size(70, 26);
+            this.radio_tilt_col_zero.Size = new System.Drawing.Size(57, 17);
             this.radio_tilt_col_zero.TabIndex = 3;
             this.radio_tilt_col_zero.TabStop = true;
             this.radio_tilt_col_zero.Text = "col = 0";
@@ -4329,7 +4329,7 @@ namespace LORICA4
             this.radio_tilt_row_max.AutoSize = true;
             this.radio_tilt_row_max.Location = new System.Drawing.Point(6, 36);
             this.radio_tilt_row_max.Name = "radio_tilt_row_max";
-            this.radio_tilt_row_max.Size = new System.Drawing.Size(106, 26);
+            this.radio_tilt_row_max.Size = new System.Drawing.Size(93, 17);
             this.radio_tilt_row_max.TabIndex = 2;
             this.radio_tilt_row_max.TabStop = true;
             this.radio_tilt_row_max.Text = "row = max row";
@@ -4340,7 +4340,7 @@ namespace LORICA4
             this.tilting_active_checkbox.AutoSize = true;
             this.tilting_active_checkbox.Location = new System.Drawing.Point(6, 19);
             this.tilting_active_checkbox.Name = "tilting_active_checkbox";
-            this.tilting_active_checkbox.Size = new System.Drawing.Size(78, 27);
+            this.tilting_active_checkbox.Size = new System.Drawing.Size(65, 17);
             this.tilting_active_checkbox.TabIndex = 0;
             this.tilting_active_checkbox.Text = "Activate";
             this.tilting_active_checkbox.UseVisualStyleBackColor = true;
@@ -4358,9 +4358,9 @@ namespace LORICA4
             this.treefall.Controls.Add(this.label107);
             this.treefall.Controls.Add(this.tf_W);
             this.treefall.Controls.Add(this.treefall_checkbox);
-            this.treefall.Location = new System.Drawing.Point(8, 27);
+            this.treefall.Location = new System.Drawing.Point(4, 22);
             this.treefall.Name = "treefall";
-            this.treefall.Size = new System.Drawing.Size(724, 241);
+            this.treefall.Size = new System.Drawing.Size(732, 250);
             this.treefall.TabIndex = 8;
             this.treefall.Text = "Tree fall";
             this.treefall.UseVisualStyleBackColor = true;
@@ -4456,7 +4456,7 @@ namespace LORICA4
             this.treefall_checkbox.AutoSize = true;
             this.treefall_checkbox.Location = new System.Drawing.Point(25, 16);
             this.treefall_checkbox.Name = "treefall_checkbox";
-            this.treefall_checkbox.Size = new System.Drawing.Size(137, 27);
+            this.treefall_checkbox.Size = new System.Drawing.Size(124, 17);
             this.treefall_checkbox.TabIndex = 0;
             this.treefall_checkbox.Text = "Activate this process";
             this.treefall_checkbox.UseVisualStyleBackColor = true;
@@ -4477,10 +4477,10 @@ namespace LORICA4
             this.tabPage3.Controls.Add(this.hardlayerthickness_textbox);
             this.tabPage3.Controls.Add(this.label61);
             this.tabPage3.Controls.Add(this.blocks_active_checkbox);
-            this.tabPage3.Location = new System.Drawing.Point(8, 27);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(724, 241);
+            this.tabPage3.Size = new System.Drawing.Size(732, 250);
             this.tabPage3.TabIndex = 9;
             this.tabPage3.Text = "Blocks";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -4586,7 +4586,7 @@ namespace LORICA4
             this.blocks_active_checkbox.AutoSize = true;
             this.blocks_active_checkbox.Location = new System.Drawing.Point(19, 20);
             this.blocks_active_checkbox.Name = "blocks_active_checkbox";
-            this.blocks_active_checkbox.Size = new System.Drawing.Size(137, 27);
+            this.blocks_active_checkbox.Size = new System.Drawing.Size(124, 17);
             this.blocks_active_checkbox.TabIndex = 1;
             this.blocks_active_checkbox.Text = "Activate this process";
             this.blocks_active_checkbox.UseVisualStyleBackColor = true;
@@ -4624,9 +4624,9 @@ namespace LORICA4
             // tabPage1
             // 
             this.tabPage1.Controls.Add(this.tabControl2);
-            this.tabPage1.Location = new System.Drawing.Point(8, 27);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(795, 284);
+            this.tabPage1.Size = new System.Drawing.Size(803, 293);
             this.tabPage1.TabIndex = 9;
             this.tabPage1.Text = "Soil forming processes";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -4665,10 +4665,10 @@ namespace LORICA4
             this.physical.Controls.Add(this.physical_weath_constant1);
             this.physical.Controls.Add(this.Physical_weath_C1_textbox);
             this.physical.Controls.Add(this.soil_phys_weath_checkbox);
-            this.physical.Location = new System.Drawing.Point(8, 27);
+            this.physical.Location = new System.Drawing.Point(4, 22);
             this.physical.Name = "physical";
             this.physical.Padding = new System.Windows.Forms.Padding(3);
-            this.physical.Size = new System.Drawing.Size(743, 226);
+            this.physical.Size = new System.Drawing.Size(751, 235);
             this.physical.TabIndex = 0;
             this.physical.Text = "Physical weathering";
             this.physical.UseVisualStyleBackColor = true;
@@ -4744,7 +4744,7 @@ namespace LORICA4
             this.soil_phys_weath_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.soil_phys_weath_checkbox.Location = new System.Drawing.Point(21, 6);
             this.soil_phys_weath_checkbox.Name = "soil_phys_weath_checkbox";
-            this.soil_phys_weath_checkbox.Size = new System.Drawing.Size(137, 27);
+            this.soil_phys_weath_checkbox.Size = new System.Drawing.Size(124, 17);
             this.soil_phys_weath_checkbox.TabIndex = 1;
             this.soil_phys_weath_checkbox.Text = "Activate this process";
             this.soil_phys_weath_checkbox.UseVisualStyleBackColor = true;
@@ -4770,10 +4770,10 @@ namespace LORICA4
             this.chemical.Controls.Add(this.chem_weath_depth_constant_textbox);
             this.chemical.Controls.Add(this.chem_weath_rate_constant_textbox);
             this.chemical.Controls.Add(this.soil_chem_weath_checkbox);
-            this.chemical.Location = new System.Drawing.Point(8, 27);
+            this.chemical.Location = new System.Drawing.Point(4, 22);
             this.chemical.Name = "chemical";
             this.chemical.Padding = new System.Windows.Forms.Padding(3);
-            this.chemical.Size = new System.Drawing.Size(743, 226);
+            this.chemical.Size = new System.Drawing.Size(751, 235);
             this.chemical.TabIndex = 1;
             this.chemical.Text = "Chemical weathering";
             this.chemical.UseVisualStyleBackColor = true;
@@ -4849,7 +4849,7 @@ namespace LORICA4
             this.soil_chem_weath_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.soil_chem_weath_checkbox.Location = new System.Drawing.Point(29, 6);
             this.soil_chem_weath_checkbox.Name = "soil_chem_weath_checkbox";
-            this.soil_chem_weath_checkbox.Size = new System.Drawing.Size(137, 27);
+            this.soil_chem_weath_checkbox.Size = new System.Drawing.Size(124, 17);
             this.soil_chem_weath_checkbox.TabIndex = 1;
             this.soil_chem_weath_checkbox.Text = "Activate this process";
             this.soil_chem_weath_checkbox.UseVisualStyleBackColor = true;
@@ -4880,9 +4880,9 @@ namespace LORICA4
             this.clay.Controls.Add(this.clay_neoform_constant_textbox);
             this.clay.Controls.Add(label60);
             this.clay.Controls.Add(this.soil_clay_transloc_checkbox);
-            this.clay.Location = new System.Drawing.Point(8, 27);
+            this.clay.Location = new System.Drawing.Point(4, 22);
             this.clay.Name = "clay";
-            this.clay.Size = new System.Drawing.Size(743, 226);
+            this.clay.Size = new System.Drawing.Size(751, 235);
             this.clay.TabIndex = 2;
             this.clay.Text = "Clay dynamics";
             this.clay.UseVisualStyleBackColor = true;
@@ -4892,7 +4892,7 @@ namespace LORICA4
             this.ct_Jagercikova.AutoSize = true;
             this.ct_Jagercikova.Location = new System.Drawing.Point(540, 52);
             this.ct_Jagercikova.Name = "ct_Jagercikova";
-            this.ct_Jagercikova.Size = new System.Drawing.Size(192, 27);
+            this.ct_Jagercikova.Size = new System.Drawing.Size(179, 17);
             this.ct_Jagercikova.TabIndex = 62;
             this.ct_Jagercikova.Text = "Advection equation Jagercikova";
             this.ct_Jagercikova.UseVisualStyleBackColor = true;
@@ -4946,7 +4946,7 @@ namespace LORICA4
             this.CT_depth_decay_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.CT_depth_decay_checkbox.Location = new System.Drawing.Point(304, 146);
             this.CT_depth_decay_checkbox.Name = "CT_depth_decay_checkbox";
-            this.CT_depth_decay_checkbox.Size = new System.Drawing.Size(150, 27);
+            this.CT_depth_decay_checkbox.Size = new System.Drawing.Size(137, 17);
             this.CT_depth_decay_checkbox.TabIndex = 54;
             this.CT_depth_decay_checkbox.Text = "Depth decay constant?";
             this.CT_depth_decay_checkbox.UseVisualStyleBackColor = true;
@@ -4998,7 +4998,7 @@ namespace LORICA4
             this.soil_clay_transloc_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.soil_clay_transloc_checkbox.Location = new System.Drawing.Point(26, 12);
             this.soil_clay_transloc_checkbox.Name = "soil_clay_transloc_checkbox";
-            this.soil_clay_transloc_checkbox.Size = new System.Drawing.Size(137, 27);
+            this.soil_clay_transloc_checkbox.Size = new System.Drawing.Size(124, 17);
             this.soil_clay_transloc_checkbox.TabIndex = 1;
             this.soil_clay_transloc_checkbox.Text = "Activate this process";
             this.soil_clay_transloc_checkbox.UseVisualStyleBackColor = true;
@@ -5011,9 +5011,9 @@ namespace LORICA4
             this.bioturbation.Controls.Add(this.bioturbation_depth_decay_textbox);
             this.bioturbation.Controls.Add(this.potential_bioturbation_textbox);
             this.bioturbation.Controls.Add(this.soil_bioturb_checkbox);
-            this.bioturbation.Location = new System.Drawing.Point(8, 27);
+            this.bioturbation.Location = new System.Drawing.Point(4, 22);
             this.bioturbation.Name = "bioturbation";
-            this.bioturbation.Size = new System.Drawing.Size(743, 226);
+            this.bioturbation.Size = new System.Drawing.Size(751, 235);
             this.bioturbation.TabIndex = 3;
             this.bioturbation.Text = "Bioturbation";
             this.bioturbation.UseVisualStyleBackColor = true;
@@ -5041,7 +5041,7 @@ namespace LORICA4
             this.soil_bioturb_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.soil_bioturb_checkbox.Location = new System.Drawing.Point(26, 12);
             this.soil_bioturb_checkbox.Name = "soil_bioturb_checkbox";
-            this.soil_bioturb_checkbox.Size = new System.Drawing.Size(137, 27);
+            this.soil_bioturb_checkbox.Size = new System.Drawing.Size(124, 17);
             this.soil_bioturb_checkbox.TabIndex = 1;
             this.soil_bioturb_checkbox.Text = "Activate this process";
             this.soil_bioturb_checkbox.UseVisualStyleBackColor = true;
@@ -5069,9 +5069,9 @@ namespace LORICA4
             this.carbon.Controls.Add(this.carbon_depth_decay_textbox);
             this.carbon.Controls.Add(this.carbon_input_textbox);
             this.carbon.Controls.Add(this.soil_carbon_cycle_checkbox);
-            this.carbon.Location = new System.Drawing.Point(8, 27);
+            this.carbon.Location = new System.Drawing.Point(4, 22);
             this.carbon.Name = "carbon";
-            this.carbon.Size = new System.Drawing.Size(743, 226);
+            this.carbon.Size = new System.Drawing.Size(751, 235);
             this.carbon.TabIndex = 4;
             this.carbon.Text = "Carbon Cycle";
             this.carbon.UseVisualStyleBackColor = true;
@@ -5155,7 +5155,7 @@ namespace LORICA4
             this.soil_carbon_cycle_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.soil_carbon_cycle_checkbox.Location = new System.Drawing.Point(25, 14);
             this.soil_carbon_cycle_checkbox.Name = "soil_carbon_cycle_checkbox";
-            this.soil_carbon_cycle_checkbox.Size = new System.Drawing.Size(137, 27);
+            this.soil_carbon_cycle_checkbox.Size = new System.Drawing.Size(124, 17);
             this.soil_carbon_cycle_checkbox.TabIndex = 2;
             this.soil_carbon_cycle_checkbox.Text = "Activate this process";
             this.soil_carbon_cycle_checkbox.UseVisualStyleBackColor = true;
@@ -5165,9 +5165,9 @@ namespace LORICA4
             this.decalcification.Controls.Add(this.label94);
             this.decalcification.Controls.Add(this.ini_CaCO3_content);
             this.decalcification.Controls.Add(this.decalcification_checkbox);
-            this.decalcification.Location = new System.Drawing.Point(8, 27);
+            this.decalcification.Location = new System.Drawing.Point(4, 22);
             this.decalcification.Name = "decalcification";
-            this.decalcification.Size = new System.Drawing.Size(743, 226);
+            this.decalcification.Size = new System.Drawing.Size(751, 235);
             this.decalcification.TabIndex = 5;
             this.decalcification.Text = "Decalcification";
             this.decalcification.UseVisualStyleBackColor = true;
@@ -5194,7 +5194,7 @@ namespace LORICA4
             this.decalcification_checkbox.AutoSize = true;
             this.decalcification_checkbox.Location = new System.Drawing.Point(32, 15);
             this.decalcification_checkbox.Name = "decalcification_checkbox";
-            this.decalcification_checkbox.Size = new System.Drawing.Size(137, 27);
+            this.decalcification_checkbox.Size = new System.Drawing.Size(124, 17);
             this.decalcification_checkbox.TabIndex = 0;
             this.decalcification_checkbox.Text = "Activate this process";
             this.decalcification_checkbox.UseVisualStyleBackColor = true;
@@ -5226,9 +5226,9 @@ namespace LORICA4
             this.tabPage2.Controls.Add(this.dailyET0);
             this.tabPage2.Controls.Add(this.dailyD);
             this.tabPage2.Controls.Add(this.dailyP);
-            this.tabPage2.Location = new System.Drawing.Point(8, 27);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(795, 284);
+            this.tabPage2.Size = new System.Drawing.Size(803, 293);
             this.tabPage2.TabIndex = 10;
             this.tabPage2.Text = "Hydrological parameters";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -5238,7 +5238,7 @@ namespace LORICA4
             this.check_scaling_daily_weather.AutoSize = true;
             this.check_scaling_daily_weather.Location = new System.Drawing.Point(125, 227);
             this.check_scaling_daily_weather.Name = "check_scaling_daily_weather";
-            this.check_scaling_daily_weather.Size = new System.Drawing.Size(243, 27);
+            this.check_scaling_daily_weather.Size = new System.Drawing.Size(230, 17);
             this.check_scaling_daily_weather.TabIndex = 71;
             this.check_scaling_daily_weather.Text = "Scale daily weather with annual timeseries?";
             this.check_scaling_daily_weather.UseVisualStyleBackColor = true;
@@ -14606,15 +14606,6 @@ namespace LORICA4
 
                                             }
 
-                                            // 4. Indien oververzadigd: depositie. Berekenen van de doorgaande massa van iedere textuurklasse, op basis van 1/d0.5 (zie Excel). 
-                                            // 4b. Vergelijken van doorgaande massa met massa aanwezig in transport per textuurfractie. Indien teveel aanwezig, afwerpen. 
-                                            // 4c. Organische stof afwerpen propoertioneel met de afzettingsfractie van de beide kleifracties. (Dus als er 30% van de klei in transport blijft, dan ook 30% van de OM).
-                                            // Dit leidt bij de kleifractie slechts zelden tot afzetting. 
-
-                                            // Depressies: volledige afzetting van materiaal dat in transport is. 
-                                            // Instabiliteit: geen garantie dat dit niet gebeurt. Smearing kan er bij gezet worden. 
-                                            // Gravelafzettingen: volgens pdf een rho van 2.7. Afgeronde gravel afzettingen van rivieren kunnen die heel laag hebben. 
-
                                         } //end`dH > 000
                                     }//end if novalues
                                 }//end if boundaries
@@ -14783,6 +14774,332 @@ namespace LORICA4
                 timeseries_matrix[t, timeseries_order[14]] = total_rain;
             }
 
+        }
+
+        void calculate_sediment_dynamics(int row_sd, int col_sd, int i_sd, int j_sd, double waterflow_m3_per_m, double flowfraction, double sum_of_fractions)
+        {
+            int size;
+            double total_sediment_in_transport_kg, organic_in_transport, mass_to_be_eroded, rock_fraction, bio_fraction, vegetation_cover_fraction, selectivity_fraction, potential_transported_amount_kg, organic_selectivity_fraction, frac_eroded, frac_deposited;
+            double[] total_mass_eroded, total_mass_deposited_kg;
+            total_mass_eroded = new double[7] { 0, 0, 0, 0, 0, 0, 0 };
+            total_mass_deposited_kg = new double[7] { 0, 0, 0, 0, 0, 0, 0 };
+
+
+            transport_capacity_kg = advection_erodibility * (bulkdensity[row_sd, col_sd, 0] * dx * dx) * (Math.Pow(waterflow_m3_per_m, m) * Math.Pow(dh, n)); // in a departure from literature, the erosion threshold is only evaluated if erosion actually occurs
+            if (transport_capacity_kg < 0)
+            {
+                transport_capacity_kg = 0;
+                Debug.WriteLine(" Warning: negative transport capacity at" + row_sd + " " + col_sd);
+            }  // this should never happen
+               // We now compare transport_capacity with the total amount of sediment in transport, to determine whether we will have erosion or deposition or nothing
+            total_sediment_in_transport_kg = 0;
+
+            for (size = 0; size < n_texture_classes; size++)
+            {
+                total_sediment_in_transport_kg += flowfraction * sediment_in_transport_kg[row_sd, col_sd, size];                     //all in kg
+            }
+
+            // Transport
+            if (transport_capacity_kg == total_sediment_in_transport_kg)
+            {
+                // neither erosion nor deposition, simply transport
+                for (size = 0; size < n_texture_classes; size++)
+                {
+                    sediment_in_transport_kg[row_sd + i_sd, col_sd + j_sd, size] += flowfraction * sediment_in_transport_kg[row_sd, col_sd, size];  //all in kg 
+                }
+                old_SOM_in_transport_kg[row_sd + i_sd, col_sd + j_sd] += flowfraction * old_SOM_in_transport_kg[row_sd, col_sd];  //all in kg
+                young_SOM_in_transport_kg[row_sd + i_sd, col_sd + j_sd] += flowfraction * young_SOM_in_transport_kg[row_sd, col_sd];  //all in kg
+
+                if (CN_checkbox.Checked)
+                {
+                    // add fraction of all CNs to the receiving cell
+                    for (int i_cn = 0; i_cn < n_cosmo; i_cn++)
+                    {
+                        CN_in_transport[row_sd + i_sd, col_sd + j_sd, i_cn] += Convert.ToInt32(Math.Round(CN_in_transport[row_sd, col_sd, i_cn] * flowfraction));
+                    }
+                }
+                if (OSL_checkbox.Checked)
+                {
+                    transport_ero_sed_OSL_by_WE(row_sd, col_sd, i_sd, j_sd, sum_of_fractions, flowfraction, 0, 0, 0);
+                }
+            }
+
+            // Erosion
+            if (transport_capacity_kg > total_sediment_in_transport_kg)
+            {
+                //in case of desired erosion, we first evaluate whether we exceed the erosion threshold
+                if ((transport_capacity_kg - total_sediment_in_transport_kg) > erosion_threshold_kg)
+                {
+                    //first, calculate how much we are going to erode. Not as much as we want to if the soil is protected by rocks or plants
+                    rock_fraction = texture_kg[row_sd, col_sd, 0, 0] / (texture_kg[row_sd, col_sd, 0, 0] + texture_kg[row_sd, col_sd, 0, 1] + texture_kg[row_sd, col_sd, 0, 2] + texture_kg[row_sd, col_sd, 0, 3] + texture_kg[row_sd, col_sd, 0, 4]);
+                    if (version_lux_checkbox.Checked == false)
+                    {
+                        mass_to_be_eroded = (transport_capacity_kg - total_sediment_in_transport_kg)
+                        * Math.Exp(-rock_protection_constant * rock_fraction)
+                        * Math.Exp(-bio_protection_constant);
+                    }
+                    else
+                    {  //for Luxemburg version, here we additially protect soil from erosion by its cover of 'bad' organic matter as litter (i.e. in top layer)
+
+                        // MvdM litter fraction is determined by the total amount of litter as fraction of the mineral soil in the top layer. This might be changed, because mineral content is variable and indepent of litter quantity
+                        //XIA change this number to 0.25 as well. For creep and no creep
+                        double litter_characteristic_protection_mass_kg_m2 = 0.01; // based on average litter contents in Luxembourg
+                        double litter_characteristic_protection_mass_kg = litter_characteristic_protection_mass_kg_m2 * dx * dx;
+                        double litter_protection_fraction = Math.Exp(-litter_characteristic_protection_mass_kg / (litter_kg[row_sd, col_sd, 0] + litter_kg[row_sd, col_sd, 1]));
+                        // double litter_fraction = (litter_kg[row, col, 0] + litter_kg[row, col, 0]) / (litter_kg[row, col, 0] + litter_kg[row, col, 0] + total_layer_mass(row, col, 0));
+
+                        //double litter_fraction = (old_SOM_kg[row, col, 0] + young_SOM_kg[row, col, 0]) / total_layer_mass(row, col, 0);
+                        //LUX Xia you have to set this parameter here in the code. Value between 0-1.
+                        // double litter_protection_constant = 0.5;
+
+                        mass_to_be_eroded = (transport_capacity_kg - total_sediment_in_transport_kg)
+                        * Math.Exp(-rock_protection_constant * rock_fraction)
+                        * Math.Exp(-bio_protection_constant)
+                        * Math.Exp(-litter_protection_fraction);
+                    }
+                    if (daily_water.Checked)
+                    {
+                        if (aridity_vegetation[row, col] >= 1) { vegetation_cover_fraction = 1; }
+                        else { vegetation_cover_fraction = aridity_vegetation[row, col]; }
+                        mass_to_be_eroded = (transport_capacity_kg - total_sediment_in_transport_kg)
+                            * Math.Exp(-rock_protection_constant * rock_fraction)
+                            * Math.Exp(-bio_protection_constant
+                            * vegetation_cover_fraction);
+                    }
+
+                    // second, calculate how the mass to be eroded is taken from the different size fractions: selectivity
+                    // if total transport capacity is small, only the finer fractions will be eroded (selectivity with diameter to power 0.5). For larger transport capacities, selectivity decreases (diameter to power 0 = equal between fractions)
+
+                    double constant_b1 = 0.5 * Math.Exp(constant_selective_transcap * transport_capacity_kg);
+                    double sum_diameter_power = 0;
+                    for (size = 0; size < 5; size++)
+                    {
+                        sum_diameter_power += 1 / Math.Pow(upper_particle_size[size], constant_b1);
+                    }
+                    double clayeroded_0_kg = 0, claypresent_0_kg = 0, clayeroded_1_kg = 0, claypresent_1_kg = 0;
+                    double sanderoded_0_kg = 0, sandpresent_0_kg = 0, sanderoded_1_kg = 0, sandpresent_1_kg = 0;
+                    for (size = 0; size < 5; size++)
+                    {
+                        selectivity_fraction = (1 / Math.Pow(upper_particle_size[size], constant_b1)) / sum_diameter_power;    // unit [-]
+                        if (texture_kg[row_sd, col_sd, 0, size] >= selectivity_fraction * mass_to_be_eroded)
+                        {    // typical situation
+                            if (size == 1)
+                            {
+                                sanderoded_0_kg = selectivity_fraction * mass_to_be_eroded;
+                                sandpresent_0_kg = texture_kg[row_sd, col_sd, 0, size];
+                            }
+                            if (size > 2)
+                            {
+                                clayeroded_0_kg += selectivity_fraction * mass_to_be_eroded;
+                                claypresent_0_kg += texture_kg[row_sd, col_sd, 0, size];
+                            }
+                            total_mass_eroded[size] += selectivity_fraction * mass_to_be_eroded;
+                            texture_kg[row_sd, col_sd, 0, size] -= selectivity_fraction * mass_to_be_eroded;   // unit [kg]
+                            sediment_in_transport_kg[row_sd + i_sd, col_sd + j_sd, size] += selectivity_fraction * mass_to_be_eroded;  // unit [kg
+                        }
+                        else
+                        {    // exceptional. If we want to erode more than present in the layer, we will take it from one layer down.
+                             //this is to avoid exceptionally thin rocky layers blocking all erosion
+                             //we will then first erode everything from the top layer (layer "0") and then erode from the second layer  (i.e. layer "1").
+
+                            // Layer 0
+                            if (size == 1)
+                            {
+                                sanderoded_0_kg = texture_kg[row_sd, col_sd, 0, size];
+                                sandpresent_0_kg = texture_kg[row_sd, col_sd, 0, size];
+                            }
+                            if (size > 2)
+                            {
+                                clayeroded_0_kg += texture_kg[row_sd, col_sd, 0, size];
+                                claypresent_0_kg += texture_kg[row_sd, col_sd, 0, size];
+                            }
+                            total_mass_eroded[size] += texture_kg[row_sd, col_sd, 0, size];
+                            double left = (selectivity_fraction * mass_to_be_eroded) - texture_kg[row_sd, col_sd, 0, size]; // unit [kg]
+                            sediment_in_transport_kg[row_sd + i_sd, col_sd + j_sd, size] += texture_kg[row_sd, col_sd, 0, size];
+                            texture_kg[row_sd, col_sd, 0, size] = 0;
+
+                            // Layer 1
+                            if (texture_kg[row_sd, col_sd, 1, size] >= left)
+                            {   // typical
+                                if (size == 1)
+                                {
+                                    sanderoded_1_kg = left;
+                                    sandpresent_1_kg = texture_kg[row_sd, col_sd, 1, size];
+                                }
+                                if (size > 2)
+                                {
+                                    clayeroded_1_kg += left;
+                                    claypresent_1_kg += texture_kg[row_sd, col_sd, 1, size];
+                                }
+                                total_mass_eroded[size] += left;
+                                sediment_in_transport_kg[row_sd + i_sd, col_sd + j_sd, size] += left;   // unit [kg]
+                                texture_kg[row_sd, col_sd, 1, size] -= left;  // unit [kg]
+                            }
+                            else
+                            {
+                                total_mass_eroded[size] += texture_kg[row_sd, col_sd, 1, size];
+                                if (size == 1)
+                                {
+                                    sanderoded_1_kg = texture_kg[row_sd, col_sd, 1, size];
+                                    sandpresent_1_kg = texture_kg[row_sd, col_sd, 1, size];
+                                }
+                                if (size > 2)
+                                {
+                                    clayeroded_1_kg += texture_kg[row_sd, col_sd, 1, size];
+                                    claypresent_1_kg += texture_kg[row_sd, col_sd, 1, size];
+                                }
+                                sediment_in_transport_kg[row_sd + i_sd, col_sd + j_sd, size] += texture_kg[row_sd, col_sd, 1, size];// unit [kg]
+                                texture_kg[row_sd, col_sd, 1, size] = 0;
+                            }
+                        }
+                    }
+
+                    //organic matter is eroded as a fraction of total OM. That fraction equals the fraction of clay eroded from the layer
+                    //the assumption underlying this is that clay and humus are bound in aggregates
+                    //this does not cover: LMW SOM, peat or large woody debris
+                    double clayerodedfraction_0 = clayeroded_0_kg / claypresent_0_kg;
+                    double clayerodedfraction_1 = clayeroded_1_kg / claypresent_1_kg;
+                    double sanderodedfraction_0 = sanderoded_0_kg / sandpresent_0_kg;
+                    double sanderodedfraction_1 = sanderoded_1_kg / sandpresent_1_kg;
+                    if (Double.IsNaN(clayerodedfraction_0))
+                    {
+                        clayerodedfraction_0 = 0;
+                        Debug.WriteLine(" this should not have happened - no OM erosion possible");
+                    }
+                    if (Double.IsNaN(clayerodedfraction_1)) { clayerodedfraction_1 = 0; }
+                    if (Double.IsNaN(sanderodedfraction_0)) { sanderodedfraction_0 = 0; }
+                    if (Double.IsNaN(sanderodedfraction_1)) { sanderodedfraction_1 = 0; }
+                    //if (row == 62 && col == 78) { Debug.WriteLine(clayerodedfraction_0 + "  " + clayerodedfraction_1); displaysoil(row, col); }
+                    old_SOM_in_transport_kg[row_sd, col_sd] += old_SOM_kg[row_sd, col_sd, 0] * clayerodedfraction_0 + old_SOM_kg[row_sd, col_sd, 1] * clayerodedfraction_1;
+                    young_SOM_in_transport_kg[row_sd, col_sd] += young_SOM_kg[row_sd, col_sd, 0] * clayerodedfraction_0 + young_SOM_kg[row_sd, col_sd, 1] * clayerodedfraction_1;
+                    total_mass_eroded[5] += old_SOM_kg[row_sd, col_sd, 0] * clayerodedfraction_0 + old_SOM_kg[row_sd, col_sd, 1] * clayerodedfraction_1;
+                    total_mass_eroded[6] += young_SOM_kg[row_sd, col_sd, 0] * clayerodedfraction_0 + young_SOM_kg[row_sd, col_sd, 1] * clayerodedfraction_1;
+                    old_SOM_kg[row_sd, col_sd, 0] *= 1 - clayerodedfraction_0;
+                    young_SOM_kg[row_sd, col_sd, 0] *= 1 - clayerodedfraction_0;
+                    old_SOM_kg[row_sd, col_sd, 1] *= 1 - clayerodedfraction_1;
+                    young_SOM_kg[row_sd, col_sd, 1] *= 1 - clayerodedfraction_1;
+
+                    if (OSL_checkbox.Checked)
+                    {
+                        transport_ero_sed_OSL_by_WE(row_sd, col_sd, i_sd, j_sd, sum_of_fractions, flowfraction, sanderodedfraction_0, sanderodedfraction_1, 0);
+                    }
+
+                    if (CN_checkbox.Checked)
+                    {
+                        for (int i_cn = 0; i_cn < n_cosmo; i_cn++)
+                        {
+                            // Erosion layer 0
+                            if (i_cn == 0 | i_cn == 4) { frac_eroded = clayerodedfraction_0; } else { frac_eroded = sanderodedfraction_0; }
+                            int CN_erosion = Convert.ToInt32(Math.Round(CN_atoms_cm2[row_sd, col_sd, 0, i_cn] * frac_eroded));
+                            CN_in_transport[row_sd + i_sd, col_sd + j_sd, i_cn] += CN_erosion; // add CNs associated with eroded fraction to transport
+                            CN_atoms_cm2[row_sd, col_sd, 0, i_cn] -= CN_erosion; // remove from source location
+
+                            // Erosion layer 1
+                            if (i_cn == 0 | i_cn == 4) { frac_eroded = clayerodedfraction_1; } else { frac_eroded = sanderodedfraction_1; }
+                            CN_erosion = Convert.ToInt32(Math.Round(CN_atoms_cm2[row_sd, col_sd, 1, i_cn] * frac_eroded));
+                            CN_in_transport[row_sd + i_sd, col_sd + j_sd, i_cn] += CN_erosion; // add CNs associated with eroded fraction
+                            CN_atoms_cm2[row_sd, col_sd, 1, i_cn] -= CN_erosion; // remove from source location
+
+                            // CNs already in transport
+                            CN_in_transport[row_sd + i_sd, col_sd + j_sd, i_cn] += Convert.ToInt32(Math.Round(CN_in_transport[row_sd, col_sd, i_cn] * flowfraction));
+                        }
+                    }
+                }
+                else
+                {
+                    //do nothing. We wanted to erode, but not enough so to actually exceed the threshold and actually do that
+                    // But we still need to transport the sediments that were already in transport:
+                    for (size = 0; size < n_texture_classes; size++)
+                    {
+                        sediment_in_transport_kg[row_sd + i_sd, col_sd + j_sd, size] += flowfraction * sediment_in_transport_kg[row_sd, col_sd, size];  //all in kg 
+                    }
+                    old_SOM_in_transport_kg[row_sd + i_sd, col_sd + j_sd] += flowfraction * old_SOM_in_transport_kg[row_sd, col_sd];  //all in kg
+                    young_SOM_in_transport_kg[row_sd + i_sd, col_sd + j_sd] += flowfraction * young_SOM_in_transport_kg[row_sd, col_sd];  //all in kg
+
+                    if (OSL_checkbox.Checked)
+                    {
+                        transport_ero_sed_OSL_by_WE(row_sd, col_sd, i_sd, j_sd, sum_of_fractions, flowfraction, 0, 0, 0);
+                    }
+
+                    if (CN_checkbox.Checked)
+                    {
+                        for (int i_cn = 0; i_cn < n_cosmo; i_cn++)
+                        {
+                            // CNs already in transport
+                            CN_in_transport[row_sd + i_sd, col_sd + j_sd, i_cn] += Convert.ToInt32(Math.Round(CN_in_transport[row_sd, col_sd, i_cn] * flowfraction));
+                        }
+                    }
+
+                }
+            }
+
+            // Deposition
+            if (transport_capacity_kg < total_sediment_in_transport_kg)
+            {
+                //first, calculate how much we are going to keep in transport. This is the way that selectivity works now. 
+                double sum_diameter_power = 0, clay_deposited = 0, clay_transported = 0, clay_in_transport = 0, sand_deposited = 0, sand_in_transport = 0;
+                for (size = 0; size < 5; size++)
+                {
+                    sum_diameter_power += 1 / Math.Pow(upper_particle_size[size], 0.5);
+                }
+                for (size = 0; size < 5; size++)
+                {
+                    selectivity_fraction = (1 / Math.Pow(upper_particle_size[size], 0.5)) / sum_diameter_power;    // unit [-]
+                    potential_transported_amount_kg = selectivity_fraction * transport_capacity_kg;                      // unit [kg]
+                    if (potential_transported_amount_kg < sediment_in_transport_kg[row_sd, col_sd, size] * flowfraction)
+                    {
+                        total_mass_deposited_kg[size] += sediment_in_transport_kg[row_sd, col_sd, size] * flowfraction - potential_transported_amount_kg;
+                        texture_kg[row_sd, col_sd, 0, size] += sediment_in_transport_kg[row_sd, col_sd, size] * flowfraction - potential_transported_amount_kg;        // unit [kg]
+                        sediment_in_transport_kg[row_sd + i_sd, col_sd + j_sd, size] = potential_transported_amount_kg;                                    // unit [kg]  
+                        if (size == 1)
+                        {
+                            sand_deposited = sediment_in_transport_kg[row_sd, col_sd, size] * flowfraction - potential_transported_amount_kg;
+                            sand_in_transport = sediment_in_transport_kg[row_sd, col_sd, size] * flowfraction;
+                        }
+                        if (size > 2)
+                        {
+                            clay_deposited += sediment_in_transport_kg[row_sd, col_sd, size] * flowfraction - potential_transported_amount_kg;
+                            clay_transported += potential_transported_amount_kg;
+                            clay_in_transport += sediment_in_transport_kg[row_sd, col_sd, size] * flowfraction;
+                        }
+                    }
+                    else
+                    {
+                        //do nothing. We keep the sediment in transport, and do not deposit anything. Only transport the sediments to the next cell
+                        sediment_in_transport_kg[row_sd + i_sd, col_sd + j_sd, size] += sediment_in_transport_kg[row_sd, col_sd, size] * flowfraction;
+                    }
+                }
+                // now organic matter
+                double sand_deposited_fraction = sand_deposited / sand_in_transport; if (Double.IsNaN(sand_deposited_fraction)) { sand_deposited_fraction = 0; }
+                double clay_deposited_fraction = clay_deposited / clay_in_transport; ; if (Double.IsNaN(clay_deposited_fraction)) { clay_deposited_fraction = 0; }
+
+                total_mass_deposited_kg[5] += flowfraction * young_SOM_in_transport_kg[row_sd, col_sd] * clay_deposited_fraction;
+                total_mass_deposited_kg[6] += flowfraction * old_SOM_in_transport_kg[row_sd, col_sd] * clay_deposited_fraction;
+                young_SOM_kg[row_sd, col_sd, 0] += flowfraction * young_SOM_in_transport_kg[row_sd, col_sd] * clay_deposited_fraction;
+                old_SOM_kg[row_sd, col_sd, 0] += flowfraction * old_SOM_in_transport_kg[row_sd, col_sd] * clay_deposited_fraction;
+
+                young_SOM_in_transport_kg[row_sd + i_sd, col_sd + j_sd] += flowfraction * young_SOM_in_transport_kg[row_sd, col_sd] * (1 - clay_deposited_fraction);
+                old_SOM_in_transport_kg[row_sd + i_sd, col_sd + j_sd] += flowfraction * old_SOM_in_transport_kg[row_sd, col_sd] * (1 - clay_deposited_fraction);
+
+                // Now geochronology
+                if (OSL_checkbox.Checked)
+                {
+                    transport_ero_sed_OSL_by_WE(row_sd, col_sd, i_sd, j_sd, sum_of_fractions, flowfraction, 0, 0, sand_deposited_fraction); // layer 0
+                }
+
+                if (CN_checkbox.Checked)
+                {
+                    for (int i_cn = 0; i_cn < n_cosmo; i_cn++)
+                    {
+                        // Deposition layer 0
+                        if (i_cn == 0 | i_cn == 4) { frac_deposited = clay_deposited_fraction; } else { frac_deposited = sand_deposited_fraction; }
+
+                        int CN_deposition = Convert.ToInt32(Math.Round(CN_in_transport[row_sd, col_sd, i_cn] * flowfraction * frac_deposited));
+                        CN_atoms_cm2[row_sd, col_sd, 0, i_cn] += CN_deposition; // deposit CNs
+                        CN_in_transport[row_sd + i_sd, col_sd + j_sd, i_cn] += (Convert.ToInt32(Math.Round(CN_in_transport[row_sd, col_sd, i_cn] * flowfraction)) - CN_deposition); // transport the rest
+                    }
+                }
+            } // end deposition
         }
 
         void ini_slope()   //Initialise LS parameters   
