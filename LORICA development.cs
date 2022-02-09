@@ -14775,7 +14775,7 @@ namespace LORICA4
             }
 
         }
-
+        /*
         void calculate_sediment_dynamics(int row_sd, int col_sd, int i_sd, int j_sd, double waterflow_m3_per_m, double flowfraction, double sum_of_fractions)
         {
             int size;
@@ -15101,6 +15101,7 @@ namespace LORICA4
                 }
             } // end deposition
         }
+        */
 
         void ini_slope()   //Initialise LS parameters   
         {
