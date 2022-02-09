@@ -1040,9 +1040,9 @@ namespace LORICA4
                 Accumulated_creep_m_1 = accumulated_creep_m_1;
                 Accumulated_creep_m_2 = accumulated_creep_m_2;
                 Accumulated_creep_m_3 = accumulated_creep_m_3;
-                Accumulated_creep_m_4 = accumulated_creep_m_4; 
+                Accumulated_creep_m_4 = accumulated_creep_m_4;
                 Accumulated_creep_m_5 = accumulated_creep_m_5;
-                Accumulated_creep_m_6 = accumulated_creep_m_6; 
+                Accumulated_creep_m_6 = accumulated_creep_m_6;
                 Accumulated_creep_m_7 = accumulated_creep_m_7;
             }
         }
@@ -4633,8 +4633,8 @@ namespace LORICA4
             // 
             // tabControl1
             // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.Processes);
             this.tabControl1.Controls.Add(this.tabPage1);
@@ -5733,7 +5733,156 @@ namespace LORICA4
                 }
             }
         }
+        int makematrices_testing()
+        {
+            // Debug.WriteLine("assigning memory");
+            // status grids
 
+            if (this.Ik_ben_Marijn.Checked == true) { original_dtm = new double[nr, nc]; }
+            dtm = new double[nr, nc];
+            if (merely_calculating_derivatives == false)
+            {
+                OSL_age = new int[nr * nc * max_soil_layers * ngrains, 5];
+                soildepth_m = new double[nr, nc];
+                dtmchange = new double[nr, nc];
+                dz_soil = new double[nr, nc];
+                // climate grids
+                if (check_space_evap.Checked == true) { evapotranspiration = new double[nr, nc]; }
+                if (check_space_infil.Checked == true) { infil = new double[nr, nc]; }
+                if (check_space_rain.Checked == true) { rain = new double[nr, nc]; }
+                veg = new double[nr, nc];
+                // categorical grids
+                if (check_space_landuse.Checked == true) { landuse = new int[nr, nc]; }
+            }
+            status_map = new int[nr, nc];
+            //sorting arrays
+            index = new double[nr * nc];
+            row_index = new int[nr * nc];
+            col_index = new int[nr * nc];
+            rowcol_index = new string[nr * nc];
+            //others
+            depression = new int[nr, nc];
+            dtmfill_A = new double[nr, nc];
+            if (merely_calculating_derivatives == false)
+            {
+                if (1 == 1)
+                {
+                    texture_kg = new double[nr, nc, max_soil_layers, n_texture_classes];    //: mass in kg (per voxel = layer * thickness)
+                    layerthickness_m = new double[nr, nc, max_soil_layers];        // : thickness in m 
+                    young_SOM_kg = new double[nr, nc, max_soil_layers];         // : OM mass in kg (per voxel = layer * thickness)
+                    old_SOM_kg = new double[nr, nc, max_soil_layers];
+                    bulkdensity = new double[nr, nc, max_soil_layers];            // : bulkdensity in kg/m3 (over the voxel = layer * thickness)
+                }
+
+                if (Water_ero_checkbox.Checked)
+                {
+                    //doubles
+                    waterflow_m3 = new double[nr, nc];
+                    if (only_waterflow_checkbox.Checked == false)
+                    {
+                        K_fac = new double[nr, nc];
+                        P_fac = new double[nr, nc];
+                        sediment_in_transport_kg = new double[nr, nc, n_texture_classes];
+                        young_SOM_in_transport_kg = new double[nr, nc];
+                        old_SOM_in_transport_kg = new double[nr, nc];
+                        sum_water_erosion = new double[nr, nc];
+                        dz_ero_m = new double[nr, nc];
+                        dz_sed_m = new double[nr, nc];
+                        lake_sed_m = new double[nr, nc];
+                        depressionsum_texture_kg = new double[n_texture_classes];
+
+                    }
+
+                }
+                if (Tillage_checkbox.Checked)
+                {
+                    till_result = new double[nr, nc];
+                    sum_tillage = new double[nr, nc];
+                    tillfields = new int[nr, nc];
+                    dz_till_bd = new double[nr, nc];
+                }
+
+                if (treefall_checkbox.Checked)
+                {
+                    treefall_count = new int[nr, nc];
+                    dz_treefall = new double[nr, nc];
+                }
+
+                if (version_lux_checkbox.Checked)
+                {
+                    tpi = new double[nr, nc];
+                    hornbeam_cover_fraction = new double[nr, nc];
+                    litter_kg = new double[nr, nc, 2];
+                }
+
+                if (Solifluction_checkbox.Checked)
+                {
+                    solif = new double[nr, nc];
+                    sum_solifluction = new double[nr, nc];
+                }
+                if (creep_active_checkbox.Checked)
+                {
+                    creep = new double[nr, nc];
+                    sum_creep_grid = new double[nr, nc];
+                }
+                if (Landslide_checkbox.Checked)
+                {
+                    //doubles
+                    stslope = new double[nr, nc];
+                    crrain = new double[nr, nc];
+                    camf = new double[nr, nc];
+                    T_fac = new double[nr, nc];
+                    C_fac = new double[nr, nc];
+                    Cs_fac = new double[nr, nc];
+                    bulkd = new double[nr, nc];
+                    intfr = new double[nr, nc];
+                    reserv = new double[nr, nc];
+                    ero_slid = new double[nr, nc];
+                    cel_dist = new double[nr, nc];
+                    sed_slid = new double[nr, nc];
+                    sed_bud = new double[nr, nc];
+                    dh_slid = new double[nr, nc];
+                    sum_landsliding = new double[nr, nc];
+                    //integers
+                    slidemap = new int[nr, nc];
+                    watsh = new int[nr, nc];
+                }
+                if (Biological_weathering_checkbox.Checked)
+                {
+                    bedrock_weathering_m = new double[nr, nc];
+                    sum_biological_weathering = new double[nr, nc];
+                }
+                if (Frost_weathering_checkbox.Checked)
+                {
+                    frost_weathering = new double[nr, nc];
+                    sum_frost_weathering = new double[nr, nc];
+                }
+                if (tilting_active_checkbox.Checked)
+                {
+                    sum_tilting = new double[nr, nc];
+                }
+                if (uplift_active_checkbox.Checked)
+                {
+                    sum_uplift = new double[nr, nc];
+                }
+                if (decalcification_checkbox.Checked)
+                {
+                    CO3_kg = new double[nr, nc, max_soil_layers];
+                }
+                if (blocks_active == 1)
+                {
+                    hardlayeropenness_fraction = new float[nr, nc];
+                }
+
+
+            }
+            aspect = new double[nr, nc];
+            slopeAnalysis = new double[nr, nc];
+            hillshade = new double[nr, nc];
+            Tau = new double[nr, nc];
+            // Debug.WriteLine("memory assigned succesfully");
+            return 1;
+        }
         int makematrices()
         {
             // Debug.WriteLine("assigning memory");
@@ -5951,7 +6100,137 @@ namespace LORICA4
 
             memory_records_d = true;
         }
+ 
+        void dtm_file_test(string name1)
+        {
 
+            string FILE_NAME = name1;
+            int z, dem_integer_error = 1;
+            string[] lineArray2;
+            int sp;
+            Debug.WriteLine("Opening DEM" + FILE_NAME);
+            //MessageBox.Show("Directory " + Directory.GetCurrentDirectory() );
+
+            if (!File.Exists(FILE_NAME))
+            {
+                MessageBox.Show("No such DEM data file..");
+                input_data_error = true;
+                return;
+            }
+
+            try
+            {
+
+                //read headers
+                StreamReader sr = File.OpenText(FILE_NAME);
+                for (z = 1; z <= 6; z++)
+                {
+                    inputheader[z - 1] = sr.ReadLine();
+                    Debug.WriteLine(inputheader[z - 1]);
+                }
+                sr.Close();
+
+                // get nc, nr and dx from input headers
+
+                lineArray2 = inputheader[0].Split(new char[] { ' ' });
+                sp = 1;
+                while (lineArray2[sp] == "") sp++;
+                nc = int.Parse(lineArray2[sp]);
+
+                lineArray2 = inputheader[1].Split(new char[] { ' ' });
+                sp = 1;
+                while (lineArray2[sp] == "") sp++;
+                nr = int.Parse(lineArray2[sp]);
+
+                lineArray2 = inputheader[2].Split(new char[] { ' ' });
+                sp = 1;
+                while (lineArray2[sp] == "") sp++;
+                xcoord = double.Parse(lineArray2[sp]);
+
+                lineArray2 = inputheader[3].Split(new char[] { ' ' });
+                sp = 1;
+                while (lineArray2[sp] == "") sp++;
+                ycoord = double.Parse(lineArray2[sp]);
+
+                lineArray2 = inputheader[4].Split(new char[] { ' ' });
+                sp = 1;
+                while (lineArray2[sp] == "") sp++;
+                dx = double.Parse(lineArray2[sp]);
+
+                Debug.WriteLine("read DEM: nr = " + nr + " nc = " + nc);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("There is a problem with the header of the DEM file");
+                input_data_error = true;
+                return;
+
+            }
+            /*
+            int ok = makematrices_testing();
+            if (ok == 1)
+            { // we have now succesfully made memory reservations for all data layers in the model 
+
+            }
+            else
+            {
+                MessageBox.Show("There is not enough memory for LORICA to run with these settings");
+            }
+            */
+            {
+
+                int col, row, colcounter;
+                String input;
+                double tttt = 0.00;
+
+                // load dem again
+
+                if (!File.Exists(FILE_NAME))
+                {
+                    Debug.WriteLine("No such DEM data file..");
+                    input_data_error = true;
+                    return;
+                }
+
+                StreamReader sr = File.OpenText(FILE_NAME);
+
+                //now skip over the headers.
+                for (z = 1; z <= 6; z++)
+                {
+                    input = sr.ReadLine();
+                }
+                row = 0;
+                while ((input = sr.ReadLine()) != null)  // so not until nr is reached, but until the file is empty
+                {
+                    //Debug.WriteLine("Line " + row);
+                    string[] lineArray;
+                    lineArray = input.Split(new char[] { ' ' });   // so we split the string that we read (readline) from file into an array of strings that each contain a number
+                    col = 0;
+                    for (colcounter = 0; colcounter <= (lineArray.Length - 1); colcounter++)  // the length of LineArray should equal nc, and therefore run from 0 to nc-1
+                    {
+
+                        //Debug.WriteLine("Col " + col);
+                        if (lineArray[colcounter] != "" && col < nc) // but just to make sure, col counts only the non-empty strings in LineArrary (handy for instance when files are double-spaced)
+                        {
+                            tttt = double.Parse(lineArray[colcounter]);
+                            if (Ik_ben_Marijn.Checked == true) { original_dtm[row, col] = tttt; dtm[row, col] = -9999; }
+                            else { dtm[row, col] = tttt; }
+                            col++;
+                            if (double.Parse(lineArray[colcounter]) - Math.Round(double.Parse(lineArray[colcounter])) != 0)
+                            {
+                                dem_integer_error = 0;
+                            }
+                        }
+                    }
+                    row++;
+
+
+                }
+                sr.Close();
+                if (dem_integer_error == 1) { MessageBox.Show("Warning: Digital Elevation Model may only contain integer values\n LORICA can proceed, but may experience problems"); }
+
+            }
+        }
         void dtm_file(string name1)
         {
 
@@ -7584,11 +7863,11 @@ namespace LORICA4
             filename = dir + "0_" + time + "_out_dz_treefall.asc";
             read_double(filename, dz_treefall);
             Debug.WriteLine("read dz_treefall");
-
+            /* Repeat calc ???
             filename = dir + "0_" + time + "_out_tillage.asc";
             read_double(filename, sum_tillage);
             Debug.WriteLine("read sum_tillage");
-
+            */
             filename = dir + "0_" + time + "_out_dz_soil.asc";
             read_double(filename, dz_soil);
             Debug.WriteLine("read sum_dz_soil");
@@ -9408,9 +9687,8 @@ namespace LORICA4
 
         #region initialisation code
 
-        void initialise_once()        //fills the inputgrids with values
+        void initialize_values_testing()
         {
-
             if (daily_water.Checked && input_data_error == false)
             {
                 try
@@ -9451,19 +9729,7 @@ namespace LORICA4
                     read_record(filename, Tmax_all);
                     // Debug.WriteLine("Tmax_all read successfully");
 
-                    //// Hargreaves extraterrestrial radiation
-                    //// http://www.fao.org/docrep/X0490E/x0490e07.htm#radiation
-                    //double dr, delta, ws;
-                    //double lat_st = Math.PI/180*(System.Convert.ToDouble(latitude_deg.Text)+ System.Convert.ToDouble(latitude_min.Text) / 60); // latitude in radians
-
-                    //for (double day_ra = 1; day_ra <= 365; day_ra++)
-                    //{
-                    //    dr = 1 + 0.033 * Math.Cos(2 * Math.PI * (day_ra / 365)); //inverse relative distance Earth-Sun
-                    //    delta = 0.409 * Math.Sin(2 * Math.PI * (day_ra / 365) - 1.39); //solar declination [rad].
-                    //    ws = Math.Acos(-Math.Tan(lat_st) * Math.Tan(delta)); // sunset hour angle [rad]
-                    //    Ra_ann[Convert.ToInt16(day_ra - 1)] = (24 * 60 / Math.PI * 0.082 * dr * (ws * Math.Sin(lat_st) * Math.Sin(delta) + Math.Cos(lat_st) * Math.Cos(delta) * Math.Sin(ws))) * 0.408; // extraterrestrial radiation [mm d-1]
-                    //}
-
+                    /*
                     Ra_rcm = new double[nr, nc, 12];
                     OFy_m = new double[nr, nc, 10]; // 0: outflow, 1:8 flow to neighbours, 9: inflow
                     Iy = new double[nr, nc];
@@ -9471,14 +9737,14 @@ namespace LORICA4
                     pond_y = new double[nr, nc];
                     outflow_y = new double[nr, nc];
                     total_outflow_y = new double[nr, nc];
-                    water_balance_m = new double[nr, nc, 5]; // 1: rainfall, 2: actual ET, 3: runon, 4: runoff, 5: I
+                    water_balance_m = new double[nr, nc, 5]; // 1: rainfall, 2: actual ET, 3: runon, 4: runoff, 5: I    //where else is this reference ???
                     ETay = new double[nr, nc];
                     ET0y = new double[nr, nc];
                     veg_correction_factor = new double[nr, nc];
                     waterflow_m3 = new double[nr, nc];
                     vegetation_type = new int[nr, nc];
-
-                    for (int row  = 0; row < nr; row++)
+                    */
+                    for (int row = 0; row < nr; row++)
                     {
                         for (int col = 0; col < nc; col++)
                         {
@@ -9486,100 +9752,100 @@ namespace LORICA4
                             vegetation_type[row, col] = 0;
                         }
                     }
-
+                    /*
                     Ks_topsoil_mh = new double[nr, nc];
                     Ks_md = new double[nr, nc, max_soil_layers];
                     stagdepth = new double[nr, nc];
+                    */
                     snow_m = 0;
                     snow_start_m = 0;
                     snowfall_m = 0;
                     snowmelt_factor_mTd = Convert.ToDouble(snowmelt_factor_textbox.Text);
                     snow_threshold_C = Convert.ToDouble(snow_threshold_textbox.Text);
-                    // snowmelt factor now assumed to be 0.004 m per degree per day, as a mean from the following paper: Hock 2003, https://www.sciencedirect.com/science/article/pii/S0022169403002579#BIB50
-                    // DEVELOP I didn't take the correct parameter (DDF instead of Fm, see paper). Change to right parameter based on the paper of Gottlieb, 1980. Other developments are varying melt factors, based on month, incoming radiation etc. (See Hock 2003)
                 }
                 catch { Debug.WriteLine(" problem preparing for hourly water balance "); }
             }
-
-            if (check_space_soildepth.Checked && input_data_error == false)
+            if (input_data_error == false)
             {
-                filename = this.soildepth_input_filename_textbox.Text;
-                read_double(filename, soildepth_m);
-                Debug.WriteLine("read soildepth");
+                if (check_space_soildepth.Checked)
+                {
+                    filename = this.soildepth_input_filename_textbox.Text;
+                    read_double(filename, soildepth_m);
+                    Debug.WriteLine("read soildepth");
+                }
+                if (check_space_till_fields.Checked)
+                {
+                    filename = this.tillfields_input_filename_textbox.Text;
+                    read_integer(filename, tillfields);
+                    Debug.WriteLine("read tillfields");
+                }
+                if (check_space_landuse.Checked)
+                {
+                    filename = this.landuse_input_filename_textbox.Text;
+                    read_integer(filename, landuse);
+                    Debug.WriteLine("read landuse");
+                }
+                if (check_space_evap.Checked)
+                {
+                    filename = this.evap_input_filename_textbox.Text;
+                    read_double(filename, evapotranspiration);
+                }
+                if (check_space_infil.Checked)
+                {
+                    filename = this.infil_input_filename_textbox.Text;
+                    read_double(filename, infil);
+                }
+                if (check_space_rain.Checked)
+                {
+                    filename = this.rain_input_filename_textbox.Text;
+                    read_double(filename, rain);
+                }
+                // If required, read timeseries instead.
+                if (check_time_landuse.Checked)
+                {
+                    filename = this.landuse_input_filename_textbox.Text;
+                    read_integer(filename, landuse);
+                }
+                if (check_time_evap.Checked)
+                {
+                    filename = this.evap_input_filename_textbox.Text;
+                    if (memory_records == false) { makerecords(filename); }
+                    read_record(filename, evap_record);
+                }
+                if (check_time_infil.Checked)
+                {
+                    filename = this.infil_input_filename_textbox.Text;
+                    if (memory_records == false) { makerecords(filename); }
+                    read_record(filename, infil_record);
+                }
+                if (check_time_rain.Checked)
+                {
+                    filename = this.rain_input_filename_textbox.Text;
+                    if (memory_records == false) { makerecords(filename); }
+                    read_record(filename, rainfall_record);
+                }
+                if (check_time_T.Checked)
+                {
+                    filename = this.temp_input_filename_textbox.Text;
+                    if (memory_records == false) { makerecords(filename); }
+                    read_record(filename, temp_record);
+                }
+                if (check_time_till_fields.Checked)
+                {
+                    filename = this.tillfields_input_filename_textbox.Text;
+                    if (memory_records == false) { makerecords(filename); }
+                    read_record(filename, till_record);
+                    Debug.WriteLine("Tillage time parameters read");
+                }
             }
-            if (check_space_till_fields.Checked && input_data_error == false)
-            {
-                filename = this.tillfields_input_filename_textbox.Text;
-                read_integer(filename, tillfields);
-                Debug.WriteLine("read tillfields");
-            }
-            if (check_space_landuse.Checked && input_data_error == false)
-            {
-                filename = this.landuse_input_filename_textbox.Text;
-                read_integer(filename, landuse);
-                Debug.WriteLine("read landuse");
-            }
-            if (check_space_evap.Checked && input_data_error == false)
-            {
-                filename = this.evap_input_filename_textbox.Text;
-                read_double(filename, evapotranspiration);
-            }
-            if (check_space_infil.Checked && input_data_error == false)
-            {
-                filename = this.infil_input_filename_textbox.Text;
-                read_double(filename, infil);
-            }
-            if (check_space_rain.Checked && input_data_error == false)
-            {
-                filename = this.rain_input_filename_textbox.Text;
-                read_double(filename, rain);
-            }
-            // If required, read timeseries instead.
-            if (check_time_landuse.Checked && input_data_error == false)
-            {
-                filename = this.landuse_input_filename_textbox.Text;
-                read_integer(filename, landuse);
-            }
-            if (check_time_evap.Checked && input_data_error == false)
-            {
-                filename = this.evap_input_filename_textbox.Text;
-                if (memory_records == false) { makerecords(filename); }
-                read_record(filename, evap_record);
-            }
-            if (check_time_infil.Checked && input_data_error == false)
-            {
-                filename = this.infil_input_filename_textbox.Text;
-                if (memory_records == false) { makerecords(filename); }
-                read_record(filename, infil_record);
-            }
-            if (check_time_rain.Checked && input_data_error == false)
-            {
-                filename = this.rain_input_filename_textbox.Text;
-                if (memory_records == false) { makerecords(filename); }
-                read_record(filename, rainfall_record);
-            }
-            if (check_time_T.Checked && input_data_error == false)
-            {
-                filename = this.temp_input_filename_textbox.Text;
-                if (memory_records == false) { makerecords(filename); }
-                read_record(filename, temp_record);
-            }
-
-
-            if (check_time_till_fields.Checked && input_data_error == false)
-            {
-                filename = this.tillfields_input_filename_textbox.Text;
-                if (memory_records == false) { makerecords(filename); }
-                read_record(filename, till_record);
-                Debug.WriteLine("Tillage time parameters read");
-            }
+            
 
             try
             {
                 // Debug.WriteLine(" assigning starting values for geomorph  ");
-                for (row = 0; row < nr; row++)
+                for (int row = 0; row < nr; row++)
                 {
-                    for (col = 0; col < nc; col++)
+                    for (int col = 0; col < nc; col++)
                     {
                         dz_soil[row, col] = 0;
                         if (Creep_Checkbox.Checked) { sum_creep_grid[row, col] = 0; creep[row, col] = 0; }
@@ -9712,9 +9978,363 @@ namespace LORICA4
                     {
                         searchdepressions();
                         //define_fillheight_new();
-                        for (row = 0; row < nr; row++)
+                        for (int row = 0; row < nr; row++)
                         {
-                            for (col = 0; col < nc; col++)
+                            for (int col = 0; col < nc; col++)
+                            {
+                                if (dtm[row, col] < dtmfill_A[row, col] && dtm[row, col] != -9999)
+                                {
+                                    dtm[row, col] = dtmfill_A[row, col];
+                                }
+                            }
+                        }
+                    }
+                }
+                catch { Debug.WriteLine(" problem with sink definition "); }
+            }
+
+            // Timeseries preparation
+            try
+            {
+                number_of_outputs = 0;
+                if (timeseries.timeseries_cell_waterflow_check.Checked) { timeseries_order[1] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_cell_altitude_check.Checked) { timeseries_order[2] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_net_ero_check.Checked) { timeseries_order[3] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_number_dep_check.Checked) { timeseries_order[4] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_number_erosion_check.Checked) { timeseries_order[5] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_number_waterflow_check.Checked) { timeseries_order[6] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_SDR_check.Checked) { timeseries_order[7] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_total_average_alt_check.Checked) { timeseries_order[8] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_total_dep_check.Checked) { timeseries_order[9] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_total_ero_check.Checked) { timeseries_order[10] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_total_evap_check.Checked) { timeseries_order[11] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_total_infil_check.Checked) { timeseries_order[12] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_total_outflow_check.Checked) { timeseries_order[13] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_total_rain_check.Checked) { timeseries_order[14] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.total_phys_weath_checkbox.Checked) { timeseries_order[15] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.total_chem_weath_checkbox.Checked) { timeseries_order[16] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.total_fine_formed_checkbox.Checked) { timeseries_order[17] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.total_fine_eluviated_checkbox.Checked) { timeseries_order[18] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.total_mass_bioturbed_checkbox.Checked) { timeseries_order[19] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.total_OM_input_checkbox.Checked) { timeseries_order[20] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.total_average_soilthickness_checkbox.Checked) { timeseries_order[21] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_number_soil_thicker_checkbox.Checked) { timeseries_order[22] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_coarser_checkbox.Checked) { timeseries_order[23] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_soil_depth_checkbox.Checked) { timeseries_order[24] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_soil_mass_checkbox.Checked) { timeseries_order[25] = number_of_outputs; number_of_outputs++; }
+            }
+            catch { Debug.WriteLine("timeseries preparation was unsuccesful"); }
+
+            //if ((Final_output_checkbox.Checked && t == end_time) || (Regular_output_checkbox.Checked && (t % (int.Parse(Box_years_output.Text)) == 0)))
+            //Debug.WriteLine(" successfully ended initialisations  ");
+        }
+        void initialise_once()        //fills the inputgrids with values
+        {
+
+            if (daily_water.Checked && input_data_error == false)
+            {
+                try
+                {
+                    filename = this.dailyP.Text;
+                    if (memory_records_d == false) { makedailyrecords(filename); }
+                    // Debug.WriteLine("P_all record created successfully");
+
+                    int namelength = filename.Length;
+                    string fn = filename.Substring(0, (namelength - 4));
+                    filename = fn + "_sc" + P_scen + ".csv";
+
+                    read_record(filename, P_all);
+                    // Debug.WriteLine("P_all read successfully");
+
+                    //filename = this.dailyET0.Text;
+                    //if (memory_records_d == false) { makedailyrecords(filename); }
+                    //read_record(filename, ET0_all);
+                    //Debug.WriteLine("ET0_all read successfully");
+
+                    filename = this.dailyD.Text;
+                    if (memory_records_d == false) { makedailyrecords(filename); }
+                    read_record(filename, D_all);
+                    // Debug.WriteLine("D_all read successfully");
+
+                    filename = this.dailyT_avg.Text;
+                    if (memory_records_d == false) { makedailyrecords(filename); }
+                    read_record(filename, Tavg_all);
+                    // Debug.WriteLine("Tavg_all read successfully");
+
+                    filename = this.dailyT_min.Text;
+                    if (memory_records_d == false) { makedailyrecords(filename); }
+                    read_record(filename, Tmin_all);
+                    // Debug.WriteLine("Tmin_all read successfully");
+
+                    filename = this.dailyT_max.Text;
+                    if (memory_records_d == false) { makedailyrecords(filename); }
+                    read_record(filename, Tmax_all);
+                    // Debug.WriteLine("Tmax_all read successfully");
+
+                    //// Hargreaves extraterrestrial radiation
+                    //// http://www.fao.org/docrep/X0490E/x0490e07.htm#radiation
+                    //double dr, delta, ws;
+                    //double lat_st = Math.PI/180*(System.Convert.ToDouble(latitude_deg.Text)+ System.Convert.ToDouble(latitude_min.Text) / 60); // latitude in radians
+
+                    //for (double day_ra = 1; day_ra <= 365; day_ra++)
+                    //{
+                    //    dr = 1 + 0.033 * Math.Cos(2 * Math.PI * (day_ra / 365)); //inverse relative distance Earth-Sun
+                    //    delta = 0.409 * Math.Sin(2 * Math.PI * (day_ra / 365) - 1.39); //solar declination [rad].
+                    //    ws = Math.Acos(-Math.Tan(lat_st) * Math.Tan(delta)); // sunset hour angle [rad]
+                    //    Ra_ann[Convert.ToInt16(day_ra - 1)] = (24 * 60 / Math.PI * 0.082 * dr * (ws * Math.Sin(lat_st) * Math.Sin(delta) + Math.Cos(lat_st) * Math.Cos(delta) * Math.Sin(ws))) * 0.408; // extraterrestrial radiation [mm d-1]
+                    //}
+
+                    Ra_rcm = new double[nr, nc, 12];
+                    OFy_m = new double[nr, nc, 10]; // 0: outflow, 1:8 flow to neighbours, 9: inflow
+                    Iy = new double[nr, nc];
+                    waterfactor = new double[nr, nc];
+                    pond_y = new double[nr, nc];
+                    outflow_y = new double[nr, nc];
+                    total_outflow_y = new double[nr, nc];
+                    water_balance_m = new double[nr, nc, 5]; // 1: rainfall, 2: actual ET, 3: runon, 4: runoff, 5: I    //where else is this reference ???
+                    ETay = new double[nr, nc];
+                    ET0y = new double[nr, nc];
+                    veg_correction_factor = new double[nr, nc];
+                    waterflow_m3 = new double[nr, nc];
+                    vegetation_type = new int[nr, nc];
+
+                    for (int row  = 0; row < nr; row++)
+                    {
+                        for (int col = 0; col < nc; col++)
+                        {
+                            veg_correction_factor[row, col] = 1;
+                            vegetation_type[row, col] = 0;
+                        }
+                    }
+
+                    Ks_topsoil_mh = new double[nr, nc];
+                    Ks_md = new double[nr, nc, max_soil_layers];
+                    stagdepth = new double[nr, nc];
+                    snow_m = 0;
+                    snow_start_m = 0;
+                    snowfall_m = 0;
+                    snowmelt_factor_mTd = Convert.ToDouble(snowmelt_factor_textbox.Text);
+                    snow_threshold_C = Convert.ToDouble(snow_threshold_textbox.Text);
+                    // snowmelt factor now assumed to be 0.004 m per degree per day, as a mean from the following paper: Hock 2003, https://www.sciencedirect.com/science/article/pii/S0022169403002579#BIB50
+                    // DEVELOP I didn't take the correct parameter (DDF instead of Fm, see paper). Change to right parameter based on the paper of Gottlieb, 1980. Other developments are varying melt factors, based on month, incoming radiation etc. (See Hock 2003)
+                }
+                catch { Debug.WriteLine(" problem preparing for hourly water balance "); }
+            }
+
+            if (check_space_soildepth.Checked && input_data_error == false)
+            {
+                filename = this.soildepth_input_filename_textbox.Text;
+                read_double(filename, soildepth_m);
+                Debug.WriteLine("read soildepth");
+            }
+            if (check_space_till_fields.Checked && input_data_error == false)
+            {
+                filename = this.tillfields_input_filename_textbox.Text;
+                read_integer(filename, tillfields);
+                Debug.WriteLine("read tillfields");
+            }
+            if (check_space_landuse.Checked && input_data_error == false)
+            {
+                filename = this.landuse_input_filename_textbox.Text;
+                read_integer(filename, landuse);
+                Debug.WriteLine("read landuse");
+            }
+            if (check_space_evap.Checked && input_data_error == false)
+            {
+                filename = this.evap_input_filename_textbox.Text;
+                read_double(filename, evapotranspiration);
+            }
+            if (check_space_infil.Checked && input_data_error == false)
+            {
+                filename = this.infil_input_filename_textbox.Text;
+                read_double(filename, infil);
+            }
+            if (check_space_rain.Checked && input_data_error == false)
+            {
+                filename = this.rain_input_filename_textbox.Text;
+                read_double(filename, rain);
+            }
+            // If required, read timeseries instead.
+            if (check_time_landuse.Checked && input_data_error == false)
+            {
+                filename = this.landuse_input_filename_textbox.Text;
+                read_integer(filename, landuse);
+            }
+            if (check_time_evap.Checked && input_data_error == false)
+            {
+                filename = this.evap_input_filename_textbox.Text;
+                if (memory_records == false) { makerecords(filename); }
+                read_record(filename, evap_record);
+            }
+            if (check_time_infil.Checked && input_data_error == false)
+            {
+                filename = this.infil_input_filename_textbox.Text;
+                if (memory_records == false) { makerecords(filename); }
+                read_record(filename, infil_record);
+            }
+            if (check_time_rain.Checked && input_data_error == false)
+            {
+                filename = this.rain_input_filename_textbox.Text;
+                if (memory_records == false) { makerecords(filename); }
+                read_record(filename, rainfall_record);
+            }
+            if (check_time_T.Checked && input_data_error == false)
+            {
+                filename = this.temp_input_filename_textbox.Text;
+                if (memory_records == false) { makerecords(filename); }
+                read_record(filename, temp_record);
+            }
+
+
+            if (check_time_till_fields.Checked && input_data_error == false)
+            {
+                filename = this.tillfields_input_filename_textbox.Text;
+                if (memory_records == false) { makerecords(filename); }
+                read_record(filename, till_record);
+                Debug.WriteLine("Tillage time parameters read");
+            }
+
+            try
+            {
+                // Debug.WriteLine(" assigning starting values for geomorph  ");
+                for (int row = 0; row < nr; row++)
+                {
+                    for (int col = 0; col < nc; col++)
+                    {
+                        dz_soil[row, col] = 0;
+                        if (Creep_Checkbox.Checked) { sum_creep_grid[row, col] = 0; creep[row, col] = 0; }
+                        if (Solifluction_checkbox.Checked) { sum_solifluction[row, col] = 0; }
+                        if (Water_ero_checkbox.Checked && only_waterflow_checkbox.Checked == false) { sum_water_erosion[row, col] = 0; total_sed_export = 0; }
+                        if (treefall_checkbox.Checked) { dz_treefall[row, col] = 0; treefall_count[row, col] = 0; }
+                        if (Biological_weathering_checkbox.Checked) { sum_biological_weathering[row, col] = 0; }
+                        if (Frost_weathering_checkbox.Checked) { sum_frost_weathering[row, col] = 0; }
+                        if (Tillage_checkbox.Checked) { sum_tillage[row, col] = 0; total_sum_tillage = 0; dz_till_bd[row, col] = 0; }
+                        if (Landslide_checkbox.Checked) { sum_landsliding[row, col] = 0; total_sum_tillage = 0; }
+                        if (soildepth_m[row, col] < 0.0 && soildepth_m[row, col] != -9999) { soildepth_error += soildepth_m[row, col]; soildepth_m[row, col] = 0; }
+                        if (uplift_active_checkbox.Checked) { sum_uplift[row, col] = 0; total_sum_uplift = 0; }
+                        if (tilting_active_checkbox.Checked) { sum_tilting[row, col] = 0; total_sum_tilting = 0; }
+                        if (check_space_soildepth.Checked != true) { soildepth_m[row, col] = soildepth_value; }
+                        if (check_space_till_fields.Checked != true && Tillage_checkbox.Checked)
+                        {
+                            tillfields[row, col] = 1;
+
+                        }
+
+
+
+                        if (Water_ero_checkbox.Checked && only_waterflow_checkbox.Checked == false)
+                        {
+                            K_fac[row, col] = advection_erodibility; P_fac[row, col] = P_act;
+                        } //WVG K_fac matrix initialisation is needed when landuse is disabled
+
+                        if (Water_ero_checkbox.Checked && check_space_landuse.Checked == true)
+                        {
+                            //currently, this will throw an exception if landuse is actually spatial //development required //ArT
+                            if (landuse[row, col] == 1)
+                            {
+                                infil[row, col] *= System.Convert.ToDouble(landuse_determinator.LU1_Inf_textbox.Text);
+                                evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU1_Evap_textbox.Text);
+                                K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU1_Ero_textbox.Text);
+                                P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU1_Dep_textbox.Text);
+                            }
+                            if (landuse[row, col] == 2)
+                            {
+                                infil[row, col] *= System.Convert.ToDouble(landuse_determinator.LU2_Inf_textbox.Text);
+                                evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU2_Evap_textbox.Text);
+                                K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU2_Ero_textbox.Text);
+                                P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU2_Dep_textbox.Text);
+                            }
+                            if (landuse[row, col] == 3)
+                            {
+                                infil[row, col] *= System.Convert.ToDouble(landuse_determinator.LU3_Inf_textbox.Text);
+                                evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU3_Evap_textbox.Text);
+                                K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU3_Ero_textbox.Text);
+                                P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU3_Dep_textbox.Text);
+                            }
+                            if (landuse[row, col] == 4)
+                            {
+                                infil[row, col] *= System.Convert.ToDouble(landuse_determinator.LU4_Inf_textbox.Text);
+                                evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU4_Evap_textbox.Text);
+                                K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU4_Ero_textbox.Text);
+                                P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU4_Dep_textbox.Text);
+                            }
+                            if (landuse[row, col] == 5)
+                            {
+                                infil[row, col] *= System.Convert.ToDouble(landuse_determinator.LU5_Inf_textbox.Text);
+                                evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU5_Evap_textbox.Text);
+                                K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU5_Ero_textbox.Text);
+                                P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU5_Dep_textbox.Text);
+                            }
+                            if (landuse[row, col] == 6)
+                            {
+                                infil[row, col] *= System.Convert.ToDouble(landuse_determinator.LU6_Inf_textbox.Text);
+                                evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU6_Evap_textbox.Text);
+                                K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU6_Ero_textbox.Text);
+                                P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU6_Dep_textbox.Text);
+                            }
+                            if (landuse[row, col] == 7)
+                            {
+                                infil[row, col] *= System.Convert.ToDouble(landuse_determinator.LU7_Inf_textbox.Text);
+                                evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU7_Evap_textbox.Text);
+                                K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU7_Ero_textbox.Text);
+                                P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU7_Dep_textbox.Text);
+                            }
+                            if (landuse[row, col] == 8)
+                            {
+                                infil[row, col] *= System.Convert.ToDouble(landuse_determinator.LU8_Inf_textbox.Text);
+                                evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU8_Evap_textbox.Text);
+                                K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU8_Ero_textbox.Text);
+                                P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU8_Dep_textbox.Text);
+                            }
+                            if (landuse[row, col] == 9)
+                            {
+                                infil[row, col] *= System.Convert.ToDouble(landuse_determinator.LU9_Inf_textbox.Text);
+                                evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU9_Evap_textbox.Text);
+                                K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU9_Ero_textbox.Text);
+                                P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU9_Dep_textbox.Text);
+                            }
+                            if (landuse[row, col] == 10)
+                            {
+                                infil[row, col] *= System.Convert.ToDouble(landuse_determinator.LU10_Inf_textbox.Text);
+                                evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU10_Evap_textbox.Text);
+                                K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU10_Ero_textbox.Text);
+                                P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU10_Dep_textbox.Text);
+                            }
+                        }
+                    } //for
+                } //for
+                  // Debug.WriteLine(" assigned starting values for geomorph  ");
+                  // Debug.WriteLine("before initialise soil {0}", texture_kg[0, 0, 0, 2]);
+
+                initialise_soil();
+                //Debug.WriteLine("after initialise soil {0}", texture_kg[0, 0, 0, 2]);
+                if (findnegativetexture())
+                {
+                    Debug.WriteLine("err_ini1");
+                    // Debugger.Break(); 
+                }
+
+                // displaysoil(0, 0);
+                // Debug.WriteLine("Total catchment mass = " + total_catchment_mass());
+
+
+                //displaysoil(50, 0);
+                //writesoil(0, 0);
+            } //try
+            catch { Debug.WriteLine(" problem assigning starting values to matrices "); }
+
+            if (fill_sinks_before_checkbox.Checked)
+            {
+                try
+                {
+                    findsinks();
+                    if (numberofsinks > 0)
+                    {
+                        searchdepressions();
+                        //define_fillheight_new();
+                        for (int row = 0; row < nr; row++)
+                        {
+                            for (int col = 0; col < nc; col++)
                             {
                                 if (dtm[row, col] < dtmfill_A[row, col] && dtm[row, col] != -9999) { 
                                     dtm[row, col] = dtmfill_A[row, col]; 
@@ -9782,9 +10402,9 @@ namespace LORICA4
             double clayfrac = Convert.ToDouble(soildata.claybox.Text) / 100;
             double fclayfrac = Convert.ToDouble(soildata.fineclaybox.Text) / 100;
             double location_bd;
-            for (row = 0; row < nr; row++)
+            for (int row = 0; row < nr; row++)
             {
-                for (col = 0; col < nc; col++)
+                for (int col = 0; col < nc; col++)
                 {
                     depth_m = 0;
                     if (creep_testing.Checked)
@@ -9945,9 +10565,9 @@ namespace LORICA4
             double fclayfrac = Convert.ToDouble(soildata.fineclaybox.Text) / 100;
             double location_bd;
             double dz_standard = 0.1;
-            for (row = 0; row < nr; row++)
+            for (int row = 0; row < nr; row++)
             {
-                for (col = 0; col < nc; col++)
+                for (int col = 0; col < nc; col++)
                 {
                     depth_m = 0;
                     if (creep_testing.Checked)
@@ -18189,9 +18809,9 @@ Example: rainfall.asc can look like:
             double total_bulk_density = 0;
             double average_bulk_density = 0;
             int objective_function_cells = 0;
-            for (row = 0; row < nr; row++)
+            for (int row = 0; row < nr; row++)
             {
-                for (col = 0; col < nc; col++)
+                for (int col = 0; col < nc; col++)
                 {
                     if (dtm[row, col] != -9999)
                     {
@@ -18620,62 +19240,81 @@ Example: rainfall.asc can look like:
                     }
                 }
 
-                
-
-                for (run_number = 0; run_number < maxruns; run_number++) //Maxruns Loop()
+                //OTHER PARAMETERS 
+                if (input_data_error == false)
                 {
                     try
                     {
+                        //Debug.WriteLine("reading general values");
+                        if (check_space_soildepth.Checked != true)
+                        {
+                            try { soildepth_value = double.Parse(soildepth_constant_value_box.Text); }
+                            catch { MessageBox.Show("value for parameter soildepth is not valid"); }
+                        }
+                        if (check_space_landuse.Checked != true && check_time_landuse.Checked != true)
+                        {
+                            try { landuse_value = int.Parse(landuse_constant_value_box.Text); }
+                            catch { MessageBox.Show("value for parameter landuse is not valid"); }
+                        }
+                        if (check_space_evap.Checked != true && check_time_evap.Checked != true)
+                        {
+                            try { evap_value_m = double.Parse(evap_constant_value_box.Text); }
+                            catch { MessageBox.Show("value for parameter evapotranspiration is not valid"); }
+                        }
+                        if (check_space_infil.Checked != true && check_time_infil.Checked != true)
+                        {
+                            try { infil_value_m = double.Parse(infil_constant_value_box.Text); }
+                            catch { MessageBox.Show("value for parameter infiltration is not valid"); }
+                        }
+
+                        if (check_space_rain.Checked != true && check_time_rain.Checked != true)
+                        {
+                            try { rain_value_m = double.Parse(rainfall_constant_value_box.Text); }
+                            catch { MessageBox.Show("value for parameter rainfall is not valid"); }
+                        }
+
+                        if (check_time_T.Checked != true)
+                        {
+                            try { temp_value_C = int.Parse(temp_constant_value_box.Text); }
+                            catch { MessageBox.Show("value for parameter temperature is not valid"); }
+                        }
+                    }
+                    catch
+                    {
+                        MessageBox.Show("there was a problem reading input values"); input_data_error = true;
+                    }
+                }
+
+                //TESTING can you put initialize_once() outside of loop ???
+                try { initialise_once(); } // reading input files
+                catch { MessageBox.Show("there was a problem reading input files "); input_data_error = true; }
+                
+                try
+                {
+                    filename = dtmfilename;             //for directory input
+                    dtm_file(filename);                 // from dtm_file(), almost all memory for the model is claimed
+                }
+                catch { Debug.WriteLine(" failed to initialise dtm "); }
+                
+                for (run_number = 0; run_number < maxruns; run_number++) //Maxruns Loop()
+                {
+                    
+                    try
+                    {
                         filename = dtmfilename;             //for directory input
-                        dtm_file(filename);                 // from dtm_file(), almost all memory for the model is claimed
+                        dtm_file_test(filename);                 // from dtm_file(), almost all memory for the model is claimed
                     }
                     catch { Debug.WriteLine(" failed to initialise dtm "); }
-
+                    
                     if (input_data_error == false)
                     {
-                        try
-                        {
 
-                            //Debug.WriteLine("reading general values");
-                            if (check_space_soildepth.Checked != true)
-                            {
-                                try { soildepth_value = double.Parse(soildepth_constant_value_box.Text); }
-                                catch { MessageBox.Show("value for parameter soildepth is not valid"); }
-                            }
-                            if (check_space_landuse.Checked != true && check_time_landuse.Checked != true)
-                            {
-                                try { landuse_value = int.Parse(landuse_constant_value_box.Text); }
-                                catch { MessageBox.Show("value for parameter landuse is not valid"); }
-                            }
-                            if (check_space_evap.Checked != true && check_time_evap.Checked != true)
-                            {
-                                try { evap_value_m = double.Parse(evap_constant_value_box.Text); }
-                                catch { MessageBox.Show("value for parameter evapotranspiration is not valid"); }
-                            }
-                            if (check_space_infil.Checked != true && check_time_infil.Checked != true)
-                            {
-                                try { infil_value_m = double.Parse(infil_constant_value_box.Text); }
-                                catch { MessageBox.Show("value for parameter infiltration is not valid"); }
-                            }
-
-                            if (check_space_rain.Checked != true && check_time_rain.Checked != true)
-                            {
-                                try { rain_value_m = double.Parse(rainfall_constant_value_box.Text); }
-                                catch { MessageBox.Show("value for parameter rainfall is not valid"); }
-                            }
-
-                            if (check_time_T.Checked != true)
-                            {
-                                try { temp_value_C = int.Parse(temp_constant_value_box.Text); }
-                                catch { MessageBox.Show("value for parameter temperature is not valid"); }
-                            }
-
-                        }
-                        catch { MessageBox.Show("there was a problem reading input values"); input_data_error = true; }
                         // Debug.WriteLine("initialising non-general inputs");
-                        try { initialise_once(); } // reading input files
-                        catch { MessageBox.Show("there was a problem reading input files "); input_data_error = true; }
-
+                        //try { initialise_once(); } // reading input files
+                        //catch { MessageBox.Show("there was a problem reading input files "); input_data_error = true; }
+                        initialize_values_testing();
+                        
+                        
 
                         //CALIB_USER: multiply parameter values with current ratio
                         //Note the correspondence between the formulas. Change only 1 value for additional parameters!
@@ -18698,7 +19337,7 @@ Example: rainfall.asc can look like:
                             {
                                 int count_intervene = 0;
                                 t_intervene = 0;
-                                if (t_intervene > 0) { read_soil_elevation_distance_from_output(t_intervene, workdir); }
+                                if (t_intervene > 0) { read_soil_elevation_distance_from_output(t_intervene, workdir); } //this never runs?
 
                                 for (t = t_intervene; t < end_time; t++)
                                 {
@@ -19136,9 +19775,9 @@ Example: rainfall.asc can look like:
                     try
                     {
                         out_integer(workdir + "\\" + run_number + "_" + t_out + "_out_vegetationtype.asc", vegetation_type);
-                        for (row = 0; row < nr; row++)
+                        for (int row = 0; row < nr; row++)
                         {
-                            for (col = 0; col < nc; col++)
+                            for (int col = 0; col < nc; col++)
                             {
                                 vegetation_type[row, col] = 0; // reset vegetation_type, to give the output per output period
                             }
@@ -19547,11 +20186,12 @@ Example: rainfall.asc can look like:
             // http://en.wikipedia.org/wiki/Comb_sort
             // LORICA adaptation by Arnaud Temme june 2009
             //Debug.WriteLine("sorting. nr " + nr + " nc " + nc + " t " + t);
-            
+            /*
             Task.Factory.StartNew(() =>
             {
                 this.InfoStatusPanel.Text = "sorting";
             }, CancellationToken.None, TaskCreationOptions.None, guiThread);
+            */
             int i = 0;
             double dtm_temp = 0;
             int row_temp = 0, col_temp = 0;
