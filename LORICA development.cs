@@ -14438,7 +14438,7 @@ namespace LORICA4
                                                                 //XIA change this number to 0.25 as well. For creep and no creep
                                                                 double litter_characteristic_protection_mass_kg_m2 = 0.01; // based on average litter contents in Luxembourg
                                                                 double litter_characteristic_protection_mass_kg = litter_characteristic_protection_mass_kg_m2 * dx * dx;
-                                                                double litter_protection_fraction = Math.Exp(-litter_characteristic_protection_mass_kg / (litter_kg[row, col, 0] + litter_kg[row, col, 1]));
+                                                                double litter_protection_fraction = - (litter_kg[row, col, 0] + litter_kg[row, col, 1])/ litter_characteristic_protection_mass_kg;
 
                                                                 //double litter_fraction = (litter_kg[row, col, 0] + litter_kg[row, col, 1]) / (litter_kg[row, col, 0] + litter_kg[row, col, 1] + total_layer_mass(row, col, 0));
 
@@ -14540,7 +14540,13 @@ namespace LORICA4
                                                         }
                                                         else
                                                         {
-                                                            //do nothing. We wanted to erode, but not enough so to exceed the threshold and actually do that
+                                                            // neither erosion nor deposition, simply transport
+                                                            for (size = 0; size < n_texture_classes; size++)
+                                                            {
+                                                                sediment_in_transport_kg[row + i, col + j, size] += fraction * sediment_in_transport_kg[row, col, size];  //all in kg 
+                                                            }
+                                                            old_SOM_in_transport_kg[row + i, col + j] += fraction * old_SOM_in_transport_kg[row, col];  //all in kg
+                                                            young_SOM_in_transport_kg[row + i, col + j] += fraction * young_SOM_in_transport_kg[row, col];  //all in kg
                                                         }
                                                     }
                                                     if (transport_capacity_kg < total_sediment_in_transport_kg)
@@ -14557,15 +14563,15 @@ namespace LORICA4
                                                         {
                                                             selectivity_fraction = (1 / Math.Pow(upper_particle_size[size], 0.5)) / sum_diameter_power;    // unit [-]
                                                             potential_transported_amount_kg = selectivity_fraction * transport_capacity_kg;                      // unit [kg]
-                                                            if (potential_transported_amount_kg < sediment_in_transport_kg[row, col, size])
+                                                            if (potential_transported_amount_kg < sediment_in_transport_kg[row, col, size] * fraction)
                                                             {
-                                                                total_mass_deposited_kg[size] += sediment_in_transport_kg[row, col, size] - potential_transported_amount_kg;
-                                                                texture_kg[row, col, 0, size] += sediment_in_transport_kg[row, col, size] - potential_transported_amount_kg;        // unit [kg]
-                                                                sediment_in_transport_kg[row + i, col + j, 0] = potential_transported_amount_kg;                                    // unit [kg]  
+                                                                total_mass_deposited_kg[size] += (sediment_in_transport_kg[row, col, size] * fraction) - potential_transported_amount_kg;
+                                                                texture_kg[row, col, 0, size] += (sediment_in_transport_kg[row, col, size] * fraction) - potential_transported_amount_kg;        // unit [kg]
+                                                                sediment_in_transport_kg[row + i, col + j, size] = potential_transported_amount_kg;                                    // unit [kg]  
 
                                                                 if (size > 2)
                                                                 {
-                                                                    clay_deposited += sediment_in_transport_kg[row, col, size] - potential_transported_amount_kg;
+                                                                    clay_deposited += (sediment_in_transport_kg[row, col, size] * fraction) - potential_transported_amount_kg;
                                                                     clay_transported += potential_transported_amount_kg;
                                                                 }
 
@@ -14573,6 +14579,8 @@ namespace LORICA4
                                                             else
                                                             {
                                                                 //do nothing. We keep the sediment in transport, and do not deposit anything
+                                                                //we do move the transport further down
+                                                                sediment_in_transport_kg[row + i, col + j, size] += fraction * sediment_in_transport_kg[row, col, size];
                                                             }
 
                                                         }
