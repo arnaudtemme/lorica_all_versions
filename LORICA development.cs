@@ -18857,7 +18857,7 @@ Example: rainfall.asc can look like:
             var options = TaskCreationOptions.LongRunning;
             var StartThread = Task.Factory.StartNew(() =>  //send simulation work on background thread
             {
-                main_loop_code(); 
+                main_loop_code(); //start simulation work on background thread
             }, CancellationToken.None, options, TaskScheduler.Default);
         }
 
@@ -19289,8 +19289,8 @@ Example: rainfall.asc can look like:
                     }
                 }
 
-                //TESTING can you put initialize_once() outside of loop ???
-                try { initialise_once(); } // reading input files
+                //TESTING Allocate Memory Once... then reset/Clear array values inside of for-loop
+                try { initialise_once(); } // reading input files and allocate memory
                 catch { MessageBox.Show("there was a problem reading input files "); input_data_error = true; }
                 
                 try
@@ -19306,19 +19306,16 @@ Example: rainfall.asc can look like:
                     try
                     {
                         filename = dtmfilename;             //for directory input
-                        dtm_file_test(filename);                 // from dtm_file(), almost all memory for the model is claimed
+                        dtm_file_test(filename);                 // Reset Memory values instead of Allocating new memory in makematrices()
                     }
                     catch { Debug.WriteLine(" failed to initialise dtm "); }
                     
                     if (input_data_error == false)
                     {
 
-                        // Debug.WriteLine("initialising non-general inputs");
-                        //try { initialise_once(); } // reading input files
-                        //catch { MessageBox.Show("there was a problem reading input files "); input_data_error = true; }
-                        initialize_once_testing();
                         
-                        
+                        try { initialize_once_testing(); }  // Reset Memory values instead of Allocating new memory
+                        catch { MessageBox.Show("there was a problem reading input files "); input_data_error = true; }
 
                         //CALIB_USER: multiply parameter values with current ratio
                         //Note the correspondence between the formulas. Change only 1 value for additional parameters!
@@ -19463,7 +19460,6 @@ Example: rainfall.asc can look like:
 
             //    // force no-change boundary op de outlet CLORPT
             //    dtm[50, 100] = dtm00;
-
             //}
 
             DateTime geo_start, pedo_start, hydro_start;
