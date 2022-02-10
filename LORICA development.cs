@@ -5735,151 +5735,155 @@ namespace LORICA4
         }
         int makematrices_testing()
         {
-            // Debug.WriteLine("assigning memory");
-            // status grids
+            // Reseting values of existing memory instead of Re-allocating (saves memory)
+            // Re-allocating, while faster, still keeps the previous memory until Garbage Collection (GC) decides to clear it up
 
-            if (this.Ik_ben_Marijn.Checked == true) { original_dtm = new double[nr, nc]; }
-            dtm = new double[nr, nc];
+            //Another potentially faster way is to for-loop through each array position and reset to its default value.
+            //While it does require so extra coding logic it would be good for larger arrays and can implement Parallel.For()
+
+            if (this.Ik_ben_Marijn.Checked == true) { Array.Clear(original_dtm, 0, original_dtm.Length); }
+            Array.Clear(dtm, 0, dtm.Length);
             if (merely_calculating_derivatives == false)
             {
-                OSL_age = new int[nr * nc * max_soil_layers * ngrains, 5];
-                soildepth_m = new double[nr, nc];
-                dtmchange = new double[nr, nc];
-                dz_soil = new double[nr, nc];
+                Array.Clear(OSL_age, 0, OSL_age.Length);
+                Array.Clear(soildepth_m, 0, soildepth_m.Length);
+                Array.Clear(dtmchange, 0, dtmchange.Length);
+                Array.Clear(dz_soil, 0, dz_soil.Length);
                 // climate grids
-                if (check_space_evap.Checked == true) { evapotranspiration = new double[nr, nc]; }
-                if (check_space_infil.Checked == true) { infil = new double[nr, nc]; }
-                if (check_space_rain.Checked == true) { rain = new double[nr, nc]; }
-                veg = new double[nr, nc];
+                if (check_space_evap.Checked == true) {  Array.Clear(evapotranspiration, 0, evapotranspiration.Length); }
+                if (check_space_infil.Checked == true) {  Array.Clear(infil, 0, infil.Length); }
+                if (check_space_rain.Checked == true) {  Array.Clear(rain, 0, rain.Length); }
+                
+                Array.Clear(veg, 0, veg.Length);
                 // categorical grids
-                if (check_space_landuse.Checked == true) { landuse = new int[nr, nc]; }
+                if (check_space_landuse.Checked == true) { Array.Clear(landuse, 0, landuse.Length); }
             }
-            status_map = new int[nr, nc];
+            Array.Clear(status_map, 0, status_map.Length);
             //sorting arrays
-            index = new double[nr * nc];
-            row_index = new int[nr * nc];
-            col_index = new int[nr * nc];
-            rowcol_index = new string[nr * nc];
+            Array.Clear(index, 0, index.Length);
+            Array.Clear(row_index, 0, row_index.Length);
+            Array.Clear(col_index, 0, col_index.Length);
+            Array.Clear(rowcol_index, 0, rowcol_index.Length);
             //others
-            depression = new int[nr, nc];
-            dtmfill_A = new double[nr, nc];
+            Array.Clear(depression, 0, depression.Length);
+            Array.Clear(dtmfill_A, 0, dtmfill_A.Length);
             if (merely_calculating_derivatives == false)
             {
                 if (1 == 1)
                 {
-                    texture_kg = new double[nr, nc, max_soil_layers, n_texture_classes];    //: mass in kg (per voxel = layer * thickness)
-                    layerthickness_m = new double[nr, nc, max_soil_layers];        // : thickness in m 
-                    young_SOM_kg = new double[nr, nc, max_soil_layers];         // : OM mass in kg (per voxel = layer * thickness)
-                    old_SOM_kg = new double[nr, nc, max_soil_layers];
-                    bulkdensity = new double[nr, nc, max_soil_layers];            // : bulkdensity in kg/m3 (over the voxel = layer * thickness)
+                    Array.Clear(texture_kg, 0, texture_kg.Length);   //: mass in kg (per voxel = layer * thickness)
+                    Array.Clear(layerthickness_m, 0, layerthickness_m.Length);      // : thickness in m 
+                    Array.Clear(young_SOM_kg, 0, young_SOM_kg.Length);   // : OM mass in kg (per voxel = layer * thickness)
+                    Array.Clear(old_SOM_kg, 0, old_SOM_kg.Length);
+                    Array.Clear(bulkdensity, 0, bulkdensity.Length);           // : bulkdensity in kg/m3 (over the voxel = layer * thickness)
                 }
 
                 if (Water_ero_checkbox.Checked)
                 {
                     //doubles
-                    waterflow_m3 = new double[nr, nc];
+                    Array.Clear(waterflow_m3, 0, waterflow_m3.Length);
                     if (only_waterflow_checkbox.Checked == false)
                     {
-                        K_fac = new double[nr, nc];
-                        P_fac = new double[nr, nc];
-                        sediment_in_transport_kg = new double[nr, nc, n_texture_classes];
-                        young_SOM_in_transport_kg = new double[nr, nc];
-                        old_SOM_in_transport_kg = new double[nr, nc];
-                        sum_water_erosion = new double[nr, nc];
-                        dz_ero_m = new double[nr, nc];
-                        dz_sed_m = new double[nr, nc];
-                        lake_sed_m = new double[nr, nc];
-                        depressionsum_texture_kg = new double[n_texture_classes];
+                        Array.Clear(K_fac, 0, K_fac.Length);
+                        Array.Clear(P_fac, 0, P_fac.Length);
+                        Array.Clear(sediment_in_transport_kg, 0, sediment_in_transport_kg.Length);
+                        Array.Clear(young_SOM_in_transport_kg, 0, young_SOM_in_transport_kg.Length);
+                        Array.Clear(old_SOM_in_transport_kg, 0, old_SOM_in_transport_kg.Length);
+                        Array.Clear(sum_water_erosion, 0, sum_water_erosion.Length);
+                        Array.Clear(dz_ero_m, 0, dz_ero_m.Length);
+                        Array.Clear(dz_sed_m, 0, dz_sed_m.Length);
+                        Array.Clear(lake_sed_m, 0, lake_sed_m.Length);
+                        Array.Clear(depressionsum_texture_kg, 0, depressionsum_texture_kg.Length);
 
                     }
 
                 }
                 if (Tillage_checkbox.Checked)
                 {
-                    till_result = new double[nr, nc];
-                    sum_tillage = new double[nr, nc];
-                    tillfields = new int[nr, nc];
-                    dz_till_bd = new double[nr, nc];
+                    Array.Clear(till_result, 0, till_result.Length);
+                    Array.Clear(sum_tillage, 0, sum_tillage.Length);
+                    Array.Clear(tillfields, 0, tillfields.Length);
+                    Array.Clear(dz_till_bd, 0, dz_till_bd.Length);
                 }
 
                 if (treefall_checkbox.Checked)
                 {
-                    treefall_count = new int[nr, nc];
-                    dz_treefall = new double[nr, nc];
+                    Array.Clear(treefall_count, 0, treefall_count.Length);
+                    Array.Clear(dz_treefall, 0, dz_treefall.Length);
                 }
 
                 if (version_lux_checkbox.Checked)
                 {
-                    tpi = new double[nr, nc];
-                    hornbeam_cover_fraction = new double[nr, nc];
-                    litter_kg = new double[nr, nc, 2];
+                    Array.Clear(tpi, 0, tpi.Length);
+                    Array.Clear(hornbeam_cover_fraction, 0, hornbeam_cover_fraction.Length);
+                    Array.Clear(litter_kg, 0, litter_kg.Length);
                 }
 
                 if (Solifluction_checkbox.Checked)
                 {
-                    solif = new double[nr, nc];
-                    sum_solifluction = new double[nr, nc];
+                    Array.Clear(solif, 0, solif.Length);
+                    Array.Clear(sum_solifluction, 0, sum_solifluction.Length);
                 }
                 if (creep_active_checkbox.Checked)
                 {
-                    creep = new double[nr, nc];
-                    sum_creep_grid = new double[nr, nc];
+                    Array.Clear(creep, 0, creep.Length);
+                    Array.Clear(sum_creep_grid, 0, sum_creep_grid.Length);
                 }
                 if (Landslide_checkbox.Checked)
                 {
                     //doubles
-                    stslope = new double[nr, nc];
-                    crrain = new double[nr, nc];
-                    camf = new double[nr, nc];
-                    T_fac = new double[nr, nc];
-                    C_fac = new double[nr, nc];
-                    Cs_fac = new double[nr, nc];
-                    bulkd = new double[nr, nc];
-                    intfr = new double[nr, nc];
-                    reserv = new double[nr, nc];
-                    ero_slid = new double[nr, nc];
-                    cel_dist = new double[nr, nc];
-                    sed_slid = new double[nr, nc];
-                    sed_bud = new double[nr, nc];
-                    dh_slid = new double[nr, nc];
-                    sum_landsliding = new double[nr, nc];
+                    Array.Clear(stslope, 0, stslope.Length);
+                    Array.Clear(crrain, 0, crrain.Length);
+                    Array.Clear(camf, 0, camf.Length);
+                    Array.Clear(T_fac, 0, T_fac.Length);
+                    Array.Clear(C_fac, 0, C_fac.Length);
+                    Array.Clear(Cs_fac, 0, Cs_fac.Length);
+                    Array.Clear(bulkd, 0, bulkd.Length);
+                    Array.Clear(intfr, 0, intfr.Length);
+                    Array.Clear(reserv, 0, reserv.Length);
+                    Array.Clear(ero_slid, 0, ero_slid.Length);
+                    Array.Clear(cel_dist, 0, cel_dist.Length);
+                    Array.Clear(sed_slid, 0, sed_slid.Length);
+                    Array.Clear(sed_bud, 0, sed_bud.Length);
+                    Array.Clear(dh_slid, 0, dh_slid.Length);
+                    Array.Clear(sum_landsliding, 0, sum_landsliding.Length);
                     //integers
-                    slidemap = new int[nr, nc];
-                    watsh = new int[nr, nc];
+                    Array.Clear(slidemap, 0, slidemap.Length);
+                    Array.Clear(watsh, 0, watsh.Length);
                 }
                 if (Biological_weathering_checkbox.Checked)
                 {
-                    bedrock_weathering_m = new double[nr, nc];
-                    sum_biological_weathering = new double[nr, nc];
+                    Array.Clear(bedrock_weathering_m, 0, bedrock_weathering_m.Length);
+                    Array.Clear(sum_biological_weathering, 0, sum_biological_weathering.Length);
                 }
                 if (Frost_weathering_checkbox.Checked)
-                {
-                    frost_weathering = new double[nr, nc];
-                    sum_frost_weathering = new double[nr, nc];
+                { 
+                    Array.Clear(frost_weathering, 0, frost_weathering.Length);
+                    Array.Clear(sum_frost_weathering, 0, sum_frost_weathering.Length);
                 }
                 if (tilting_active_checkbox.Checked)
                 {
-                    sum_tilting = new double[nr, nc];
+                    Array.Clear(sum_tilting, 0, sum_tilting.Length);
                 }
                 if (uplift_active_checkbox.Checked)
                 {
-                    sum_uplift = new double[nr, nc];
+                    Array.Clear(sum_uplift, 0, sum_uplift.Length);
                 }
                 if (decalcification_checkbox.Checked)
                 {
-                    CO3_kg = new double[nr, nc, max_soil_layers];
+                    Array.Clear(CO3_kg, 0, CO3_kg.Length);
                 }
                 if (blocks_active == 1)
                 {
-                    hardlayeropenness_fraction = new float[nr, nc];
+                    Array.Clear(hardlayeropenness_fraction, 0, hardlayeropenness_fraction.Length);
                 }
 
 
             }
-            aspect = new double[nr, nc];
-            slopeAnalysis = new double[nr, nc];
-            hillshade = new double[nr, nc];
-            Tau = new double[nr, nc];
+            Array.Clear(aspect, 0, aspect.Length);
+            Array.Clear(slopeAnalysis, 0, slopeAnalysis.Length);
+            Array.Clear(hillshade, 0, hillshade.Length);
+            Array.Clear(Tau, 0, Tau.Length);
             // Debug.WriteLine("memory assigned succesfully");
             return 1;
         }
@@ -6166,8 +6170,8 @@ namespace LORICA4
                 return;
 
             }
-            /*
-            int ok = makematrices_testing();
+            
+            int ok = makematrices_testing(); //reset values of existing memory instead of allocating new memory (saves RAM)
             if (ok == 1)
             { // we have now succesfully made memory reservations for all data layers in the model 
 
@@ -6176,7 +6180,7 @@ namespace LORICA4
             {
                 MessageBox.Show("There is not enough memory for LORICA to run with these settings");
             }
-            */
+            
             {
 
                 int col, row, colcounter;
@@ -9687,7 +9691,7 @@ namespace LORICA4
 
         #region initialisation code
 
-        void initialize_values_testing()
+        void initialize_once_testing()
         {
             if (daily_water.Checked && input_data_error == false)
             {
@@ -9729,21 +9733,21 @@ namespace LORICA4
                     read_record(filename, Tmax_all);
                     // Debug.WriteLine("Tmax_all read successfully");
 
-                    /*
-                    Ra_rcm = new double[nr, nc, 12];
-                    OFy_m = new double[nr, nc, 10]; // 0: outflow, 1:8 flow to neighbours, 9: inflow
-                    Iy = new double[nr, nc];
-                    waterfactor = new double[nr, nc];
-                    pond_y = new double[nr, nc];
-                    outflow_y = new double[nr, nc];
-                    total_outflow_y = new double[nr, nc];
-                    water_balance_m = new double[nr, nc, 5]; // 1: rainfall, 2: actual ET, 3: runon, 4: runoff, 5: I    //where else is this reference ???
-                    ETay = new double[nr, nc];
-                    ET0y = new double[nr, nc];
-                    veg_correction_factor = new double[nr, nc];
-                    waterflow_m3 = new double[nr, nc];
-                    vegetation_type = new int[nr, nc];
-                    */
+                    
+                    Array.Clear(Ra_rcm, 0, Ra_rcm.Length); //Ra_rcm = new double[nr, nc, 12];
+                    Array.Clear(OFy_m, 0, OFy_m.Length); //OFy_m = new double[nr, nc, 10]; // 0: outflow, 1:8 flow to neighbours, 9: inflow
+                    Array.Clear(Iy, 0, Iy.Length); //Iy = new double[nr, nc];
+                    Array.Clear(waterfactor, 0, waterfactor.Length); //waterfactor = new double[nr, nc];
+                    Array.Clear(pond_y, 0, pond_y.Length); //pond_y = new double[nr, nc];
+                    Array.Clear(outflow_y, 0, outflow_y.Length);// outflow_y = new double[nr, nc];
+                    Array.Clear(total_outflow_y, 0, total_outflow_y.Length); //total_outflow_y = new double[nr, nc];
+                    Array.Clear(water_balance_m, 0, water_balance_m.Length); //water_balance_m = new double[nr, nc, 5]; // 1: rainfall, 2: actual ET, 3: runon, 4: runoff, 5: I    //where else is this reference ???
+                    Array.Clear(ETay, 0, ETay.Length); //ETay = new double[nr, nc];
+                    Array.Clear(ET0y, 0, ET0y.Length);// ET0y = new double[nr, nc];
+                    Array.Clear(veg_correction_factor, 0, veg_correction_factor.Length); //veg_correction_factor = new double[nr, nc];
+                    Array.Clear(waterflow_m3, 0, waterflow_m3.Length); //waterflow_m3 = new double[nr, nc];
+                    Array.Clear(vegetation_type, 0, vegetation_type.Length); //vegetation_type = new int[nr, nc];
+                    
                     for (int row = 0; row < nr; row++)
                     {
                         for (int col = 0; col < nc; col++)
