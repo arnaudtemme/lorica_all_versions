@@ -1,4 +1,4 @@
-ï»¿
+
 
 // HydroLorica v1.0 by W.M. van der Meij and A.J.A.M. Temme, 2020
 // Based on Lorica by Vanwalleghem and Temme 2016
@@ -194,17 +194,6 @@ namespace LORICA4
         private System.Windows.Forms.Button start_button;
         private System.Windows.Forms.Button End_button;
         private System.Windows.Forms.ToolTip toolTip1;
-        private MenuItem Mapselector;
-        private MenuItem Menu_map_total_sediment;
-        private MenuItem Menu_map_waterflow;
-        private TrackBar trackBar1;
-        private Label label61;
-        private GroupBox map_controls;
-        private ComboBox comboBox1;
-        private Label label62;
-        private Label label63;
-        private TrackBar trackBar2;
-        private CheckBox View_tabs_checkbox;
         private OpenFileDialog openFileDialog1;
         private Label label1;
         private Button button6;
@@ -280,7 +269,6 @@ namespace LORICA4
         private Label label25;
         private Label label23;
         private TabPage Processes;
-        private Button graphicToGoogleEarthButton;
         private CheckBox Creep_Checkbox;
         private TabControl tabControl1;
         private GroupBox groupBox12;
@@ -299,32 +287,19 @@ namespace LORICA4
         private Label label29;
         private Button explain_input_button;
         private MenuItem Menu_About_box;
-        private MenuItem Menu_map_tillage;
-        private MenuItem Menu_map_water_ero;
-        private MenuItem Menu_map_creep;
-        private MenuItem Menu_map_weathering;
         private Button timeseries_form_button;
         private Button button2;
         private Button button3;
         private Button button1;
-<<<<<<< HEAD
         private CheckBox view_maps_checkbox; //this was previously missing but its only needed for reading input .xml file currently
-=======
-        private CheckBox view_maps_checkbox;
-        private MenuItem Menu_map_landsliding;
->>>>>>> main
         private Label label37;
         private TextBox outputcode_textbox;
         private CheckBox diagnostic_output_checkbox;
         private GroupBox groupBox3;
         private Button landuse_determinator_button;
-        private MenuItem Menu_map_critical_rainfall;
         #endregion
 
         #region global model parameters
-        AviWriter aw; // <JMW 20041018>
-        private Bitmap bmp;  // <JMW 20041018>
-        private Graphics mygraphics;
         private Label label87;
         private TextBox selectivity_constant_textbox;
         private TextBox bio_protection_constant_textbox;
@@ -335,7 +310,7 @@ namespace LORICA4
         private Label label92;
         private Label label88;
         private Button soil_specify_button;
-        private CheckBox Spitsbergen_case_study;
+        private CheckBox Ik_ben_Marijn;
         private CheckBox CT_depth_decay_checkbox;
         private TextBox ct_depth_decay;
         private CheckBox calibration;
@@ -348,6 +323,7 @@ namespace LORICA4
         private TextBox ini_CaCO3_content;
         private TabPage treefall;
         private CheckBox treefall_checkbox;
+        private bool merely_calculating_derivatives;
         private Label label98;
         private TextBox temp_input_filename_textbox;
         private TextBox temp_constant_value_box;
@@ -410,52 +386,21 @@ namespace LORICA4
         private Label label120;
         private CheckBox version_lux_checkbox;
         private Button button4;
-        private CheckBox OSL_checkbox;
-        private TextBox textbox_t_intervene;
-        private CheckBox checkbox_t_intervene;
-        private Label label_max_soil_layers;
-        private TextBox textbox_max_soil_layers;
-        private CheckBox checkBox_layer_thickness;
-        private TextBox textBox_layer_thickness;
-        private System.Drawing.Bitmap m_objDrawingSurface;
-        [System.Runtime.InteropServices.DllImport("gdi32.dll")]
-        public static extern long BitBlt(IntPtr hdcDest, int nXDest, int nYDest, int nWidth,
-            int nHeight, IntPtr hdcSrc, int nXSrc, int nYSrc, int dwROP);
-        public static int plotType = 0;
-        public static double magnifyValue = 0;
-        public static int updateClick = 0;
-        private double[] zoomFactor = { .25, .33, .50, .66, .80, 1, 1.25, 1.5, 2.0, 2.5, 3.0 };
-        private double[] contrastFactor = { 1, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3 };
-        private double contrastMultiplier = 1;
-        public int imageCount = 1;
-        public int imageCount2 = 1;
-        int coordinateDone = 0;
-        double urfinalLati, urfinalLongi, llfinalLati, llfinalLongi, yurcorner, xurcorner = 0;
-        public string kml = "";
-        public string KML_FILE_NAME;
-        int save_time2, save_interval2 = 0;
-        public string startDate, kmlTime;
-        public DateTime googleTime;
-        public string[] DateArray;
-        public string[] DateArray2;
+        int save_interval2 = 0;
+
 
 
         private System.ComponentModel.IContainer components;
         Stopwatch stopwatch;
         TimeSpan geo_t, pedo_t, hydro_t, ponding_t;
         double[,,,]    //4D matrix for soil texture masses in different x,y and z for t texture classes (x,y,z,t)
-                    texture_kg,                //mass in kg (per voxel = layer * thickness)
-                    OSL_pdfs;               // : Keeps track of OSL density functions rather than individual particles
-
+                    texture_kg;                //mass in kg (per voxel = layer * thickness)
 
         double[,,]     //3D matrices for properties of soil layers in different x y (x,y,z)
                     layerthickness_m,         // : thickness in m 
                     young_SOM_kg,         // : OM mass in kgrams (per voxel = layer * thickness)
                     old_SOM_kg,         // : OM mass in kgrams (per voxel = layer * thickness) 
                     bulkdensity;            // : bulkdensity in kg/m3 (over the voxel = layer * thickness)
-
-
-
 
 
         double[,,] sediment_in_transport_kg,         // sediment mass in kg in transport per texture class
@@ -499,8 +444,6 @@ namespace LORICA4
                     sum_tilting,
                     veg,
                     evapotranspiration,
-                    correct_dtm,        // for calibration purposes
-                    paleo_dtm,          // for calibration purposes
                     stslope,		    // matrix with steepest descent local slope [rad]
                     crrain,             // matrix with critical steady state rainfall for landsliding [m/d]
                     camf,               // matrix with number of contributing draining cells, multiple flow [-]
@@ -514,19 +457,10 @@ namespace LORICA4
                     cel_dist,
                     sed_slid,
                     sed_bud,
-                    sink_sed,
-                    olddem,
-                    dtm_epsilon,
                     dh_slid,
-                    lake_sed_m,
+                    lake_sed_m,         //the thickness of lake sediment
                     rain,
                     timeseries_matrix,
-                    profile_dtm1,       //WVG profile timeseries matrices
-                    profile_dtm2,
-                    profile_dtm3,
-                    profile_wat1,
-                    profile_wat2,
-                    profile_wat3,
                     lessivage_errors, // for calibration of lessivage
                     tpi,            //topographic position index
                     hornbeam_cover_fraction;   //hornbeam fraction 
@@ -535,10 +469,6 @@ namespace LORICA4
         int[,]  // integer matrices
                     status_map,         //geeft aan of een cel een sink, een zadel, een flat of een top is
                     depression,         //geeft aan of een cel bij een meer hoort, en welk meer
-                    zones,
-                    mask,
-                    error_m,            // To store error locations as integer
-                    sinkmap,
                     slidemap,
                     soilmap,            // integer numbers for soil map
                     watsh,              // watershed;
@@ -546,10 +476,9 @@ namespace LORICA4
                     tillfields,         //fields for tillage 
                     treefall_count,     // count number of tree falls
                     vegetation_type;
-        int[,] OSL_age;            // keeps track of the last moment of surfacing: dim1: [nr * nc * nlayers * ngrains]; dim2: [5] row, col, layer, stab age, depo age
+        int[,] OSL_age;            // keeps track of the last moment of surfacing: dim1: [nr * nc * nlayers * ngrains]; dim2: [5] row, col, layer, depo age, stab age
                                    // Memory restrictions: length of each dimension cannot exceed 2^31 - 1 units (~2.15*10^9). 
                                    // Limits on memory size depends on properties of system and settings for simulations
-
 
 
         int[,]
@@ -558,28 +487,26 @@ namespace LORICA4
 
         int[] row_index, col_index;  // for sorting the DEM from high to low
         string[] rowcol_index;
-        int calibration_length; // to assess if a process has to be calibrated mvdm, >1 is more runs
         double[] index;
 
         //sinks and depression parameters:
         //the constant values below may have to be increased for large or strange landscapes and studies
         const int numberofsinks = 10000;           // run the program once to find out the number of sinks. The exact number and any higher number will do....
-        const int maximumdepressionsize = 1500;  // run the program once to find out the SIZE OF the largest depression. Any higher number will do....
         const double tangent_of_delta = 0.005;
-        const double tangent_for_outlet = 0.1;
         const int maxlowestnbs = 100000;
         const double epsilon = 0.000001;
         const double root = 7.07;
-        int max_soil_layers;
+        int max_soil_layers = 5;
+        int ngrains = 100; // For OSL calculations
         double[] local_s_i_t_kg = new double[] { 0, 0, 0, 0, 0 };
-        
+
         // for constant layer thicknesses
-        double dz_standard; // Read from interface
-        double tolerance = 0.55; // Standard value
+        double dz_standard = 0.1;
+        double tolerance = 0.55;
 
         int n_texture_classes = 5;
 
-        double soildepth_error, dtm00;
+        double soildepth_error;
 
         int[] rainfall_record, evap_record, infil_record, till_record, temp_record;
         int[] rainfall_record_d, evap_record_d, duration_record_d;
@@ -594,7 +521,7 @@ namespace LORICA4
         rowlowestnb = new int[maxlowestnbs],
         collowestnb = new int[maxlowestnbs];
         double available_for_delta_kg = 0;
-		double available_for_delta_m = 0;							 
+        double available_for_delta_m = 0;
 
 
         int t, t_intervene, scenario, number_of_data_cells, run_number;
@@ -614,8 +541,7 @@ namespace LORICA4
             soil_carbon_active,
             input_data_error,
             memory_records,
-            memory_records_d,
-            merely_calculating_derivatives;
+            memory_records_d;
 
         int num_out,
                 ntr,				//WVG 22-10-2010 number of rows (timesteps) in profile timeseries matrices			
@@ -702,7 +628,6 @@ namespace LORICA4
         //USER INPUT NEEDED: establish best versions of parameters varied in calibration:
         double[] best_parameters;
         double[,] calib_ratios;
-<<<<<<< HEAD
         private TabPage tabPage3;
         private CheckBox blocks_active_checkbox;
         private Label label121;
@@ -721,8 +646,6 @@ namespace LORICA4
         private Label uxNumberCoresLabel;
         private Label uxNumberLogicalProcessorsLabel;
         private Label uxThreadLabel;
-=======
->>>>>>> main
         double[] original_ratios;
 
         private void rain_input_filename_textbox_TextChanged_1(object sender, EventArgs e)
@@ -772,7 +695,6 @@ namespace LORICA4
 
         double
                 diffusivity_creep,
-                potential_creep_kg,
                 plough_depth,
                 annual_weathering,
                 dh, diff, dh1, dh_maxi,
@@ -822,50 +744,13 @@ namespace LORICA4
                 total_sed_prod_up, total_sed_prod_mid, total_sed_prod_low,
                 total_sed_dep_up, total_sed_dep_mid, total_sed_dep_low;  // counters for logging and reporting through time
 
-        private void label73_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox_layer_thickness_TextChanged(object sender, EventArgs e)
-        {
-            
-
-        }
-
-        private void checkBox1_CheckedChanged_3(object sender, EventArgs e)
-        {
-            textBox_layer_thickness.Enabled = (checkBox_layer_thickness.CheckState == CheckState.Checked);
-
-        }
-
-        private void label121_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox3_TextChanged_3(object sender, EventArgs e)
-        {
-
-        }
-
-        private void parameter_diffusivity_textbox_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label10_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void button4_Click(object sender, EventArgs e)
         {
-			Debug.Write(" merely_calculating_derivatives");
-            merely_calculating_derivatives = true;								  
+            Debug.Write(" merely_calculating_derivatives");
+            merely_calculating_derivatives = true;
             try { calculate_terrain_derivatives(); MessageBox.Show("terrain derivatives calculation succeeded"); }
             catch { MessageBox.Show("terrain derivatives calculation failed"); }
-
         }
 
         private void radioButton1_CheckedChanged(object sender, EventArgs e)
@@ -933,11 +818,6 @@ namespace LORICA4
 
         }
 
-        private void label103_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void textBox3_TextChanged_1(object sender, EventArgs e)
         {
 
@@ -964,16 +844,6 @@ namespace LORICA4
             latitude_min.Enabled = (daily_water.CheckState == CheckState.Checked);
             snowmelt_factor_textbox.Enabled = (daily_water.CheckState == CheckState.Checked);
             snow_threshold_textbox.Enabled = (daily_water.CheckState == CheckState.Checked);
-
-        }
-
-        private void label97_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label96_Click(object sender, EventArgs e)
-        {
 
         }
 
@@ -1051,7 +921,7 @@ namespace LORICA4
         double max_eluviation, Cclay, ct_depthdec;
 
         //Bioturbation parameters
-        double potential_bioturbation_kg_m2_y;
+        double potential_bioturbation_kg;
         double bioturbation_depth_decay_constant;
 
         //Carbon cycle parameters
@@ -1114,7 +984,7 @@ namespace LORICA4
         double w_P0, w_k1, w_k2, w_Pa;
         double f_soilrate, f_Tmax, f_Tmin, f_max;
 
-        double mem_m;
+        double mem_m;  //the height by which all cells of a current delta need to be raised in order to get rid of the remaining amount of sediment for that delta
 
         string str, filename, logname, recordname, outfile, f_name, ch, chs;
 
@@ -1122,7 +992,6 @@ namespace LORICA4
         double[,] climate_data;
 
         int diagnostic_mode = 0;
-<<<<<<< HEAD
 
         //HARDLAYER AND BLOCK GLOBALS
         int blocks_active = 1;
@@ -1180,8 +1049,6 @@ namespace LORICA4
 
         List<Block> Blocklist = new List<Block>();
 
-=======
->>>>>>> main
         #endregion
 
         public Mother_form()
@@ -1302,15 +1169,6 @@ namespace LORICA4
             this.menuItemConfigFileOpen = new System.Windows.Forms.MenuItem();
             this.menuItemConfigFileSaveAs = new System.Windows.Forms.MenuItem();
             this.menuItemConfigFileSave = new System.Windows.Forms.MenuItem();
-            this.Mapselector = new System.Windows.Forms.MenuItem();
-            this.Menu_map_total_sediment = new System.Windows.Forms.MenuItem();
-            this.Menu_map_waterflow = new System.Windows.Forms.MenuItem();
-            this.Menu_map_tillage = new System.Windows.Forms.MenuItem();
-            this.Menu_map_water_ero = new System.Windows.Forms.MenuItem();
-            this.Menu_map_creep = new System.Windows.Forms.MenuItem();
-            this.Menu_map_weathering = new System.Windows.Forms.MenuItem();
-            this.Menu_map_landsliding = new System.Windows.Forms.MenuItem();
-            this.Menu_map_critical_rainfall = new System.Windows.Forms.MenuItem();
             this.Menu_About_box = new System.Windows.Forms.MenuItem();
             this.statusBar1 = new System.Windows.Forms.StatusBar();
             this.InfoStatusPanel = new System.Windows.Forms.StatusBarPanel();
@@ -1320,7 +1178,6 @@ namespace LORICA4
             this.total_tillage_statuspanel = new System.Windows.Forms.StatusBarPanel();
             this.start_button = new System.Windows.Forms.Button();
             this.End_button = new System.Windows.Forms.Button();
-            this.View_tabs_checkbox = new System.Windows.Forms.CheckBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.label2 = new System.Windows.Forms.Label();
             this.checkBoxGenerateAVIFile = new System.Windows.Forms.CheckBox();
@@ -1356,15 +1213,6 @@ namespace LORICA4
             this.Biological_weathering_checkbox = new System.Windows.Forms.CheckBox();
             this.label98 = new System.Windows.Forms.Label();
             this.label99 = new System.Windows.Forms.Label();
-            this.checkbox_t_intervene = new System.Windows.Forms.CheckBox();
-            this.trackBar1 = new System.Windows.Forms.TrackBar();
-            this.label61 = new System.Windows.Forms.Label();
-            this.map_controls = new System.Windows.Forms.GroupBox();
-            this.label63 = new System.Windows.Forms.Label();
-            this.graphicToGoogleEarthButton = new System.Windows.Forms.Button();
-            this.trackBar2 = new System.Windows.Forms.TrackBar();
-            this.label62 = new System.Windows.Forms.Label();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.label1 = new System.Windows.Forms.Label();
             this.button6 = new System.Windows.Forms.Button();
@@ -1405,7 +1253,6 @@ namespace LORICA4
             this.saveintervalbox = new System.Windows.Forms.TextBox();
             this.label78 = new System.Windows.Forms.Label();
             this.Run = new System.Windows.Forms.TabPage();
-            this.OSL_checkbox = new System.Windows.Forms.CheckBox();
             this.button4 = new System.Windows.Forms.Button();
             this.version_lux_checkbox = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -1423,17 +1270,12 @@ namespace LORICA4
             this.label113 = new System.Windows.Forms.Label();
             this.calibration_ratios_textbox = new System.Windows.Forms.TextBox();
             this.calibration = new System.Windows.Forms.CheckBox();
-            this.Spitsbergen_case_study = new System.Windows.Forms.CheckBox();
+            this.Ik_ben_Marijn = new System.Windows.Forms.CheckBox();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
-            this.textbox_t_intervene = new System.Windows.Forms.TextBox();
             this.runs_checkbox = new System.Windows.Forms.RadioButton();
             this.label16 = new System.Windows.Forms.Label();
             this.Number_runs_textbox = new System.Windows.Forms.TextBox();
             this.Input = new System.Windows.Forms.TabPage();
-            this.textBox_layer_thickness = new System.Windows.Forms.TextBox();
-            this.checkBox_layer_thickness = new System.Windows.Forms.CheckBox();
-            this.label_max_soil_layers = new System.Windows.Forms.Label();
-            this.textbox_max_soil_layers = new System.Windows.Forms.TextBox();
             this.check_time_T = new System.Windows.Forms.CheckBox();
             this.temp_input_filename_textbox = new System.Windows.Forms.TextBox();
             this.temp_constant_value_box = new System.Windows.Forms.TextBox();
@@ -1548,6 +1390,20 @@ namespace LORICA4
             this.label107 = new System.Windows.Forms.Label();
             this.tf_W = new System.Windows.Forms.TextBox();
             this.treefall_checkbox = new System.Windows.Forms.CheckBox();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.label122 = new System.Windows.Forms.Label();
+            this.label123 = new System.Windows.Forms.Label();
+            this.blockweath_textbox = new System.Windows.Forms.TextBox();
+            this.blocksize_textbox = new System.Windows.Forms.TextBox();
+            this.label121 = new System.Windows.Forms.Label();
+            this.label63 = new System.Windows.Forms.Label();
+            this.label62 = new System.Windows.Forms.Label();
+            this.hardlayerdensity_textbox = new System.Windows.Forms.TextBox();
+            this.hardlayerweath_textbox = new System.Windows.Forms.TextBox();
+            this.hardlayerelevation_textbox = new System.Windows.Forms.TextBox();
+            this.hardlayerthickness_textbox = new System.Windows.Forms.TextBox();
+            this.label61 = new System.Windows.Forms.Label();
+            this.blocks_active_checkbox = new System.Windows.Forms.CheckBox();
             this.Creep_Checkbox = new System.Windows.Forms.CheckBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -1630,7 +1486,6 @@ namespace LORICA4
             this.dailyET0 = new System.Windows.Forms.TextBox();
             this.dailyD = new System.Windows.Forms.TextBox();
             this.dailyP = new System.Windows.Forms.TextBox();
-            this.view_maps_checkbox = new System.Windows.Forms.CheckBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.uxNumberThreadsUpdown = new System.Windows.Forms.NumericUpDown();
             this.uxNumberLogicalProcessorsLabel = new System.Windows.Forms.Label();
@@ -1691,9 +1546,6 @@ namespace LORICA4
             this.groupBox13.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox9.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
-            this.map_controls.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).BeginInit();
             this.Output.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.groupBox12.SuspendLayout();
@@ -1725,6 +1577,7 @@ namespace LORICA4
             this.groupBox4.SuspendLayout();
             this.groupBox15.SuspendLayout();
             this.treefall.SuspendLayout();
+            this.tabPage3.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabControl2.SuspendLayout();
@@ -1768,15 +1621,9 @@ namespace LORICA4
             Landsliding.Controls.Add(this.label18);
             Landsliding.Controls.Add(this.pictureBox4);
             Landsliding.Controls.Add(this.Landslide_checkbox);
-<<<<<<< HEAD
             Landsliding.Location = new System.Drawing.Point(4, 25);
             Landsliding.Name = "Landsliding";
             Landsliding.Size = new System.Drawing.Size(732, 247);
-=======
-            Landsliding.Location = new System.Drawing.Point(4, 22);
-            Landsliding.Name = "Landsliding";
-            Landsliding.Size = new System.Drawing.Size(732, 250);
->>>>>>> main
             Landsliding.TabIndex = 2;
             Landsliding.Text = "Landsliding";
             Landsliding.UseVisualStyleBackColor = true;
@@ -1796,11 +1643,7 @@ namespace LORICA4
             this.radio_ls_fraction.Checked = true;
             this.radio_ls_fraction.Location = new System.Drawing.Point(53, 83);
             this.radio_ls_fraction.Name = "radio_ls_fraction";
-<<<<<<< HEAD
             this.radio_ls_fraction.Size = new System.Drawing.Size(17, 16);
-=======
-            this.radio_ls_fraction.Size = new System.Drawing.Size(14, 13);
->>>>>>> main
             this.radio_ls_fraction.TabIndex = 29;
             this.radio_ls_fraction.TabStop = true;
             this.radio_ls_fraction.UseVisualStyleBackColor = true;
@@ -1810,11 +1653,7 @@ namespace LORICA4
             this.radio_ls_absolute.AutoSize = true;
             this.radio_ls_absolute.Location = new System.Drawing.Point(53, 57);
             this.radio_ls_absolute.Name = "radio_ls_absolute";
-<<<<<<< HEAD
             this.radio_ls_absolute.Size = new System.Drawing.Size(17, 16);
-=======
-            this.radio_ls_absolute.Size = new System.Drawing.Size(14, 13);
->>>>>>> main
             this.radio_ls_absolute.TabIndex = 28;
             this.radio_ls_absolute.UseVisualStyleBackColor = true;
             // 
@@ -1945,11 +1784,7 @@ namespace LORICA4
             this.Landslide_checkbox.AutoSize = true;
             this.Landslide_checkbox.Location = new System.Drawing.Point(26, 14);
             this.Landslide_checkbox.Name = "Landslide_checkbox";
-<<<<<<< HEAD
             this.Landslide_checkbox.Size = new System.Drawing.Size(160, 21);
-=======
-            this.Landslide_checkbox.Size = new System.Drawing.Size(124, 17);
->>>>>>> main
             this.Landslide_checkbox.TabIndex = 1;
             this.Landslide_checkbox.Text = "Activate this process";
             this.Landslide_checkbox.UseVisualStyleBackColor = true;
@@ -2228,7 +2063,6 @@ namespace LORICA4
             label73.Size = new System.Drawing.Size(218, 17);
             label73.TabIndex = 57;
             label73.Text = "potential bioturbation [kg / m2 / y]";
-            label73.Click += new System.EventHandler(this.label73_Click);
             // 
             // label74
             // 
@@ -2335,13 +2169,11 @@ namespace LORICA4
             label13.Size = new System.Drawing.Size(146, 17);
             label13.TabIndex = 56;
             label13.Text = "Depth decay constant";
-            label13.Click += new System.EventHandler(this.label13_Click);
             // 
             // mainMenu1
             // 
             this.mainMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.menuItemConfigFile,
-            this.Mapselector,
             this.Menu_About_box});
             // 
             // menuItemConfigFile
@@ -2371,70 +2203,9 @@ namespace LORICA4
             this.menuItemConfigFileSave.Text = "&Save";
             this.menuItemConfigFileSave.Click += new System.EventHandler(this.menuItemConfigFileSave_Click);
             // 
-            // Mapselector
-            // 
-            this.Mapselector.Index = 1;
-            this.Mapselector.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.Menu_map_total_sediment,
-            this.Menu_map_waterflow,
-            this.Menu_map_tillage,
-            this.Menu_map_water_ero,
-            this.Menu_map_creep,
-            this.Menu_map_weathering,
-            this.Menu_map_landsliding,
-            this.Menu_map_critical_rainfall});
-            this.Mapselector.Text = "&Map";
-            // 
-            // Menu_map_total_sediment
-            // 
-            this.Menu_map_total_sediment.Index = 0;
-            this.Menu_map_total_sediment.Text = "Total redistribution";
-            this.Menu_map_total_sediment.Click += new System.EventHandler(this.Menu_map_sediment_Click);
-            // 
-            // Menu_map_waterflow
-            // 
-            this.Menu_map_waterflow.Index = 1;
-            this.Menu_map_waterflow.Text = "Annual water flow ";
-            this.Menu_map_waterflow.Click += new System.EventHandler(this.Menu_map_waterflow_Click);
-            // 
-            // Menu_map_tillage
-            // 
-            this.Menu_map_tillage.Index = 2;
-            this.Menu_map_tillage.Text = "Tillage";
-            this.Menu_map_tillage.Click += new System.EventHandler(this.Menu_map_tillage_Click);
-            // 
-            // Menu_map_water_ero
-            // 
-            this.Menu_map_water_ero.Index = 3;
-            this.Menu_map_water_ero.Text = "Overland erosion";
-            this.Menu_map_water_ero.Click += new System.EventHandler(this.Menu_map_water_ero_Click);
-            // 
-            // Menu_map_creep
-            // 
-            this.Menu_map_creep.Index = 4;
-            this.Menu_map_creep.Text = "Creep";
-            this.Menu_map_creep.Click += new System.EventHandler(this.Menu_map_creep_Click);
-            // 
-            // Menu_map_weathering
-            // 
-            this.Menu_map_weathering.Index = 5;
-            this.Menu_map_weathering.Text = "Weathering";
-            this.Menu_map_weathering.Click += new System.EventHandler(this.Menu_map_landsliding_Click);
-            // 
-            // Menu_map_landsliding
-            // 
-            this.Menu_map_landsliding.Index = 6;
-            this.Menu_map_landsliding.Text = "Landsliding";
-            // 
-            // Menu_map_critical_rainfall
-            // 
-            this.Menu_map_critical_rainfall.Index = 7;
-            this.Menu_map_critical_rainfall.Text = "Cricital rainfall";
-            this.Menu_map_critical_rainfall.Click += new System.EventHandler(this.Menu_map_critical_rainfall_Click);
-            // 
             // Menu_About_box
             // 
-            this.Menu_About_box.Index = 2;
+            this.Menu_About_box.Index = 1;
             this.Menu_About_box.Text = "&About";
             this.Menu_About_box.Click += new System.EventHandler(this.Menu_aboutbox_Click);
             // 
@@ -2449,11 +2220,7 @@ namespace LORICA4
             this.out_sed_statuspanel,
             this.total_tillage_statuspanel});
             this.statusBar1.ShowPanels = true;
-<<<<<<< HEAD
             this.statusBar1.Size = new System.Drawing.Size(1175, 22);
-=======
-            this.statusBar1.Size = new System.Drawing.Size(1184, 22);
->>>>>>> main
             this.statusBar1.SizingGrip = false;
             this.statusBar1.TabIndex = 144;
             this.statusBar1.Text = "statusBar1";
@@ -2508,20 +2275,6 @@ namespace LORICA4
             this.End_button.TabIndex = 147;
             this.End_button.Text = "Quit";
             this.End_button.Click += new System.EventHandler(this.End_button_Click);
-            // 
-            // View_tabs_checkbox
-            // 
-            this.View_tabs_checkbox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.View_tabs_checkbox.AutoSize = true;
-            this.View_tabs_checkbox.Checked = true;
-            this.View_tabs_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.View_tabs_checkbox.Location = new System.Drawing.Point(354, 427);
-            this.View_tabs_checkbox.Name = "View_tabs_checkbox";
-            this.View_tabs_checkbox.Size = new System.Drawing.Size(77, 17);
-            this.View_tabs_checkbox.TabIndex = 151;
-            this.View_tabs_checkbox.Text = "view tabs?";
-            this.View_tabs_checkbox.UseVisualStyleBackColor = true;
-            this.View_tabs_checkbox.CheckedChanged += new System.EventHandler(this.View_tabs_checkbox_CheckedChanged);
             // 
             // label2
             // 
@@ -2643,11 +2396,7 @@ namespace LORICA4
             this.fill_sinks_before_checkbox.AutoSize = true;
             this.fill_sinks_before_checkbox.Location = new System.Drawing.Point(11, 22);
             this.fill_sinks_before_checkbox.Name = "fill_sinks_before_checkbox";
-<<<<<<< HEAD
             this.fill_sinks_before_checkbox.Size = new System.Drawing.Size(171, 21);
-=======
-            this.fill_sinks_before_checkbox.Size = new System.Drawing.Size(131, 17);
->>>>>>> main
             this.fill_sinks_before_checkbox.TabIndex = 132;
             this.fill_sinks_before_checkbox.Text = "remove sinks and flats";
             this.toolTip1.SetToolTip(this.fill_sinks_before_checkbox, resources.GetString("fill_sinks_before_checkbox.ToolTip"));
@@ -2668,11 +2417,7 @@ namespace LORICA4
             this.fill_sinks_during_checkbox.AutoSize = true;
             this.fill_sinks_during_checkbox.Location = new System.Drawing.Point(11, 25);
             this.fill_sinks_during_checkbox.Name = "fill_sinks_during_checkbox";
-<<<<<<< HEAD
             this.fill_sinks_during_checkbox.Size = new System.Drawing.Size(171, 21);
-=======
-            this.fill_sinks_during_checkbox.Size = new System.Drawing.Size(131, 17);
->>>>>>> main
             this.fill_sinks_during_checkbox.TabIndex = 132;
             this.fill_sinks_during_checkbox.Text = "remove sinks and flats";
             this.toolTip1.SetToolTip(this.fill_sinks_during_checkbox, resources.GetString("fill_sinks_during_checkbox.ToolTip"));
@@ -2842,11 +2587,7 @@ namespace LORICA4
             this.Biological_weathering_checkbox.AutoSize = true;
             this.Biological_weathering_checkbox.Location = new System.Drawing.Point(14, 19);
             this.Biological_weathering_checkbox.Name = "Biological_weathering_checkbox";
-<<<<<<< HEAD
             this.Biological_weathering_checkbox.Size = new System.Drawing.Size(160, 21);
-=======
-            this.Biological_weathering_checkbox.Size = new System.Drawing.Size(124, 17);
->>>>>>> main
             this.Biological_weathering_checkbox.TabIndex = 3;
             this.Biological_weathering_checkbox.Text = "Activate this process";
             this.Biological_weathering_checkbox.UseVisualStyleBackColor = true;
@@ -2871,106 +2612,6 @@ namespace LORICA4
             this.label99.Text = "Only with daily water balance";
             this.label99.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.toolTip1.SetToolTip(this.label99, "Hourly rainfall data - in an ascii format");
-            // 
-            // checkbox_t_intervene
-            // 
-            this.checkbox_t_intervene.AutoSize = true;
-            this.checkbox_t_intervene.Location = new System.Drawing.Point(54, 61);
-            this.checkbox_t_intervene.Name = "checkbox_t_intervene";
-            this.checkbox_t_intervene.Size = new System.Drawing.Size(83, 17);
-            this.checkbox_t_intervene.TabIndex = 4;
-            this.checkbox_t_intervene.Text = "Start at year";
-            this.toolTip1.SetToolTip(this.checkbox_t_intervene, "Select this checkbox when you want to run simulations starting with output from a" +
-        "n earlier run. Model output should be available in the output directory for the " +
-        "indicated year.");
-            this.checkbox_t_intervene.UseVisualStyleBackColor = true;
-            // 
-            // trackBar1
-            // 
-            this.trackBar1.AutoSize = false;
-            this.trackBar1.Enabled = false;
-            this.trackBar1.Location = new System.Drawing.Point(215, 19);
-            this.trackBar1.Name = "trackBar1";
-            this.trackBar1.Size = new System.Drawing.Size(104, 20);
-            this.trackBar1.TabIndex = 149;
-            this.trackBar1.Scroll += new System.EventHandler(this.trackBar1_Scroll);
-            // 
-            // label61
-            // 
-            this.label61.AutoSize = true;
-            this.label61.Location = new System.Drawing.Point(5, 24);
-            this.label61.Name = "label61";
-            this.label61.Size = new System.Drawing.Size(44, 13);
-            this.label61.TabIndex = 150;
-            this.label61.Text = "Graphic";
-            this.label61.Visible = false;
-            // 
-            // map_controls
-            // 
-            this.map_controls.Controls.Add(this.label63);
-            this.map_controls.Controls.Add(this.graphicToGoogleEarthButton);
-            this.map_controls.Controls.Add(this.trackBar2);
-            this.map_controls.Controls.Add(this.label62);
-            this.map_controls.Controls.Add(this.comboBox1);
-            this.map_controls.Controls.Add(this.trackBar1);
-            this.map_controls.Controls.Add(this.label61);
-            this.map_controls.Location = new System.Drawing.Point(481, 372);
-            this.map_controls.Name = "map_controls";
-            this.map_controls.Size = new System.Drawing.Size(334, 91);
-            this.map_controls.TabIndex = 151;
-            this.map_controls.TabStop = false;
-            this.map_controls.Text = "Map controls";
-            this.map_controls.Visible = false;
-            // 
-            // label63
-            // 
-            this.label63.AutoSize = true;
-            this.label63.Location = new System.Drawing.Point(175, 55);
-            this.label63.Name = "label63";
-            this.label63.Size = new System.Drawing.Size(34, 13);
-            this.label63.TabIndex = 154;
-            this.label63.Text = "Zoom";
-            // 
-            // graphicToGoogleEarthButton
-            // 
-            this.graphicToGoogleEarthButton.Location = new System.Drawing.Point(26, 49);
-            this.graphicToGoogleEarthButton.Name = "graphicToGoogleEarthButton";
-            this.graphicToGoogleEarthButton.Size = new System.Drawing.Size(131, 25);
-            this.graphicToGoogleEarthButton.TabIndex = 150;
-            this.graphicToGoogleEarthButton.Text = "image to google earth";
-            this.graphicToGoogleEarthButton.UseVisualStyleBackColor = true;
-            this.graphicToGoogleEarthButton.Visible = false;
-            // 
-            // trackBar2
-            // 
-            this.trackBar2.AutoSize = false;
-            this.trackBar2.Enabled = false;
-            this.trackBar2.Location = new System.Drawing.Point(215, 54);
-            this.trackBar2.Minimum = 1;
-            this.trackBar2.Name = "trackBar2";
-            this.trackBar2.Size = new System.Drawing.Size(104, 20);
-            this.trackBar2.TabIndex = 153;
-            this.trackBar2.Value = 5;
-            this.trackBar2.Scroll += new System.EventHandler(this.trackBar2_Scroll);
-            // 
-            // label62
-            // 
-            this.label62.AutoSize = true;
-            this.label62.Location = new System.Drawing.Point(169, 24);
-            this.label62.Name = "label62";
-            this.label62.Size = new System.Drawing.Size(46, 13);
-            this.label62.TabIndex = 152;
-            this.label62.Text = "Contrast";
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(53, 20);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(104, 21);
-            this.comboBox1.TabIndex = 151;
-            this.comboBox1.Visible = false;
             // 
             // openFileDialog1
             // 
@@ -3014,15 +2655,9 @@ namespace LORICA4
             // 
             this.Output.Controls.Add(this.groupBox6);
             this.Output.Controls.Add(this.groupBox5);
-<<<<<<< HEAD
             this.Output.Location = new System.Drawing.Point(4, 25);
             this.Output.Name = "Output";
             this.Output.Size = new System.Drawing.Size(803, 290);
-=======
-            this.Output.Location = new System.Drawing.Point(4, 22);
-            this.Output.Name = "Output";
-            this.Output.Size = new System.Drawing.Size(803, 293);
->>>>>>> main
             this.Output.TabIndex = 7;
             this.Output.Text = "Output";
             this.Output.UseVisualStyleBackColor = true;
@@ -3055,11 +2690,7 @@ namespace LORICA4
             this.annual_output_checkbox.AutoSize = true;
             this.annual_output_checkbox.Location = new System.Drawing.Point(5, 35);
             this.annual_output_checkbox.Name = "annual_output_checkbox";
-<<<<<<< HEAD
             this.annual_output_checkbox.Size = new System.Drawing.Size(72, 21);
-=======
-            this.annual_output_checkbox.Size = new System.Drawing.Size(57, 17);
->>>>>>> main
             this.annual_output_checkbox.TabIndex = 1;
             this.annual_output_checkbox.Text = "annual";
             this.annual_output_checkbox.UseVisualStyleBackColor = true;
@@ -3070,11 +2701,7 @@ namespace LORICA4
             this.cumulative_output_checkbox.Checked = true;
             this.cumulative_output_checkbox.Location = new System.Drawing.Point(5, 12);
             this.cumulative_output_checkbox.Name = "cumulative_output_checkbox";
-<<<<<<< HEAD
             this.cumulative_output_checkbox.Size = new System.Drawing.Size(96, 21);
-=======
-            this.cumulative_output_checkbox.Size = new System.Drawing.Size(76, 17);
->>>>>>> main
             this.cumulative_output_checkbox.TabIndex = 0;
             this.cumulative_output_checkbox.TabStop = true;
             this.cumulative_output_checkbox.Text = "cumulative";
@@ -3097,11 +2724,7 @@ namespace LORICA4
             this.Regular_output_checkbox.AutoSize = true;
             this.Regular_output_checkbox.Location = new System.Drawing.Point(6, 36);
             this.Regular_output_checkbox.Name = "Regular_output_checkbox";
-<<<<<<< HEAD
             this.Regular_output_checkbox.Size = new System.Drawing.Size(69, 21);
-=======
-            this.Regular_output_checkbox.Size = new System.Drawing.Size(55, 17);
->>>>>>> main
             this.Regular_output_checkbox.TabIndex = 221;
             this.Regular_output_checkbox.Text = "every ";
             this.Regular_output_checkbox.UseVisualStyleBackColor = true;
@@ -3113,11 +2736,7 @@ namespace LORICA4
             this.Final_output_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.Final_output_checkbox.Location = new System.Drawing.Point(6, 13);
             this.Final_output_checkbox.Name = "Final_output_checkbox";
-<<<<<<< HEAD
             this.Final_output_checkbox.Size = new System.Drawing.Size(103, 21);
-=======
-            this.Final_output_checkbox.Size = new System.Drawing.Size(81, 17);
->>>>>>> main
             this.Final_output_checkbox.TabIndex = 220;
             this.Final_output_checkbox.Text = "when ready";
             this.Final_output_checkbox.UseVisualStyleBackColor = true;
@@ -3155,11 +2774,7 @@ namespace LORICA4
             this.diagnostic_output_checkbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.diagnostic_output_checkbox.Location = new System.Drawing.Point(125, 141);
             this.diagnostic_output_checkbox.Name = "diagnostic_output_checkbox";
-<<<<<<< HEAD
             this.diagnostic_output_checkbox.Size = new System.Drawing.Size(103, 21);
-=======
-            this.diagnostic_output_checkbox.Size = new System.Drawing.Size(81, 17);
->>>>>>> main
             this.diagnostic_output_checkbox.TabIndex = 230;
             this.diagnostic_output_checkbox.Text = "Diagnostics";
             this.diagnostic_output_checkbox.UseVisualStyleBackColor = true;
@@ -3188,11 +2803,7 @@ namespace LORICA4
             this.water_output_checkbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.water_output_checkbox.Location = new System.Drawing.Point(24, 118);
             this.water_output_checkbox.Name = "water_output_checkbox";
-<<<<<<< HEAD
             this.water_output_checkbox.Size = new System.Drawing.Size(92, 21);
-=======
-            this.water_output_checkbox.Size = new System.Drawing.Size(74, 17);
->>>>>>> main
             this.water_output_checkbox.TabIndex = 227;
             this.water_output_checkbox.Text = "Waterflow";
             this.water_output_checkbox.UseVisualStyleBackColor = true;
@@ -3203,11 +2814,7 @@ namespace LORICA4
             this.depressions_output_checkbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.depressions_output_checkbox.Location = new System.Drawing.Point(24, 141);
             this.depressions_output_checkbox.Name = "depressions_output_checkbox";
-<<<<<<< HEAD
             this.depressions_output_checkbox.Size = new System.Drawing.Size(109, 21);
-=======
-            this.depressions_output_checkbox.Size = new System.Drawing.Size(84, 17);
->>>>>>> main
             this.depressions_output_checkbox.TabIndex = 226;
             this.depressions_output_checkbox.Text = "Depressions";
             this.depressions_output_checkbox.UseVisualStyleBackColor = true;
@@ -3219,11 +2826,7 @@ namespace LORICA4
             this.all_process_output_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.all_process_output_checkbox.Location = new System.Drawing.Point(24, 95);
             this.all_process_output_checkbox.Name = "all_process_output_checkbox";
-<<<<<<< HEAD
             this.all_process_output_checkbox.Size = new System.Drawing.Size(173, 21);
-=======
-            this.all_process_output_checkbox.Size = new System.Drawing.Size(134, 17);
->>>>>>> main
             this.all_process_output_checkbox.TabIndex = 225;
             this.all_process_output_checkbox.Text = "Indiv. process volumes";
             this.all_process_output_checkbox.UseVisualStyleBackColor = true;
@@ -3235,11 +2838,7 @@ namespace LORICA4
             this.Soildepth_output_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.Soildepth_output_checkbox.Location = new System.Drawing.Point(24, 72);
             this.Soildepth_output_checkbox.Name = "Soildepth_output_checkbox";
-<<<<<<< HEAD
             this.Soildepth_output_checkbox.Size = new System.Drawing.Size(89, 21);
-=======
-            this.Soildepth_output_checkbox.Size = new System.Drawing.Size(70, 17);
->>>>>>> main
             this.Soildepth_output_checkbox.TabIndex = 224;
             this.Soildepth_output_checkbox.Text = "Soildepth";
             this.Soildepth_output_checkbox.UseVisualStyleBackColor = true;
@@ -3251,11 +2850,7 @@ namespace LORICA4
             this.Alt_change_output_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.Alt_change_output_checkbox.Location = new System.Drawing.Point(24, 49);
             this.Alt_change_output_checkbox.Name = "Alt_change_output_checkbox";
-<<<<<<< HEAD
             this.Alt_change_output_checkbox.Size = new System.Drawing.Size(128, 21);
-=======
-            this.Alt_change_output_checkbox.Size = new System.Drawing.Size(100, 17);
->>>>>>> main
             this.Alt_change_output_checkbox.TabIndex = 223;
             this.Alt_change_output_checkbox.Text = "Altitude change";
             this.Alt_change_output_checkbox.UseVisualStyleBackColor = true;
@@ -3267,11 +2862,7 @@ namespace LORICA4
             this.Altitude_output_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.Altitude_output_checkbox.Location = new System.Drawing.Point(24, 26);
             this.Altitude_output_checkbox.Name = "Altitude_output_checkbox";
-<<<<<<< HEAD
             this.Altitude_output_checkbox.Size = new System.Drawing.Size(77, 21);
-=======
-            this.Altitude_output_checkbox.Size = new System.Drawing.Size(61, 17);
->>>>>>> main
             this.Altitude_output_checkbox.TabIndex = 222;
             this.Altitude_output_checkbox.Text = "Altitude";
             this.Altitude_output_checkbox.UseVisualStyleBackColor = true;
@@ -3290,7 +2881,7 @@ namespace LORICA4
             "weathering per process"});
             this.checkedListBox1.Location = new System.Drawing.Point(119, 96);
             this.checkedListBox1.Name = "checkedListBox1";
-            this.checkedListBox1.Size = new System.Drawing.Size(152, 49);
+            this.checkedListBox1.Size = new System.Drawing.Size(152, 38);
             this.checkedListBox1.TabIndex = 0;
             this.checkedListBox1.Visible = false;
             // 
@@ -3388,11 +2979,7 @@ namespace LORICA4
             this.UTMsouthcheck.AutoSize = true;
             this.UTMsouthcheck.Location = new System.Drawing.Point(6, 42);
             this.UTMsouthcheck.Name = "UTMsouthcheck";
-<<<<<<< HEAD
             this.UTMsouthcheck.Size = new System.Drawing.Size(168, 21);
-=======
-            this.UTMsouthcheck.Size = new System.Drawing.Size(128, 17);
->>>>>>> main
             this.UTMsouthcheck.TabIndex = 197;
             this.UTMsouthcheck.Text = "Southern Hemisphere";
             this.UTMsouthcheck.UseVisualStyleBackColor = true;
@@ -3402,11 +2989,7 @@ namespace LORICA4
             this.UTMgridcheckbox.AutoSize = true;
             this.UTMgridcheckbox.Location = new System.Drawing.Point(293, 108);
             this.UTMgridcheckbox.Name = "UTMgridcheckbox";
-<<<<<<< HEAD
             this.UTMgridcheckbox.Size = new System.Drawing.Size(105, 21);
-=======
-            this.UTMgridcheckbox.Size = new System.Drawing.Size(82, 17);
->>>>>>> main
             this.UTMgridcheckbox.TabIndex = 217;
             this.UTMgridcheckbox.Text = "Grid is UTM";
             this.UTMgridcheckbox.UseVisualStyleBackColor = true;
@@ -3458,42 +3041,22 @@ namespace LORICA4
             // 
             // Run
             // 
-<<<<<<< HEAD
             this.Run.Controls.Add(this.uxThreadLabel);
             this.Run.Controls.Add(this.uxNumberCoresLabel);
             this.Run.Controls.Add(this.uxNumberLogicalProcessorsLabel);
             this.Run.Controls.Add(this.uxNumberThreadsUpdown);
-=======
-            this.Run.Controls.Add(this.OSL_checkbox);
->>>>>>> main
             this.Run.Controls.Add(this.button4);
             this.Run.Controls.Add(this.version_lux_checkbox);
             this.Run.Controls.Add(this.groupBox2);
             this.Run.Controls.Add(this.calibration);
-            this.Run.Controls.Add(this.Spitsbergen_case_study);
+            this.Run.Controls.Add(this.Ik_ben_Marijn);
             this.Run.Controls.Add(this.groupBox7);
-<<<<<<< HEAD
             this.Run.Location = new System.Drawing.Point(4, 25);
             this.Run.Name = "Run";
             this.Run.Size = new System.Drawing.Size(803, 290);
-=======
-            this.Run.Location = new System.Drawing.Point(4, 22);
-            this.Run.Name = "Run";
-            this.Run.Size = new System.Drawing.Size(803, 293);
->>>>>>> main
             this.Run.TabIndex = 8;
             this.Run.Text = "Run";
             this.Run.UseVisualStyleBackColor = true;
-            // 
-            // OSL_checkbox
-            // 
-            this.OSL_checkbox.AutoSize = true;
-            this.OSL_checkbox.Location = new System.Drawing.Point(102, 123);
-            this.OSL_checkbox.Name = "OSL_checkbox";
-            this.OSL_checkbox.Size = new System.Drawing.Size(104, 17);
-            this.OSL_checkbox.TabIndex = 8;
-            this.OSL_checkbox.Text = "Track OSL ages";
-            this.OSL_checkbox.UseVisualStyleBackColor = true;
             // 
             // button4
             // 
@@ -3510,11 +3073,7 @@ namespace LORICA4
             this.version_lux_checkbox.AutoSize = true;
             this.version_lux_checkbox.Location = new System.Drawing.Point(102, 167);
             this.version_lux_checkbox.Name = "version_lux_checkbox";
-<<<<<<< HEAD
             this.version_lux_checkbox.Size = new System.Drawing.Size(150, 21);
-=======
-            this.version_lux_checkbox.Size = new System.Drawing.Size(115, 17);
->>>>>>> main
             this.version_lux_checkbox.TabIndex = 6;
             this.version_lux_checkbox.Text = "Luxemburg version";
             this.version_lux_checkbox.UseVisualStyleBackColor = true;
@@ -3625,11 +3184,7 @@ namespace LORICA4
             this.Sensitivity_button.AutoSize = true;
             this.Sensitivity_button.Location = new System.Drawing.Point(22, 179);
             this.Sensitivity_button.Name = "Sensitivity_button";
-<<<<<<< HEAD
             this.Sensitivity_button.Size = new System.Drawing.Size(268, 21);
-=======
-            this.Sensitivity_button.Size = new System.Drawing.Size(200, 17);
->>>>>>> main
             this.Sensitivity_button.TabIndex = 3;
             this.Sensitivity_button.Text = "Run sensitivity analysis (non-iterative)";
             this.Sensitivity_button.UseVisualStyleBackColor = true;
@@ -3640,11 +3195,7 @@ namespace LORICA4
             this.Calibration_button.AutoSize = true;
             this.Calibration_button.Location = new System.Drawing.Point(22, 33);
             this.Calibration_button.Name = "Calibration_button";
-<<<<<<< HEAD
             this.Calibration_button.Size = new System.Drawing.Size(188, 21);
-=======
-            this.Calibration_button.Size = new System.Drawing.Size(142, 17);
->>>>>>> main
             this.Calibration_button.TabIndex = 2;
             this.Calibration_button.Text = "Run calibration (iterative)";
             this.Calibration_button.UseVisualStyleBackColor = true;
@@ -3671,19 +3222,14 @@ namespace LORICA4
             this.calibration.AutoSize = true;
             this.calibration.Location = new System.Drawing.Point(102, 190);
             this.calibration.Name = "calibration";
-<<<<<<< HEAD
             this.calibration.Size = new System.Drawing.Size(163, 21);
-=======
-            this.calibration.Size = new System.Drawing.Size(125, 17);
->>>>>>> main
             this.calibration.TabIndex = 5;
             this.calibration.Text = "Lessivage calibration";
             this.calibration.UseVisualStyleBackColor = true;
             this.calibration.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged_1);
             // 
-            // Spitsbergen_case_study
+            // Ik_ben_Marijn
             // 
-<<<<<<< HEAD
             this.Ik_ben_Marijn.AutoSize = true;
             this.Ik_ben_Marijn.Location = new System.Drawing.Point(102, 146);
             this.Ik_ben_Marijn.Name = "Ik_ben_Marijn";
@@ -3691,38 +3237,18 @@ namespace LORICA4
             this.Ik_ben_Marijn.TabIndex = 4;
             this.Ik_ben_Marijn.Text = "Ik ben Marijn";
             this.Ik_ben_Marijn.UseVisualStyleBackColor = true;
-=======
-            this.Spitsbergen_case_study.AutoSize = true;
-            this.Spitsbergen_case_study.Location = new System.Drawing.Point(102, 146);
-            this.Spitsbergen_case_study.Name = "Spitsbergen_case_study";
-            this.Spitsbergen_case_study.Size = new System.Drawing.Size(136, 17);
-            this.Spitsbergen_case_study.TabIndex = 4;
-            this.Spitsbergen_case_study.Text = "Spitsbergen case study";
-            this.Spitsbergen_case_study.UseVisualStyleBackColor = true;
->>>>>>> main
             // 
             // groupBox7
             // 
-            this.groupBox7.Controls.Add(this.checkbox_t_intervene);
-            this.groupBox7.Controls.Add(this.textbox_t_intervene);
             this.groupBox7.Controls.Add(this.runs_checkbox);
             this.groupBox7.Controls.Add(this.label16);
             this.groupBox7.Controls.Add(this.Number_runs_textbox);
             this.groupBox7.Location = new System.Drawing.Point(48, 32);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(277, 85);
+            this.groupBox7.Size = new System.Drawing.Size(277, 69);
             this.groupBox7.TabIndex = 3;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Please specify  the number of timesteps per run";
-            // 
-            // textbox_t_intervene
-            // 
-            this.textbox_t_intervene.Location = new System.Drawing.Point(190, 60);
-            this.textbox_t_intervene.Name = "textbox_t_intervene";
-            this.textbox_t_intervene.Size = new System.Drawing.Size(55, 20);
-            this.textbox_t_intervene.TabIndex = 3;
-            this.textbox_t_intervene.Text = "0";
-            this.textbox_t_intervene.TextChanged += new System.EventHandler(this.textBox3_TextChanged_3);
             // 
             // runs_checkbox
             // 
@@ -3730,11 +3256,7 @@ namespace LORICA4
             this.runs_checkbox.Checked = true;
             this.runs_checkbox.Location = new System.Drawing.Point(54, 33);
             this.runs_checkbox.Name = "runs_checkbox";
-<<<<<<< HEAD
             this.runs_checkbox.Size = new System.Drawing.Size(106, 21);
-=======
-            this.runs_checkbox.Size = new System.Drawing.Size(79, 17);
->>>>>>> main
             this.runs_checkbox.TabIndex = 2;
             this.runs_checkbox.TabStop = true;
             this.runs_checkbox.Text = "runs (years)";
@@ -3758,10 +3280,6 @@ namespace LORICA4
             // 
             // Input
             // 
-            this.Input.Controls.Add(this.textBox_layer_thickness);
-            this.Input.Controls.Add(this.checkBox_layer_thickness);
-            this.Input.Controls.Add(this.label_max_soil_layers);
-            this.Input.Controls.Add(this.textbox_max_soil_layers);
             this.Input.Controls.Add(this.check_time_T);
             this.Input.Controls.Add(this.label99);
             this.Input.Controls.Add(this.label98);
@@ -3809,58 +3327,12 @@ namespace LORICA4
             this.Input.Controls.Add(this.label3);
             this.Input.Controls.Add(this.label25);
             this.Input.Controls.Add(this.label23);
-<<<<<<< HEAD
             this.Input.Location = new System.Drawing.Point(4, 25);
             this.Input.Name = "Input";
             this.Input.Size = new System.Drawing.Size(803, 290);
-=======
-            this.Input.Location = new System.Drawing.Point(4, 22);
-            this.Input.Name = "Input";
-            this.Input.Size = new System.Drawing.Size(803, 293);
->>>>>>> main
             this.Input.TabIndex = 0;
             this.Input.Text = "Inputs";
             this.Input.UseVisualStyleBackColor = true;
-            // 
-            // textBox_layer_thickness
-            // 
-            this.textBox_layer_thickness.Location = new System.Drawing.Point(736, 265);
-            this.textBox_layer_thickness.Name = "textBox_layer_thickness";
-            this.textBox_layer_thickness.Size = new System.Drawing.Size(50, 20);
-            this.textBox_layer_thickness.TabIndex = 158;
-            this.textBox_layer_thickness.Text = "0.10";
-            this.textBox_layer_thickness.TextChanged += new System.EventHandler(this.textBox_layer_thickness_TextChanged);
-            // 
-            // checkBox_layer_thickness
-            // 
-            this.checkBox_layer_thickness.AutoSize = true;
-            this.checkBox_layer_thickness.Checked = true;
-            this.checkBox_layer_thickness.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox_layer_thickness.Location = new System.Drawing.Point(558, 266);
-            this.checkBox_layer_thickness.Name = "checkBox_layer_thickness";
-            this.checkBox_layer_thickness.Size = new System.Drawing.Size(130, 17);
-            this.checkBox_layer_thickness.TabIndex = 157;
-            this.checkBox_layer_thickness.Text = "Fixed layer thickness?";
-            this.checkBox_layer_thickness.UseVisualStyleBackColor = true;
-            this.checkBox_layer_thickness.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged_3);
-            // 
-            // label_max_soil_layers
-            // 
-            this.label_max_soil_layers.AutoSize = true;
-            this.label_max_soil_layers.Location = new System.Drawing.Point(586, 242);
-            this.label_max_soil_layers.Name = "label_max_soil_layers";
-            this.label_max_soil_layers.Size = new System.Drawing.Size(104, 13);
-            this.label_max_soil_layers.TabIndex = 156;
-            this.label_max_soil_layers.Text = "Number of soil layers";
-            this.label_max_soil_layers.Click += new System.EventHandler(this.label121_Click);
-            // 
-            // textbox_max_soil_layers
-            // 
-            this.textbox_max_soil_layers.Location = new System.Drawing.Point(736, 241);
-            this.textbox_max_soil_layers.Name = "textbox_max_soil_layers";
-            this.textbox_max_soil_layers.Size = new System.Drawing.Size(50, 20);
-            this.textbox_max_soil_layers.TabIndex = 155;
-            this.textbox_max_soil_layers.Text = "25";
             // 
             // check_time_T
             // 
@@ -3868,11 +3340,7 @@ namespace LORICA4
             this.check_time_T.Enabled = false;
             this.check_time_T.Location = new System.Drawing.Point(220, 251);
             this.check_time_T.Name = "check_time_T";
-<<<<<<< HEAD
             this.check_time_T.Size = new System.Drawing.Size(18, 17);
-=======
-            this.check_time_T.Size = new System.Drawing.Size(15, 14);
->>>>>>> main
             this.check_time_T.TabIndex = 154;
             this.check_time_T.UseVisualStyleBackColor = true;
             // 
@@ -3930,11 +3398,7 @@ namespace LORICA4
             this.check_time_evap.AutoSize = true;
             this.check_time_evap.Location = new System.Drawing.Point(220, 222);
             this.check_time_evap.Name = "check_time_evap";
-<<<<<<< HEAD
             this.check_time_evap.Size = new System.Drawing.Size(18, 17);
-=======
-            this.check_time_evap.Size = new System.Drawing.Size(15, 14);
->>>>>>> main
             this.check_time_evap.TabIndex = 145;
             this.check_time_evap.UseVisualStyleBackColor = true;
             this.check_time_evap.CheckedChanged += new System.EventHandler(this.check_time_evap_CheckedChanged);
@@ -3944,11 +3408,7 @@ namespace LORICA4
             this.check_time_infil.AutoSize = true;
             this.check_time_infil.Location = new System.Drawing.Point(220, 198);
             this.check_time_infil.Name = "check_time_infil";
-<<<<<<< HEAD
             this.check_time_infil.Size = new System.Drawing.Size(18, 17);
-=======
-            this.check_time_infil.Size = new System.Drawing.Size(15, 14);
->>>>>>> main
             this.check_time_infil.TabIndex = 144;
             this.check_time_infil.UseVisualStyleBackColor = true;
             this.check_time_infil.CheckedChanged += new System.EventHandler(this.check_time_infil_CheckedChanged);
@@ -3958,11 +3418,7 @@ namespace LORICA4
             this.check_time_rain.AutoSize = true;
             this.check_time_rain.Location = new System.Drawing.Point(220, 174);
             this.check_time_rain.Name = "check_time_rain";
-<<<<<<< HEAD
             this.check_time_rain.Size = new System.Drawing.Size(18, 17);
-=======
-            this.check_time_rain.Size = new System.Drawing.Size(15, 14);
->>>>>>> main
             this.check_time_rain.TabIndex = 143;
             this.check_time_rain.UseVisualStyleBackColor = true;
             this.check_time_rain.CheckedChanged += new System.EventHandler(this.check_time_rain_CheckedChanged);
@@ -3972,11 +3428,7 @@ namespace LORICA4
             this.check_time_till_fields.AutoSize = true;
             this.check_time_till_fields.Location = new System.Drawing.Point(220, 150);
             this.check_time_till_fields.Name = "check_time_till_fields";
-<<<<<<< HEAD
             this.check_time_till_fields.Size = new System.Drawing.Size(18, 17);
-=======
-            this.check_time_till_fields.Size = new System.Drawing.Size(15, 14);
->>>>>>> main
             this.check_time_till_fields.TabIndex = 142;
             this.check_time_till_fields.UseVisualStyleBackColor = true;
             this.check_time_till_fields.CheckedChanged += new System.EventHandler(this.check_time_tillage_CheckedChanged);
@@ -3986,11 +3438,7 @@ namespace LORICA4
             this.check_time_landuse.AutoSize = true;
             this.check_time_landuse.Location = new System.Drawing.Point(220, 123);
             this.check_time_landuse.Name = "check_time_landuse";
-<<<<<<< HEAD
             this.check_time_landuse.Size = new System.Drawing.Size(18, 17);
-=======
-            this.check_time_landuse.Size = new System.Drawing.Size(15, 14);
->>>>>>> main
             this.check_time_landuse.TabIndex = 141;
             this.check_time_landuse.UseVisualStyleBackColor = true;
             this.check_time_landuse.CheckedChanged += new System.EventHandler(this.check_time_landuse_CheckedChanged);
@@ -4003,11 +3451,7 @@ namespace LORICA4
             this.check_space_DTM.Enabled = false;
             this.check_space_DTM.Location = new System.Drawing.Point(188, 51);
             this.check_space_DTM.Name = "check_space_DTM";
-<<<<<<< HEAD
             this.check_space_DTM.Size = new System.Drawing.Size(18, 17);
-=======
-            this.check_space_DTM.Size = new System.Drawing.Size(15, 14);
->>>>>>> main
             this.check_space_DTM.TabIndex = 138;
             this.check_space_DTM.UseVisualStyleBackColor = true;
             // 
@@ -4151,11 +3595,7 @@ namespace LORICA4
             this.check_space_evap.AutoSize = true;
             this.check_space_evap.Location = new System.Drawing.Point(188, 222);
             this.check_space_evap.Name = "check_space_evap";
-<<<<<<< HEAD
             this.check_space_evap.Size = new System.Drawing.Size(18, 17);
-=======
-            this.check_space_evap.Size = new System.Drawing.Size(15, 14);
->>>>>>> main
             this.check_space_evap.TabIndex = 130;
             this.check_space_evap.UseVisualStyleBackColor = true;
             this.check_space_evap.CheckedChanged += new System.EventHandler(this.check_cnst_evap_CheckedChanged);
@@ -4165,11 +3605,7 @@ namespace LORICA4
             this.check_space_infil.AutoSize = true;
             this.check_space_infil.Location = new System.Drawing.Point(188, 198);
             this.check_space_infil.Name = "check_space_infil";
-<<<<<<< HEAD
             this.check_space_infil.Size = new System.Drawing.Size(18, 17);
-=======
-            this.check_space_infil.Size = new System.Drawing.Size(15, 14);
->>>>>>> main
             this.check_space_infil.TabIndex = 129;
             this.check_space_infil.UseVisualStyleBackColor = true;
             this.check_space_infil.CheckedChanged += new System.EventHandler(this.check_cnst_infil_CheckedChanged);
@@ -4179,11 +3615,7 @@ namespace LORICA4
             this.check_space_rain.AutoSize = true;
             this.check_space_rain.Location = new System.Drawing.Point(188, 174);
             this.check_space_rain.Name = "check_space_rain";
-<<<<<<< HEAD
             this.check_space_rain.Size = new System.Drawing.Size(18, 17);
-=======
-            this.check_space_rain.Size = new System.Drawing.Size(15, 14);
->>>>>>> main
             this.check_space_rain.TabIndex = 128;
             this.check_space_rain.UseVisualStyleBackColor = true;
             this.check_space_rain.CheckedChanged += new System.EventHandler(this.check_cnst_rain_CheckedChanged_1);
@@ -4193,11 +3625,7 @@ namespace LORICA4
             this.check_space_till_fields.AutoSize = true;
             this.check_space_till_fields.Location = new System.Drawing.Point(188, 150);
             this.check_space_till_fields.Name = "check_space_till_fields";
-<<<<<<< HEAD
             this.check_space_till_fields.Size = new System.Drawing.Size(18, 17);
-=======
-            this.check_space_till_fields.Size = new System.Drawing.Size(15, 14);
->>>>>>> main
             this.check_space_till_fields.TabIndex = 127;
             this.check_space_till_fields.UseVisualStyleBackColor = true;
             this.check_space_till_fields.CheckedChanged += new System.EventHandler(this.check_cnst_till_fields_CheckedChanged);
@@ -4207,11 +3635,7 @@ namespace LORICA4
             this.check_space_landuse.AutoSize = true;
             this.check_space_landuse.Location = new System.Drawing.Point(188, 123);
             this.check_space_landuse.Name = "check_space_landuse";
-<<<<<<< HEAD
             this.check_space_landuse.Size = new System.Drawing.Size(18, 17);
-=======
-            this.check_space_landuse.Size = new System.Drawing.Size(15, 14);
->>>>>>> main
             this.check_space_landuse.TabIndex = 126;
             this.check_space_landuse.UseVisualStyleBackColor = true;
             this.check_space_landuse.CheckedChanged += new System.EventHandler(this.check_cnst_landuse_CheckedChanged_1);
@@ -4221,11 +3645,7 @@ namespace LORICA4
             this.check_space_soildepth.AutoSize = true;
             this.check_space_soildepth.Location = new System.Drawing.Point(188, 76);
             this.check_space_soildepth.Name = "check_space_soildepth";
-<<<<<<< HEAD
             this.check_space_soildepth.Size = new System.Drawing.Size(18, 17);
-=======
-            this.check_space_soildepth.Size = new System.Drawing.Size(15, 14);
->>>>>>> main
             this.check_space_soildepth.TabIndex = 125;
             this.check_space_soildepth.UseVisualStyleBackColor = true;
             this.check_space_soildepth.CheckedChanged += new System.EventHandler(this.check_cnst_soildepth_CheckedChanged_1);
@@ -4260,15 +3680,9 @@ namespace LORICA4
             // Processes
             // 
             this.Processes.Controls.Add(this.Process_tabs);
-<<<<<<< HEAD
             this.Processes.Location = new System.Drawing.Point(4, 25);
             this.Processes.Name = "Processes";
             this.Processes.Size = new System.Drawing.Size(803, 290);
-=======
-            this.Processes.Location = new System.Drawing.Point(4, 22);
-            this.Processes.Name = "Processes";
-            this.Processes.Size = new System.Drawing.Size(803, 293);
->>>>>>> main
             this.Processes.TabIndex = 6;
             this.Processes.Text = "Geomorphic processes";
             this.Processes.UseVisualStyleBackColor = true;
@@ -4283,6 +3697,7 @@ namespace LORICA4
             this.Process_tabs.Controls.Add(this.Rock_weathering);
             this.Process_tabs.Controls.Add(this.Tectonics);
             this.Process_tabs.Controls.Add(this.treefall);
+            this.Process_tabs.Controls.Add(this.tabPage3);
             this.Process_tabs.Location = new System.Drawing.Point(8, 14);
             this.Process_tabs.MaximumSize = new System.Drawing.Size(740, 276);
             this.Process_tabs.MinimumSize = new System.Drawing.Size(740, 276);
@@ -4313,17 +3728,10 @@ namespace LORICA4
             this.Water.Controls.Add(this.label10);
             this.Water.Controls.Add(this.label9);
             this.Water.Controls.Add(this.Water_ero_checkbox);
-<<<<<<< HEAD
             this.Water.Location = new System.Drawing.Point(4, 25);
             this.Water.Name = "Water";
             this.Water.Padding = new System.Windows.Forms.Padding(3);
             this.Water.Size = new System.Drawing.Size(732, 247);
-=======
-            this.Water.Location = new System.Drawing.Point(4, 22);
-            this.Water.Name = "Water";
-            this.Water.Padding = new System.Windows.Forms.Padding(3);
-            this.Water.Size = new System.Drawing.Size(732, 250);
->>>>>>> main
             this.Water.TabIndex = 0;
             this.Water.Text = "Water erosion and deposition";
             this.Water.UseVisualStyleBackColor = true;
@@ -4333,11 +3741,7 @@ namespace LORICA4
             this.daily_water.AutoSize = true;
             this.daily_water.Location = new System.Drawing.Point(392, 16);
             this.daily_water.Name = "daily_water";
-<<<<<<< HEAD
             this.daily_water.Size = new System.Drawing.Size(127, 21);
-=======
-            this.daily_water.Size = new System.Drawing.Size(100, 17);
->>>>>>> main
             this.daily_water.TabIndex = 29;
             this.daily_water.Text = "Daily water flow";
             this.daily_water.UseVisualStyleBackColor = true;
@@ -4449,11 +3853,7 @@ namespace LORICA4
             this.only_waterflow_checkbox.AutoSize = true;
             this.only_waterflow_checkbox.Location = new System.Drawing.Point(156, 16);
             this.only_waterflow_checkbox.Name = "only_waterflow_checkbox";
-<<<<<<< HEAD
             this.only_waterflow_checkbox.Size = new System.Drawing.Size(286, 21);
-=======
-            this.only_waterflow_checkbox.Size = new System.Drawing.Size(219, 17);
->>>>>>> main
             this.only_waterflow_checkbox.TabIndex = 14;
             this.only_waterflow_checkbox.Text = "Only calculate waterflow, no ero and dep";
             this.only_waterflow_checkbox.UseVisualStyleBackColor = true;
@@ -4493,7 +3893,6 @@ namespace LORICA4
             this.label10.Size = new System.Drawing.Size(142, 17);
             this.label10.TabIndex = 9;
             this.label10.Text = "n (exponent of slope)";
-            this.label10.Click += new System.EventHandler(this.label10_Click);
             // 
             // label9
             // 
@@ -4511,11 +3910,7 @@ namespace LORICA4
             this.Water_ero_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.Water_ero_checkbox.Location = new System.Drawing.Point(26, 16);
             this.Water_ero_checkbox.Name = "Water_ero_checkbox";
-<<<<<<< HEAD
             this.Water_ero_checkbox.Size = new System.Drawing.Size(160, 21);
-=======
-            this.Water_ero_checkbox.Size = new System.Drawing.Size(124, 17);
->>>>>>> main
             this.Water_ero_checkbox.TabIndex = 0;
             this.Water_ero_checkbox.Text = "Activate this process";
             this.Water_ero_checkbox.UseVisualStyleBackColor = true;
@@ -4529,17 +3924,10 @@ namespace LORICA4
             this.Tillage.Controls.Add(this.parameter_tillage_constant_textbox);
             this.Tillage.Controls.Add(this.parameter_ploughing_depth_textbox);
             this.Tillage.Controls.Add(this.Tillage_checkbox);
-<<<<<<< HEAD
             this.Tillage.Location = new System.Drawing.Point(4, 25);
             this.Tillage.Name = "Tillage";
             this.Tillage.Padding = new System.Windows.Forms.Padding(3);
             this.Tillage.Size = new System.Drawing.Size(732, 247);
-=======
-            this.Tillage.Location = new System.Drawing.Point(4, 22);
-            this.Tillage.Name = "Tillage";
-            this.Tillage.Padding = new System.Windows.Forms.Padding(3);
-            this.Tillage.Size = new System.Drawing.Size(732, 250);
->>>>>>> main
             this.Tillage.TabIndex = 1;
             this.Tillage.Text = "Tillage";
             this.Tillage.UseVisualStyleBackColor = true;
@@ -4593,11 +3981,7 @@ namespace LORICA4
             this.Tillage_checkbox.AutoSize = true;
             this.Tillage_checkbox.Location = new System.Drawing.Point(26, 16);
             this.Tillage_checkbox.Name = "Tillage_checkbox";
-<<<<<<< HEAD
             this.Tillage_checkbox.Size = new System.Drawing.Size(160, 21);
-=======
-            this.Tillage_checkbox.Size = new System.Drawing.Size(124, 17);
->>>>>>> main
             this.Tillage_checkbox.TabIndex = 1;
             this.Tillage_checkbox.Text = "Activate this process";
             this.Tillage_checkbox.UseVisualStyleBackColor = true;
@@ -4609,15 +3993,9 @@ namespace LORICA4
             this.Creeper.Controls.Add(this.label19);
             this.Creeper.Controls.Add(this.parameter_diffusivity_textbox);
             this.Creeper.Controls.Add(this.creep_active_checkbox);
-<<<<<<< HEAD
             this.Creeper.Location = new System.Drawing.Point(4, 25);
             this.Creeper.Name = "Creeper";
             this.Creeper.Size = new System.Drawing.Size(732, 247);
-=======
-            this.Creeper.Location = new System.Drawing.Point(4, 22);
-            this.Creeper.Name = "Creeper";
-            this.Creeper.Size = new System.Drawing.Size(732, 250);
->>>>>>> main
             this.Creeper.TabIndex = 6;
             this.Creeper.Text = "Creep";
             this.Creeper.UseVisualStyleBackColor = true;
@@ -4627,11 +4005,7 @@ namespace LORICA4
             this.creep_testing.AutoSize = true;
             this.creep_testing.Location = new System.Drawing.Point(26, 108);
             this.creep_testing.Name = "creep_testing";
-<<<<<<< HEAD
             this.creep_testing.Size = new System.Drawing.Size(114, 21);
-=======
-            this.creep_testing.Size = new System.Drawing.Size(88, 17);
->>>>>>> main
             this.creep_testing.TabIndex = 26;
             this.creep_testing.Text = "Creep testing";
             this.creep_testing.UseVisualStyleBackColor = true;
@@ -4639,7 +4013,7 @@ namespace LORICA4
             // pictureBox3
             // 
             this.pictureBox3.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox3.Image")));
-            this.pictureBox3.Location = new System.Drawing.Point(295, 57);
+            this.pictureBox3.Location = new System.Drawing.Point(276, 57);
             this.pictureBox3.Name = "pictureBox3";
             this.pictureBox3.Size = new System.Drawing.Size(180, 137);
             this.pictureBox3.TabIndex = 25;
@@ -4650,13 +4024,9 @@ namespace LORICA4
             this.label19.AutoSize = true;
             this.label19.Location = new System.Drawing.Point(128, 63);
             this.label19.Name = "label19";
-<<<<<<< HEAD
             this.label19.Size = new System.Drawing.Size(66, 17);
-=======
-            this.label19.Size = new System.Drawing.Size(127, 13);
->>>>>>> main
             this.label19.TabIndex = 23;
-            this.label19.Text = "potential creep [kg/m2/y]";
+            this.label19.Text = "diffusivity";
             // 
             // parameter_diffusivity_textbox
             // 
@@ -4665,19 +4035,14 @@ namespace LORICA4
             this.parameter_diffusivity_textbox.Name = "parameter_diffusivity_textbox";
             this.parameter_diffusivity_textbox.Size = new System.Drawing.Size(53, 22);
             this.parameter_diffusivity_textbox.TabIndex = 21;
-            this.parameter_diffusivity_textbox.Text = "4.5";
-            this.parameter_diffusivity_textbox.TextChanged += new System.EventHandler(this.parameter_diffusivity_textbox_TextChanged);
+            this.parameter_diffusivity_textbox.Text = "0.05";
             // 
             // creep_active_checkbox
             // 
             this.creep_active_checkbox.AutoSize = true;
             this.creep_active_checkbox.Location = new System.Drawing.Point(26, 18);
             this.creep_active_checkbox.Name = "creep_active_checkbox";
-<<<<<<< HEAD
             this.creep_active_checkbox.Size = new System.Drawing.Size(160, 21);
-=======
-            this.creep_active_checkbox.Size = new System.Drawing.Size(124, 17);
->>>>>>> main
             this.creep_active_checkbox.TabIndex = 20;
             this.creep_active_checkbox.Text = "Activate this process";
             this.creep_active_checkbox.UseVisualStyleBackColor = true;
@@ -4686,15 +4051,9 @@ namespace LORICA4
             // 
             this.Solifluction.Controls.Add(this.pictureBox5);
             this.Solifluction.Controls.Add(this.Solifluction_checkbox);
-<<<<<<< HEAD
             this.Solifluction.Location = new System.Drawing.Point(4, 25);
             this.Solifluction.Name = "Solifluction";
             this.Solifluction.Size = new System.Drawing.Size(732, 247);
-=======
-            this.Solifluction.Location = new System.Drawing.Point(4, 22);
-            this.Solifluction.Name = "Solifluction";
-            this.Solifluction.Size = new System.Drawing.Size(732, 250);
->>>>>>> main
             this.Solifluction.TabIndex = 4;
             this.Solifluction.Text = "Solifluction";
             this.Solifluction.UseVisualStyleBackColor = true;
@@ -4714,11 +4073,7 @@ namespace LORICA4
             this.Solifluction_checkbox.Enabled = false;
             this.Solifluction_checkbox.Location = new System.Drawing.Point(36, 24);
             this.Solifluction_checkbox.Name = "Solifluction_checkbox";
-<<<<<<< HEAD
             this.Solifluction_checkbox.Size = new System.Drawing.Size(160, 21);
-=======
-            this.Solifluction_checkbox.Size = new System.Drawing.Size(124, 17);
->>>>>>> main
             this.Solifluction_checkbox.TabIndex = 2;
             this.Solifluction_checkbox.Text = "Activate this process";
             this.Solifluction_checkbox.UseVisualStyleBackColor = true;
@@ -4729,15 +4084,9 @@ namespace LORICA4
             this.Rock_weathering.Controls.Add(this.pictureBox6);
             this.Rock_weathering.Controls.Add(this.groupBox10);
             this.Rock_weathering.Controls.Add(this.groupBox9);
-<<<<<<< HEAD
             this.Rock_weathering.Location = new System.Drawing.Point(4, 25);
             this.Rock_weathering.Name = "Rock_weathering";
             this.Rock_weathering.Size = new System.Drawing.Size(732, 247);
-=======
-            this.Rock_weathering.Location = new System.Drawing.Point(4, 22);
-            this.Rock_weathering.Name = "Rock_weathering";
-            this.Rock_weathering.Size = new System.Drawing.Size(732, 250);
->>>>>>> main
             this.Rock_weathering.TabIndex = 5;
             this.Rock_weathering.Text = "Rock weathering";
             this.Rock_weathering.UseVisualStyleBackColor = true;
@@ -4784,11 +4133,7 @@ namespace LORICA4
             this.Frost_weathering_checkbox.Enabled = false;
             this.Frost_weathering_checkbox.Location = new System.Drawing.Point(14, 19);
             this.Frost_weathering_checkbox.Name = "Frost_weathering_checkbox";
-<<<<<<< HEAD
             this.Frost_weathering_checkbox.Size = new System.Drawing.Size(160, 21);
-=======
-            this.Frost_weathering_checkbox.Size = new System.Drawing.Size(124, 17);
->>>>>>> main
             this.Frost_weathering_checkbox.TabIndex = 3;
             this.Frost_weathering_checkbox.Text = "Activate this process";
             this.Frost_weathering_checkbox.UseVisualStyleBackColor = true;
@@ -4797,17 +4142,10 @@ namespace LORICA4
             // 
             this.Tectonics.Controls.Add(this.groupBox14);
             this.Tectonics.Controls.Add(this.groupBox4);
-<<<<<<< HEAD
             this.Tectonics.Location = new System.Drawing.Point(4, 25);
             this.Tectonics.Name = "Tectonics";
             this.Tectonics.Padding = new System.Windows.Forms.Padding(3);
             this.Tectonics.Size = new System.Drawing.Size(732, 247);
-=======
-            this.Tectonics.Location = new System.Drawing.Point(4, 22);
-            this.Tectonics.Name = "Tectonics";
-            this.Tectonics.Padding = new System.Windows.Forms.Padding(3);
-            this.Tectonics.Size = new System.Drawing.Size(732, 250);
->>>>>>> main
             this.Tectonics.TabIndex = 7;
             this.Tectonics.Text = "Tectonics";
             this.Tectonics.UseVisualStyleBackColor = true;
@@ -4875,11 +4213,7 @@ namespace LORICA4
             this.radio_lift_col_less_than.AutoSize = true;
             this.radio_lift_col_less_than.Location = new System.Drawing.Point(6, 75);
             this.radio_lift_col_less_than.Name = "radio_lift_col_less_than";
-<<<<<<< HEAD
             this.radio_lift_col_less_than.Size = new System.Drawing.Size(59, 21);
-=======
-            this.radio_lift_col_less_than.Size = new System.Drawing.Size(48, 17);
->>>>>>> main
             this.radio_lift_col_less_than.TabIndex = 5;
             this.radio_lift_col_less_than.TabStop = true;
             this.radio_lift_col_less_than.Text = "col <";
@@ -4890,11 +4224,7 @@ namespace LORICA4
             this.radio_lift_row_more_than.AutoSize = true;
             this.radio_lift_row_more_than.Location = new System.Drawing.Point(6, 16);
             this.radio_lift_row_more_than.Name = "radio_lift_row_more_than";
-<<<<<<< HEAD
             this.radio_lift_row_more_than.Size = new System.Drawing.Size(63, 21);
-=======
-            this.radio_lift_row_more_than.Size = new System.Drawing.Size(51, 17);
->>>>>>> main
             this.radio_lift_row_more_than.TabIndex = 4;
             this.radio_lift_row_more_than.TabStop = true;
             this.radio_lift_row_more_than.Text = "row >";
@@ -4905,11 +4235,7 @@ namespace LORICA4
             this.radio_lift_col_more_than.AutoSize = true;
             this.radio_lift_col_more_than.Location = new System.Drawing.Point(6, 56);
             this.radio_lift_col_more_than.Name = "radio_lift_col_more_than";
-<<<<<<< HEAD
             this.radio_lift_col_more_than.Size = new System.Drawing.Size(59, 21);
-=======
-            this.radio_lift_col_more_than.Size = new System.Drawing.Size(48, 17);
->>>>>>> main
             this.radio_lift_col_more_than.TabIndex = 3;
             this.radio_lift_col_more_than.TabStop = true;
             this.radio_lift_col_more_than.Text = "col >";
@@ -4920,11 +4246,7 @@ namespace LORICA4
             this.radio_lift_row_less_than.AutoSize = true;
             this.radio_lift_row_less_than.Location = new System.Drawing.Point(6, 36);
             this.radio_lift_row_less_than.Name = "radio_lift_row_less_than";
-<<<<<<< HEAD
             this.radio_lift_row_less_than.Size = new System.Drawing.Size(63, 21);
-=======
-            this.radio_lift_row_less_than.Size = new System.Drawing.Size(51, 17);
->>>>>>> main
             this.radio_lift_row_less_than.TabIndex = 2;
             this.radio_lift_row_less_than.TabStop = true;
             this.radio_lift_row_less_than.Text = "row <";
@@ -4942,11 +4264,7 @@ namespace LORICA4
             this.uplift_active_checkbox.AutoSize = true;
             this.uplift_active_checkbox.Location = new System.Drawing.Point(13, 19);
             this.uplift_active_checkbox.Name = "uplift_active_checkbox";
-<<<<<<< HEAD
             this.uplift_active_checkbox.Size = new System.Drawing.Size(80, 21);
-=======
-            this.uplift_active_checkbox.Size = new System.Drawing.Size(65, 17);
->>>>>>> main
             this.uplift_active_checkbox.TabIndex = 1;
             this.uplift_active_checkbox.Text = "Activate";
             this.uplift_active_checkbox.UseVisualStyleBackColor = true;
@@ -5007,11 +4325,7 @@ namespace LORICA4
             this.radio_tilt_col_max.AutoSize = true;
             this.radio_tilt_col_max.Location = new System.Drawing.Point(6, 79);
             this.radio_tilt_col_max.Name = "radio_tilt_col_max";
-<<<<<<< HEAD
             this.radio_tilt_col_max.Size = new System.Drawing.Size(110, 21);
-=======
-            this.radio_tilt_col_max.Size = new System.Drawing.Size(87, 17);
->>>>>>> main
             this.radio_tilt_col_max.TabIndex = 5;
             this.radio_tilt_col_max.TabStop = true;
             this.radio_tilt_col_max.Text = "col = max col";
@@ -5022,11 +4336,7 @@ namespace LORICA4
             this.radio_tilt_row_zero.AutoSize = true;
             this.radio_tilt_row_zero.Location = new System.Drawing.Point(6, 16);
             this.radio_tilt_row_zero.Name = "radio_tilt_row_zero";
-<<<<<<< HEAD
             this.radio_tilt_row_zero.Size = new System.Drawing.Size(75, 21);
-=======
-            this.radio_tilt_row_zero.Size = new System.Drawing.Size(60, 17);
->>>>>>> main
             this.radio_tilt_row_zero.TabIndex = 4;
             this.radio_tilt_row_zero.TabStop = true;
             this.radio_tilt_row_zero.Text = "row = 0";
@@ -5037,11 +4347,7 @@ namespace LORICA4
             this.radio_tilt_col_zero.AutoSize = true;
             this.radio_tilt_col_zero.Location = new System.Drawing.Point(6, 56);
             this.radio_tilt_col_zero.Name = "radio_tilt_col_zero";
-<<<<<<< HEAD
             this.radio_tilt_col_zero.Size = new System.Drawing.Size(71, 21);
-=======
-            this.radio_tilt_col_zero.Size = new System.Drawing.Size(57, 17);
->>>>>>> main
             this.radio_tilt_col_zero.TabIndex = 3;
             this.radio_tilt_col_zero.TabStop = true;
             this.radio_tilt_col_zero.Text = "col = 0";
@@ -5052,11 +4358,7 @@ namespace LORICA4
             this.radio_tilt_row_max.AutoSize = true;
             this.radio_tilt_row_max.Location = new System.Drawing.Point(6, 36);
             this.radio_tilt_row_max.Name = "radio_tilt_row_max";
-<<<<<<< HEAD
             this.radio_tilt_row_max.Size = new System.Drawing.Size(118, 21);
-=======
-            this.radio_tilt_row_max.Size = new System.Drawing.Size(93, 17);
->>>>>>> main
             this.radio_tilt_row_max.TabIndex = 2;
             this.radio_tilt_row_max.TabStop = true;
             this.radio_tilt_row_max.Text = "row = max row";
@@ -5067,11 +4369,7 @@ namespace LORICA4
             this.tilting_active_checkbox.AutoSize = true;
             this.tilting_active_checkbox.Location = new System.Drawing.Point(6, 19);
             this.tilting_active_checkbox.Name = "tilting_active_checkbox";
-<<<<<<< HEAD
             this.tilting_active_checkbox.Size = new System.Drawing.Size(80, 21);
-=======
-            this.tilting_active_checkbox.Size = new System.Drawing.Size(65, 17);
->>>>>>> main
             this.tilting_active_checkbox.TabIndex = 0;
             this.tilting_active_checkbox.Text = "Activate";
             this.tilting_active_checkbox.UseVisualStyleBackColor = true;
@@ -5089,15 +4387,9 @@ namespace LORICA4
             this.treefall.Controls.Add(this.label107);
             this.treefall.Controls.Add(this.tf_W);
             this.treefall.Controls.Add(this.treefall_checkbox);
-<<<<<<< HEAD
             this.treefall.Location = new System.Drawing.Point(4, 25);
             this.treefall.Name = "treefall";
             this.treefall.Size = new System.Drawing.Size(732, 247);
-=======
-            this.treefall.Location = new System.Drawing.Point(4, 22);
-            this.treefall.Name = "treefall";
-            this.treefall.Size = new System.Drawing.Size(732, 250);
->>>>>>> main
             this.treefall.TabIndex = 8;
             this.treefall.Text = "Tree fall";
             this.treefall.UseVisualStyleBackColor = true;
@@ -5119,7 +4411,6 @@ namespace LORICA4
             this.label112.Size = new System.Drawing.Size(172, 17);
             this.label112.TabIndex = 29;
             this.label112.Text = "fall frequency [trees/m2/a]";
-            this.label112.Click += new System.EventHandler(this.label112_Click);
             // 
             // tf_age
             // 
@@ -5137,7 +4428,6 @@ namespace LORICA4
             this.label111.Size = new System.Drawing.Size(159, 17);
             this.label111.TabIndex = 27;
             this.label111.Text = "maximum age of tree [a]";
-            this.label111.Click += new System.EventHandler(this.label111_Click);
             // 
             // tf_growth
             // 
@@ -5172,7 +4462,6 @@ namespace LORICA4
             this.label95.Size = new System.Drawing.Size(195, 17);
             this.label95.TabIndex = 23;
             this.label95.Text = "maximum depth root mass [m]";
-            this.label95.Click += new System.EventHandler(this.label95_Click_1);
             // 
             // label107
             // 
@@ -5196,17 +4485,12 @@ namespace LORICA4
             this.treefall_checkbox.AutoSize = true;
             this.treefall_checkbox.Location = new System.Drawing.Point(25, 16);
             this.treefall_checkbox.Name = "treefall_checkbox";
-<<<<<<< HEAD
             this.treefall_checkbox.Size = new System.Drawing.Size(160, 21);
-=======
-            this.treefall_checkbox.Size = new System.Drawing.Size(124, 17);
->>>>>>> main
             this.treefall_checkbox.TabIndex = 0;
             this.treefall_checkbox.Text = "Activate this process";
             this.treefall_checkbox.UseVisualStyleBackColor = true;
             this.treefall_checkbox.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged_2);
             // 
-<<<<<<< HEAD
             // tabPage3
             // 
             this.tabPage3.Controls.Add(this.label122);
@@ -5336,8 +4620,6 @@ namespace LORICA4
             this.blocks_active_checkbox.Text = "Activate this process";
             this.blocks_active_checkbox.UseVisualStyleBackColor = true;
             // 
-=======
->>>>>>> main
             // Creep_Checkbox
             // 
             this.Creep_Checkbox.AutoSize = true;
@@ -5371,15 +4653,9 @@ namespace LORICA4
             // tabPage1
             // 
             this.tabPage1.Controls.Add(this.tabControl2);
-<<<<<<< HEAD
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Size = new System.Drawing.Size(803, 290);
-=======
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(803, 293);
->>>>>>> main
             this.tabPage1.TabIndex = 9;
             this.tabPage1.Text = "Soil forming processes";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -5418,17 +4694,10 @@ namespace LORICA4
             this.physical.Controls.Add(this.physical_weath_constant1);
             this.physical.Controls.Add(this.Physical_weath_C1_textbox);
             this.physical.Controls.Add(this.soil_phys_weath_checkbox);
-<<<<<<< HEAD
             this.physical.Location = new System.Drawing.Point(4, 25);
             this.physical.Name = "physical";
             this.physical.Padding = new System.Windows.Forms.Padding(3);
             this.physical.Size = new System.Drawing.Size(751, 232);
-=======
-            this.physical.Location = new System.Drawing.Point(4, 22);
-            this.physical.Name = "physical";
-            this.physical.Padding = new System.Windows.Forms.Padding(3);
-            this.physical.Size = new System.Drawing.Size(751, 235);
->>>>>>> main
             this.physical.TabIndex = 0;
             this.physical.Text = "Physical weathering";
             this.physical.UseVisualStyleBackColor = true;
@@ -5504,11 +4773,7 @@ namespace LORICA4
             this.soil_phys_weath_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.soil_phys_weath_checkbox.Location = new System.Drawing.Point(21, 6);
             this.soil_phys_weath_checkbox.Name = "soil_phys_weath_checkbox";
-<<<<<<< HEAD
             this.soil_phys_weath_checkbox.Size = new System.Drawing.Size(160, 21);
-=======
-            this.soil_phys_weath_checkbox.Size = new System.Drawing.Size(124, 17);
->>>>>>> main
             this.soil_phys_weath_checkbox.TabIndex = 1;
             this.soil_phys_weath_checkbox.Text = "Activate this process";
             this.soil_phys_weath_checkbox.UseVisualStyleBackColor = true;
@@ -5534,17 +4799,10 @@ namespace LORICA4
             this.chemical.Controls.Add(this.chem_weath_depth_constant_textbox);
             this.chemical.Controls.Add(this.chem_weath_rate_constant_textbox);
             this.chemical.Controls.Add(this.soil_chem_weath_checkbox);
-<<<<<<< HEAD
             this.chemical.Location = new System.Drawing.Point(4, 25);
             this.chemical.Name = "chemical";
             this.chemical.Padding = new System.Windows.Forms.Padding(3);
             this.chemical.Size = new System.Drawing.Size(751, 232);
-=======
-            this.chemical.Location = new System.Drawing.Point(4, 22);
-            this.chemical.Name = "chemical";
-            this.chemical.Padding = new System.Windows.Forms.Padding(3);
-            this.chemical.Size = new System.Drawing.Size(751, 235);
->>>>>>> main
             this.chemical.TabIndex = 1;
             this.chemical.Text = "Chemical weathering";
             this.chemical.UseVisualStyleBackColor = true;
@@ -5620,11 +4878,7 @@ namespace LORICA4
             this.soil_chem_weath_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.soil_chem_weath_checkbox.Location = new System.Drawing.Point(29, 6);
             this.soil_chem_weath_checkbox.Name = "soil_chem_weath_checkbox";
-<<<<<<< HEAD
             this.soil_chem_weath_checkbox.Size = new System.Drawing.Size(160, 21);
-=======
-            this.soil_chem_weath_checkbox.Size = new System.Drawing.Size(124, 17);
->>>>>>> main
             this.soil_chem_weath_checkbox.TabIndex = 1;
             this.soil_chem_weath_checkbox.Text = "Activate this process";
             this.soil_chem_weath_checkbox.UseVisualStyleBackColor = true;
@@ -5655,15 +4909,9 @@ namespace LORICA4
             this.clay.Controls.Add(this.clay_neoform_constant_textbox);
             this.clay.Controls.Add(label60);
             this.clay.Controls.Add(this.soil_clay_transloc_checkbox);
-<<<<<<< HEAD
             this.clay.Location = new System.Drawing.Point(4, 25);
             this.clay.Name = "clay";
             this.clay.Size = new System.Drawing.Size(751, 232);
-=======
-            this.clay.Location = new System.Drawing.Point(4, 22);
-            this.clay.Name = "clay";
-            this.clay.Size = new System.Drawing.Size(751, 235);
->>>>>>> main
             this.clay.TabIndex = 2;
             this.clay.Text = "Clay dynamics";
             this.clay.UseVisualStyleBackColor = true;
@@ -5673,11 +4921,7 @@ namespace LORICA4
             this.ct_Jagercikova.AutoSize = true;
             this.ct_Jagercikova.Location = new System.Drawing.Point(540, 52);
             this.ct_Jagercikova.Name = "ct_Jagercikova";
-<<<<<<< HEAD
             this.ct_Jagercikova.Size = new System.Drawing.Size(231, 21);
-=======
-            this.ct_Jagercikova.Size = new System.Drawing.Size(179, 17);
->>>>>>> main
             this.ct_Jagercikova.TabIndex = 62;
             this.ct_Jagercikova.Text = "Advection equation Jagercikova";
             this.ct_Jagercikova.UseVisualStyleBackColor = true;
@@ -5731,11 +4975,7 @@ namespace LORICA4
             this.CT_depth_decay_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.CT_depth_decay_checkbox.Location = new System.Drawing.Point(304, 146);
             this.CT_depth_decay_checkbox.Name = "CT_depth_decay_checkbox";
-<<<<<<< HEAD
             this.CT_depth_decay_checkbox.Size = new System.Drawing.Size(176, 21);
-=======
-            this.CT_depth_decay_checkbox.Size = new System.Drawing.Size(137, 17);
->>>>>>> main
             this.CT_depth_decay_checkbox.TabIndex = 54;
             this.CT_depth_decay_checkbox.Text = "Depth decay constant?";
             this.CT_depth_decay_checkbox.UseVisualStyleBackColor = true;
@@ -5787,11 +5027,7 @@ namespace LORICA4
             this.soil_clay_transloc_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.soil_clay_transloc_checkbox.Location = new System.Drawing.Point(26, 12);
             this.soil_clay_transloc_checkbox.Name = "soil_clay_transloc_checkbox";
-<<<<<<< HEAD
             this.soil_clay_transloc_checkbox.Size = new System.Drawing.Size(160, 21);
-=======
-            this.soil_clay_transloc_checkbox.Size = new System.Drawing.Size(124, 17);
->>>>>>> main
             this.soil_clay_transloc_checkbox.TabIndex = 1;
             this.soil_clay_transloc_checkbox.Text = "Activate this process";
             this.soil_clay_transloc_checkbox.UseVisualStyleBackColor = true;
@@ -5804,15 +5040,9 @@ namespace LORICA4
             this.bioturbation.Controls.Add(this.bioturbation_depth_decay_textbox);
             this.bioturbation.Controls.Add(this.potential_bioturbation_textbox);
             this.bioturbation.Controls.Add(this.soil_bioturb_checkbox);
-<<<<<<< HEAD
             this.bioturbation.Location = new System.Drawing.Point(4, 25);
             this.bioturbation.Name = "bioturbation";
             this.bioturbation.Size = new System.Drawing.Size(751, 232);
-=======
-            this.bioturbation.Location = new System.Drawing.Point(4, 22);
-            this.bioturbation.Name = "bioturbation";
-            this.bioturbation.Size = new System.Drawing.Size(751, 235);
->>>>>>> main
             this.bioturbation.TabIndex = 3;
             this.bioturbation.Text = "Bioturbation";
             this.bioturbation.UseVisualStyleBackColor = true;
@@ -5831,7 +5061,7 @@ namespace LORICA4
             this.potential_bioturbation_textbox.Name = "potential_bioturbation_textbox";
             this.potential_bioturbation_textbox.Size = new System.Drawing.Size(100, 22);
             this.potential_bioturbation_textbox.TabIndex = 55;
-            this.potential_bioturbation_textbox.Text = "4.3";
+            this.potential_bioturbation_textbox.Text = "6";
             // 
             // soil_bioturb_checkbox
             // 
@@ -5840,11 +5070,7 @@ namespace LORICA4
             this.soil_bioturb_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.soil_bioturb_checkbox.Location = new System.Drawing.Point(26, 12);
             this.soil_bioturb_checkbox.Name = "soil_bioturb_checkbox";
-<<<<<<< HEAD
             this.soil_bioturb_checkbox.Size = new System.Drawing.Size(160, 21);
-=======
-            this.soil_bioturb_checkbox.Size = new System.Drawing.Size(124, 17);
->>>>>>> main
             this.soil_bioturb_checkbox.TabIndex = 1;
             this.soil_bioturb_checkbox.Text = "Activate this process";
             this.soil_bioturb_checkbox.UseVisualStyleBackColor = true;
@@ -5872,15 +5098,9 @@ namespace LORICA4
             this.carbon.Controls.Add(this.carbon_depth_decay_textbox);
             this.carbon.Controls.Add(this.carbon_input_textbox);
             this.carbon.Controls.Add(this.soil_carbon_cycle_checkbox);
-<<<<<<< HEAD
             this.carbon.Location = new System.Drawing.Point(4, 25);
             this.carbon.Name = "carbon";
             this.carbon.Size = new System.Drawing.Size(751, 232);
-=======
-            this.carbon.Location = new System.Drawing.Point(4, 22);
-            this.carbon.Name = "carbon";
-            this.carbon.Size = new System.Drawing.Size(751, 235);
->>>>>>> main
             this.carbon.TabIndex = 4;
             this.carbon.Text = "Carbon Cycle";
             this.carbon.UseVisualStyleBackColor = true;
@@ -5964,11 +5184,7 @@ namespace LORICA4
             this.soil_carbon_cycle_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.soil_carbon_cycle_checkbox.Location = new System.Drawing.Point(25, 14);
             this.soil_carbon_cycle_checkbox.Name = "soil_carbon_cycle_checkbox";
-<<<<<<< HEAD
             this.soil_carbon_cycle_checkbox.Size = new System.Drawing.Size(160, 21);
-=======
-            this.soil_carbon_cycle_checkbox.Size = new System.Drawing.Size(124, 17);
->>>>>>> main
             this.soil_carbon_cycle_checkbox.TabIndex = 2;
             this.soil_carbon_cycle_checkbox.Text = "Activate this process";
             this.soil_carbon_cycle_checkbox.UseVisualStyleBackColor = true;
@@ -5978,15 +5194,9 @@ namespace LORICA4
             this.decalcification.Controls.Add(this.label94);
             this.decalcification.Controls.Add(this.ini_CaCO3_content);
             this.decalcification.Controls.Add(this.decalcification_checkbox);
-<<<<<<< HEAD
             this.decalcification.Location = new System.Drawing.Point(4, 25);
             this.decalcification.Name = "decalcification";
             this.decalcification.Size = new System.Drawing.Size(751, 232);
-=======
-            this.decalcification.Location = new System.Drawing.Point(4, 22);
-            this.decalcification.Name = "decalcification";
-            this.decalcification.Size = new System.Drawing.Size(751, 235);
->>>>>>> main
             this.decalcification.TabIndex = 5;
             this.decalcification.Text = "Decalcification";
             this.decalcification.UseVisualStyleBackColor = true;
@@ -6013,11 +5223,7 @@ namespace LORICA4
             this.decalcification_checkbox.AutoSize = true;
             this.decalcification_checkbox.Location = new System.Drawing.Point(32, 15);
             this.decalcification_checkbox.Name = "decalcification_checkbox";
-<<<<<<< HEAD
             this.decalcification_checkbox.Size = new System.Drawing.Size(160, 21);
-=======
-            this.decalcification_checkbox.Size = new System.Drawing.Size(124, 17);
->>>>>>> main
             this.decalcification_checkbox.TabIndex = 0;
             this.decalcification_checkbox.Text = "Activate this process";
             this.decalcification_checkbox.UseVisualStyleBackColor = true;
@@ -6049,15 +5255,9 @@ namespace LORICA4
             this.tabPage2.Controls.Add(this.dailyET0);
             this.tabPage2.Controls.Add(this.dailyD);
             this.tabPage2.Controls.Add(this.dailyP);
-<<<<<<< HEAD
             this.tabPage2.Location = new System.Drawing.Point(4, 25);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Size = new System.Drawing.Size(803, 290);
-=======
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(803, 293);
->>>>>>> main
             this.tabPage2.TabIndex = 10;
             this.tabPage2.Text = "Hydrological parameters";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -6067,11 +5267,7 @@ namespace LORICA4
             this.check_scaling_daily_weather.AutoSize = true;
             this.check_scaling_daily_weather.Location = new System.Drawing.Point(125, 227);
             this.check_scaling_daily_weather.Name = "check_scaling_daily_weather";
-<<<<<<< HEAD
             this.check_scaling_daily_weather.Size = new System.Drawing.Size(303, 21);
-=======
-            this.check_scaling_daily_weather.Size = new System.Drawing.Size(230, 17);
->>>>>>> main
             this.check_scaling_daily_weather.TabIndex = 71;
             this.check_scaling_daily_weather.Text = "Scale daily weather with annual timeseries?";
             this.check_scaling_daily_weather.UseVisualStyleBackColor = true;
@@ -6297,7 +5493,6 @@ namespace LORICA4
             this.dailyP.Text = "D:\\PhD\\projects\\1g_basic LORICA development\\daily water\\Grunow\\Pday_grunow.csv";
             this.dailyP.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
-<<<<<<< HEAD
             // uxNumberThreadsUpdown
             // 
             this.uxNumberThreadsUpdown.Location = new System.Drawing.Point(238, 113);
@@ -6346,34 +5541,13 @@ namespace LORICA4
             this.uxThreadLabel.Size = new System.Drawing.Size(76, 21);
             this.uxThreadLabel.TabIndex = 11;
             this.uxThreadLabel.Text = "Threads";
-=======
-            // view_maps_checkbox
-            // 
-            this.view_maps_checkbox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.view_maps_checkbox.AutoSize = true;
-            this.view_maps_checkbox.Checked = true;
-            this.view_maps_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.view_maps_checkbox.Location = new System.Drawing.Point(354, 398);
-            this.view_maps_checkbox.Name = "view_maps_checkbox";
-            this.view_maps_checkbox.Size = new System.Drawing.Size(86, 17);
-            this.view_maps_checkbox.TabIndex = 155;
-            this.view_maps_checkbox.Text = "make maps?";
-            this.view_maps_checkbox.UseVisualStyleBackColor = true;
->>>>>>> main
             // 
             // Mother_form
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.AutoScroll = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-<<<<<<< HEAD
             this.ClientSize = new System.Drawing.Size(1175, 497);
-=======
-            this.ClientSize = new System.Drawing.Size(1184, 497);
-            this.Controls.Add(this.view_maps_checkbox);
-            this.Controls.Add(this.map_controls);
-            this.Controls.Add(this.View_tabs_checkbox);
->>>>>>> main
             this.Controls.Add(this.End_button);
             this.Controls.Add(this.start_button);
             this.Controls.Add(this.tabControl1);
@@ -6399,10 +5573,6 @@ namespace LORICA4
             this.groupBox3.ResumeLayout(false);
             this.groupBox9.ResumeLayout(false);
             this.groupBox9.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
-            this.map_controls.ResumeLayout(false);
-            this.map_controls.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar2)).EndInit();
             this.Output.ResumeLayout(false);
             this.groupBox6.ResumeLayout(false);
             this.groupBox12.ResumeLayout(false);
@@ -6454,6 +5624,8 @@ namespace LORICA4
             this.groupBox15.PerformLayout();
             this.treefall.ResumeLayout(false);
             this.treefall.PerformLayout();
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabControl2.ResumeLayout(false);
@@ -6473,7 +5645,6 @@ namespace LORICA4
             this.tabPage2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.uxNumberThreadsUpdown)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
         #endregion
@@ -6495,151 +5666,6 @@ namespace LORICA4
 
 
         #region memory, reading and writing utilities
-
-        private void Google_Earth_Output()
-        {
-            updateClick = 1;
-            this.Refresh();
-            draw_map(mygraphics);
-
-            if (coordinateDone == 0)
-            {
-                //transfrom coordinates
-                point testPoint = new point(xcoord, ycoord);
-                if (UTMgridcheckbox.Checked)
-                {
-                    testPoint.UTMzone = System.Convert.ToInt32(UTMzonebox.Text);
-                    testPoint.south = System.Convert.ToBoolean(UTMsouthcheck.Checked);
-                    testPoint.transformUTMPoint();
-                }
-                else
-                {
-                    testPoint.transformPoint();
-                }
-                yurcorner = ycoord + (System.Convert.ToDouble(nr) * System.Convert.ToDouble(dx)); //ART possibly incorrect nr = nc
-                xurcorner = xcoord + (System.Convert.ToDouble(nc) * System.Convert.ToDouble(dx));
-                point testPoint2 = new point(xurcorner, yurcorner);
-                if (UTMgridcheckbox.Checked)
-                {
-                    testPoint2.UTMzone = System.Convert.ToInt32(UTMzonebox.Text);
-                    testPoint2.south = System.Convert.ToBoolean(UTMsouthcheck.Checked);
-                    testPoint2.transformUTMPoint();
-                }
-                else
-                {
-                    testPoint2.transformPoint();
-                }
-                urfinalLati = testPoint2.ycoord;
-                urfinalLongi = testPoint2.xcoord;
-                llfinalLati = testPoint.ycoord;
-                llfinalLongi = testPoint.xcoord;
-                coordinateDone = 1;
-            }
-
-            //Save image
-            m_objDrawingSurface.MakeTransparent();
-            m_objDrawingSurface.Save(workdir + "\\animation\\mysavedimage" + imageCount2 + ".png", System.Drawing.Imaging.ImageFormat.Png);
-            //update time
-            googleTime = googleTime.AddYears(save_interval2);
-            kmlTime = googleTime.ToString();
-            DateArray = kmlTime.Split(new char[] { ' ' });
-            DateArray2 = DateArray[0].Split(new char[] { '-' });
-            kmlTime = DateArray2[2] + "-" + DateArray2[1] + "-" + DateArray2[0] + "T" + DateArray[1] + "Z";
-
-            //create kml file for image
-            StreamWriter kmlsr = File.AppendText(KML_FILE_NAME);
-            if (imageCount2 == 1)
-            {
-                kml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
-                         <kml xmlns=""http://earth.google.com/kml/2.1"">";
-                kml = kml + "\n<Folder>"
-                    + "\n<name>Animation</name>";
-                kmlsr.WriteLine(kml);
-                kml = "";
-            }
-            kml = kml + "\n<GroundOverlay>"
-                + "\n<name>Untitled Image Overlay</name>";
-            kml = kml + "\n<TimeSpan>"
-                   + "\n<begin>" + kmlTime + "</begin>"
-                   + "\n<end>" + kmlTime + "</end>"
-                   + "\n</TimeSpan>"
-                   + "\n<Icon>"
-                   + "\n<href>mySavedImage" + imageCount2 + ".png</href>"
-                   + "\n</Icon>"
-                   + "\n<LatLonBox>";
-            kml = kml + "\n<north>" + urfinalLati + "</north>"
-                  + "\n<south>" + llfinalLati + "</south>"
-                  + "\n<east>" + urfinalLongi + "</east>"
-                  + "\n<west>" + llfinalLongi + "</west>\n";
-            kml = kml + @"</LatLonBox>
-                           </GroundOverlay>";
-            kmlsr.WriteLine(kml);
-            kml = "";
-            kmlsr.Close();
-            imageCount2 = imageCount2 + 1;
-
-        }
-
-        private void AVI_Output()
-        {
-            this.Refresh(); // tjc to enable graphics to be drawn before sending to AVI
-            draw_map(mygraphics); // tjc
-            Graphics gbmp = Graphics.FromImage(bmp);
-
-            if (gbmp != null)
-            {
-
-                IntPtr dc1 = mygraphics.GetHdc();
-                IntPtr dc2 = gbmp.GetHdc();
-
-                //BitBlt(dc2, 0, 0, this.ClientRectangle.Width, this.ClientRectangle.Height,
-                //dc1, 0, 0, 13369376);
-                // this makes sure the entire LORICA window gets video-ed.
-
-                BitBlt(dc2, this.Mapwindow.Location.X, this.Mapwindow.Location.Y,
-                    this.Mapwindow.Size.Width + this.Mapwindow.Location.X,
-                    this.Mapwindow.Size.Height + this.Mapwindow.Location.Y,
-                    dc1, 0, 0, 13369376);
-                // this makes sure the video only gets made for the mapped area
-
-
-                mygraphics.ReleaseHdc(dc1);
-                gbmp.ReleaseHdc(dc2);
-
-
-                // need to flip image to get it the correct way up in the avi - not sure why.
-                bmp.RotateFlip(System.Drawing.RotateFlipType.RotateNoneFlipY);
-
-
-                try
-                {
-                    aw.AddFrame();
-                }
-                catch (AviWriter.AviException ex)  // <JMW 20041018>
-                {
-                    aw.Close();
-                    Debug.WriteLine("AVI Exception in: " + ex.ToString());
-                }
-                try
-                {
-                    aw.AddFrame();
-                }
-                catch (AviWriter.AviException ex)  // <JMW 20041018>
-                {
-                    aw.Close();
-                    Debug.WriteLine("AVI Exception in: " + ex.ToString());
-                }
-                try
-                {
-                    aw.AddFrame();
-                }
-                catch (AviWriter.AviException ex)  // <JMW 20041018>
-                {
-                    aw.Close();
-                    Debug.WriteLine("AVI Exception in: " + ex.ToString());
-                }
-            }
-        }
 
         private void timeseries_output()
         {
@@ -6865,18 +5891,22 @@ namespace LORICA4
         {
             // Debug.WriteLine("assigning memory");
             // status grids
-            if (this.Spitsbergen_case_study.Checked == true) { original_dtm = new double[nr, nc]; }
+            if (this.Ik_ben_Marijn.Checked == true) { original_dtm = new double[nr, nc]; }
             dtm = new double[nr, nc];
-            soildepth_m = new double[nr, nc];
-            dtmchange = new double[nr, nc];
-            dz_soil = new double[nr, nc];
-            // climate grids
-            if (check_space_evap.Checked == true) { evapotranspiration = new double[nr, nc]; }
-            if (check_space_infil.Checked == true) { infil = new double[nr, nc]; }
-            if (check_space_rain.Checked == true) { rain = new double[nr, nc]; }
-            veg = new double[nr, nc];
-            // categorical grids
-            if (check_space_landuse.Checked == true) { landuse = new int[nr, nc]; }
+            if (merely_calculating_derivatives == false)
+            {
+                OSL_age = new int[nr * nc * max_soil_layers * ngrains, 5];
+                soildepth_m = new double[nr, nc];
+                dtmchange = new double[nr, nc];
+                dz_soil = new double[nr, nc];
+                // climate grids
+                if (check_space_evap.Checked == true) { evapotranspiration = new double[nr, nc]; }
+                if (check_space_infil.Checked == true) { infil = new double[nr, nc]; }
+                if (check_space_rain.Checked == true) { rain = new double[nr, nc]; }
+                veg = new double[nr, nc];
+                // categorical grids
+                if (check_space_landuse.Checked == true) { landuse = new int[nr, nc]; }
+            }
             status_map = new int[nr, nc];
             //sorting arrays
             index = new double[nr * nc];
@@ -6886,140 +5916,119 @@ namespace LORICA4
             //others
             depression = new int[nr, nc];
             dtmfill_A = new double[nr, nc];
-
-            if (1 == 1)
+            if (merely_calculating_derivatives == false)
             {
-                texture_kg = new double[nr, nc, max_soil_layers, n_texture_classes];    //: mass in kg (per voxel = layer * thickness)
-                layerthickness_m = new double[nr, nc, max_soil_layers];        // : thickness in m 
-                young_SOM_kg = new double[nr, nc, max_soil_layers];         // : OM mass in kg (per voxel = layer * thickness)
-                old_SOM_kg = new double[nr, nc, max_soil_layers];
-                bulkdensity = new double[nr, nc, max_soil_layers];            // : bulkdensity in kg/m3 (over the voxel = layer * thickness)
-            }
-
-            if (OSL_checkbox.Checked)
-            {
-                int ngrains = 50;
-                int start_age = 1000000;
-                OSL_age = new int[nr * nc * max_soil_layers * ngrains, 5];
-                int count = 0;
-                for (int row = 0; row < nr; row++)
+                if (1 == 1)
                 {
-                    for (int col = 0; col < nc; col++)
+                    texture_kg = new double[nr, nc, max_soil_layers, n_texture_classes];    //: mass in kg (per voxel = layer * thickness)
+                    layerthickness_m = new double[nr, nc, max_soil_layers];        // : thickness in m 
+                    young_SOM_kg = new double[nr, nc, max_soil_layers];         // : OM mass in kg (per voxel = layer * thickness)
+                    old_SOM_kg = new double[nr, nc, max_soil_layers];
+                    bulkdensity = new double[nr, nc, max_soil_layers];            // : bulkdensity in kg/m3 (over the voxel = layer * thickness)
+                }
+
+                if (Water_ero_checkbox.Checked)
+                {
+                    //doubles
+                    waterflow_m3 = new double[nr, nc];
+                    if (only_waterflow_checkbox.Checked == false)
                     {
-                        for (int lay = 0; lay < max_soil_layers; lay++)
-                        {
-                            for (int gr = 0; gr < ngrains; gr++)
-                            {
-                                OSL_age[count, 0] = row;
-                                OSL_age[count, 1] = col;
-                                OSL_age[count, 2] = lay;
-                                OSL_age[count, 3] = start_age;
-                                OSL_age[count, 4] = start_age;
-                                count += 1;
-                                if (count > (nr * nc * max_soil_layers * ngrains)) { Debugger.Break(); }
-                            }
-                        }
+                        K_fac = new double[nr, nc];
+                        P_fac = new double[nr, nc];
+                        sediment_in_transport_kg = new double[nr, nc, n_texture_classes];
+                        young_SOM_in_transport_kg = new double[nr, nc];
+                        old_SOM_in_transport_kg = new double[nr, nc];
+                        sum_water_erosion = new double[nr, nc];
+                        dz_ero_m = new double[nr, nc];
+                        dz_sed_m = new double[nr, nc];
+                        lake_sed_m = new double[nr, nc];
+                        depressionsum_texture_kg = new double[n_texture_classes];
+
                     }
-                }
-                // OSL_pdfs = new double[nr,nc,max_soil_layers,timesteps + 1];
-            }
 
-            if (Water_ero_checkbox.Checked)
-            {
-                //doubles
-                waterflow_m3 = new double[nr, nc];
-                if (only_waterflow_checkbox.Checked == false)
+                }
+                if (Tillage_checkbox.Checked)
                 {
-                    K_fac = new double[nr, nc];
-                    P_fac = new double[nr, nc];
-                    sediment_in_transport_kg = new double[nr, nc, n_texture_classes];
-                    young_SOM_in_transport_kg = new double[nr, nc];
-                    old_SOM_in_transport_kg = new double[nr, nc];
-                    sum_water_erosion = new double[nr, nc];
-                    dz_ero_m = new double[nr, nc];
-                    dz_sed_m = new double[nr, nc];
-                    lake_sed_m = new double[nr, nc];
-                    depressionsum_texture_kg = new double[n_texture_classes];
-
+                    till_result = new double[nr, nc];
+                    sum_tillage = new double[nr, nc];
+                    tillfields = new int[nr, nc];
+                    dz_till_bd = new double[nr, nc];
                 }
 
-            }
-            if (Tillage_checkbox.Checked)
-            {
-                till_result = new double[nr, nc];
-                sum_tillage = new double[nr, nc];
-                tillfields = new int[nr, nc];
-                dz_till_bd = new double[nr, nc];
-            }
+                if (treefall_checkbox.Checked)
+                {
+                    treefall_count = new int[nr, nc];
+                    dz_treefall = new double[nr, nc];
+                }
 
-            if (treefall_checkbox.Checked)
-            {
-                treefall_count = new int[nr, nc];
-                dz_treefall = new double[nr, nc];
-            }
+                if (version_lux_checkbox.Checked)
+                {
+                    tpi = new double[nr, nc];
+                    hornbeam_cover_fraction = new double[nr, nc];
+                    litter_kg = new double[nr, nc, 2];
+                }
 
-            if (version_lux_checkbox.Checked)
-            {
-                tpi = new double[nr, nc];
-                hornbeam_cover_fraction = new double[nr, nc];
-                litter_kg = new double[nr, nc, 2];
-            }
+                if (Solifluction_checkbox.Checked)
+                {
+                    solif = new double[nr, nc];
+                    sum_solifluction = new double[nr, nc];
+                }
+                if (creep_active_checkbox.Checked)
+                {
+                    creep = new double[nr, nc];
+                    sum_creep_grid = new double[nr, nc];
+                }
+                if (Landslide_checkbox.Checked)
+                {
+                    //doubles
+                    stslope = new double[nr, nc];
+                    crrain = new double[nr, nc];
+                    camf = new double[nr, nc];
+                    T_fac = new double[nr, nc];
+                    C_fac = new double[nr, nc];
+                    Cs_fac = new double[nr, nc];
+                    bulkd = new double[nr, nc];
+                    intfr = new double[nr, nc];
+                    reserv = new double[nr, nc];
+                    ero_slid = new double[nr, nc];
+                    cel_dist = new double[nr, nc];
+                    sed_slid = new double[nr, nc];
+                    sed_bud = new double[nr, nc];
+                    dh_slid = new double[nr, nc];
+                    sum_landsliding = new double[nr, nc];
+                    //integers
+                    slidemap = new int[nr, nc];
+                    watsh = new int[nr, nc];
+                }
+                if (Biological_weathering_checkbox.Checked)
+                {
+                    bedrock_weathering_m = new double[nr, nc];
+                    sum_biological_weathering = new double[nr, nc];
+                }
+                if (Frost_weathering_checkbox.Checked)
+                {
+                    frost_weathering = new double[nr, nc];
+                    sum_frost_weathering = new double[nr, nc];
+                }
+                if (tilting_active_checkbox.Checked)
+                {
+                    sum_tilting = new double[nr, nc];
+                }
+                if (uplift_active_checkbox.Checked)
+                {
+                    sum_uplift = new double[nr, nc];
+                }
+                if (decalcification_checkbox.Checked)
+                {
+                    CO3_kg = new double[nr, nc, max_soil_layers];
+                }
+                if (blocks_active == 1)
+                {
+                    hardlayeropenness_fraction = new float[nr, nc];
+                }
 
-            if (Solifluction_checkbox.Checked)
-            {
-                solif = new double[nr, nc];
-                sum_solifluction = new double[nr, nc];
-            }
-            if (creep_active_checkbox.Checked)
-            {
-                creep = new double[nr, nc];
-                sum_creep_grid = new double[nr, nc];
-            }
-            if (Landslide_checkbox.Checked)
-            {
-                //doubles
-                stslope = new double[nr, nc];
-                crrain = new double[nr, nc];
-                camf = new double[nr, nc];
-                T_fac = new double[nr, nc];
-                C_fac = new double[nr, nc];
-                Cs_fac = new double[nr, nc];
-                bulkd = new double[nr, nc];
-                intfr = new double[nr, nc];
-                reserv = new double[nr, nc];
-                ero_slid = new double[nr, nc];
-                cel_dist = new double[nr, nc];
-                sed_slid = new double[nr, nc];
-                sed_bud = new double[nr, nc];
-                dh_slid = new double[nr, nc];
-                sum_landsliding = new double[nr, nc];
-                //integers
-                slidemap = new int[nr, nc];
-                watsh = new int[nr, nc];
-            }
-            if (Biological_weathering_checkbox.Checked)
-            {
-                bedrock_weathering_m = new double[nr, nc];
-                sum_biological_weathering = new double[nr, nc];
-            }
-            if (Frost_weathering_checkbox.Checked)
-            {
-                frost_weathering = new double[nr, nc];
-                sum_frost_weathering = new double[nr, nc];
-            }
-            if (tilting_active_checkbox.Checked)
-            {
-                sum_tilting = new double[nr, nc];
-            }
-            if (uplift_active_checkbox.Checked)
-            {
-                sum_uplift = new double[nr, nc];
-            }
-            if (decalcification_checkbox.Checked)
-            {
-                CO3_kg = new double[nr, nc, max_soil_layers];
-            }
 
+            }
             aspect = new double[nr, nc];
             slopeAnalysis = new double[nr, nc];
             hillshade = new double[nr, nc];
@@ -7233,7 +6242,7 @@ namespace LORICA4
             int z, dem_integer_error = 1;
             string[] lineArray2;
             int sp;
-            //MessageBox.Show("Opening DEM" + FILE_NAME);
+            Debug.WriteLine("Opening DEM" + FILE_NAME);
             //MessageBox.Show("Directory " + Directory.GetCurrentDirectory() );
 
             if (!File.Exists(FILE_NAME))
@@ -7251,7 +6260,7 @@ namespace LORICA4
                 for (z = 1; z <= 6; z++)
                 {
                     inputheader[z - 1] = sr.ReadLine();
-                    //MessageBox.Show(inputheader[z - 1]);
+                    Debug.WriteLine(inputheader[z - 1]);
                 }
                 sr.Close();
 
@@ -7286,7 +6295,7 @@ namespace LORICA4
             }
             catch (Exception ex)
             {
-                MessageBox.Show("There is a problem with the header of the DEM file");
+                Debug.WriteLine("There is a problem with the header of the DEM file");
                 input_data_error = true;
                 return;
 
@@ -7306,11 +6315,11 @@ namespace LORICA4
                 String input;
                 double tttt = 0.00;
 
-                // load dem
+                // load dem again
 
                 if (!File.Exists(FILE_NAME))
                 {
-                    MessageBox.Show("No such DEM data file..");
+                    Debug.WriteLine("No such DEM data file..");
                     input_data_error = true;
                     return;
                 }
@@ -7325,16 +6334,18 @@ namespace LORICA4
                 row = 0;
                 while ((input = sr.ReadLine()) != null)  // so not until nr is reached, but until the file is empty
                 {
+                    //Debug.WriteLine("Line " + row);
                     string[] lineArray;
                     lineArray = input.Split(new char[] { ' ' });   // so we split the string that we read (readline) from file into an array of strings that each contain a number
                     col = 0;
                     for (colcounter = 0; colcounter <= (lineArray.Length - 1); colcounter++)  // the length of LineArray should equal nc, and therefore run from 0 to nc-1
                     {
 
+                        //Debug.WriteLine("Col " + col);
                         if (lineArray[colcounter] != "" && col < nc) // but just to make sure, col counts only the non-empty strings in LineArrary (handy for instance when files are double-spaced)
                         {
                             tttt = double.Parse(lineArray[colcounter]);
-                            if (Spitsbergen_case_study.Checked == true) { original_dtm[row, col] = tttt; dtm[row, col] = -9999; }
+                            if (Ik_ben_Marijn.Checked == true) { original_dtm[row, col] = tttt; dtm[row, col] = -9999; }
                             else { dtm[row, col] = tttt; }
                             col++;
                             if (double.Parse(lineArray[colcounter]) - Math.Round(double.Parse(lineArray[colcounter])) != 0)
@@ -7562,11 +6573,58 @@ namespace LORICA4
                 sw.Close();
             }
 
+        } 
+
+        void out_float(string name4, float[,] output)
+        {
+            int nn, row, col;
+            string FILENAME = name4;
+            using (StreamWriter sw = new StreamWriter(FILENAME))
+            {
+                sw.Write("ncols         " + nc);
+                sw.Write("\r\n");
+                sw.Write("nrows         " + nr);
+                sw.Write("\r\n");
+                for (nn = 2; nn <= 5; nn++)
+                {
+                    sw.Write(inputheader[nn]); sw.Write("\r\n");
+                    //MessageBox.Show(inputheader[nn]);
+                }
+                for (row = 0; row < nr; row++)
+                {
+                    for (col = 0; col < nc; col++)
+                    {
+                        sw.Write("{0:F6}", output[row, col]);
+                        sw.Write(" ");
+
+                    }
+                    sw.Write("\r\n");
+                }
+                sw.Close();
+            }
+
+        } 
+
+        void out_blocks(string name4)
+        {
+            string FILENAME = name4;
+            using (StreamWriter sw = new StreamWriter(FILENAME))
+            {
+                int blocknr = 0;
+                sw.WriteLine("blocknr x y size row col");
+                foreach(var Block in Blocklist)
+                {
+                    sw.WriteLine(blocknr + " " + (Block.X_col * dx + xcoord) + " " + (Block.Y_row * dx + ycoord) + " " + Block.Size_m + " " + Math.Floor(Block.Y_row) + " " + Math.Floor(Block.X_col));
+                    blocknr++;
+                }
+                sw.Close();
+            }
+            Debug.WriteLine(" wrote block locations and sizes to file " + name4);
         } //end out_double
 
         void out_mf(string name4, double[,,] output)
         {
-            int nn, row, col;
+            int row, col;
             string FILENAME = name4;
             using (StreamWriter sw = new StreamWriter(FILENAME))
             {
@@ -7634,10 +6692,8 @@ namespace LORICA4
                         {
                             for (col = 0; col < nc; col++)// WVG the number of columns is equal to nc
                             {
-                                sw.Write(output[row_or_col, col]);
-                                sw.Write(" ");
+                                sw.WriteLine(output[row_or_col, col]);
                             }
-                            sw.Write("\n");
                         }
                         catch { Debug.WriteLine("out_profile: error "); }
                     }
@@ -7647,10 +6703,8 @@ namespace LORICA4
                         {
                             for (row = 0; row < nr; row++)// WVG the number of columns is equal to nc
                             {
-                                sw.Write(output[row, row_or_col]);
-                                sw.Write(" ");
+                                sw.WriteLine(output[row, row_or_col]);
                             }
-                            sw.Write("\n");
                         }
                         catch { Debug.WriteLine("out_profile: error "); }
                     }
@@ -7689,25 +6743,6 @@ namespace LORICA4
             }
         }// end writesoil
 
-        void writeOSLages()
-        {
-            int layer;
-            string FILENAME = string.Format("{0}\\t{1}_out_OSL_ages.csv", workdir, t + 1);
-            using (StreamWriter sw = new StreamWriter(FILENAME))
-            {
-                sw.Write("row, col, layer, stabilization_age, deposition_age, layerthickness_m, layermass_kg, z_surface_m");
-                sw.Write("\r\n");
-                int t_out = t + 1;
-                for (int osl_i = 0; osl_i < OSL_age.GetLength(0); osl_i++)
-                {
-                    double laythick = layerthickness_m[OSL_age[osl_i, 0], OSL_age[osl_i, 1], OSL_age[osl_i, 2]];
-                    double laymass = total_layer_mass(OSL_age[osl_i, 0], OSL_age[osl_i, 1], OSL_age[osl_i, 2]);
-                    sw.Write(OSL_age[osl_i, 0] + "," + OSL_age[osl_i, 1] + "," + OSL_age[osl_i, 2] + "," + OSL_age[osl_i, 3] + "," + OSL_age[osl_i, 4] + "," + laythick + "," + laymass + "," + dtm[OSL_age[osl_i, 0], OSL_age[osl_i, 1]]);
-                    sw.Write("\r\n");
-                }
-                sw.Close();
-            }
-        }
         void writeallsoils()
         {
             int layer;
@@ -7715,7 +6750,7 @@ namespace LORICA4
             string FILENAME = string.Format("{0}\\t{1}_out_allsoils.csv", workdir, t + 1);
             using (StreamWriter sw = new StreamWriter(FILENAME))
             {
-                sw.Write("row,col,t,nlayer,cumth_m,thick_m,midthick_m,z,coarse_kg,sand_kg,silt_kg,clay_kg,fine_kg,YOM_kg,OOM_kg,YOM/OOM,f_coarse,f_sand,f_silt,f_clay,f_fineclay,ftotal_clay,f_OM,BD");
+                sw.Write("row, col, t, nlayer, cumth_m, thick_m, midthick_m, z, coarse_kg, sand_kg, silt_kg, clay_kg, fine_kg, YOM_kg, OOM_kg, YOM/OOM, f_coarse, f_sand, f_silt, f_clay, f_fineclay, ftotal_clay, f_OM, BD");
                 sw.Write("\r\n");
                 int t_out = t + 1;
                 for (int row = 0; row < nr; row++)
@@ -8198,22 +7233,24 @@ namespace LORICA4
                     catch { read_error = 1; }
 
                     try { xreader.ReadEndElement(); }
-                    catch { read_error = 1; }
+                    catch { read_error = 1; Debug.WriteLine("xm20"); }
 
                     try { xreader.ReadStartElement("Run"); }
-                    catch { read_error = 1; }
+                    catch { read_error = 1; Debug.WriteLine("xm21"); }
                     try { runs_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("runs_radiobutton")); }
-                    catch { read_error = 1; }
+                    catch { read_error = 1; Debug.WriteLine("xm22"); }
                     try { Number_runs_textbox.Text = xreader.ReadElementString("number_runs"); }
-                    catch { read_error = 1; }
-					try { xreader.ReadStartElement("Specialsettings"); }
+                    catch { read_error = 1; Debug.WriteLine("xm23"); }
+
+
+                    try { xreader.ReadStartElement("Specialsettings"); }
                     catch { read_error = 1; Debug.WriteLine("xm24"); }
-                    try { Spitsbergen_case_study.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("Spitsbergen")); }
+                    try { Ik_ben_Marijn.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("Spitsbergen")); }
                     catch { read_error = 1; Debug.WriteLine("xm25"); }
                     try { version_lux_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("Luxembourg")); }
                     catch { read_error = 1; Debug.WriteLine("xm26"); }
                     try { xreader.ReadEndElement(); }
-                    catch { read_error = 1; Debug.WriteLine("xm27"); }											  
+                    catch { read_error = 1; Debug.WriteLine("xm27"); }
 
                     try { xreader.ReadStartElement("CalibrationSensitivity"); }
                     catch { read_error = 2; }
@@ -8225,7 +7262,7 @@ namespace LORICA4
                         calibration_ratio_reduction_parameter_textbox.Text = xreader.ReadElementString("calibration_ratio_reduction_per_level");
                         xreader.ReadEndElement();
                     }
-                    catch { read_error = 2; }
+                    catch { read_error = 2; Debug.WriteLine("xm28"); }
 
                     try { xreader.ReadEndElement(); }
                     catch { read_error = 1; }
@@ -8422,14 +7459,9 @@ namespace LORICA4
                     try { xreader.ReadEndElement(); }
                     catch { read_error = 1; }
 
-<<<<<<< HEAD
                     //this might have been missing but its not needed now:
                     //try { view_maps_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("maps_required")); }
                     //catch { read_error = 1; }
-=======
-                    try { view_maps_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("maps_required")); }
-                    catch { read_error = 1; }
->>>>>>> main
 
                     try { xreader.ReadEndElement(); }
                     catch { read_error = 1; }
@@ -8457,7 +7489,6 @@ namespace LORICA4
 
                     this.Text = basetext + " (" + Path.GetFileName(cfgname) + ")";
                     start_button.Enabled = true;
-                    graphicToGoogleEarthButton.Visible = false;
                     tabControl1.Visible = true;
 
                 }
@@ -8660,16 +7691,17 @@ namespace LORICA4
 
                 xwriter.WriteEndElement();
 
+
                 xwriter.WriteStartElement("Run");
                 xwriter.WriteElementString("runs_radiobutton", XmlConvert.ToString(runs_checkbox.Checked));
                 xwriter.WriteElementString("number_runs", Number_runs_textbox.Text);
 
-				xwriter.WriteStartElement("Specialsettings");
-                xwriter.WriteElementString("Spitsbergen", XmlConvert.ToString(Spitsbergen_case_study.Checked));
+                xwriter.WriteStartElement("Specialsettings");
+                xwriter.WriteElementString("Spitsbergen", XmlConvert.ToString(Ik_ben_Marijn.Checked));
                 xwriter.WriteElementString("Luxembourg", XmlConvert.ToString(version_lux_checkbox.Checked));
                 //xwriter.WriteElementString("other", XmlConvert.ToString(runs_checkbox.Checked));
                 xwriter.WriteEndElement();
-				
+
                 xwriter.WriteStartElement("CalibrationSensitivity");
                 xwriter.WriteElementString("calibration_active_button", XmlConvert.ToString(Calibration_button.Checked));
                 xwriter.WriteElementString("calibration_ratios_string", calibration_ratios_textbox.Text);
@@ -8779,8 +7811,6 @@ namespace LORICA4
                 xwriter.WriteElementString("p3_altitude", XmlConvert.ToString(profile.check_altitude_profile3.Checked));
                 xwriter.WriteEndElement();
 
-                xwriter.WriteElementString("maps_required", XmlConvert.ToString(view_maps_checkbox.Checked));
-
                 xwriter.WriteEndElement();
 
                 xwriter.WriteStartElement("Soilfractions");
@@ -8821,43 +7851,15 @@ namespace LORICA4
             filename = dir + "0_" + time + "_out_change.asc";
             read_double(filename, dtmchange);
             Debug.WriteLine("read dtm change");
-            
-            if(Water_ero_checkbox.Checked)
-            {
-                filename = dir + "0_" + time + "_out_water_erosion.asc";
-                read_double(filename, sum_water_erosion);
-                Debug.WriteLine("read water erosion");
-            }
-            
-            if(Tillage_checkbox.Checked)
-            {
-                filename = dir + "0_" + time + "_out_tillage.asc";
-                read_double(filename, sum_tillage);
-                Debug.WriteLine("read sum_tillage");
-            }
-           
-            if(Creep_Checkbox.Checked)
-            {
-                filename = dir + "0_" + time + "_out_creep.asc";
-                read_double(filename, creep);
-                Debug.WriteLine("read creep");
-            }
 
-            if(treefall_checkbox.Checked)
-            {
-                filename = dir + "0_" + time + "_out_dz_treefall.asc";
-                read_double(filename, dz_treefall);
-                Debug.WriteLine("read dz_treefall");
-            }
+            filename = dir + "0_" + time + "_out_water_erosion.asc";
+            read_double(filename, sum_water_erosion);
+            Debug.WriteLine("read water erosion");
 
-            if(Tillage_checkbox.Checked)
-            {
             filename = dir + "0_" + time + "_out_tillage.asc";
             read_double(filename, sum_tillage);
             Debug.WriteLine("read sum_tillage");
-            }
 
-<<<<<<< HEAD
             filename = dir + "0_" + time + "_out_creep.asc";
             read_double(filename, creep);
             Debug.WriteLine("read creep");
@@ -8870,9 +7872,6 @@ namespace LORICA4
             read_double(filename, sum_tillage);
             Debug.WriteLine("read sum_tillage");
             */
-=======
-
->>>>>>> main
             filename = dir + "0_" + time + "_out_dz_soil.asc";
             read_double(filename, dz_soil);
             Debug.WriteLine("read sum_dz_soil");
@@ -8903,12 +7902,12 @@ namespace LORICA4
                 int row, col, lay;
                 // discard first line (header)    
                 var line = reader.ReadLine();
-                var values = line.Split(','); // MvdM change separator based on csv output
+                var values = line.Split(',');
 
                 while (!reader.EndOfStream)
                 {
                     line = reader.ReadLine();
-                    values = line.Split(',');// MvdM change separator based on csv output
+                    values = line.Split(',');
 
                     row = Convert.ToInt32(values[0]);
                     col = Convert.ToInt32(values[1]);
@@ -8998,11 +7997,11 @@ namespace LORICA4
 
             //reports
 
-            this.InfoStatusPanel.Text = "found " + numsinks + " true sinks in " + nr * nc + "  cells";
+            //this.InfoStatusPanel.Text = "found " + numsinks + " true sinks in " + nr * nc + "  cells";
             //Debug.WriteLine("\n\n--sinks overview at t = " + t + "--");
 
-            if (numsinks / (nr * nc) > 0.0075) { Debug.WriteLine("this DEM contains " + numsinks + " true sinks in " + nr * nc + "  cells\n That's a lot!"); }
-            else { Debug.WriteLine("t" + t + " this DEM contains " + numsinks + " true sinks in " + nr * nc + "  cells"); }
+            //if (numsinks / (nr * nc) > 0.0075) { Debug.WriteLine("this DEM contains " + numsinks + " true sinks in " + nr * nc + "  cells\n That's a lot!"); }
+            //else { Debug.WriteLine("t" + t + " this DEM contains " + numsinks + " true sinks in " + nr * nc + "  cells"); }
             //Debug.WriteLine(" equals: " + twoequals / 2 + " double, " + threeequals / 3 + " triple and about " + moreequals + " larger\n");
 
             // 
@@ -9014,13 +8013,8 @@ namespace LORICA4
         void searchdepressions()
         {
             int z;
-<<<<<<< HEAD
             //this.InfoStatusPanel.Text = "searchdepressions has been entered";
             for (int row = 0; row < nr; row++)
-=======
-            this.InfoStatusPanel.Text = "searchdepressions has been entered";
-            for (row = 0; row < nr; row++)
->>>>>>> main
             {        //visit all cells in the DEM and  ...
                 for (int col = 0; col < nc; col++)
                 {
@@ -9392,7 +8386,7 @@ namespace LORICA4
                     //Debug.WriteLine("now at row " + row + " and col " + col);
                 }  // end for  col
             } // end for   row
-
+            /*
             Debug.WriteLine("\n\n--depressions overview--");
             if (totaldepressions != 0)
             {
@@ -9405,7 +8399,7 @@ namespace LORICA4
             {
                 Debug.WriteLine(" no depressions found ");
 
-            }
+            } */
             //Debug.WriteLine("\n");
             //Debug.WriteLine(" drains at: " + + " , " + + " , volume: %6.9f " ,drainingoutlet_row[largestdepression],drainingoutlet_col[largestdepression],depressionvolume[largestdepression]); 
             //out_integer("lakes.asc",depression);
@@ -9421,7 +8415,7 @@ namespace LORICA4
             // to membercells so they drain towards the outlet.
             // we cannot simply use distance_to_outlet for each member cell, since depressions can round corners....
 
-            this.InfoStatusPanel.Text = "def fillheight has been entered";
+            //this.InfoStatusPanel.Text = "def fillheight has been entered";
             //Debug.WriteLine("defining fillheight\n");
             int notyetdone, done, depressiontt;
 
@@ -9499,7 +8493,7 @@ namespace LORICA4
                 } // end if they exist
             } //end for all possible depressions
 
-            Debug.WriteLine("\n--dtmfill determination finished--");
+            //Debug.WriteLine("\n--dtmfill determination finished--");
 
         }
 
@@ -9516,23 +8510,29 @@ namespace LORICA4
                         if (depression[clear_row + epsilon, clear_col + eta] < 0)
                         {
                             depression[clear_row + epsilon, clear_col + eta] = Math.Abs(depression[clear_row, clear_col]);
-                            if (diagnostic_mode == 1) { Debug.WriteLine(" membership of delta has been cancelled for " + (clear_row + epsilon) + " " + (clear_col + eta)); }
+                            if (diagnostic_mode == 1)
+                            {
+                                Debug.WriteLine(" membership of delta has been cancelled for " + (clear_row + epsilon) + " " + (clear_col + eta));
+                            }
                         }  // end if depression < 0
                     }   // end if boundary
                 }   // end for eta
             } // end for epsilon
             //Debug.WriteLine("cleared delta\n");
-
+            if (diagnostic_mode == 1)
+            {
+                Debug.WriteLine(" ");
+            }
         }
 
         void update_depression(int number)   //updates depressions when the erosion/deposition process has reached them to include cells that have been eroded to below lakelevel
         {
-            /*  a.	First estimate of required sediment is fillheight Â– dtm for all lake cells. Test whether dz_ero_m and dz_sed_m for these cells are zero (they should be).
+            /*  a.	First estimate of required sediment is fillheight – dtm for all lake cells. Test whether dz_ero_m and dz_sed_m for these cells are zero (they should be).
                 b.	Starting from every lake cell, look for cells around it that are not part of the lake and had dtm above lakelevel.
-                    Â•	For such a cell, look around it for all lake-neighbours and determine the one that would yield the lowest fillheight. 
-                    Â•	Assign that fillheight to the cell, see  if its current altitude (corrected for already calculated ero and sed) is lower than fillheight.
-                    Â•	Add the difference to the sediment needed to fill the (now larger) lake.
-                    Â•	Add the cell to the lake and update the size and volume  of the lake
+                    •	For such a cell, look around it for all lake-neighbours and determine the one that would yield the lowest fillheight. 
+                    •	Assign that fillheight to the cell, see  if its current altitude (corrected for already calculated ero and sed) is lower than fillheight.
+                    •	Add the difference to the sediment needed to fill the (now larger) lake.
+                    •	Add the cell to the lake and update the size and volume  of the lake
                 c.	Continue until no more cells around the lake are lower 
                 This would potentially clash with lakes that have more than two outlets. The third and later outlets would be 
                 seen as lake cells and their lower neighbours on the non-lake-side would be added to the lake, leading to errors. */
@@ -9685,9 +8685,10 @@ namespace LORICA4
                         if (depression[fillrow, fillcol] == this_depression)
                         {
                             //Debug.WriteLine(" adding "  +(dtmfill_A[fillrow, fillcol] - dz_ero_m[fillrow, fillcol] - dz_sed_m[fillrow, fillcol] - dtm[fillrow, fillcol])+" sed to " + fillrow + " "+ fillcol ); 
-                            //sediment_filled2 += dtmfill_A[fillrow, fillcol] - dz_ero_m[fillrow, fillcol] - dz_sed_m[fillrow, fillcol] - dtm[fillrow, fillcol];   //sediment_filled2 SHOULD BE sediment_filled at the end
                             lake_sed_m[fillrow, fillcol] += dtmfill_A[fillrow, fillcol] - dz_ero_m[fillrow, fillcol] - dz_sed_m[fillrow, fillcol] - dtm[fillrow, fillcol];
                             dtm[fillrow, fillcol] = dtmfill_A[fillrow, fillcol] - dz_ero_m[fillrow, fillcol] - dz_sed_m[fillrow, fillcol];
+                            dtmchange[fillrow, fillcol] += dtmfill_A[fillrow, fillcol] - dz_ero_m[fillrow, fillcol] - dz_sed_m[fillrow, fillcol] - dtm[fillrow, fillcol];
+                            soildepth_m[fillrow, fillcol] += dtmfill_A[fillrow, fillcol] - dz_ero_m[fillrow, fillcol] - dz_sed_m[fillrow, fillcol] - dtm[fillrow, fillcol];
                             if (dtm[fillrow, fillcol] == -1) { Debug.WriteLine("C cell " + (fillrow) + " " + (fillcol) + " has an altitude of -1 now"); minimaps(fillrow, fillcol); }
                         }
                     }
@@ -9719,7 +8720,7 @@ namespace LORICA4
             //Debug.WriteLine(" leaving depression " + this_depression + " alone");
 
             for (leaverow = iloedge[this_depression];
- leaverow <= iupedge[this_depression]; leaverow++)
+            leaverow <= iupedge[this_depression]; leaverow++)
             {
                 for (leavecol = jloedge[this_depression]; leavecol <= jupedge[this_depression]; leavecol++)
                 {
@@ -9747,21 +8748,21 @@ namespace LORICA4
 
         void delta_depression(int number)  // builds deltas in an updated depression (because not enough sed)
         {
-            /*When there is not enough sediment to fill the lake, fill the lake from each of its initial side-cells that have a non-zero sediment in transport, excluding outlet cells (their sediment in transport gets moved outside Â– they will never have to be raised higher than lakelevel which they already have  - they will remain having the lakenumber even when the whole lake would have been filled). 
+            /*When there is not enough sediment to fill the lake, fill the lake from each of its initial side-cells that have a non-zero sediment in transport, excluding outlet cells (their sediment in transport gets moved outside – they will never have to be raised higher than lakelevel which they already have  - they will remain having the lakenumber even when the whole lake would have been filled). 
 
                 c. For each of these cells, while there is sediment in transport /dx left:
-                    Â•	Find a potentially lower oblique cell (in the lake, but there are  no others)
-                    Â•	Find the first higher oblique cell relative to that cell
-                    Â•	Raise the oblique deepest cell to that level
-                    Â•	Reduce the remaining amount of sediment in transport with the raised amount
-                    Â•	Test whether the cell has now been raised above fillheight, in which case: 
+                    •	Find a potentially lower oblique cell (in the lake, but there are  no others)
+                    •	Find the first higher oblique cell relative to that cell
+                    •	Raise the oblique deepest cell to that level
+                    •	Reduce the remaining amount of sediment in transport with the raised amount
+                    •	Test whether the cell has now been raised above fillheight, in which case: 
                             it must be lowered to its fillheight, 
                             remaining amount of sed in trans must be increased again
                             lakecell must be removed from the lake (potentially fragmenting the original lake) */
 
             int active_depression = number, size;
-            if (diagnostic_mode == 1) { Debug.WriteLine(" building deltas in depression " + number + " sed needed " + needed_to_fill_depression_m + " sed available " + depressionsum_sediment_m); }
-
+            if (diagnostic_mode == 1 && number > 23) { Debug.WriteLine(" building deltas in depression " + number + " sed needed " + needed_to_fill_depression_m + " sed available " + depressionsum_sediment_m); }
+            //else { diagnostic_mode = 0; }
 
             //if (number == 30001 && t == 1) { diagnostic_mode = 1; } else { diagnostic_mode = 0; }
 
@@ -9800,8 +8801,7 @@ namespace LORICA4
                                 }
                                 available_for_delta_m += calc_thickness_from_mass(local_s_i_t_kg, 0, 0);
                                 sediment_delta_m += available_for_delta_m;
-                                // we will completely use all of this sed in trans now, so let's set it to zero already
-                                // and add it to the overall counter of the volume used in delta's
+                                // we will completely use all of this sed in trans now, so let's add it to the overall counter of the volume used in delta's
 
                                 while (available_for_delta_m > 0)
                                 {
@@ -9839,14 +8839,14 @@ namespace LORICA4
                                         }
                                         if (dhobliquemax2 > 0)
                                         {
-                                            if (diagnostic_mode == 1) { Debug.WriteLine(" lowest oblique neighbour is higher - raising delta"); }
+                                            if (diagnostic_mode == 1) { Debug.WriteLine(" lowest higher oblique neighbour is higher - raising delta"); }
                                             if (diagnostic_mode == 1) { Debug.WriteLine(" available " + available_for_delta_m + "m and space for " + (deltasize * dhobliquemax2) + " m"); }
                                             if (available_for_delta_m >= deltasize * dhobliquemax2)
                                             {
                                                 if (diagnostic_mode == 1) { Debug.WriteLine(" raising delta to higher oblique level "); }
                                                 raise_delta_completely(active_depression);
                                             }
-                                            if (available_for_delta_m < deltasize * dhobliquemax2)
+                                            else
                                             {
                                                 if (diagnostic_mode == 1) { Debug.WriteLine(" raising delta as far as possible given sediment "); }
                                                 raise_delta_partly(active_depression);
@@ -9877,7 +8877,7 @@ namespace LORICA4
             {
                 waterflow_m3[drainingoutlet_row[active_depression, i], drainingoutlet_col[active_depression, i]] += dx * dx * (depressionsum_sediment_m) / outletcounter;
             }
-            diagnostic_mode = 1;
+            //diagnostic_mode = 1;
         }
 
         void find_lowest_oblique_neighbour(int this_depression) // to determine where to start or continue with current delta 
@@ -9894,9 +8894,9 @@ namespace LORICA4
                 readysearching = 1;      // we expect to be ready searching, but when not, we will set this to 0
                 if (diagnostic_mode == 1) { Debug.WriteLine(" dhobliquemax1 : " + dhobliquemax1); }
                 if (diagnostic_mode == 1) { Debug.WriteLine(" ilo " + iloradius2 + ", iup " + iupradius2 + ", jlo " + jloradius2 + ", jup " + jupradius2 + ", row: " + startrow + ", col " + startcol); }
-                for (i = -1 * iloradius2; i <= iupradius2; i++)
+                for (i = -iloradius2; i <= iupradius2; i++)
                 {
-                    for (j = -1 * jloradius2; j <= jupradius2; j++)
+                    for (j = -jloradius2; j <= jupradius2; j++)
                     {
                         if ((startrow + i >= 0) && (startrow + i < nr) && (startcol + j >= 0) && (startcol + j < nc) && !((i == 0) && (j == 0)) && dtm[startrow + i, startcol + j] != -9999) //&& !((startrow + i == row) && (startcol + j == col))
                         { // boundary check while looking around startrow startcol for the neighbours of the entire current delta
@@ -10022,6 +9022,8 @@ namespace LORICA4
                         if (depression[rowlowestobnb + i, collowestobnb + j] == -this_depression) // i.e. if cell is part of present delta
                         {
                             dtm[rowlowestobnb + i, collowestobnb + j] += dhobliquemax2;
+                            dtmchange[rowlowestobnb + i, collowestobnb + j] += dhobliquemax2;
+                            lake_sed_m[rowlowestobnb + i, collowestobnb + j] += dhobliquemax2;
                             available_for_delta_m -= dhobliquemax2;
                             if (dtm[rowlowestobnb + i, collowestobnb + j] == -1) { Debug.WriteLine("A1 cell " + (rowlowestobnb + i) + " " + (collowestobnb + j) + " has an altitude of -1 now"); minimaps((rowlowestobnb + i), (collowestobnb + j)); }
                             if (available_for_delta_m < 0) { Debug.WriteLine(" Error: negative sediment for delta " + available_for_delta_m + " m"); minimaps(rowlowestobnb + i, collowestobnb + j); }
@@ -10030,7 +9032,7 @@ namespace LORICA4
                             //if (diagnostic_mode == 1) { MessageBox.Show("warning - extremely high coarse sed_in_trans:" + sediment_in_transport_kg[startrow, startcol,0]); }
                             if ((dtm[rowlowestobnb + i, collowestobnb + j] + dz_ero_m[rowlowestobnb + i, collowestobnb + j] + dz_sed_m[rowlowestobnb + i, collowestobnb + j]) > dtmfill_A[rowlowestobnb + i, collowestobnb + j])
                             {   // then we have raised this cell too high
-                                if (diagnostic_mode == 1) { Debug.WriteLine("1 we change the altitude of " + (rowlowestobnb + i) + " " + (collowestobnb + j) + " (depressionlevel " + depressionlevel[this_depression] + ") from " + dtm[rowlowestobnb + i, collowestobnb + j] + " to " + dtmfill_A[rowlowestobnb + i, collowestobnb + j]); }
+                                if (diagnostic_mode == 1) { Debug.WriteLine("1 we change the too-high altitude of " + (rowlowestobnb + i) + " " + (collowestobnb + j) + " (depressionlevel " + depressionlevel[this_depression] + ") from " + dtm[rowlowestobnb + i, collowestobnb + j] + " to " + dtmfill_A[rowlowestobnb + i, collowestobnb + j]); }
                                 available_for_delta_m += ((dtm[rowlowestobnb + i, collowestobnb + j] + dz_ero_m[rowlowestobnb + i, collowestobnb + j] + dz_sed_m[rowlowestobnb + i, collowestobnb + j]) - dtmfill_A[rowlowestobnb + i, collowestobnb + j]);
                                 double[] local_s_i_t_kg = new double[5] { 0, 0, 0, 0, 0 };
                                 for (size = 0; size < n_texture_classes; size++)
@@ -10043,9 +9045,10 @@ namespace LORICA4
                                 available_for_delta_m += calc_thickness_from_mass(local_s_i_t_kg, 0, 0);
                                 if (available_for_delta_m < 0) { Debug.WriteLine("5 negative sediment for delta " + available_for_delta_m + " m"); }
                                 lake_sed_m[rowlowestobnb + i, collowestobnb + j] += ((dtm[rowlowestobnb + i, collowestobnb + j] + dz_ero_m[rowlowestobnb + i, collowestobnb + j] + dz_sed_m[rowlowestobnb + i, collowestobnb + j]) - dtmfill_A[rowlowestobnb + i, collowestobnb + j]);
-                                if (lake_sed_m[rowlowestobnb + i, collowestobnb + j] < -0.0000001) { Debug.WriteLine("1 Warning: negative lake deposition in row " + (rowlowestobnb + i) + " col " + (collowestobnb + j) + " time " + t + " of " + lake_sed_m[rowlowestobnb + i, collowestobnb + j] + " dtm " + dtm[rowlowestobnb + i, collowestobnb + j] + " fill " + dtmfill_A[rowlowestobnb + i, collowestobnb + j]); minimaps(rowlowestobnb + i, collowestobnb + j); }
+                                dtmchange[rowlowestobnb + i, collowestobnb + j] += ((dtm[rowlowestobnb + i, collowestobnb + j] + dz_ero_m[rowlowestobnb + i, collowestobnb + j] + dz_sed_m[rowlowestobnb + i, collowestobnb + j]) - dtmfill_A[rowlowestobnb + i, collowestobnb + j]);
+                                if (lake_sed_m[rowlowestobnb + i, collowestobnb + j] < -0.0000001) { Debug.WriteLine("1 Warning: negative lake deposition in " + (rowlowestobnb + i) + " " + (collowestobnb + j) + " of " + lake_sed_m[rowlowestobnb + i, collowestobnb + j] + " dtm " + dtm[rowlowestobnb + i, collowestobnb + j] + " fill " + dtmfill_A[rowlowestobnb + i, collowestobnb + j]); minimaps(rowlowestobnb + i, collowestobnb + j); }
                                 dtm[rowlowestobnb + i, collowestobnb + j] = dtmfill_A[rowlowestobnb + i, collowestobnb + j] - dz_ero_m[rowlowestobnb + i, collowestobnb + j] - dz_sed_m[rowlowestobnb + i, collowestobnb + j];
-                                if (dtm[rowlowestobnb + i, collowestobnb + j] == -1) { Debug.WriteLine("A2 cell " + (rowlowestobnb + i) + " " + (collowestobnb + j) + " at time " + t  +" has an altitude of -1 now"); minimaps((rowlowestobnb + i), (collowestobnb + j)); }
+                                if (dtm[rowlowestobnb + i, collowestobnb + j] == -1) { Debug.WriteLine("A2 cell " + (rowlowestobnb + i) + " " + (collowestobnb + j) + " has an altitude of -1 now"); minimaps((rowlowestobnb + i), (collowestobnb + j)); }
                                 depression[rowlowestobnb + i, collowestobnb + j] = 0;
                                 deltasize--;
                                 if (diagnostic_mode == 1) { Debug.WriteLine("1: " + (rowlowestobnb + i) + " " + (collowestobnb + j) + " (depressionlevel " + depressionlevel[depression[row, col]] + ") now at " + dtm[rowlowestobnb + i, collowestobnb + j] + " = fill_A " + dtmfill_A[rowlowestobnb + i, collowestobnb + j] + " sed for delta " + available_for_delta_m); }
@@ -10089,6 +9092,7 @@ namespace LORICA4
                         if (depression[tempx + i, tempy + j] == -this_depression)
                         {
                             dtm[tempx + i, tempy + j] += mem_m;
+                            dtmchange[tempx + i, tempy + j] += mem_m;
                             lake_sed_m[tempx + i, tempy + j] += mem_m;
                             if (dtm[rowlowestobnb + i, collowestobnb + j] == -1) { Debug.WriteLine("B cell " + (rowlowestobnb + i) + " " + (collowestobnb + j) + " has an altitude of -1 now"); minimaps((rowlowestobnb + i), (collowestobnb + j)); }
                             if (lake_sed_m[tempx + i, tempy + j] < -0.0000001) { Debug.WriteLine("4 Warning: negative lake deposition in " + (tempx + i) + " " + (tempy + j) + " of " + lake_sed_m[tempx + i, tempy + j]); minimaps(tempx + i, tempy + j); }
@@ -10107,6 +9111,7 @@ namespace LORICA4
                                 if (diagnostic_mode == 1) { Debug.WriteLine(" A we change the altitude of " + (tempx + i) + " " + (tempy + j) + " (depressionlevel " + depressionlevel[this_depression] + ") from " + (dtm[tempx + i, tempy + j] + dz_ero_m[tempx + i, tempy + j] + dz_sed_m[tempx + i, tempy + j]) + " to " + dtmfill_A[tempx + i, tempy + j]); }
                                 if (tempx + i == row && tempy + j == col) { Debug.WriteLine("we are changing outlet " + tempx + " " + tempy + " into 0"); }
                                 lake_sed_m[tempx + i, tempy + j] -= ((dtm[tempx + i, tempy + j] + dz_ero_m[tempx + i, tempy + j] + dz_sed_m[tempx + i, tempy + j]) - dtmfill_A[tempx + i, tempy + j]);
+                                dtmchange[tempx + i, tempy + j] -= ((dtm[tempx + i, tempy + j] + dz_ero_m[tempx + i, tempy + j] + dz_sed_m[tempx + i, tempy + j]) - dtmfill_A[tempx + i, tempy + j]);
                                 if (lake_sed_m[tempx + i, tempy + j] < -0.0000001) { Debug.WriteLine("3 Warning: negative lake deposition in " + (tempx + i) + " " + (tempy + j) + " of " + lake_sed_m[tempx + i, tempy + j] + " alt " + (dtm[tempx + i, tempy + j] + dz_ero_m[tempx + i, tempy + j] + dz_sed_m[tempx + i, tempy + j]) + " fill " + dtmfill_A[tempx + i, tempy + j]); minimaps(tempx + i, tempy + j); }
                                 dtm[tempx + i, tempy + j] = (dtmfill_A[tempx + i, tempy + j] - dz_ero_m[tempx + i, tempy + j] - dz_sed_m[tempx + i, tempy + j]); //so that with ero and sed, it equals dtmfill
                                 if (dtm[tempx + i, tempy + j] == -1) { Debug.WriteLine("C cell " + (tempx + i) + " " + (tempy + j) + " has an altitude of -1 now"); minimaps(tempx + i, tempy + j); } //
@@ -10132,17 +9137,68 @@ namespace LORICA4
                 // a) correct amount of sediment (already guaranteed)
                 // b) correct cells member of delta (already correct if deltasize > 0, but if deltasize == 0 after removal of the too-high cell, then not correct).
                 // c) correct starting cell for delta building (rowlowestobnb and collowestobnb). Not correct because it may be that cell which was just removed from lake and delta. 
-                // In case deltasize > 0 and rowlobnb,collobnb is no longer part of the delta, we select any delta-neighbour of the old starting cell. In case deltasize = 0, we select the lowest higher oblique nb for this.
+                // In case deltasize > 0 and rowlobnb,collobnb is no longer part of the delta, we select any delta-neighbour of the old starting cell.
+                // In case deltasize = 0, we select the lowest higher oblique nb for this.
+                // Nov 2021: If deltasize = 0, rowlobnb, collownb also is possibly no longer part of the lake. Then what? Then any lake-neighbour of the old starting cell, but we'll need to look harder.
 
                 if (deltasize == 0)
                 {
-                    deltasize++;
-                    if (diagnostic_mode == 1) { Debug.WriteLine("increased deltasize with 1 to " + deltasize); }
-                    if (diagnostic_mode == 1) { Debug.WriteLine("lowest oblique neighbour now " + rowlowestobnb + " " + collowestobnb + ", will be: " + (tempx + II) + " " + (tempy + JJ)); }
-                    rowlowestobnb = tempx + II;
-                    collowestobnb = tempy + JJ;
-                    if (diagnostic_mode == 1) { Debug.WriteLine(" will change depressionmembership of " + rowlowestobnb + " " + collowestobnb + " from " + depression[rowlowestobnb, collowestobnb] + " to " + (-this_depression)); }
-                    depression[rowlowestobnb, collowestobnb] = -this_depression;
+                    if (depression[tempx + II, tempy + JJ] == this_depression)
+                    {
+                        deltasize++;
+                        if (diagnostic_mode == 1) { Debug.WriteLine("increased deltasize with 1 to " + deltasize); }
+                        if (diagnostic_mode == 1) { Debug.WriteLine("lowest oblique neighbour now " + rowlowestobnb + " " + collowestobnb + ", will be: " + (tempx + II) + " " + (tempy + JJ)); }
+                        rowlowestobnb = tempx + II;
+                        collowestobnb = tempy + JJ;
+                        if (diagnostic_mode == 1) { Debug.WriteLine(" will change depressionmembership of " + rowlowestobnb + " " + collowestobnb + " from " + depression[rowlowestobnb, collowestobnb] + " to " + (-this_depression)); }
+                        depression[rowlowestobnb, collowestobnb] = -this_depression;
+                    }
+                    else
+                    {
+                        //we have no delta cells left, but we do have sed_in_trans left. We don't know from where to continue delta-building. We do know from where we started delta building, but that cell may no longer be part of the lake.
+                        //we also know that there are at least one lake cells left (because we are in fill_delta_partly here), and that all lake cells are within iupradius3,iloradius3, etc from tempx, tempy
+                        if (diagnostic_mode == 1)
+                        {
+                            Debug.WriteLine("row" + row + "col " + col + " depression " + depression[row, col]);
+                            Debug.WriteLine("rowlowestobnb" + rowlowestobnb + "collowestobnb " + collowestobnb + " depression " + depression[rowlowestobnb, collowestobnb]);
+                            Debug.WriteLine("tempx" + tempx + "tempy " + tempy + " depression " + depression[tempx, tempy]);
+                            Debug.WriteLine("tempx + II" + (tempx + II) + "tempy + JJ " + (tempy + JJ) + " depression " + depression[tempx + II, tempy + JJ]);
+                            minimaps(row, col);
+                        }
+                        bool found_a_delta_starter = false;
+                        int tprowlowestobnb = -9999;
+                        int tpcollowestobnb = -9999;
+                        for (i = -1 * iloradius3; i <= iupradius3; i++)
+                        {
+                            for (j = -1 * jloradius3; j <= jupradius3; j++)
+                            {
+                                if (((tempx + i) >= 0) && ((tempx + i) < nr) && ((tempy + j) >= 0) && ((tempy + j) < nc) && !(tempx + i == row && tempy + j == col) && dtm[tempx + i, tempy + j] != -9999)
+                                { // boundaries
+                                    if (depression[tempx + i, tempy + j] == this_depression)
+                                    {
+                                        Debug.WriteLine(" found a possible delta-starter in cell" + (tempx + i) + " " + (tempy + j) + " depression " + depression[tempx + i, tempy + j] + " for depression " + this_depression);
+                                        found_a_delta_starter = true;
+                                        tprowlowestobnb = tempx + i;
+                                        tpcollowestobnb = tempy + j;
+
+                                    }
+                                }
+                            }
+                        }
+                        if (found_a_delta_starter == true)
+                        {
+                            depression[tprowlowestobnb, tpcollowestobnb] = -this_depression;
+                            rowlowestobnb = tprowlowestobnb;
+                            collowestobnb = tpcollowestobnb;
+                            deltasize++;
+                            if (diagnostic_mode == 1) { Debug.WriteLine("increased deltasize with 1 to " + deltasize); }
+                        }
+                        else
+                        {
+                            Debug.WriteLine("did not find an alternative start for this delta  " + deltasize);
+                        }
+
+                    }
                 }
                 if (deltasize > 0 && depression[rowlowestobnb, collowestobnb] != -this_depression)
                 {
@@ -10155,12 +9211,18 @@ namespace LORICA4
                     if (depression[rowlowestobnb - 1, collowestobnb] == -this_depression) { rowlowestobnb = rowlowestobnb - 1; }
                     if (depression[rowlowestobnb - 1, collowestobnb - 1] == -this_depression) { rowlowestobnb = rowlowestobnb - 1; collowestobnb = collowestobnb - 1; }
                 }
+                if (deltasize > 0 && depression[rowlowestobnb, collowestobnb] == -this_depression)
+                {
+                    //no action needed, just reporting
+                    if (diagnostic_mode == 1) { Debug.WriteLine(" no action needed, lowestobnb is part of the delta " + rowlowestobnb + " " + collowestobnb + " lake " + depression[rowlowestobnb, collowestobnb]); }
+                }
             }
             if (diagnostic_mode == 1) { Debug.WriteLine(" sed_for_delta is now " + available_for_delta_m + " and deltasize = " + deltasize); }
             //diagnostic_mode = 0;
         }
 
         #endregion
+
         #region experimental and maintenance code
 
         void minimaps(int row, int col)
@@ -10205,7 +9267,7 @@ namespace LORICA4
                 }
                 Debug.Write(" \n"); if ((disrow + 1) <= upperrow) { mess = String.Format(" {0:D8}", (disrow + 1)); Debug.Write(mess); }
             }
-
+            */
             Debug.Write(" \n"); Debug.Write("SedI_TRA_kg");
             for (discol = lowercol; discol < (uppercol + 1); discol++)
             {
@@ -10219,9 +9281,9 @@ namespace LORICA4
                     mess = String.Format("  {0:F8}", sediment_in_transport_kg[disrow, discol, 0]); Debug.Write(mess);
                 }
                 Debug.Write(" \n"); if ((disrow + 1) <= upperrow) { mess = String.Format(" {0:D10}", (disrow + 1)); Debug.Write(mess); }
-            } */
-            /*
-            Debug.Write(" \n"); Debug.Write("fillheightA_m    ");
+            }
+
+            Debug.Write(" \n"); Debug.Write("fillheightA_m");
             for (discol = lowercol; discol < (uppercol + 1); discol++)
             {
                 mess = String.Format("  {0:D10}", discol); Debug.Write(mess);
@@ -10280,7 +9342,7 @@ namespace LORICA4
                 }
                 Debug.Write(" \n"); if ((disrow + 1) <= upperrow) { mess = String.Format(" {0:D10}", (disrow + 1)); Debug.Write(mess); }
             }
-            */
+
 
 
         }
@@ -10295,7 +9357,7 @@ namespace LORICA4
 
             int layer; double cumthick = 0; double depth = 0, z_layer = dtm[row, col];
             //  if (t == 0) { Debug.WriteLine("digitally augering and analysing at row " + row + " col " + col); }//header
-             Debug.WriteLine("row col t nlayer cumth(m)  thick(m)  depth(m) z(m) coarse(kg) sand(kg)   silt(kg)   clay(kg)   fine(kg)   YOM(kg)    OOM(kg)   YOM/OOM   w%coarse   w%sand   w%silt   w%clay   w%fineclay BD"); 
+            Debug.WriteLine("row col t nlayer cumth(m)  thick(m)  depth(m) z(m) coarse(kg) sand(kg)   silt(kg)   clay(kg)   fine(kg)   YOM(kg)    OOM(kg)   YOM/OOM   w%coarse   w%sand   w%silt   w%clay   w%fineclay BD"); //header
 
 
             for (layer = 0; layer < max_soil_layers; layer++) // only the top layer
@@ -10367,7 +9429,7 @@ namespace LORICA4
             ledgenames = new int[nr, nc];
             int runner = 0;
 
-            //Topographic Ruggedness Index (Riley, S.J., DeGloria, S.D., Elliot, R., 1999. A terrain ruggedness index that quantifies topographic heterogeneity. Intermt. J. Sci. 5, 23Â–27.)
+            //Topographic Ruggedness Index (Riley, S.J., DeGloria, S.D., Elliot, R., 1999. A terrain ruggedness index that quantifies topographic heterogeneity. Intermt. J. Sci. 5, 23–27.)
             double sum_squared_difference = 0; int num_nbs = 0;
             try
             {
@@ -10393,7 +9455,7 @@ namespace LORICA4
                                     }
                                 }
                             }
-                            if (num_nbs == 0) { minimaps(row, col); terruggedindex[row, col] = -9999; }
+                            if (num_nbs == 0) { terruggedindex[row, col] = -9999; }
                             else { terruggedindex[row, col] = Math.Sqrt(sum_squared_difference) * (8 / num_nbs); }
                         }
                     }
@@ -10472,7 +9534,7 @@ namespace LORICA4
             }
             Debug.WriteLine("ledgeheights determined");
 
-		for (row = 0; row < nr; row++)
+            for (row = 0; row < nr; row++)
             {
                 for (col = 0; col < nc; col++)
                 {
@@ -10481,7 +9543,6 @@ namespace LORICA4
                         if (ledgeheight[row, col] == -9999)
                         {
                             double highestledgeheight = 0;
-                            int besti = -4, bestj = -4;
                             for (i = (-1); i <= 1; i++)
                             {
                                 for (j = (-1); j <= 1; j++)
@@ -10502,6 +9563,7 @@ namespace LORICA4
                     }
                 }
             }
+
             //now, we sort the dtm from high to low and walk through it from high to low to assign ledge properties to 
             comb_sort();
             for (runner = number_of_data_cells - 1; runner >= 0; runner--)
@@ -11278,50 +10340,14 @@ namespace LORICA4
                         {
                             for (int col = 0; col < nc; col++)
                             {
-                                if (dtm[row, col] < dtmfill_A[row, col] && dtm[row, col] != -9999) { dtm[row, col] = dtmfill_A[row, col]; }
+                                if (dtm[row, col] < dtmfill_A[row, col] && dtm[row, col] != -9999) { 
+                                    dtm[row, col] = dtmfill_A[row, col]; 
+                                }
                             }
                         }
                     }
                 }
                 catch { Debug.WriteLine(" problem with sink definition "); }
-            }
-
-            //Google Earth Preparation
-            if (googleAnimationCheckbox.Checked)
-            {
-                KML_FILE_NAME = workdir + "\\animation\\animation.kml";
-                Debug.WriteLine("creating directory " + workdir + @"\animation");
-                Directory.CreateDirectory(workdir + @"\animation");
-                startDate = googleBeginDate.Text;
-                try { googleTime = System.DateTime.Parse(googleBeginDate.Text); }
-                catch { input_data_error = true; MessageBox.Show("No valid Google Earth animation start date provided"); }
-            }
-            // AVI preparation
-            if (checkBoxGenerateAVIFile.Checked)
-            {
-                try
-                {
-                    aw = new AviWriter();
-
-                    string fname = workdir + @"\" + textBoxAVIFile.Text;
-                    Debug.WriteLine("checking for existence of movie file " + fname);
-                    //Delete the avi if it already exists, & wait for it to occur
-                    if (File.Exists(fname))
-                    {
-                        File.Delete(fname);
-
-                        if (File.Exists(fname))
-                        {
-                            System.IO.FileSystemWatcher watcher =
-                                new System.IO.FileSystemWatcher(fname);
-                            watcher.WaitForChanged(System.IO.WatcherChangeTypes.Deleted);
-                        }
-                    }
-                    bmp = aw.Open(fname, 25, this.Mapwindow.Size.Width,
-                        this.Mapwindow.Size.Height);  // <JMW 20041018>
-                }
-                catch { input_data_error = true; MessageBox.Show("Video file can not be created"); }
-
             }
 
             // Timeseries preparation
@@ -11416,7 +10442,6 @@ namespace LORICA4
                         //now assign thicknesses and material to layer.
                         double available_soildepth = soildepth_m[row, col];
                         soil_layer = 0;
-
                         while (available_soildepth > 0)
                         {
                             // 0-50 cm    min 2.5   insteek 5    maximum 10 cm       n=10    bovenste laag geen minimum (sediment HOEFT niet meteen weggemiddeld te worden - pas als nodig)
@@ -11515,14 +10540,13 @@ namespace LORICA4
                             soil_layer++;
 
                         } // end availabke soil depth > 0
-
                     } // end else 
 
                 } // end col
             } // end row
               // Debug.WriteLine("initialised soil");
 
-        }
+        }  //keep this code even when it's unreferenced
 
         void initialise_soil()
         {
@@ -11544,12 +10568,8 @@ namespace LORICA4
             double clayfrac = Convert.ToDouble(soildata.claybox.Text) / 100;
             double fclayfrac = Convert.ToDouble(soildata.fineclaybox.Text) / 100;
             double location_bd;
-<<<<<<< HEAD
             double dz_standard = 0.1;
             for (int row = 0; row < nr; row++)
-=======
-            for (row = 0; row < nr; row++)
->>>>>>> main
             {
                 for (int col = 0; col < nc; col++)
                 {
@@ -11584,160 +10604,76 @@ namespace LORICA4
                         //now assign thicknesses and material to layer.
                         double available_soildepth = soildepth_m[row, col];
                         soil_layer = 0;
-
-                        if (checkBox_layer_thickness.Checked) // MvdM if layer thickness is fixed
+                        while (available_soildepth > 0)
                         {
-                            while (available_soildepth > 0)
+                            //first time around, depth_m = 0 here, and then gets larger with increasing assigned soildepth.
+
+                            if (available_soildepth > dz_standard)
                             {
-                                if (available_soildepth > dz_standard)
-                                {
-                                    layerthickness_m[row, col, soil_layer] = dz_standard;
-                                    available_soildepth -= dz_standard;
-                                }
-                                else
-                                {
-                                    layerthickness_m[row, col, soil_layer] = available_soildepth;
-                                    available_soildepth = 0;
-                                }
-
-                                if (soil_layer == max_soil_layers - 1)
-                                {
-                                    layerthickness_m[row, col, soil_layer] = available_soildepth;
-                                    available_soildepth = 0;
-                                }
-
-                                if (layerthickness_m[row, col, soil_layer] != 0)
-                                {
-                                    depth_m += layerthickness_m[row, col, soil_layer] / 2;
-                                    location_bd = bulk_density_calc(coarsefrac, sandfrac, siltfrac, clayfrac, fclayfrac, 0, 0, depth_m);
-                                    depth_m += layerthickness_m[row, col, soil_layer] / 2;
-                                    texture_kg[row, col, soil_layer, 0] = location_bd * layerthickness_m[row, col, soil_layer] * coarsefrac * dx * dx;   //  kg = kg/m3 * m * kg/kg * m * m
-                                    texture_kg[row, col, soil_layer, 1] = location_bd * layerthickness_m[row, col, soil_layer] * sandfrac * dx * dx;
-                                    texture_kg[row, col, soil_layer, 2] = location_bd * layerthickness_m[row, col, soil_layer] * siltfrac * dx * dx;
-                                    texture_kg[row, col, soil_layer, 3] = location_bd * layerthickness_m[row, col, soil_layer] * clayfrac * dx * dx;
-                                    texture_kg[row, col, soil_layer, 4] = location_bd * layerthickness_m[row, col, soil_layer] * fclayfrac * dx * dx;
-                                    bulkdensity[row, col, soil_layer] = location_bd;
-
-                                    if (decalcification_checkbox.Checked)
-                                    {
-                                        CO3_kg[row, col, soil_layer] = (location_bd * layerthickness_m[row, col, soil_layer] * dx * dx) * Convert.ToDouble(ini_CaCO3_content.Text) * 40.08 / (40.08 + 60.01); // calculate total CO3: total mass * fraction of soil * fraction of CaCO3 molecule
-                                    }
-
-                                }
-                                if (creep_testing.Checked)
-                                {
-                                    sandfrac -= 0.05;
-                                    clayfrac += 0.05;
-
-                                    sandfrac = Math.Max(sandfrac, 0);
-                                    clayfrac = Math.Min(clayfrac, 1);
-                                }
-
-                                soil_layer++;
-
-                            } // end available soil depth > 0
-                        } // end if fixed layer thickness
-                        else
-                        { // start variable layer thickness
-                            while (available_soildepth > 0)
+                                layerthickness_m[row, col, soil_layer] = dz_standard;
+                                available_soildepth -= dz_standard;
+                            }
+                            else
                             {
-                                // 0-50 cm    min 2.5   insteek 5    maximum 10 cm       n=10    bovenste laag geen minimum (sediment HOEFT niet meteen weggemiddeld te worden - pas als nodig)
-                                // 50-200 cm  min 10    insteek 15    maximum 50 cm      n=10
-                                // daarna     min 50    insteek 100  geen max            n=5
-                                // If max_soil_layers is smaller than the sum of the perfect layers in each of the three ' packages' , then we simply make the lowest layer very thick.
-                                //if (soil_layer < 10 && soil_layer < max_soil_layers - 1)
-                                /*
-                                if (soil_layer < 40 && soil_layer < max_soil_layers - 1)
+                                layerthickness_m[row, col, soil_layer] = available_soildepth;
+                                available_soildepth = 0;
+                            }
+
+                            if (soil_layer == max_soil_layers - 1)
+                            {
+                                layerthickness_m[row, col, soil_layer] = available_soildepth;
+                                available_soildepth = 0;
+                            }
+
+                            //now limit layerthicknes to hardlayer limitations if needed
+                            if (blocks_active==1) {
+                                if (dtm[row, col] >= hardlayerelevation_m)
                                 {
-                                    if (available_soildepth > 0.05)
+                                    double currentdepth = (dtm[row, col] - depth_m - layerthickness_m[row, col, soil_layer]);
+                                    if (currentdepth < hardlayerelevation_m && currentdepth > (hardlayerelevation_m - hardlayerthickness_m))
                                     {
-                                        layerthickness_m[row, col, soil_layer] = 0.05;
-                                        available_soildepth -= 0.05;
-                                    }
-                                    else
-                                    {
-                                        layerthickness_m[row, col, soil_layer] = available_soildepth;
+                                        layerthickness_m[row, col, soil_layer] = (dtm[row, col] - depth_m) - hardlayerelevation_m;
+                                        //Debug.WriteLine(" limited layerthickness and soildepth to account for proximity of hardlayer  in " + row + " " + col);
+                                        //Debug.WriteLine(" hardlayerelevation_m " + hardlayerelevation_m + ", " + ((dtm[row, col] - depth_m) - hardlayerelevation_m) + " under the top of this layer");
+                                        //Debug.WriteLine(" dtm " + dtm[row, col] + " currentdepth " + currentdepth + " available_soildepth " + available_soildepth + " depth_m " + depth_m);
+                                        //Debug.WriteLine(" adapted layerthickness is " + layerthickness_m[row, col, soil_layer]);
                                         available_soildepth = 0;
+
+                                        //this ensures that soils stay thinner on top of hardlayers, and don't continue under them.
                                     }
                                 }
-                                */
-                                if (soil_layer < 10 && soil_layer < max_soil_layers - 1)
+                            }
+
+                            if (layerthickness_m[row, col, soil_layer] != 0)
+                            {
+                                depth_m += layerthickness_m[row, col, soil_layer] / 2;
+                                location_bd = bulk_density_calc(coarsefrac, sandfrac, siltfrac, clayfrac, fclayfrac, 0, 0, depth_m);
+                                depth_m += layerthickness_m[row, col, soil_layer] / 2;
+                                texture_kg[row, col, soil_layer, 0] = location_bd * layerthickness_m[row, col, soil_layer] * coarsefrac * dx * dx;   //  kg = kg/m3 * m * kg/kg * m * m
+                                texture_kg[row, col, soil_layer, 1] = location_bd * layerthickness_m[row, col, soil_layer] * sandfrac * dx * dx;
+                                texture_kg[row, col, soil_layer, 2] = location_bd * layerthickness_m[row, col, soil_layer] * siltfrac * dx * dx;
+                                texture_kg[row, col, soil_layer, 3] = location_bd * layerthickness_m[row, col, soil_layer] * clayfrac * dx * dx;
+                                texture_kg[row, col, soil_layer, 4] = location_bd * layerthickness_m[row, col, soil_layer] * fclayfrac * dx * dx;
+                                bulkdensity[row, col, soil_layer] = location_bd;
+
+                                if (decalcification_checkbox.Checked)
                                 {
-                                    if (available_soildepth > 0.05) //
-                                    {
-                                        layerthickness_m[row, col, soil_layer] = 0.05; // 
-                                        available_soildepth -= 0.05;
-                                    }
-                                    else
-                                    {
-                                        layerthickness_m[row, col, soil_layer] = available_soildepth;
-                                        available_soildepth = 0;
-                                    }
-                                }
-                                if (soil_layer > 9 && soil_layer < 20 && soil_layer < max_soil_layers - 1)
-                                {
-                                    if (available_soildepth > 0.15) // was 0.25
-                                    {
-                                        layerthickness_m[row, col, soil_layer] = 0.15; // was 0.15
-                                        available_soildepth -= 0.15;
-                                    }
-                                    else
-                                    {
-                                        layerthickness_m[row, col, soil_layer] = available_soildepth;
-                                        available_soildepth = 0;
-                                    }
-                                }
-                                if (soil_layer > 19 && soil_layer < max_soil_layers && soil_layer < max_soil_layers - 1) // Rest
-                                {
-                                    if (available_soildepth > 0.5) // was 1
-                                    {
-                                        layerthickness_m[row, col, soil_layer] = 0.5; // was 1
-                                        available_soildepth -= 0.5; // was 1
-                                    }
-                                    else
-                                    {
-                                        layerthickness_m[row, col, soil_layer] = available_soildepth;
-                                        available_soildepth = 0;
-                                    }
+                                    CO3_kg[row, col, soil_layer] = (location_bd * layerthickness_m[row, col, soil_layer] * dx * dx) * Convert.ToDouble(ini_CaCO3_content.Text) * 40.08 / (40.08 + 60.01); // calculate total CO3: total mass * fraction of soil * fraction of CaCO3 molecule
                                 }
 
-                                if (soil_layer == max_soil_layers - 1)
-                                {
-                                    layerthickness_m[row, col, soil_layer] = available_soildepth;
-                                    available_soildepth = 0;
-                                }
+                            }
+                            if (creep_testing.Checked)
+                            {
+                                sandfrac -= 0.05;
+                                clayfrac += 0.05;
 
-                                if (layerthickness_m[row, col, soil_layer] != 0)
-                                {
-                                    depth_m += layerthickness_m[row, col, soil_layer] / 2;
-                                    location_bd = bulk_density_calc(coarsefrac, sandfrac, siltfrac, clayfrac, fclayfrac, 0, 0, depth_m);
-                                    depth_m += layerthickness_m[row, col, soil_layer] / 2;
-                                    texture_kg[row, col, soil_layer, 0] = location_bd * layerthickness_m[row, col, soil_layer] * coarsefrac * dx * dx;   //  kg = kg/m3 * m * kg/kg * m * m
-                                    texture_kg[row, col, soil_layer, 1] = location_bd * layerthickness_m[row, col, soil_layer] * sandfrac * dx * dx;
-                                    texture_kg[row, col, soil_layer, 2] = location_bd * layerthickness_m[row, col, soil_layer] * siltfrac * dx * dx;
-                                    texture_kg[row, col, soil_layer, 3] = location_bd * layerthickness_m[row, col, soil_layer] * clayfrac * dx * dx;
-                                    texture_kg[row, col, soil_layer, 4] = location_bd * layerthickness_m[row, col, soil_layer] * fclayfrac * dx * dx;
-                                    bulkdensity[row, col, soil_layer] = location_bd;
+                                sandfrac = Math.Max(sandfrac, 0);
+                                clayfrac = Math.Min(clayfrac, 1);
+                            }
 
-                                    if (decalcification_checkbox.Checked)
-                                    {
-                                        CO3_kg[row, col, soil_layer] = (location_bd * layerthickness_m[row, col, soil_layer] * dx * dx) * Convert.ToDouble(ini_CaCO3_content.Text) * 40.08 / (40.08 + 60.01); // calculate total CO3: total mass * fraction of soil * fraction of CaCO3 molecule
-                                    }
+                            soil_layer++;
 
-                                }
-                                if (creep_testing.Checked)
-                                {
-                                    sandfrac -= 0.05;
-                                    clayfrac += 0.05;
-
-                                    sandfrac = Math.Max(sandfrac, 0);
-                                    clayfrac = Math.Min(clayfrac, 1);
-                                }
-
-                                soil_layer++;
-
-                            } // end availabke soil depth > 0
-                        }    // end variable layer thickness              
+                        } // end available soil depth > 0
                     } // end else 
                     soildepth_m[row, col] = total_soil_thickness(row, col);
 
@@ -11746,7 +10682,6 @@ namespace LORICA4
             //Debug.WriteLine("initialised soil");
 
         } // anngepast voor standaard diktes
-
 
         void initialise_every_till()
         {
@@ -11837,7 +10772,11 @@ namespace LORICA4
                     {
                         for (int col = 0; col < nc; col++)
                         {
-                            if (dtm[row, col] < dtmfill_A[row, col] && dtm[row, col] != -9999) { dtm[row, col] = dtmfill_A[row, col]; }
+                            if (dtm[row, col] < dtmfill_A[row, col] && dtm[row, col] != -9999) {
+                                dtmchange[row, col] += dtmfill_A[row, col] - dtm[row, col];
+                                dtm[row, col] = dtmfill_A[row, col]; 
+                            
+                            }
                         }
                     }
                 }
@@ -12160,7 +11099,7 @@ namespace LORICA4
         {
             double[] tex_topsoil;
             double depth, fsilt, fclay, fOM, BD_t, slope_rad;
-            int lay, topsoil;
+            int lay;
             Ks_min_mh = 1000; Ks_max_mh = 0;
             List<double> BD_topsoil;
 
@@ -12312,12 +11251,11 @@ namespace LORICA4
             -link infiltration to differences in Ks (negative Ks) !!!
              */
 
-
             pond_d = new double[nr, nc];
             double[,] currentflow = new double[nr, nc];
             // Debug.WriteLine("df1");
             //every cell, inflow and outflow;
-            double Qi, powered_slope_sum, OF_tot1 = 0, OF_tot2 = 0, OF_tot3 = 0; ;
+            double powered_slope_sum, OF_tot1 = 0, OF_tot2 = 0, OF_tot3 = 0; ;
             double[,,] OFd = new double[nr, nc, 10];
 
             //0: total flow
@@ -12380,7 +11318,7 @@ namespace LORICA4
                 {
                     row = row_index[runner]; col = col_index[runner];
 
-                    // if (row == 186 & col == 499 & t == 5) { minimaps(186, 499); }
+                    //if (row == 186 & col == 499 & t == 5) { minimaps(186, 499); }
 
 
                     powered_slope_sum = 0;
@@ -12808,7 +11746,7 @@ namespace LORICA4
             // DEVELOP after shifting cells up the script runs through the lower empty cells, moving them up also. with some booleans, this should be prevented. there is no error now, only longer simulation time.  
             try
             {
-                if(diagnostic_mode==1){ Debug.WriteLine("entered removing empty layers");}
+                if (diagnostic_mode == 1) { Debug.WriteLine("entered removing empty layers"); }
                 int empty_layers = 0;
                 bool shift_layers = false;
 
@@ -12837,7 +11775,6 @@ namespace LORICA4
                             }
                             old_SOM_kg[row2, col2, layert] = old_SOM_kg[row2, col2, layert + 1];
                             young_SOM_kg[row2, col2, layert] = young_SOM_kg[row2, col2, layert + 1];
-
                         }
                         for (i = 0; i < 5; i++)
                         {
@@ -12847,30 +11784,11 @@ namespace LORICA4
                         young_SOM_kg[row2, col2, max_soil_layers - 1] = 0;
                         layerthickness_m[row2, col2, max_soil_layers - 1] = 0;
 
-                        if (OSL_checkbox.Checked)
-                        {
-                            for (int osl_i = 0; osl_i < OSL_age.GetLength(0); osl_i++) // loop over all rows
-                            {
-                                if (OSL_age[osl_i, 0] == row2 & OSL_age[osl_i, 1] == col2)
-                                {
-                                    if (OSL_age[osl_i, 2] == lay2) { Debugger.Break(); } // should not happen. This layer has been eroded completely
-                                    if (OSL_age[osl_i, 2] > lay2)
-                                    {
-                                        OSL_age[osl_i, 2] -= 1;
-                                    } // reduce layer number by 1
-                                }
-                            }
-                        }
-
                         if (full_layer_shift == true) { lay2--; }
                         //Debug.WriteLine("-");
                         //displaysoil(row2, col2);
-
                     }
                 }
-
-
-
                 // Debug.WriteLine("rel3");
                 if (shift_layers == true)
                 {
@@ -12883,293 +11801,17 @@ namespace LORICA4
 
                 }
 
-                // if (n_shifts > 0) { displaysoil(row2, col2); Debug.WriteLine("n layers shifted: {0} in row {1}, col {2}", n_shifts, row2,col2); }
+                if (diagnostic_mode == 1) { if (n_shifts > 0) { displaysoil(row2, col2); Debug.WriteLine("n layers shifted: {0} in row {1}, col {2}", n_shifts, row2, col2); } }
                 update_all_soil_thicknesses(row2, col2);
             } // end try
 
             catch
             {
                 Debug.WriteLine("Error in removing empty layers");
+                Debug.WriteLine(" at end of remove_empty_layers: "); displaysoil(row2, col2); 
             }
-            // displaysoil(row2, col2);
+            
         }
-
-        /*void soil_update_split_and_combine_layers()
-        {
-
-            //where at the end of soil development, splitting and combining of soil layers is performed.
-
-            //per layer: if too thin: combine with one of the two neighbours (the closest one in properties). 
-            // too thick: split
-            // if total too much - combine the most similar two layers although the product conforms to most restrictive rule about thicknesses
-            //maat voor verschil is som (absolute differences in de vijf text classes and two organic matter classes)
-
-            // 0-50 cm    min 2.5   insteek 5    maximum 10 cm       n=10    bovenste laag geen minimum (sediment HOEFT niet meteen weggemiddeld te worden - pas als nodig)
-            // 50-250 cm  min 10    insteek 25    maximum 50 cm      n=8
-            // daarna     min 50    insteek 100  geen max            n=4
-
-            //for combining : only when matrix size exceeded, then those two layers that are most equal are combined
-            //do not combine two layers that together are too thick for their position in the profile. If needed, make lowest layer thicker. Therefore, approach from above
-
-            //MISSING: HOW DO WE GO FROM MAX TO LESS LAYERS? ART
-          //  Debug.WriteLine("suscl1 ");
-
-            //displaysoil(0,0);
-
-            total_average_soilthickness_m = 0;
-            number_soil_thicker_than = 0;
-            number_soil_coarser_than = 0;
-            local_soil_depth_m = 0;
-            local_soil_mass_kg = 0;
-
-            int layer;
-            int numberoflayers = 0;
-            double depth_m;  // keep better track of this, currently not OK yet
-            try
-            {
-                //Debug.WriteLine("suscl2");
-                //displaysoil(0, 0);
-                for (int row = 0; row < nr; row++)
-                {
-                    for (int col = 0; col < nc; col++)
-                    {
-                        if (dtm[row, col] != -9999)
-                        {
-                            soildepth_m[row, col] = total_soil_thickness(row, col);
-                            soildepth_m[row, col] = total_soil_thickness(row, col);
-
-                           // if (soildepth_m[row, col] < 50) { Debug.WriteLine("susac d = {0}, at t {1}, r {2}, c {3}", soildepth_m[row, col], t, row, col); displaysoil(row, col); Debugger.Break(); }
-                            depth_m = 0;
-                            for (layer = 0; layer < max_soil_layers; layer++)
-                            {
-                                ////update the layers' thickness now that textures and organic matter amounts have changed (if there is anything in the layer at all).
-                                //if (!(texture_kg[row, col, layer, 0] == 0 && texture_kg[row, col, layer, 1] == 0 && texture_kg[row, col, layer, 2] == 0 && texture_kg[row, col, layer, 3] == 0 && texture_kg[row, col, layer, 4] == 0 && young_SOM_kg[row, col, layer] == 0 && old_SOM_kg[row, col, layer] == 0))
-                                //{
-                                layerthickness_m[row, col, layer] = thickness_calc(row, col, layer);
-                                //}
-                                if (timeseries.timeseries_soil_mass_checkbox.Checked && System.Convert.ToInt32(timeseries.timeseries_soil_cell_row.Text) == row && System.Convert.ToInt32(timeseries.timeseries_soil_cell_col.Text) == col)
-                                {
-                                    local_soil_mass_kg += texture_kg[row, col, layer, 0] + texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4] + young_SOM_kg[row, col, layer] + old_SOM_kg[row, col, layer];
-                                }
-                                if (timeseries.timeseries_soil_mass_checkbox.Checked && layer == 0 && texture_kg[row, col, layer, 0] / (texture_kg[row, col, layer, 0] + texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4] + young_SOM_kg[row, col, layer] + old_SOM_kg[row, col, layer]) > System.Convert.ToDouble(timeseries.timeseries_soil_coarser_fraction_textbox.Text))
-                                {
-                                    number_soil_coarser_than++;
-                                }
-                            }
-                        }
-
-                    }
-                }
-
-
-                //displaysoil(0, 0);
-                for (int row  = 0; row < nr; row++)
-                {
-                    for (int col = 0; col < nc; col++)
-                    {
-                        if (dtm[row, col] != -9999)
-                        {
-                            // Debug.WriteLine("suscl0" + row + ", " + col + ", " + t + " " + total_soil_mass(row, col));
-                            //Debug.WriteLine("soil before splitting");
-                            // Debug.WriteLine("uscl1");
-                            // if (row == 0 & col == 0) { displaysoil(row, col); }
-                            depth_m = 0; numberoflayers = 0;
-
-
-                            double mass1 = total_soil_mass(row, col);
-                            for (layer = 0; layer < max_soil_layers; layer++)
-                            {
-                                if (layerthickness_m[row, col, layer] > 0)
-                                {
-                                    depth_m += layerthickness_m[row, col, layer];
-                                    //Debug.WriteLine("depth is now " + depth + " for lyr " +  layer);
-                                    numberoflayers++;
-
-                                    // 0-50 cm    min 2.5   insteek 5    maximum 10 cm       n=10    bovenste laag geen minimum (sediment HOEFT niet meteen weggemiddeld te worden - pas als nodig)
-                                    // 50-250 cm  min 10    insteek 25    maximum 50 cm      n=8
-                                    // daarna     min 50    insteek 100  geen max            n=4
-
-                                    if (depth_m <= 0.5)
-                                    {
-
-                                        if (layerthickness_m[row, col, layer] < 0.025 && layer != 0)
-                                        { //combine layers: select the one most like this one
-                                            if (layer_difference(row, col, layer, layer - 1) > layer_difference(row, col, layer, layer + 1))
-                                            {
-                                                combine_layers(row, col, layer, layer + 1);
-                                                update_all_soil_thicknesses(row, col);
-                                                numberoflayers--;
-
-                                            }
-                                            else
-                                            {
-                                                combine_layers(row, col, layer - 1, layer);
-                                                layer--;  //because we combined with the previous one, the current one has been replaced with one that has not yet been considered
-                                                update_all_soil_thicknesses(row, col);
-                                                numberoflayers--;
-
-                                            }
-                                            // we will now check whether layers have become too thick and if needed cut them in half
-                                        }
-
-                                        if (layerthickness_m[row, col, layer] > 0.1)
-                                        { //split 
-                                          // Debug.WriteLine("splitting after combining 1");
-                                            split_layer(row, col, layer, depth_m);
-                                            update_all_soil_thicknesses(row, col);
-                                            numberoflayers++;
-
-                                        }
-
-                                        // 0-50 cm    min 2.5   insteek 5    maximum 10 cm       n=10    bovenste laag geen minimum (sediment HOEFT niet meteen weggemiddeld te worden - pas als nodig)
-                                        // 50-250 cm  min 10    insteek 25    maximum 50 cm      n=8
-                                        // daarna     min 50    insteek 100  geen max            n=4
-
-                                    }
-
-                                    // Debug.WriteLine("uscl2");
-
-                                    if (depth_m > 0.5 && depth_m <= 3.0)
-                                    {
-                                        if (layerthickness_m[row, col, layer] < 0.1 && layer != 0)
-                                        { //combine 
-                                            if (layer_difference(row, col, layer, layer - 1) > layer_difference(row, col, layer, layer + 1))
-                                            {
-                                                combine_layers(row, col, layer, layer + 1);
-                                                update_all_soil_thicknesses(row, col);
-                                                numberoflayers--;
-
-                                            }
-                                            else
-                                            {
-                                                combine_layers(row, col, layer - 1, layer);
-                                                layer--;  //because we combined with the previous one, the current one has been replaced with one that has not yet been considered
-                                                update_all_soil_thicknesses(row, col);
-                                            }
-                                        }
-                                        if (layerthickness_m[row, col, layer] > 0.5)
-                                        { //split 
-                                          // Debug.WriteLine("splitting after combining 2. layer = {0}, layerthickness = {1}", layer, layerthickness_m[row, col, layer]);
-                                            split_layer(row, col, layer, depth_m);
-                                            update_all_soil_thicknesses(row, col);
-                                        }
-                                    }
-
-                                    // Debug.WriteLine("uscl3");
-
-                                    if (depth_m > 3.0)
-                                    {
-                                        // Debug.WriteLine("uscl3");
-                                        if (layerthickness_m[row, col, layer] < 0.5 && layer != 0 && layer<max_soil_layers)
-                                        { //combine 
-                                            Debug.WriteLine("uscl3");
-                                            if (layer_difference(row, col, layer, layer - 1) > layer_difference(row, col, layer, layer + 1))
-                                            {
-                                                // Debug.WriteLine("uscl3.1");
-                                                combine_layers(row, col, layer, layer + 1);
-                                                update_all_soil_thicknesses(row, col);
-                                                numberoflayers--;
-                                                // Debug.WriteLine("uscl3.2");
-
-
-                                            }
-                                            else
-                                            {
-                                                Debug.WriteLine("uscl3.3");
-
-                                                combine_layers(row, col, layer - 1, layer);
-                                                layer--;  //because we combined with the previous one, the current one has been replaced with one that has not yet been considered
-                                                numberoflayers--;
-                                                update_all_soil_thicknesses(row, col);
-                                                // Debug.WriteLine("uscl3.4");
-
-                                            }
-
-                                        }
-                                        if (layerthickness_m[row, col, layer] > 0.5)
-                                        { //split 
-                                          // no splitting, no maximum thickness
-                                        }
-                                    }
-                                    // Debug.WriteLine("uscl4");
-
-                                    //Debug.WriteLine("depth is now " + depth + " and number of layers is  " + numberoflayers);
-                                }
-                            }
-
-                            //Debug.WriteLine("suscl1" + row + ", " + col + ", " + t);
-                            // Debug.WriteLine("uscl5");
-
-                            for (int layupdate = 0; layupdate < max_soil_layers; layupdate++)
-                            {
-                                layerthickness_m[row, col, layupdate] = thickness_calc(row, col, layupdate);
-                            }
-
-                            double mass2 = total_soil_mass(row, col);
-                            // Debug.WriteLine("uscl6");
-
-                            //Debug.WriteLine("Soil after splitting");
-                            //if (row == 0 & col == 0) { displaysoil(row, col); }
-                            //Debug.WriteLine("suscl4");
-                            //displaysoil(0, 0);
-                            //if (numberoflayers > max_soil_layers)
-                            if (Math.Abs(mass1 - mass2) > 0.0000001) // meij. changed the check to amount of material in the soil. with a lot of combining and splitting, the count of numberoflayers goes wrong. Threshold not 0, due to rounding errors
-                            {
-                               // this should never happen, because the data of the lowest layers have then been lost.
-                               Debug.WriteLine(" Warning - loss of soil data "); 
-                               Debug.WriteLine("mass difference = {0}", (mass1 - mass2)); 
-                               displaysoil(row, col);
-                               Debugger.Break();
-                            }
-                            // Debug.WriteLine("uscl7");
-
-                            if (timeseries.timeseries_number_soil_thicker_checkbox.Checked && System.Convert.ToDouble(timeseries.timeseries_soil_thicker_textbox.Text) < depth_m) { number_soil_thicker_than++; }
-                            if (timeseries.total_average_soilthickness_checkbox.Checked) { total_average_soilthickness_m += depth_m; }
-                            if (timeseries.timeseries_soil_depth_checkbox.Checked && System.Convert.ToInt32(timeseries.timeseries_soil_cell_row.Text) == row && System.Convert.ToInt32(timeseries.timeseries_soil_cell_col.Text) == col)
-                            {
-                                local_soil_depth_m = depth_m;
-                            }
-
-                            //Debug.WriteLine("suscl0" + row + ", " + col + ", " + t + " " + total_soil_mass(row, col));
-                            //double old_thickness = soildepth_m[row, col];
-                            //double new_thickness = total_soil_thickness(row, col);
-                            //double dtm_difference = soildepth_m[row, col] - total_soil_thickness(row, col);
-                            //if (Math.Abs(old_thickness - new_thickness) > 0.0005)
-                            //{
-                            //    displaysoil(row, col);
-                            //    Debugger.Break();
-                            //}
-                            //double old_thickness = soildepth_m[row, col];
-                            //double new_thickness = total_soil_thickness(row, col);
-                            //if(Math.Abs(old_thickness-new_thickness)>0.5)
-                            //{
-                            //    Debugger.Break();
-                            //}
-                            dtm[row, col] += soildepth_m[row, col] - total_soil_thickness(row, col); // update dtm by differences in soil depth
-                            soildepth_m[row, col] = total_soil_thickness(row, col);
-
-                        }
-
-<<<<<<< HEAD
-                if (timeseries.total_average_soilthickness_checkbox.Checked) { total_average_soilthickness_m /= number_of_data_cells; }
-            }
-            catch { }
-            double mass_after = total_catchment_mass(); //called but not used?
-            //if (Math.Round(mass_before, 3) != Math.Round(mass_after, 3)) { Debugger.Break(); }
-=======
-                    }
-                }
-               if (timeseries.total_average_soilthickness_checkbox.Checked) { total_average_soilthickness_m /= number_of_data_cells; }
->>>>>>> main
-
-            }
-            catch
-            {
-                Debug.WriteLine("Error in updating, splitting and combining layers");
-            }
-
-        }
-         * */ //aangepast voor tree fall, maar met fout erin
 
         void soil_update_split_and_combine_layers_standard()
         {
@@ -13205,9 +11847,9 @@ namespace LORICA4
             {
                 //Debug.WriteLine("suscl2");
                 //displaysoil(0, 0);
-                for (row = 0; row < nr; row++)
+                for (int row = 0; row < nr; row++)
                 {
-                    for (col = 0; col < nc; col++)
+                    for (int col = 0; col < nc; col++)
                     {
                         if (dtm[row, col] != -9999)
                         {
@@ -13245,12 +11887,7 @@ namespace LORICA4
 
 
                 //displaysoil(0, 0);
-<<<<<<< HEAD
-                depth_m = 0;
                 for (int row  = 0; row < nr; row++)
-=======
-                for (row = 0; row < nr; row++)
->>>>>>> main
                 {
                     for (int col = 0; col < nc; col++)
                     {
@@ -13285,23 +11922,8 @@ namespace LORICA4
                                             if (Math.Round(old_soil_mass, 6) != Math.Round(total_soil_mass(row, col), 6)) { Debug.WriteLine("err_uscl2"); }
                                         }
 
-<<<<<<< HEAD
-                                            split_layer(row, col, layer, depth_m);
-                                            // Debug.WriteLine("d_layer {0}", layerthickness_m[row, col, layer]);
-                                            update_all_soil_thicknesses(row, col);
-                                            // Debug.WriteLine("d_layer {0}", layerthickness_m[row, col, layer] );
-                                            boolsplit = true;
-                                        }
-                                    }
-                                    //if (layer != 0)
-                                    else
-                                    {
-                                        if (layerthickness_m[row, col, layer] < (dz_standard * (1 - tolerance))) // Lower end, combine
-                                        {
-=======
                                         if (layerthickness_m[row, col, layer] < 0.025 && layer != 0)
                                         { //combine layers: select the one most like this one
->>>>>>> main
                                             if (layer_difference(row, col, layer, layer - 1) > layer_difference(row, col, layer, layer + 1))
                                             {
                                                 combine_layers(row, col, layer, layer + 1);
@@ -13319,7 +11941,7 @@ namespace LORICA4
                                                 layer--;  //because we combined with the previous one, the current one has been replaced with one that has not yet been considered
                                                 update_all_soil_thicknesses(row, col);
                                                 boolcombine = true;
-                                                if (Math.Round(old_soil_mass, 6) != Math.Round(total_soil_mass(row, col), 6)) { Debugger.Break(); }
+                                                // if (Math.Round(old_soil_mass, 6) != Math.Round(total_soil_mass(row, col), 6)) { Debugger.Break(); }
 
                                             }
                                             // we will now check whether layers have become too thick and if needed cut them in half
@@ -13331,7 +11953,7 @@ namespace LORICA4
                                             split_layer(row, col, layer, depth_m);
                                             update_all_soil_thicknesses(row, col);
                                             boolsplit = true;
-                                            if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00000001) { Debugger.Break(); }
+                                            // if (Math.Abs(old_soil_mass-total_soil_mass(row, col))>0.00000001) { Debugger.Break(); }
 
                                         }
 
@@ -13366,7 +11988,7 @@ namespace LORICA4
                                                 layer--;  //because we combined with the previous one, the current one has been replaced with one that has not yet been considered
                                                 update_all_soil_thicknesses(row, col);
                                                 boolcombine = true;
-                                                if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00000001) { Debugger.Break(); }
+                                                // if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00000001) { Debugger.Break(); }
 
                                             }
                                         }
@@ -13409,7 +12031,7 @@ namespace LORICA4
                                                 numberoflayers--;
                                                 update_all_soil_thicknesses(row, col);
                                                 boolcombine = true;
-                                                if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00000001) { Debugger.Break(); }
+                                                // if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00000001) { Debugger.Break(); }
 
                                             }
 
@@ -13466,14 +12088,18 @@ namespace LORICA4
                 if (timeseries.total_average_soilthickness_checkbox.Checked) { total_average_soilthickness_m /= number_of_data_cells; }
             }
             catch { }
-            double mass_after = total_catchment_mass();
-            if (Math.Round(mass_before, 3) != Math.Round(mass_after, 3)) { Debugger.Break(); }
+            double mass_after = total_catchment_mass(); //called but not used?
+            //if (Math.Round(mass_before, 3) != Math.Round(mass_after, 3)) { Debugger.Break(); }
 
 
-        }
+        } //always keep this code
 
         void soil_update_split_and_combine_layers()
         {
+            double dz_standard = 0.1;
+            double tolerance = 0.55; // fraction of standard thickness
+                                     //where at the end of soil development, splitting and combining of soil layers is performed.
+
             //per layer: if too thin: combine with one of the two neighbours (the closest one in properties). 
             // too thick: split
             // if total too much - combine the most similar two layers although the product conforms to most restrictive rule about thicknesses
@@ -13550,15 +12176,22 @@ namespace LORICA4
 
                 //displaysoil(0, 0);
                 depth_m = 0;
-                for (row = 0; row < nr; row++)
+                for (int row  = 0; row < nr; row++)
                 {
-                    for (col = 0; col < nc; col++)
+                    for (int col = 0; col < nc; col++)
                     {
                         if (dtm[row, col] != -9999)
                         {
                             remove_empty_layers(row, col);
                             remove_empty_layers(row, col);
+
                             update_all_soil_thicknesses(row, col);
+
+                            //if (NA_in_soil(row, col))
+                            //{
+                            //    Debug.WriteLine("err_uscl8");
+                            //}
+
 
                             double old_soil_mass = total_soil_mass(row, col), new_soil_mass;
                             // Debug.WriteLine("suscl0" + row + ", " + col + ", " + t + " " + total_soil_mass(row, col));
@@ -13567,251 +12200,105 @@ namespace LORICA4
                             depth_m = 0; numberoflayers = 0;
                             bool boolsplit = false;
                             bool boolcombine = false;
-
-                            if(checkBox_layer_thickness.Checked) // fixed layer thickness
+                            for (layer = 0; layer < (max_soil_layers - 1); layer++)
                             {
-                                for (layer = 0; layer < (max_soil_layers - 1); layer++)
+                                if (total_layer_mass(row, col, layer) > 0)
                                 {
-                                    if (total_layer_mass(row, col, layer) > 0)
+
+                                    //Debug.WriteLine("depth is now " + depth + " for lyr " +  layer);
+                                    numberoflayers++;
+                                    if (layer == 0)
                                     {
-                                        //Debug.WriteLine("depth is now " + depth + " for lyr " +  layer);
-                                        numberoflayers++;
-                                        if (layer == 0)
+                                        if (layerthickness_m[row, col, layer] < 0.001 | total_soil_mass(row, col) < 0.001) // smaller than one mm, lighter than 1 gram -> merge with layer below, to avoid numerical problems when always a fraction leaves the profile (e.g. with creep)
                                         {
-                                            if (layerthickness_m[row, col, layer] < 0.001 | total_soil_mass(row, col) < 0.001) // smaller than one mm, lighter than 1 gram -> merge with layer below, to avoid numerical problems when always a fraction leaves the profile (e.g. with creep)
+                                            combine_layers(row, col, layer, layer + 1);
+                                            update_all_soil_thicknesses(row, col);
+                                            boolcombine = true;
+                                            if (Math.Round(old_soil_mass, 6) != Math.Round(total_soil_mass(row, col), 6))
                                             {
+                                                Debug.WriteLine("err_uscl9");
+                                            }
+                                        }
+                                        while (layerthickness_m[row, col, layer] > dz_standard * (1 + tolerance)) //Higher end, split
+                                        { //split 
+                                          // Debug.WriteLine("splitting after combining 1");
+                                          // Debug.WriteLine("d_layer {0}", layerthickness_m[row, col, layer]);
+
+                                            split_layer(row, col, layer, depth_m);
+                                            // Debug.WriteLine("d_layer {0}", layerthickness_m[row, col, layer]);
+                                            update_all_soil_thicknesses(row, col);
+                                            // Debug.WriteLine("d_layer {0}", layerthickness_m[row, col, layer] );
+                                            boolsplit = true;
+                                        }
+                                    }
+                                    //if (layer != 0)
+                                    else
+                                    {
+                                        if (layerthickness_m[row, col, layer] < (dz_standard * (1 - tolerance))) // Lower end, combine
+                                        {
+                                            if (layer_difference(row, col, layer, layer - 1) > layer_difference(row, col, layer, layer + 1))
+                                            {
+                                                if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00001)
+                                                {
+                                                    Debug.WriteLine("err_uscl10");
+                                                }
                                                 combine_layers(row, col, layer, layer + 1);
                                                 update_all_soil_thicknesses(row, col);
                                                 boolcombine = true;
                                                 if (Math.Round(old_soil_mass, 6) != Math.Round(total_soil_mass(row, col), 6))
                                                 {
-                                                    Debug.WriteLine("err_uscl9");
+                                                    Debug.WriteLine("err_uscl11");
                                                 }
                                             }
-                                            while (layerthickness_m[row, col, layer] > dz_standard * (1 + tolerance)) //Higher end, split
-                                            { //split 
-                                              // Debug.WriteLine("splitting after combining 1");
-                                              // Debug.WriteLine("d_layer {0}", layerthickness_m[row, col, layer]);
-
-                                                split_layer(row, col, layer, depth_m);
-                                                // Debug.WriteLine("d_layer {0}", layerthickness_m[row, col, layer]);
-                                                update_all_soil_thicknesses(row, col);
-                                                // Debug.WriteLine("d_layer {0}", layerthickness_m[row, col, layer] );
-                                                boolsplit = true;
-                                            }
-                                        }
-                                        if (layer != 0)
-                                        {
-                                            if (layerthickness_m[row, col, layer] < (dz_standard * (1 - tolerance))) // Lower end, combine
+                                            else
                                             {
-                                                if (layer_difference(row, col, layer, layer - 1) > layer_difference(row, col, layer, layer + 1))
+                                                if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00001)
                                                 {
-                                                    if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00001)
-                                                    {
-                                                        Debug.WriteLine("err_uscl10");
-                                                    }
-                                                    combine_layers(row, col, layer, layer + 1);
-                                                    update_all_soil_thicknesses(row, col);
-                                                    boolcombine = true;
-                                                    if (Math.Round(old_soil_mass, 6) != Math.Round(total_soil_mass(row, col), 6))
-                                                    {
-                                                        Debug.WriteLine("err_uscl11");
-                                                    }
+                                                    Debug.WriteLine("err_uscl12");
                                                 }
-                                                else
-                                                {
-                                                    if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00001)
-                                                    {
-                                                        Debug.WriteLine("err_uscl12");
-                                                    }
-                                                    combine_layers(row, col, layer - 1, layer);
-                                                    layer--;  //because we combined with the previous one, the current one has been replaced with one that has not yet been considered
-                                                    update_all_soil_thicknesses(row, col);
-                                                    boolcombine = true;
-                                                    // if (Math.Round(old_soil_mass, 6) != Math.Round(total_soil_mass(row, col), 6)) { Debugger.Break(); }
-                                                    if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00001)
-                                                    {
-                                                        Debug.WriteLine("err_uscl13");
-                                                    }
-
-                                                }
-                                            }
-                                            if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00001)
-                                            {
-                                                Debug.WriteLine("err_uscl14");
-                                            }
-                                            if (NA_in_soil(row, col))
-                                            {
-                                                Debug.WriteLine("err_uscl15");
-                                            }
-                                            // MvdM changed the 'while' into an 'if' below, to prevent an infinite loop
-                                            if (layerthickness_m[row, col, layer] > dz_standard * (1 + tolerance)) //Higher end, split
-                                            { //split 
-                                              // Debug.WriteLine("splitting after combining 1");
-                                                split_layer(row, col, layer, depth_m);
+                                                combine_layers(row, col, layer - 1, layer);
+                                                layer--;  //because we combined with the previous one, the current one has been replaced with one that has not yet been considered
                                                 update_all_soil_thicknesses(row, col);
-                                                boolsplit = true;
-                                                // if (Math.Abs(old_soil_mass-total_soil_mass(row, col))>0.00000001) { Debugger.Break(); }
-                                            }
-                                            if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00001)
-                                            {
-                                                Debug.WriteLine("err_uscl16");
-                                            }
+                                                boolcombine = true;
+                                                // if (Math.Round(old_soil_mass, 6) != Math.Round(total_soil_mass(row, col), 6)) { Debugger.Break(); }
+                                                if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00001)
+                                                {
+                                                    Debug.WriteLine("err_uscl13");
+                                                }
 
-                                            //Debug.WriteLine("depth is now " + depth + " and number of layers is  " + numberoflayers);
+                                            }
                                         }
                                         if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00001)
                                         {
-                                            Debug.WriteLine("err_uscl17");
+                                            Debug.WriteLine("err_uscl14");
                                         }
-                                    }
-                                } // end layer
-                            } // end fixed layer thickness
-                            else // variable layer thickness
-                            {
-                                for (layer = 0; layer < max_soil_layers - 1; layer++)
-                                {
-                                    if (layerthickness_m[row, col, layer] > 0)
-                                    {
-
-                                        //Debug.WriteLine("depth is now " + depth + " for lyr " +  layer);
-                                        numberoflayers++;
-
-                                        // 0-50 cm    min 2.5   insteek 5    maximum 10 cm       n=10    bovenste laag geen minimum (sediment HOEFT niet meteen weggemiddeld te worden - pas als nodig)
-                                        // 50-250 cm  min 10    insteek 25    maximum 50 cm      n=8
-                                        // daarna     min 50    insteek 100  geen max            n=4
-
-                                        if (depth_m <= 0.5)
+                                        if (NA_in_soil(row, col))
                                         {
-                                            if (layer == 0 & layerthickness_m[row, col, layer] < 0.001) // smaller than one mm -> merge with layer below
-                                            {
-                                                combine_layers(row, col, layer, layer + 1);
-                                                update_all_soil_thicknesses(row, col);
-                                                boolcombine = true;
-                                                if (Math.Round(old_soil_mass, 6) != Math.Round(total_soil_mass(row, col), 6)) { Debug.WriteLine("err_uscl2"); }
-                                            }
-
-                                            if (layerthickness_m[row, col, layer] < 0.025 && layer != 0)
-                                            { //combine layers: select the one most like this one
-                                                if (layer_difference(row, col, layer, layer - 1) > layer_difference(row, col, layer, layer + 1))
-                                                {
-                                                    combine_layers(row, col, layer, layer + 1);
-                                                    update_all_soil_thicknesses(row, col);
-                                                    boolcombine = true;
-                                                    if (Math.Round(old_soil_mass, 6) != Math.Round(total_soil_mass(row, col), 6))
-                                                    {
-                                                        Debug.WriteLine("err_uscl3");
-                                                    }
-
-                                                }
-                                                else
-                                                {
-                                                    combine_layers(row, col, layer - 1, layer);
-                                                    layer--;  //because we combined with the previous one, the current one has been replaced with one that has not yet been considered
-                                                    update_all_soil_thicknesses(row, col);
-                                                    boolcombine = true;
-                                                    if (Math.Round(old_soil_mass, 6) != Math.Round(total_soil_mass(row, col), 6)) { Debugger.Break(); }
-
-                                                }
-                                                // we will now check whether layers have become too thick and if needed cut them in half
-                                            }
-
-                                            while (layerthickness_m[row, col, layer] > 0.1)
-                                            { //split 
-                                              // Debug.WriteLine("splitting after combining 1");
-                                                split_layer(row, col, layer, depth_m);
-                                                update_all_soil_thicknesses(row, col);
-                                                boolsplit = true;
-                                                if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00000001) { Debugger.Break(); }
-
-                                            }
-
-                                            // 0-50 cm    min 2.5   insteek 5    maximum 10 cm       n=10    bovenste laag geen minimum (sediment HOEFT niet meteen weggemiddeld te worden - pas als nodig)
-                                            // 50-250 cm  min 10    insteek 25    maximum 50 cm      n=8
-                                            // daarna     min 50    insteek 100  geen max            n=4
-
+                                            Debug.WriteLine("err_uscl15");
                                         }
 
-                                        depth_m += layerthickness_m[row, col, layer]; // MM moved this down one if-function, to be able to split big clumps of earth by tree fall. If I put it at the end, it will give problems with splitting the one-before-last layer
-
-
-
-
-                                        if (depth_m > 0.5 && depth_m <= 2)
+                                        while (layerthickness_m[row, col, layer] > dz_standard * (1 + tolerance)) //Higher end, split
+                                        { //split 
+                                          // Debug.WriteLine("splitting after combining 1");
+                                            split_layer(row, col, layer, depth_m);
+                                            update_all_soil_thicknesses(row, col);
+                                            boolsplit = true;
+                                            // if (Math.Abs(old_soil_mass-total_soil_mass(row, col))>0.00000001) { Debugger.Break(); }
+                                        }
+                                        if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00001)
                                         {
-                                            if (layerthickness_m[row, col, layer] < 0.1 && layer != 0)
-                                            { //combine 
-                                                if (layer_difference(row, col, layer, layer - 1) > layer_difference(row, col, layer, layer + 1))
-                                                {
-                                                    combine_layers(row, col, layer, layer + 1);
-                                                    update_all_soil_thicknesses(row, col);
-                                                    boolcombine = true;
-                                                    if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00000001)
-                                                    {
-                                                        Debug.WriteLine("err_uscl4");
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    combine_layers(row, col, layer - 1, layer);
-                                                    layer--;  //because we combined with the previous one, the current one has been replaced with one that has not yet been considered
-                                                    update_all_soil_thicknesses(row, col);
-                                                    boolcombine = true;
-                                                    if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00000001) { Debugger.Break(); }
-
-                                                }
-                                            }
-                                            while (layerthickness_m[row, col, layer] > 0.5)
-                                            { //split 
-                                              // Debug.WriteLine("splitting after combining 2. layer = {0}, layerthickness = {1}", layer, layerthickness_m[row, col, layer]);
-                                                split_layer(row, col, layer, depth_m);
-                                                update_all_soil_thicknesses(row, col);
-                                                boolsplit = true;
-                                                new_soil_mass = total_soil_mass(row, col);
-                                                if (Math.Abs(old_soil_mass - new_soil_mass) > 0.00000001)
-                                                {
-                                                    Debug.WriteLine("err_uscl5");
-                                                }
-
-                                            }
+                                            Debug.WriteLine("err_uscl16");
                                         }
 
-
-                                        if (depth_m > 2)
-                                        {
-                                            if (layerthickness_m[row, col, layer] < 0.4 && layer != 0)
-                                            { //combine 
-                                              //displaysoil(row, col);
-                                                if (layer_difference(row, col, layer, layer - 1) > layer_difference(row, col, layer, layer + 1))
-                                                {
-                                                    combine_layers(row, col, layer, layer + 1);
-                                                    update_all_soil_thicknesses(row, col);
-                                                    boolcombine = true;
-                                                    if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00000001)
-                                                    {
-                                                        Debug.WriteLine("err_uscl6");
-                                                    }
-
-                                                }
-                                                else
-                                                {
-                                                    combine_layers(row, col, layer - 1, layer);
-                                                    layer--;  //because we combined with the previous one, the current one has been replaced with one that has not yet been considered
-                                                    numberoflayers--;
-                                                    update_all_soil_thicknesses(row, col);
-                                                    boolcombine = true;
-                                                    if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00000001) { Debugger.Break(); }
-                                                }
-                                            }
-                                            if (layerthickness_m[row, col, layer] > 0.5)
-                                            { //split 
-                                              // no splitting, no maximum thickness
-                                            }
-                                        }
                                         //Debug.WriteLine("depth is now " + depth + " and number of layers is  " + numberoflayers);
                                     }
+                                    if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00001)
+                                    {
+                                        Debug.WriteLine("err_uscl17");
+                                    }
+
                                 }
-                            } // end variable layer thickness
+                            } // end layer
                               //Debug.WriteLine("suscl1" + row + ", " + col + ", " + t);
                             if (NA_in_soil(row, col))
                             {
@@ -13893,7 +12380,6 @@ namespace LORICA4
             }
         }
 
-
         double layer_difference(int rowwer, int coller, int lay1, int lay2)   //calculates a simple measure of difference between two soil layers based on the sum of relative differences in a set of properties
         {
             double average_property_value = 0, property_difference = 0, sum_property_difference = 0;
@@ -13963,24 +12449,6 @@ namespace LORICA4
                     young_SOM_kg[rowwer, coller, layert] = young_SOM_kg[rowwer, coller, layert + 1];
                 }
 
-                if (OSL_checkbox.Checked)
-                {
-                    for (int osl_i = 0; osl_i < OSL_age.GetLength(0); osl_i++) // loop over all rows
-                    {
-                        if (OSL_age[osl_i, 0] == rowwer & OSL_age[osl_i, 1] == coller)
-                        {
-                            if (OSL_age[osl_i, 2] == lay2)
-                            {
-                                OSL_age[osl_i, 2] = lay1;
-                            } //combine layers
-                            if (OSL_age[osl_i, 2] > lay2)
-                            {
-                                OSL_age[osl_i, 2] -= 1;
-                            } // move all layers 1 up
-                        }
-                    }
-                }
-
                 //now set the last layer to sentinel value of -1
                 for (int i = 0; i < 5; i++)
                 {
@@ -14006,10 +12474,9 @@ namespace LORICA4
             }
         }
 
-
         double bulk_density_calc(double coarse_mass, double sand_mass, double silt_mass, double clay_mass, double fine_clay_mass, double OMo_mass, double OMy_mass, double depth)
         {
-            if (depth == 0) { depth = 0.001; } // reset values of 0 to a thickness of 1 micrometer, to avoid infinite numbers in the calculation of BD
+            if (depth == 0) { depth = 0.001; } //MvdM value to prevent no data when calculating BD for layers that were previously empty, or for sediments that are deposited. A value of 1 results in an infinite value
             double bd = 2700, combined_frac, m_finesoil;
             m_finesoil = sand_mass + silt_mass + clay_mass + fine_clay_mass;
             if (m_finesoil > 0)
@@ -14025,7 +12492,7 @@ namespace LORICA4
             {
                 bd = 2700;
             }
-
+            if (double.IsNaN(bd) | double.IsInfinity(bd)) { Debugger.Break(); }
             return bd;
             // return 1500;
         }
@@ -14049,6 +12516,7 @@ namespace LORICA4
                 soil_mass += texture_kg[rowwer, coller, lay1, i];
             }
             soil_mass += old_SOM_kg[rowwer, coller, lay1] + young_SOM_kg[rowwer, coller, lay1];
+            //if (t == 6 && row == 193 && col == 58) { Debug.WriteLine("A " + row + " " + col + " soil mass " + soil_mass); displaysoil(row, col); }
             if (soil_mass > 0)
             {
                 bulkdensity[rowwer, coller, lay1] = bulk_density_calc(texture_kg[rowwer, coller, lay1, 0], texture_kg[rowwer, coller, lay1, 1], texture_kg[rowwer, coller, lay1, 2], texture_kg[rowwer, coller, lay1, 3], texture_kg[rowwer, coller, lay1, 4], old_SOM_kg[rowwer, coller, lay1], young_SOM_kg[rowwer, coller, lay1], depth_m);
@@ -14059,6 +12527,7 @@ namespace LORICA4
                 ////now coarse fragment correction
 
                 //bulkdensity[rowwer, coller, lay1] = (soil_mass + texture_kg[rowwer, coller, lay1, 0]) / ((soil_mass / bulkdensity[rowwer, coller, lay1]) + (texture_kg[rowwer, coller, lay1, 0] / 2700)); // ooit through interface              
+                // if (t == 6 && row == 193 && col == 58) { Debug.WriteLine("B " + row + " " + col + " soil mass " + soil_mass); }
             }
             else
             {
@@ -14068,6 +12537,7 @@ namespace LORICA4
                     bulkdensity[rowwer, coller, lay1] = 2700;   //kg/m3
                 }
             }
+            // if (t == 6 && row == 193 && col == 58) { Debug.WriteLine("C " + row + " " + col + " soil mass " + soil_mass); }
             soil_mass += texture_kg[rowwer, coller, lay1, 0];
             if (soil_mass == 0)
             {
@@ -14080,12 +12550,12 @@ namespace LORICA4
             if (double.IsNaN(thickness)) { thickness = 0.00000000001; }
             return thickness;
         }
-		
-		double calc_thickness_from_mass(double[] textures_kg, double yom_kg, double oom_kg)
+
+        double calc_thickness_from_mass(double[] textures_kg, double yom_kg, double oom_kg)
         {
             //pdf goes here
             double thickness_m = 0, soil_mass_kg = 0;
-            double sand_fraction, silt_fraction, combined_fraction, bulk_density;
+            double sand_fraction, silt_fraction, bulk_density;
             //first calculate total soil mass to calculate mass percentages for the fine earth fractions (excluding coarse)
             for (int ir = 1; ir < 5; ir++)
             {
@@ -14094,17 +12564,13 @@ namespace LORICA4
             soil_mass_kg += oom_kg + yom_kg;
             sand_fraction = textures_kg[1] / soil_mass_kg;
             silt_fraction = textures_kg[2] / soil_mass_kg;
-																		
-																																						 
 
             //calculate bulk density
             bulk_density = bulk_density_calc(textures_kg[0], textures_kg[1], textures_kg[2], textures_kg[3], textures_kg[4], oom_kg, yom_kg, 0.001); // MM depth of 1 micrometer, because a depth of 0 will result in infinite numbers 
-																																																																				   
             thickness_m = (soil_mass_kg + textures_kg[0]) / (dx * dx * bulk_density);  // thickness in m per unit area
 
             return thickness_m;
         }
-
 
         double total_soil_mass(int rowmass, int colmass)
         {
@@ -14134,7 +12600,8 @@ namespace LORICA4
 
             return (tot_mass);
         }
-		double total_layer_fine_earth_mass(int rowmass, int colmass, int laymass)
+
+        double total_layer_fine_earth_mass(int rowmass, int colmass, int laymass)
         {
             double tot_mass = 0;
 
@@ -14147,7 +12614,7 @@ namespace LORICA4
 
             return (tot_mass);
         }
-																				 
+
         bool findnegativetexture()
         {
             bool neg = false;
@@ -14264,18 +12731,19 @@ namespace LORICA4
 
         void split_layer(int rowwer, int coller, int lay1, double currentdepth) // splits layers 
         {
+            if (t == 44000 && rowwer == 11 && coller == 17) { diagnostic_mode = 1; }
             try
             {
-                double max_layer_difference, current_difference, maximum_allowed_thickness, old_mass_soil, new_soil_mass;
-                old_mass_soil = total_soil_mass(rowwer, coller);
+                double max_layer_difference, current_difference, maximum_allowed_thickness;
                 //splitting will increase the number of layers. If this splits beyond the max number of layers, then combine the two most similar ones 
                 int laynum, combininglayer = -1;
-                //Debug.WriteLine("sl0");
-                //Debug.WriteLine("total soil mass = " + total_soil_mass(rowwer, coller));
+                // Debug.WriteLine("sl0");
+                if (diagnostic_mode == 1) { Debug.WriteLine("total soil mass = " + total_soil_mass(rowwer, coller)); }
                 double mass_lowest_layer = total_layer_mass(rowwer, coller, max_soil_layers - 1);
-                // Debug.WriteLine("total mass last layer = {0}", mass_lowest_layer);
-                if ((total_layer_mass(rowwer, coller, max_soil_layers - 1) > 0))  // so, if we are using the lowest possible layer already:
+                if (diagnostic_mode == 1){ Debug.WriteLine("total mass last layer = {0}", mass_lowest_layer);}
+                if ((total_layer_mass(rowwer, coller, max_soil_layers - 1) > 0))  // so, if we are using the lowest possible layer already (even if it's not this layer):
                 {
+                    //this breaks now because the lowest layer can be empty due to its encountering a hard layer
                     //if they are already all in use, then the split will create one too many. We start by looking for the two most similar layers that would not create a too-thick product (do we need to do that last part?)
                     max_layer_difference = 100; //100 is a huge difference
                     for (laynum = 0; laynum < max_soil_layers - 1; laynum++)
@@ -14284,16 +12752,13 @@ namespace LORICA4
                         maximum_allowed_thickness = 9999;   // 9999 is a sentinel value and means infinitely thick 
                         if (currentdepth < 0.5) { maximum_allowed_thickness = 0.1; }
                         else { if (currentdepth < 2.5) { maximum_allowed_thickness = 0.5; } }
-
-                        if(checkBox_layer_thickness.Checked) // Overwrite max allowed thickness in case of fixed initial layer thicknesses
-                        {
-                            maximum_allowed_thickness = dz_standard * (1 + tolerance);
-                        }
+                        maximum_allowed_thickness = dz_standard * (1 + tolerance);
                         if (layerthickness_m[rowwer, coller, laynum] + layerthickness_m[rowwer, coller, laynum + 1] < maximum_allowed_thickness)  //if it potentially is possible to combine them 
                         {
                             if (current_difference <= max_layer_difference)   // the equal to condition means that we prefer to combine layers lower in the profile (if equally different from each other)
                             {
-                                max_layer_difference = current_difference; combininglayer = laynum;
+                                max_layer_difference = current_difference; 
+                                combininglayer = laynum;
                             }
                         }
                     }
@@ -14303,140 +12768,93 @@ namespace LORICA4
                     //combine the two most-similar layers, or the lowest two if nothing else possible
                     if (max_layer_difference == 100) { combininglayer = max_soil_layers - 2; }
                     //Debug.WriteLine("test");
-                    //Debug.WriteLine(rowwer + "," + coller + "," + combininglayer + "," + combininglayer + 1 + "," + t);
+                    if (diagnostic_mode == 1)
+                    {
+                        Debug.WriteLine(rowwer + "," + coller + "," + combininglayer + "," + (combininglayer + 1) + "," + t);
+                    }
                     try { combine_layers(rowwer, coller, combininglayer, combininglayer + 1); }
                     catch { Debug.WriteLine(" failed to combine layers to prepare for splitting "); }
                     //make sure to change lay1 if needed (because something overlying has been combined into 1 for instance).
                     if (combininglayer == lay1 || combininglayer == lay1 - 1)
                     {
-                        Debug.WriteLine("the layer that needed to be split has now been combined: layer {0} at t {1}", combininglayer, t);
+                        if (diagnostic_mode == 1) { Debug.WriteLine("the layer that needed to be split has now been combined: layer {0} at t {1}", combininglayer, t); }
                         // displaysoil(rowwer, coller);
                         // Debugger.Break();
                     }
-                    if (combininglayer < lay1) { lay1++; } // mvdm Should this be changed from ++ to --? because if layers above are combined, the target layer has moved up one spot
-                }
-
-                if (Math.Abs(old_mass_soil - total_soil_mass(rowwer, coller)) > 0.000001)
-                {
-                    Debug.WriteLine("err_spl_1 {0}", total_soil_mass(rowwer, coller));
-                    Debugger.Break();
+                    if (combininglayer < lay1) { lay1++; } // mvdm changed from++ to --, because if layers above are combined, the target layer has moved up one spot
                 }
                 //Debug.WriteLine("sl2");
-                //Debug.WriteLine("total soil mass = " + total_soil_mass(rowwer, coller));
-
+                if (diagnostic_mode == 1)
+                { Debug.WriteLine("total soil mass = " + total_soil_mass(rowwer, coller)); }
+                
                 // now we can move all layers down below the one we want to split
                 for (laynum = max_soil_layers - 1; laynum >= lay1 + 2; laynum--)  // we want to clear layer lay1+1 (so we run through move-receiving layers from below up to lay1+2). 
                                                                                   //This means that layer laynum+1, into which we want to split, will be evacuated and will give its values to laynum+2;
                 {
-<<<<<<< HEAD
                     if (diagnostic_mode == 1)
                     {
                         Debug.WriteLine("sl2a, laynum = " + laynum + ", lay1+2 = " + lay1 + 2 + "tex lay 19 =" + texture_kg[rowwer, coller, 19, 2]);
                     }
                     for (int i  = 0; i < 5; i++)
-=======
-                    // Debug.WriteLine("sl2a, laynum = "+laynum+", lay1+2 = "+lay1 + 2+"tex lay 19 =" + texture_kg[rowwer,coller,19,2]);
-                    for (i = 0; i < 5; i++)
->>>>>>> main
                     {
                         texture_kg[rowwer, coller, laynum, i] = texture_kg[rowwer, coller, laynum - 1, i];
-                        texture_kg[rowwer, coller, laynum - 1, i] = 0;
                     }
-                    // Debug.WriteLine("sl2b, ");
-                    old_SOM_kg[rowwer, coller, laynum] = old_SOM_kg[rowwer, coller, laynum - 1]; old_SOM_kg[rowwer, coller, laynum - 1] = 0;
-                    young_SOM_kg[rowwer, coller, laynum] = young_SOM_kg[rowwer, coller, laynum - 1]; young_SOM_kg[rowwer, coller, laynum - 1] = 0;
-                }
-                if (Math.Abs(old_mass_soil - total_soil_mass(rowwer, coller)) > 0.000001)
-                {
-                    Debug.WriteLine("err_spl_2 {0}", total_soil_mass(rowwer, coller));
-                    // Debugger.Break();
-                    // old_mass_soil = total_soil_mass(rowwer, coller);
+                    if (diagnostic_mode == 1)
+                    {
+                        Debug.WriteLine("sl2b, ");
+                    }
+                    old_SOM_kg[rowwer, coller, laynum] = old_SOM_kg[rowwer, coller, laynum - 1];
+                    young_SOM_kg[rowwer, coller, laynum] = young_SOM_kg[rowwer, coller, laynum - 1];
+                    // OSL_age[rowwer, coller, laynum] = OSL_age[rowwer, coller, laynum - 1];
                 }
                 //Debug.WriteLine("sl3");
                 //Debug.WriteLine("total soil mass = " + total_soil_mass(rowwer, coller));
 
-                //Debug.WriteLine(" moved layers one down to make space for split layer ");
-
-                // MvdM cleaned up the code below. I removed the if-else statement for even splitting or uneven splitting and use div to split the layers. If even splitting, div = 0.5, if not, div gets recalculated
-                double div = 0.5;
-                if ((lay1 + 1) == (max_soil_layers)) // if one of the splitting layers is the last layer, 
+                if (diagnostic_mode == 1)
                 {
-                    div = 0.1 / (layerthickness_m[row, col, lay1]); // aim to have the split layer at ~0.1 m
+                    Debug.WriteLine(" moved layers one down to make space for split layer ");
                 }
-                if (div > 1) { div = 1; }
-                for (i = 0; i < 5; i++)
+                if ((lay1 + 1) == (max_soil_layers - 1))
                 {
-<<<<<<< HEAD
                     double div = 0.1 / (layerthickness_m[rowwer, coller, lay1]); // aim to have the split layer at 0.1 m
                     if (div > 1) { div = 1; }
                     for (int i  = 0; i < 5; i++)
-=======
-                    texture_kg[rowwer, coller, lay1 + 1, i] = texture_kg[rowwer, coller, lay1, i] * (1 - div);
-                    texture_kg[rowwer, coller, lay1, i] *= div;
-                    if (double.IsNaN(texture_kg[rowwer, coller, lay1, i]))
->>>>>>> main
                     {
-                        Debug.WriteLine("err_spl1");
-                    }
-                    if (double.IsNaN(texture_kg[rowwer, coller, lay1 + 1, i]))
-                    {
-                        Debug.WriteLine("err_spl2");
-                    }
-                }
-                old_SOM_kg[rowwer, coller, lay1 + 1] += old_SOM_kg[rowwer, coller, lay1] * (1 - div);
-                old_SOM_kg[rowwer, coller, lay1] *= div;
-                young_SOM_kg[rowwer, coller, lay1 + 1] += young_SOM_kg[rowwer, coller, lay1] * (1 - div);
-                young_SOM_kg[rowwer, coller, lay1] *= div;
-                //Debug.WriteLine(" successfully split layer ");
-                //Debug.WriteLine("sl4");
-                //Debug.WriteLine("total soil mass = " + total_soil_mass(rowwer, coller));
-                new_soil_mass = total_soil_mass(rowwer, coller); 
-                if (Math.Abs(old_mass_soil - new_soil_mass) > 0.000001)
-                {
-<<<<<<< HEAD
-                    for (int i = 0; i < 5; i++)
-=======
-                    Debug.WriteLine("err_spl_3 {0}", total_soil_mass(rowwer, coller));
-                    Debugger.Break();
-                }
-
-                if (OSL_checkbox.Checked)
-                {
-                    int probRange = 10000;
-                    int splitting_P_int = Convert.ToInt32(Math.Round(div * probRange));
-                    int count_lay_i = 0;
-                    int count_lay_j = 0;
-
-                    for (int osl_i = 0; osl_i < OSL_age.GetLength(0); osl_i++) // loop over all rows
->>>>>>> main
-                    {
-                        if (OSL_age[osl_i, 0] == rowwer & OSL_age[osl_i, 1] == coller)
+                        texture_kg[rowwer, coller, lay1 + 1, i] += texture_kg[rowwer, coller, lay1, i] * (1 - div); texture_kg[rowwer, coller, lay1, i] *= div;
+                        if (double.IsNaN(texture_kg[rowwer, coller, lay1, i]))
                         {
-                            if (OSL_age[osl_i, 2] > (lay1))
-                            {
-                                OSL_age[osl_i, 2] += 1;
-                            } // move layers down, create empty layer below lay1
-                            if (OSL_age[osl_i, 2] == (lay1))
-                            {
-                                if ((randOslSplitLayers.Next(0, probRange) < splitting_P_int ? 1 : 0) == 1) // determine whether grain will be moved to new layer, with probability of div
-                                {
-                                    OSL_age[osl_i, 2] += 1;
-                                    count_lay_i += 1;
-                                }
-                                else
-                                {
-                                    count_lay_j += 1;
-                                }
-                            }
+                            Debug.WriteLine("err_spl1");
+                        }
+                        if (double.IsNaN(texture_kg[rowwer, coller, lay1 + 1, i]))
+                        {
+                            Debug.WriteLine("err_spl2");
                         }
                     }
-                    if (count_lay_i == 0 | count_lay_j == 0) { Debug.WriteLine("Split layer with zero grains. Layer {0}. Grains in layer i: {1}. Grains in layer j: {2}. Div: {3}", lay1, count_lay_i, count_lay_j, div); }
+                    old_SOM_kg[rowwer, coller, lay1 + 1] += old_SOM_kg[rowwer, coller, lay1] * (1 - div); old_SOM_kg[rowwer, coller, lay1] *= div;
+                    young_SOM_kg[rowwer, coller, lay1 + 1] += young_SOM_kg[rowwer, coller, lay1] * (1 - div); young_SOM_kg[rowwer, coller, lay1] *= div;
+                    //Debug.WriteLine(" successfully split layer ");
+                    //Debug.WriteLine("sl4");
+                    //Debug.WriteLine("total soil mass = " + total_soil_mass(rowwer, coller));
                 }
+                else // even splitting
+                {
+                    for (int i = 0; i < 5; i++)
+                    {
+                        texture_kg[rowwer, coller, lay1 + 1, i] = texture_kg[rowwer, coller, lay1, i] / 2; texture_kg[rowwer, coller, lay1, i] /= 2;
+                    }
+                    old_SOM_kg[rowwer, coller, lay1 + 1] = old_SOM_kg[rowwer, coller, lay1] / 2; old_SOM_kg[rowwer, coller, lay1] /= 2;
+                    young_SOM_kg[rowwer, coller, lay1 + 1] = young_SOM_kg[rowwer, coller, lay1] / 2; young_SOM_kg[rowwer, coller, lay1] /= 2;
+                    //Debug.WriteLine(" successfully split layer ");
+                    //Debug.WriteLine("sl4");
+                    //Debug.WriteLine("total soil mass = " + total_soil_mass(rowwer, coller));
+                }
+
             }
             catch
             {
                 Debug.WriteLine("Failed at splitting layer at row {0}, col {1} at time {2}", rowwer, coller, t);
             }
+            if (t == 44 && rowwer == 11 && coller == 17) { diagnostic_mode = 0; }
         }
 
         void split_layer_till(int rowwer, int coller, int lay1, double currentdepth) // splits layers 
@@ -14576,7 +12994,7 @@ namespace LORICA4
             }
         }
 
-        void SPITS_soil_physical_weathering()  //calculate sedimentary rock (siltstone, limestone) physical weathering
+        void SPITS_soil_physical_weathering()  //calculate sedimentary rock (siltstone, limestoneF physical weathering
         {
             // in this variant, coarse material (siltstone, limestone) weathers only into a silt fraction. 
             // Nothing else weathers. 
@@ -14645,7 +13063,7 @@ namespace LORICA4
         {
             int cells = nr * nc;
             int layer, tex_class;
-            double depth, weathered_mass_kg, total_weath_mass, fraction_neoform;
+            double depth, weathered_mass_kg, total_weath_mass;
             total_chem_weathered_mass_kg = 0;
             total_fine_neoformed_mass_kg = 0;
             for (row = 0; row < nr; row++)
@@ -14747,6 +13165,8 @@ namespace LORICA4
 
         void soil_bioturbation()
         {
+
+            Debug.WriteLine("\n--bioturbation--\n");
             try
             {
                 //for bioturbation, we first calculate how much bioturbation (kg) this cell will experience, given its thickness
@@ -14764,7 +13184,7 @@ namespace LORICA4
                 int layer, otherlayer;
                 double fine_otherlayer_mass, fine_layer_mass;
                 double total_soil_thickness_m;
-                double depth, otherdepth, distance;
+                double depth, otherdepth, distance, potential_bioturbation_kg_m2_y;
                 total_mass_bioturbed_kg = 0;
                 double[,] temp_tex_som_kg = new double[max_soil_layers, 7]; // this will hold temporary changed values of texture until all bioturbation is done
                 double[] layer_0 = new double[7], layer_0_after = new double[7];
@@ -14772,18 +13192,20 @@ namespace LORICA4
                 // if (findnegativetexture()) { Debugger.Break(); }
                 double lux_hornbeam_OM_litter_fraction = 0;
 
-                double total_young_som_kg = 0, total_old_som_kg = 0;
+                double total_young_som_kg, total_old_som_kg;
 
 
                 for (int row = 0; row < nr; row++)
                 {
                     for (int col = 0; col < nc; col++)
                     {
+                        if (t == 7000000 && row == 192 && col == 59) { diagnostic_mode = 1; }
+                        else { diagnostic_mode = 0; }
                         if (dtm[row, col] != -9999 & soildepth_m[row, col] > 0)
                         {
                             remove_empty_layers(row, col);
                             update_all_soil_thicknesses(row, col);
-
+                            total_young_som_kg = 0; total_old_som_kg = 0;
                             mass_soil_before = total_soil_mass(row, col);
                             mass_top_before = total_layer_mass(row, col, 0);
                             total_soil_thickness_m = 0;
@@ -14825,388 +13247,400 @@ namespace LORICA4
                                 {  // ArT quickfix attempt
                                     lux_hornbeam_OM_litter_fraction = 0.5;
                                 }
-                                //select vegetation parameters, same as creep
+                            }
+                            //select vegetation parameters, same as creep
+                            potential_bioturbation_kg_m2_y = 4.5;
+                            if (daily_water.Checked)
+                            {
+                                if (aridity_vegetation[row, col] < 1) { potential_bioturbation_kg_m2_y = 4 + 0.3; } // grassland
+                                else { potential_bioturbation_kg_m2_y = 4 + 1.3; } // forest
+                                                                                   // standard potential creep of 4 kg. 0.3 or 1.3 is added, based on vegetation type. Rates are derived from Wilkinson 2009: Breaking Ground and Gabet
+                            }
+                            // if (findnegativetexture()) { Debugger.Break(); }
 
-                                if (daily_water.Checked)
+                            // geen split voor voor depth decay voor verschillende vegetaties. Depth decay van creep aanhouden. 
+                            //if(daily_water.Checked)
+                            //{
+                            //    if (aridity_vegetation[row, col] < 1)
+                            //    {
+                            //        pot_bt_vegetation_kg = 0.3; // kg / m2/ y, from Gabet
+                            //        depth_dec_vegetation = -1 / (0.5 / 2); // m-1, estimated root depth of 0.5 m
+                            //    }
+                            //    else
+                            //    {
+                            //        pot_bt_vegetation_kg = 1.3; // kg / m2/ y, from Gabet et al., 2003: https://doi.org/10.1146/annurev.earth.31.100901.141314
+                            //        depth_dec_vegetation = -1 / (1.5 / 2); // m-1, estimated root depth of 1.5 m
+                            //    }
+
+                            //    pot_bt_animals_kg = 3; //  average animal burrowing rate, 30 ton/ha/yr, from Wilkinson et al., 2009: https://doi.org/10.1016/j.earscirev.2009.09.005 
+                            //    depth_dec_animals = -1 / (1.0 / 2); // estimated, no source
+                            //}
+                            //// divide in animals and vegetation. animals is constant, vegetation differs per sort. Make new function?
+
+
+                            //here we calculate the first quantity: how much bioturbation kg needs to happen in this location
+                            local_bioturbation_kg = potential_bioturbation_kg_m2_y * (1 - Math.Exp(-bioturbation_depth_decay_constant * total_soil_thickness_m)) * dx * dx * dt;
+                            if (local_bioturbation_kg < 0) // local_bt == 0 happens when soil is absent
+                            {
+                                Debug.WriteLine(" error in local_bioturbation calculation : zero mass");
+                                Debug.WriteLine(" total soil thickness :" + total_soil_thickness_m + " at rc " + row + " " + col);
+                                Debug.WriteLine("err_sbt1");
+
+                            }
+                            //LUX: if Luxembourg version: we assume that only hornbeam litter leads to bioturbation. More of it - more bioturbation.
+                            if (version_lux_checkbox.Checked) { local_bioturbation_kg *= lux_hornbeam_OM_litter_fraction; }
+
+                            total_mass_bioturbed_kg += local_bioturbation_kg;
+
+
+
+                            //now let's calculate layer-to-layer exchange to get to that local total needed.
+                            depth = 0;
+                            for (layer = 0; layer < max_soil_layers; layer++)
+                            {
+
+                                if (total_layer_fine_earth_mass(row, col, layer) > 0)  //this says: if there is actually fine earth in the layer. 
+                                                                                       // That is necessary because we leave the stone fraction out of bioturbation
+                                                                                       // and therefore purely stony layers are not involved in bioturbation
                                 {
-                                    if (aridity_vegetation[row, col] < 1) { potential_bioturbation_kg_m2_y = 4 + 0.3; } // grassland
-                                    else { potential_bioturbation_kg_m2_y = 4 + 1.3; } // forest
-                                                                                       // standard potential creep of 4 kg. 0.3 or 1.3 is added, based on vegetation type. Rates are derived from Wilkinson 2009: Breaking Ground and Gabet
-                                }
-                                // if (findnegativetexture()) { Debugger.Break(); }
+                                    //integration over the exponential decay function in JGR 2006 for the entire profile, and for the current layer.
+                                    //then calculate the fraction of bioturbation that will happen in this layer, and multiply with total bioturbation in this cell
+                                    fine_layer_mass = total_layer_fine_earth_mass(row, col, layer);
+                                    layer_bio_activity_index = Math.Exp(-bioturbation_depth_decay_constant * depth) - (Math.Exp(-bioturbation_depth_decay_constant * (depth + layerthickness_m[row, col, layer])));
+                                    total_bio_activity_index = 1 - (Math.Exp(-bioturbation_depth_decay_constant * total_soil_thickness_m));
+                                    layer_bioturbation_kg = (layer_bio_activity_index / total_bio_activity_index) * local_bioturbation_kg;
+                                    mass_distance_sum = 0;
+                                    depth += layerthickness_m[row, col, layer] / 2;
+                                    otherdepth = 0; distance = 0;
 
-                                // geen split voor voor depth decay voor verschillende vegetaties. Depth decay van creep aanhouden. 
-                                //if(daily_water.Checked)
-                                //{
-                                //    if (aridity_vegetation[row, col] < 1)
-                                //    {
-                                //        pot_bt_vegetation_kg = 0.3; // kg / m2/ y, from Gabet
-                                //        depth_dec_vegetation = -1 / (0.5 / 2); // m-1, estimated root depth of 0.5 m
-                                //    }
-                                //    else
-                                //    {
-                                //        pot_bt_vegetation_kg = 1.3; // kg / m2/ y, from Gabet et al., 2003: https://doi.org/10.1146/annurev.earth.31.100901.141314
-                                //        depth_dec_vegetation = -1 / (1.5 / 2); // m-1, estimated root depth of 1.5 m
-                                //    }
+                                    if (layerthickness_m[row, col, layer] <= 0) { Debug.WriteLine(" error: layer thickness is 0 at t " + t + " r " + row + " c " + col); }
 
-                                //    pot_bt_animals_kg = 3; //  average animal burrowing rate, 30 ton/ha/yr, from Wilkinson et al., 2009: https://doi.org/10.1016/j.earscirev.2009.09.005 
-                                //    depth_dec_animals = -1 / (1.0 / 2); // estimated, no source
-                                //}
-                                //// divide in animals and vegetation. animals is constant, vegetation differs per sort. Make new function?
-
-
-                                //here we calculate the first quantity: how much bioturbation kg needs to happen in this location
-                                local_bioturbation_kg = potential_bioturbation_kg_m2_y * (1 - Math.Exp(-bioturbation_depth_decay_constant * total_soil_thickness_m)) * dx * dx * dt;
-                                if (local_bioturbation_kg < 0) // local_bt == 0 happens when soil is absent
-                                {
-                                    Debug.WriteLine(" error in local_bioturbation calculation : zero mass");
-                                    Debug.WriteLine(" total soil thickness :" + total_soil_thickness_m + " at rc " + row + " " + col);
-                                    Debug.WriteLine("err_sbt1");
-
-                                }
-                                if (version_lux_checkbox.Checked) { local_bioturbation_kg *= lux_hornbeam_OM_litter_fraction; }
-                                total_mass_bioturbed_kg += local_bioturbation_kg;
-
-                                //LUX: if Luxembourg version: we assume that only hornbeam litter leads to bioturbation. More of it - more bioturbation.
-
-                                depth = 0;
-                                for (layer = 0; layer < max_soil_layers; layer++)
-                                {
-
-                                    if (total_layer_fine_earth_mass(row, col, layer) > 0)  //this says: if the layer actually exists
+                                    //now that we know how much bioturbation originates in this layer,
+                                    //let's look at other layers and decide which one of them exchanges how much of that good stuff.
+                                    for (otherlayer = 0; otherlayer < max_soil_layers; otherlayer++)
                                     {
-                                        //integration over the exponential decay function in JGR 2006 for the entire profile, and for the current layer.
-                                        //then calculate the fraction of bioturbation that will happen in this layer, and multiply with total bioturbation in this cell
-                                        fine_layer_mass = total_layer_fine_earth_mass(row, col, layer);
-                                        layer_bio_activity_index = Math.Exp(-bioturbation_depth_decay_constant * depth) - (Math.Exp(-bioturbation_depth_decay_constant * (depth + layerthickness_m[row, col, layer])));
-                                        total_bio_activity_index = 1 - (Math.Exp(-bioturbation_depth_decay_constant * total_soil_thickness_m));
-                                        layer_bioturbation_kg = (layer_bio_activity_index / total_bio_activity_index) * local_bioturbation_kg;
-                                        mass_distance_sum = 0;
-                                        depth += layerthickness_m[row, col, layer] / 2;
-                                        otherdepth = 0; distance = 0;
-
-                                        if (layerthickness_m[row, col, layer] <= 0) { Debug.WriteLine(" error: layer thickness is 0 at t " + t + " r " + row + " c " + col); }
-
-                                        //now that we know how much bioturbation originates in this layer,
-                                        //now look at other layers and decide which one of them exchanges how much of that good stuff.
-                                        for (otherlayer = 0; otherlayer < max_soil_layers; otherlayer++)
+                                        if (total_layer_fine_earth_mass(row, col, otherlayer) > 0)  //this says: if there is actually fine earth in the layer.
+                                                                                                    // That is necessary because we leave the stone fraction out of bioturbation
+                                                                                                    // and therefore purely stony layers are not involved in bioturbation
                                         {
-                                            if (total_layer_fine_earth_mass(row, col, otherlayer) > 0)  //this says: if the other layer actually exists
-                                            {
 
-                                                otherdepth += layerthickness_m[row, col, otherlayer] / 2;
-                                                distance = Math.Abs(otherdepth - depth);
+                                            otherdepth += layerthickness_m[row, col, otherlayer] / 2;
+                                            distance = Math.Abs(otherdepth - depth);
 
-                                                if (distance < 0) { Debug.WriteLine(" distance between layers is 0 m at row " + row + " col " + col + " layerdepth " + depth + " otherlayerdepth " + otherdepth); }
+                                            if (distance < 0) { Debug.WriteLine(" distance between layers is 0 m at row " + row + " col " + col + " layerdepth " + depth + " otherlayerdepth " + otherdepth); }
 
-                                                if (double.IsNaN(texture_kg[row, col, otherlayer, 1])) { Debug.WriteLine(" texture 1 NaN " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-                                                if (double.IsNaN(texture_kg[row, col, otherlayer, 2])) { Debug.WriteLine(" texture 2 NaN " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-                                                if (double.IsNaN(texture_kg[row, col, otherlayer, 3])) { Debug.WriteLine(" texture 3 NaN " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-                                                if (double.IsNaN(texture_kg[row, col, otherlayer, 4])) { Debug.WriteLine(" texture 4 NaN " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-                                                if (double.IsNaN(young_SOM_kg[row, col, otherlayer])) { Debug.WriteLine(" young som NaN " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-                                                if (double.IsNaN(old_SOM_kg[row, col, otherlayer])) { Debug.WriteLine(" old som NaN " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
+                                            if (double.IsNaN(texture_kg[row, col, otherlayer, 1])) { Debug.WriteLine(" texture 1 NaN " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
+                                            if (double.IsNaN(texture_kg[row, col, otherlayer, 2])) { Debug.WriteLine(" texture 2 NaN " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
+                                            if (double.IsNaN(texture_kg[row, col, otherlayer, 3])) { Debug.WriteLine(" texture 3 NaN " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
+                                            if (double.IsNaN(texture_kg[row, col, otherlayer, 4])) { Debug.WriteLine(" texture 4 NaN " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
+                                            if (double.IsNaN(young_SOM_kg[row, col, otherlayer])) { Debug.WriteLine(" young som NaN " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
+                                            if (double.IsNaN(old_SOM_kg[row, col, otherlayer])) { Debug.WriteLine(" old som NaN " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
 
-                                                if ((texture_kg[row, col, otherlayer, 1] < 0)) { Debug.WriteLine(" texture 1 null " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-                                                if ((texture_kg[row, col, otherlayer, 2] < 0)) { Debug.WriteLine(" texture 2 null " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-                                                if ((texture_kg[row, col, otherlayer, 3] < 0)) { Debug.WriteLine(" texture 3 null " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-                                                if ((texture_kg[row, col, otherlayer, 4] < 0)) { Debug.WriteLine(" texture 4 null " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-                                                if ((young_SOM_kg[row, col, otherlayer] < 0)) { Debug.WriteLine(" young som null " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-                                                if ((old_SOM_kg[row, col, otherlayer] < 0)) { Debug.WriteLine(" old som null " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
+                                            if ((texture_kg[row, col, otherlayer, 1] < 0)) { Debug.WriteLine(" texture 1 null " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
+                                            if ((texture_kg[row, col, otherlayer, 2] < 0)) { Debug.WriteLine(" texture 2 null " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
+                                            if ((texture_kg[row, col, otherlayer, 3] < 0)) { Debug.WriteLine(" texture 3 null " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
+                                            if ((texture_kg[row, col, otherlayer, 4] < 0)) { Debug.WriteLine(" texture 4 null " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
+                                            if ((young_SOM_kg[row, col, otherlayer] < 0)) { Debug.WriteLine(" young som null " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
+                                            if ((old_SOM_kg[row, col, otherlayer] < 0)) { Debug.WriteLine(" old som null " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
 
+                                            if (otherlayer != layer) { mass_distance_sum += (texture_kg[row, col, otherlayer, 1] + texture_kg[row, col, otherlayer, 2] + texture_kg[row, col, otherlayer, 3] + texture_kg[row, col, otherlayer, 4] + young_SOM_kg[row, col, otherlayer] + old_SOM_kg[row, col, otherlayer]) / distance; }
 
-                                                if (otherlayer != layer) { mass_distance_sum += (texture_kg[row, col, otherlayer, 1] + texture_kg[row, col, otherlayer, 2] + texture_kg[row, col, otherlayer, 3] + texture_kg[row, col, otherlayer, 4] + young_SOM_kg[row, col, otherlayer] + old_SOM_kg[row, col, otherlayer]) / distance; }
-
-
-                                                otherdepth += layerthickness_m[row, col, otherlayer] / 2;
-                                                if (double.IsNaN(mass_distance_sum)) { Debug.WriteLine(" B NaN mass distance in bioturbation t " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-                                                if (double.IsNaN(distance)) { Debug.WriteLine(" NaN  distance in bioturbation t " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-                                                if (double.IsNaN((layerthickness_m[row, col, otherlayer] / 2))) { Debug.WriteLine(" NaN layerthick in bioturbation t " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-                                            }
+                                            otherdepth += layerthickness_m[row, col, otherlayer] / 2;
+                                            if (double.IsNaN(mass_distance_sum)) { Debug.WriteLine(" B NaN mass distance in bioturbation t " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
+                                            if (double.IsNaN(distance)) { Debug.WriteLine(" NaN  distance in bioturbation t " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
+                                            if (double.IsNaN((layerthickness_m[row, col, otherlayer] / 2))) { Debug.WriteLine(" NaN layerthick in bioturbation t " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
                                         }
-                                        double check_mass_distance = 0;
-                                        otherdepth = 0; distance = 0;
-                                        double BT_fraction = 0;
-                                        for (otherlayer = 0; otherlayer < max_soil_layers; otherlayer++)
+                                    }
+                                    double check_mass_distance = 0;
+                                    otherdepth = 0; distance = 0;
+                                    double BT_fraction = 0;
+                                    for (otherlayer = 0; otherlayer < max_soil_layers; otherlayer++)
+                                    {
+                                        otherdepth += layerthickness_m[row, col, otherlayer] / 2;
+                                        if (total_layer_fine_earth_mass(row, col, otherlayer) > 0 && layer != otherlayer)  //this says: if the other layer actually exists and if it's not the current layer
                                         {
-                                            otherdepth += layerthickness_m[row, col, otherlayer] / 2; // MM moved out of if-function, otherwise distance is not calculated correctly
-                                            if (total_layer_fine_earth_mass(row, col, otherlayer) > 0 && layer != otherlayer)  //this says: if the other layer actually exists and if it's not the current layer
+
+                                            distance = Math.Abs(otherdepth - depth);
+                                            if (layer != otherlayer)
                                             {
+                                                mass_distance_layer = (texture_kg[row, col, otherlayer, 1] + texture_kg[row, col, otherlayer, 2] + texture_kg[row, col, otherlayer, 3] + texture_kg[row, col, otherlayer, 4] + young_SOM_kg[row, col, otherlayer] + old_SOM_kg[row, col, otherlayer]) / distance;
+                                            }
+                                            else
+                                            {
+                                                mass_distance_layer = (texture_kg[row, col, otherlayer, 1] + texture_kg[row, col, otherlayer, 2] + texture_kg[row, col, otherlayer, 3] + texture_kg[row, col, otherlayer, 4] + young_SOM_kg[row, col, otherlayer] + old_SOM_kg[row, col, otherlayer]) / (layerthickness_m[row, col, otherlayer] / 2);
+                                            }
+                                            if (double.IsNaN(mass_distance_layer))
+                                            {
+                                                Debug.WriteLine(" NaN mass distance layer in bioturbation t " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); Debug.WriteLine("err_sbt2");
+                                            }
+                                            if (mass_distance_sum == 0) { Debug.WriteLine(" zero mass distance sum"); }
+                                            //here we calculate the amount of material bioturbated between the current layer and the current otherlayer
+                                            interlayer_bioturbation_kg = layer_bioturbation_kg * (mass_distance_layer / mass_distance_sum);
+                                            check_mass_distance += mass_distance_layer / mass_distance_sum;
+                                            BT_fraction += mass_distance_layer / mass_distance_sum;
+                                            if (interlayer_bioturbation_kg < 0)
+                                            {
+                                                Debug.WriteLine("err_sbt3");
+                                            }
+                                            if (double.IsNaN(interlayer_bioturbation_kg))
+                                            {
+                                                Debug.WriteLine(" NaN interlayer bioturbation kg in bioturbation t " + t + " rc " + row + " " + col + " layers " + layer + " " + otherlayer);
+                                                Debug.WriteLine(" " + mass_distance_layer + " " + mass_distance_sum + " " + layer_bioturbation_kg);
+                                                Debug.WriteLine("err_sbt4");
 
-                                                distance = Math.Abs(otherdepth - depth);
-                                                if (layer != otherlayer)
-                                                {
-                                                    mass_distance_layer = (texture_kg[row, col, otherlayer, 1] + texture_kg[row, col, otherlayer, 2] + texture_kg[row, col, otherlayer, 3] + texture_kg[row, col, otherlayer, 4] + young_SOM_kg[row, col, otherlayer] + old_SOM_kg[row, col, otherlayer]) / distance;
-                                                }
-                                                else
-                                                {
-                                                    mass_distance_layer = (texture_kg[row, col, otherlayer, 1] + texture_kg[row, col, otherlayer, 2] + texture_kg[row, col, otherlayer, 3] + texture_kg[row, col, otherlayer, 4] + young_SOM_kg[row, col, otherlayer] + old_SOM_kg[row, col, otherlayer]) / (layerthickness_m[row, col, otherlayer] / 2);
-                                                }
-                                                if (double.IsNaN(mass_distance_layer))
-                                                {
-                                                    Debug.WriteLine(" NaN mass distance layer in bioturbation t " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); Debug.WriteLine("err_sbt2");
-                                                }
-                                                if (mass_distance_sum == 0) { Debug.WriteLine(" zero mass distance sum"); }
-                                                //here we calculate the amount of material bioturbated between the current layer and the current otherlayer
-                                                interlayer_bioturbation_kg = layer_bioturbation_kg * (mass_distance_layer / mass_distance_sum);
-                                                check_mass_distance += mass_distance_layer / mass_distance_sum;
-                                                BT_fraction += mass_distance_layer / mass_distance_sum;
-                                                if (interlayer_bioturbation_kg < 0)
-                                                {
-                                                    Debug.WriteLine("err_sbt3");
-                                                }
-                                                if (double.IsNaN(interlayer_bioturbation_kg))
-                                                {
-                                                    Debug.WriteLine(" NaN interlayer bioturbation kg in bioturbation t " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer);
-                                                    Debug.WriteLine(" " + mass_distance_layer + " " + mass_distance_sum + " " + layer_bioturbation_kg);
-                                                    Debug.WriteLine("err_sbt4");
+                                            }
+                                            fine_otherlayer_mass = texture_kg[row, col, otherlayer, 1] + texture_kg[row, col, otherlayer, 2] + texture_kg[row, col, otherlayer, 3] + texture_kg[row, col, otherlayer, 4] + young_SOM_kg[row, col, otherlayer] + old_SOM_kg[row, col, otherlayer];
+                                            if (double.IsNaN(fine_otherlayer_mass)) { Debug.WriteLine(" NaN fine otherlayer mass in bioturbation "); }
+                                            if ((fine_otherlayer_mass <= 0))
+                                            {
+                                                Debug.WriteLine(" fineotherlayermass " + fine_otherlayer_mass + " t " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer);
+                                                Debug.WriteLine("err_sbt5");
+                                            }
 
-                                                }
-                                                fine_otherlayer_mass = texture_kg[row, col, otherlayer, 1] + texture_kg[row, col, otherlayer, 2] + texture_kg[row, col, otherlayer, 3] + texture_kg[row, col, otherlayer, 4] + young_SOM_kg[row, col, otherlayer] + old_SOM_kg[row, col, otherlayer];
-                                                if (double.IsNaN(fine_otherlayer_mass)) { Debug.WriteLine(" NaN fine otherlayer mass in bioturbation "); }
-                                                if ((fine_otherlayer_mass <= 0))
+                                            //weathered_mass_kg may be more than present in the other layer, the current layer, or both - in that case one or both of the layers will become mixtures of the original two layers
+                                            double fromlayertomixture_kg = 0, fromotherlayertomixture_kg = 0, totalmixturemass_kg = 0, massfromlayer = 0, massfromotherlayer = 0, dmass_l, dmass_ol;
+                                            double[] mixture_kg = new double[7];
+                                            fromlayertomixture_kg = Math.Min(fine_layer_mass, (interlayer_bioturbation_kg / 2));
+                                            fromotherlayertomixture_kg = Math.Min(fine_otherlayer_mass, (interlayer_bioturbation_kg / 2));
+                                            // totalmixturemass_kg = fromlayertomixture_kg + fromotherlayertomixture_kg;
+
+                                            if ((fromlayertomixture_kg + fromotherlayertomixture_kg) > 1E-6)  // if there is actual exchange (which is not the case when all fine material is removed)
+                                            {
+                                                //now add to mixture, and take from donors
+                                                double massin_l = 0, massin_ol = 0;
+                                                // texture
+                                                for (int prop = 1; prop < 5; prop++)
                                                 {
-                                                    Debug.WriteLine(" fineotherlayermass " + fine_otherlayer_mass + " t " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer);
-                                                    Debug.WriteLine("err_sbt5");
-
-                                                }
-
-
-                                                //weathered_mass_kg may be more than present in the other layer, the current layer, or both - in that case one or both of the layers will become mixtures of the original two layers
-                                                double fromlayertomixture_kg = 0, fromotherlayertomixture_kg = 0, totalmixturemass_kg = 0, massfromlayer = 0, massfromotherlayer = 0, dmass_l, dmass_ol;
-                                                double[] mixture_kg = new double[7];
-                                                fromlayertomixture_kg = Math.Min(fine_layer_mass, (interlayer_bioturbation_kg / 2));
-                                                fromotherlayertomixture_kg = Math.Min(fine_otherlayer_mass, (interlayer_bioturbation_kg / 2));
-                                                // totalmixturemass_kg = fromlayertomixture_kg + fromotherlayertomixture_kg;
-
-                                                if ((fromlayertomixture_kg + fromotherlayertomixture_kg) > 1E-6)  // if there is actual exchange (which is not the case when all fine material is removed)
-                                                {
-                                                    //now add to mixture, and take from donors
-                                                    double massin_l = 0, massin_ol = 0;
-                                                    // texture
-                                                    for (int prop = 1; prop < 5; prop++)
+                                                    //checks
+                                                    if (temp_tex_som_kg[layer, prop] < 0)
                                                     {
-                                                        //checks
-                                                        if (temp_tex_som_kg[layer, prop] < 0)
-                                                        {
-                                                            Debug.WriteLine("err_sbt6");
-                                                        }
-                                                        if (temp_tex_som_kg[otherlayer, prop] < 0)
-                                                        {
-                                                            Debug.WriteLine("err_sbt7");
-                                                        }
-
-                                                        //determine how much mass can be exchanged,. Do not take more than is present in the temporary layer to prevent negative textures in the end
-                                                        //Should not happen, mass of top layer should stay constant, but happens anyway
-                                                        dmass_l = (fromlayertomixture_kg / fine_layer_mass) * texture_kg[row, col, layer, prop];
-                                                        dmass_ol = (fromotherlayertomixture_kg / fine_otherlayer_mass) * texture_kg[row, col, otherlayer, prop];
-
-                                                        if (dmass_l > temp_tex_som_kg[layer, prop]) { dmass_l = temp_tex_som_kg[layer, prop]; }
-                                                        if (dmass_ol > temp_tex_som_kg[otherlayer, prop]) { dmass_ol = temp_tex_som_kg[otherlayer, prop]; }
-
-                                                        //take mass from donors to mix
-                                                        mixture_kg[prop] += (dmass_l + dmass_ol);
-                                                        massfromlayer += dmass_l;
-                                                        massfromotherlayer += dmass_ol;
-
-                                                        temp_tex_som_kg[layer, prop] -= dmass_l;
-                                                        temp_tex_som_kg[otherlayer, prop] -= dmass_ol;
-
-                                                        //mixture_kg[prop] += (fromlayertomixture_kg / fine_layer_mass) * texture_kg[row, col, layer, prop];
-                                                        //if ((fromlayertomixture_kg / fine_layer_mass) * texture_kg[row, col, layer, prop] < 0) { Debugger.Break(); }
-                                                        //massfromlayer += (fromlayertomixture_kg / fine_layer_mass) * texture_kg[row, col, layer, prop];
-                                                        //mixture_kg[prop] += (fromotherlayertomixture_kg / fine_otherlayer_mass) * texture_kg[row, col, otherlayer, prop];
-                                                        //massfromotherlayer += (fromotherlayertomixture_kg / fine_otherlayer_mass) * texture_kg[row, col, otherlayer, prop];
-                                                        //if ((fromotherlayertomixture_kg / fine_otherlayer_mass) * texture_kg[row, col, otherlayer, prop] < 0) { Debugger.Break(); }
-
-                                                        //temp_tex_som_kg[otherlayer, prop] -= (fromotherlayertomixture_kg / fine_otherlayer_mass) * texture_kg[row, col, otherlayer, prop];
-                                                        //temp_tex_som_kg[layer, prop] -= (fromlayertomixture_kg / fine_layer_mass) * texture_kg[row, col, layer, prop];
-
-                                                        if (temp_tex_som_kg[layer, prop] < 0)
-                                                        {
-                                                            Debug.WriteLine("err_sbt8");
-                                                        }
-                                                        if (temp_tex_som_kg[otherlayer, prop] < 0)
-                                                        {
-                                                            Debug.WriteLine("err_sbt9");
-                                                        }
-
+                                                        Debug.WriteLine("err_sbt6");
                                                     }
-                                                    //young OM
-                                                    dmass_l = (fromlayertomixture_kg / fine_layer_mass) * (young_SOM_kg[row, col, layer]);
-                                                    dmass_ol = (fromotherlayertomixture_kg / fine_otherlayer_mass) * (young_SOM_kg[row, col, otherlayer]);
+                                                    if (temp_tex_som_kg[otherlayer, prop] < 0)
+                                                    {
+                                                        Debug.WriteLine("err_sbt7");
+                                                    }
 
-                                                    if (dmass_l > temp_tex_som_kg[layer, 5]) { dmass_l = temp_tex_som_kg[layer, 5]; }
-                                                    if (dmass_ol > temp_tex_som_kg[otherlayer, 5]) { dmass_ol = temp_tex_som_kg[otherlayer, 5]; }
+                                                    //determine how much mass can be exchanged,. Do not take more than is present in the temporary layer to prevent negative textures in the end
+                                                    //Should not happen, mass of top layer should stay constant, but happens anyway
+                                                    dmass_l = (fromlayertomixture_kg / fine_layer_mass) * texture_kg[row, col, layer, prop];
+                                                    dmass_ol = (fromotherlayertomixture_kg / fine_otherlayer_mass) * texture_kg[row, col, otherlayer, prop];
+
+                                                    if (dmass_l > temp_tex_som_kg[layer, prop]) { dmass_l = temp_tex_som_kg[layer, prop]; }
+                                                    if (dmass_ol > temp_tex_som_kg[otherlayer, prop]) { dmass_ol = temp_tex_som_kg[otherlayer, prop]; }
 
                                                     //take mass from donors to mix
-                                                    mixture_kg[5] += (dmass_l + dmass_ol);
+                                                    mixture_kg[prop] += (dmass_l + dmass_ol);
                                                     massfromlayer += dmass_l;
                                                     massfromotherlayer += dmass_ol;
 
-                                                    temp_tex_som_kg[layer, 5] -= dmass_l;
-                                                    temp_tex_som_kg[otherlayer, 5] -= dmass_ol;
+                                                    temp_tex_som_kg[layer, prop] -= dmass_l;
+                                                    temp_tex_som_kg[otherlayer, prop] -= dmass_ol;
 
-                                                    //old OM
-                                                    // if (layer == 0) { Debugger.Break(); }
-                                                    dmass_l = (fromlayertomixture_kg / fine_layer_mass) * (old_SOM_kg[row, col, layer]);
-                                                    dmass_ol = (fromotherlayertomixture_kg / fine_otherlayer_mass) * (old_SOM_kg[row, col, otherlayer]);
+                                                    //mixture_kg[prop] += (fromlayertomixture_kg / fine_layer_mass) * texture_kg[row, col, layer, prop];
+                                                    //if ((fromlayertomixture_kg / fine_layer_mass) * texture_kg[row, col, layer, prop] < 0) { Debugger.Break(); }
+                                                    //massfromlayer += (fromlayertomixture_kg / fine_layer_mass) * texture_kg[row, col, layer, prop];
+                                                    //mixture_kg[prop] += (fromotherlayertomixture_kg / fine_otherlayer_mass) * texture_kg[row, col, otherlayer, prop];
+                                                    //massfromotherlayer += (fromotherlayertomixture_kg / fine_otherlayer_mass) * texture_kg[row, col, otherlayer, prop];
+                                                    //if ((fromotherlayertomixture_kg / fine_otherlayer_mass) * texture_kg[row, col, otherlayer, prop] < 0) { Debugger.Break(); }
 
-                                                    if (dmass_l > temp_tex_som_kg[layer, 6]) { dmass_l = temp_tex_som_kg[layer, 6]; }
-                                                    if (dmass_ol > temp_tex_som_kg[otherlayer, 6]) { dmass_ol = temp_tex_som_kg[otherlayer, 6]; }
+                                                    //temp_tex_som_kg[otherlayer, prop] -= (fromotherlayertomixture_kg / fine_otherlayer_mass) * texture_kg[row, col, otherlayer, prop];
+                                                    //temp_tex_som_kg[layer, prop] -= (fromlayertomixture_kg / fine_layer_mass) * texture_kg[row, col, layer, prop];
 
-                                                    //take mass from donors to mix
-                                                    mixture_kg[6] += (dmass_l + dmass_ol);
-                                                    massfromlayer += dmass_l;
-                                                    massfromotherlayer += dmass_ol;
-
-                                                    temp_tex_som_kg[layer, 6] -= dmass_l;
-                                                    temp_tex_som_kg[otherlayer, 6] -= dmass_ol;
-
-                                                    // checks
-                                                    if (temp_tex_som_kg[layer, 5] < 0)
+                                                    if (temp_tex_som_kg[layer, prop] < 0)
                                                     {
-                                                        Debug.WriteLine("err_sbt10");
+                                                        Debug.WriteLine("err_sbt8");
                                                     }
-                                                    if (temp_tex_som_kg[otherlayer, 5] < 0)
+                                                    if (temp_tex_som_kg[otherlayer, prop] < 0)
                                                     {
-                                                        Debug.WriteLine("err_sbt11");
+                                                        Debug.WriteLine("err_sbt9");
                                                     }
 
-                                                    //now give from mixture to receivers
-                                                    totalmixturemass_kg = massfromlayer + massfromotherlayer;
-                                                    if (totalmixturemass_kg == 0)
-                                                    {
-                                                        Debug.WriteLine("err_sbt11");
-                                                    }
-
-                                                    // if (findnegativetexture()) { Debugger.Break(); }
-
-
-                                                    for (int prop = 1; prop < 7; prop++)
-                                                    {
-                                                        if (temp_tex_som_kg[layer, prop] < 0)
-                                                        {
-                                                            Debug.WriteLine("err_sbt12");
-                                                        }
-                                                        if (temp_tex_som_kg[otherlayer, prop] < 0)
-                                                        {
-                                                            Debug.WriteLine("err_sbt13");
-                                                        }
-
-                                                        if (mixture_kg[prop] < 0)
-                                                        {
-                                                            Debug.WriteLine("err_sbt14");
-                                                        }
-                                                        temp_tex_som_kg[otherlayer, prop] += mixture_kg[prop] * (massfromotherlayer / totalmixturemass_kg);
-                                                        massin_ol += mixture_kg[prop] * (massfromotherlayer / totalmixturemass_kg);
-                                                        temp_tex_som_kg[layer, prop] += mixture_kg[prop] * (massfromlayer / totalmixturemass_kg);
-                                                        massin_l += mixture_kg[prop] * (massfromlayer / totalmixturemass_kg);
-                                                        //mixture_kg[prop] = 0;  // that's not perse needed, but feels clean
-
-                                                        if (temp_tex_som_kg[layer, prop] < 0)
-                                                        {
-                                                            Debug.WriteLine("err_sbt15");
-                                                        }
-                                                        if (temp_tex_som_kg[otherlayer, prop] < 0)
-                                                        {
-                                                            Debug.WriteLine("err_sbt16");
-                                                        }
-                                                    }
                                                 }
+                                                //young OM
+                                                dmass_l = (fromlayertomixture_kg / fine_layer_mass) * (young_SOM_kg[row, col, layer]);
+                                                dmass_ol = (fromotherlayertomixture_kg / fine_otherlayer_mass) * (young_SOM_kg[row, col, otherlayer]);
 
+                                                if (dmass_l > temp_tex_som_kg[layer, 5]) { dmass_l = temp_tex_som_kg[layer, 5]; }
+                                                if (dmass_ol > temp_tex_som_kg[otherlayer, 5]) { dmass_ol = temp_tex_som_kg[otherlayer, 5]; }
 
-                                                //all sorts of checks - we should never have values under zero, or NotANumber NaN
-                                                if (temp_tex_som_kg[otherlayer, 1] < 0)
+                                                //take mass from donors to mix
+                                                mixture_kg[5] += (dmass_l + dmass_ol);
+                                                massfromlayer += dmass_l;
+                                                massfromotherlayer += dmass_ol;
+
+                                                temp_tex_som_kg[layer, 5] -= dmass_l;
+                                                temp_tex_som_kg[otherlayer, 5] -= dmass_ol;
+
+                                                //old OM
+                                                // if (layer == 0) { Debugger.Break(); }
+                                                dmass_l = (fromlayertomixture_kg / fine_layer_mass) * (old_SOM_kg[row, col, layer]);
+                                                dmass_ol = (fromotherlayertomixture_kg / fine_otherlayer_mass) * (old_SOM_kg[row, col, otherlayer]);
+
+                                                if (dmass_l > temp_tex_som_kg[layer, 6]) { dmass_l = temp_tex_som_kg[layer, 6]; }
+                                                if (dmass_ol > temp_tex_som_kg[otherlayer, 6]) { dmass_ol = temp_tex_som_kg[otherlayer, 6]; }
+
+                                                //take mass from donors to mix
+                                                mixture_kg[6] += (dmass_l + dmass_ol);
+                                                massfromlayer += dmass_l;
+                                                massfromotherlayer += dmass_ol;
+
+                                                temp_tex_som_kg[layer, 6] -= dmass_l;
+                                                temp_tex_som_kg[otherlayer, 6] -= dmass_ol;
+
+                                                // checks
+                                                if (temp_tex_som_kg[layer, 5] < 0)
                                                 {
-                                                    Debug.WriteLine(" texture 1 null " + t + " rc " + row + "  " + col + " otherlayers " + layer + " (" + total_layer_mass(row, col, layer) + "kg) " + otherlayer + " (" + total_layer_mass(row, col, otherlayer) + "kg) ");
+                                                    Debug.WriteLine("err_sbt10");
                                                 }
-                                                if (temp_tex_som_kg[otherlayer, 2] < 0) { Debug.WriteLine(" texture 2 null " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
-                                                if (temp_tex_som_kg[otherlayer, 3] < 0) { Debug.WriteLine(" texture 3 null " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
-                                                if (temp_tex_som_kg[otherlayer, 4] < 0) { Debug.WriteLine(" texture 4 null " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
-                                                if (temp_tex_som_kg[otherlayer, 5] < 0) { Debug.WriteLine(" young som null " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
-                                                if (temp_tex_som_kg[otherlayer, 6] < 0) { Debug.WriteLine(" old som null " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
+                                                if (temp_tex_som_kg[otherlayer, 5] < 0)
+                                                {
+                                                    Debug.WriteLine("err_sbt11");
+                                                }
 
-                                                if (temp_tex_som_kg[layer, 1] < 0) { Debug.WriteLine(" texture 1 null " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-                                                if (temp_tex_som_kg[layer, 2] < 0) { Debug.WriteLine(" texture 2 null " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-                                                if (temp_tex_som_kg[layer, 3] < 0) { Debug.WriteLine(" texture 3 null " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-                                                if (temp_tex_som_kg[layer, 4] < 0) { Debug.WriteLine(" texture 4 null " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-                                                if (temp_tex_som_kg[layer, 5] < 0) { Debug.WriteLine(" young som null " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-                                                if (temp_tex_som_kg[layer, 6] < 0) { Debug.WriteLine(" old som null " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
+                                                //now give from mixture to receivers
+                                                totalmixturemass_kg = massfromlayer + massfromotherlayer;
+                                                if (totalmixturemass_kg == 0)
+                                                {
+                                                    Debug.WriteLine("err_sbt11");
+                                                }
 
-                                                if (double.IsNaN(temp_tex_som_kg[otherlayer, 1])) { Debug.WriteLine(" texture 1 NaN " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
-                                                if (double.IsNaN(temp_tex_som_kg[otherlayer, 2])) { Debug.WriteLine(" texture 2 NaN " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
-                                                if (double.IsNaN(temp_tex_som_kg[otherlayer, 3])) { Debug.WriteLine(" texture 3 NaN " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
-                                                if (double.IsNaN(temp_tex_som_kg[otherlayer, 4])) { Debug.WriteLine(" texture 4 NaN " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
-                                                if (double.IsNaN(temp_tex_som_kg[otherlayer, 5])) { Debug.WriteLine(" young som NaN " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
-                                                if (double.IsNaN(temp_tex_som_kg[otherlayer, 6])) { Debug.WriteLine(" old som NaN " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
+                                                // if (findnegativetexture()) { Debugger.Break(); }
 
-                                                if (double.IsNaN(temp_tex_som_kg[layer, 1])) { Debug.WriteLine(" texture 1 NaN " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-                                                if (double.IsNaN(temp_tex_som_kg[layer, 2])) { Debug.WriteLine(" texture 2 NaN " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-                                                if (double.IsNaN(temp_tex_som_kg[layer, 3])) { Debug.WriteLine(" texture 3 NaN " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-                                                if (double.IsNaN(temp_tex_som_kg[layer, 4])) { Debug.WriteLine(" texture 4 NaN " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-                                                if (double.IsNaN(temp_tex_som_kg[layer, 5])) { Debug.WriteLine(" young som NaN " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-                                                if (double.IsNaN(temp_tex_som_kg[layer, 6])) { Debug.WriteLine(" old som NaN " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
+
+                                                for (int prop = 1; prop < 7; prop++)
+                                                {
+                                                    if (temp_tex_som_kg[layer, prop] < 0)
+                                                    {
+                                                        Debug.WriteLine("err_sbt12");
+                                                    }
+                                                    if (temp_tex_som_kg[otherlayer, prop] < 0)
+                                                    {
+                                                        Debug.WriteLine("err_sbt13");
+                                                    }
+
+                                                    if (mixture_kg[prop] < 0)
+                                                    {
+                                                        Debug.WriteLine("err_sbt14");
+                                                    }
+                                                    temp_tex_som_kg[otherlayer, prop] += mixture_kg[prop] * (massfromotherlayer / totalmixturemass_kg);
+                                                    massin_ol += mixture_kg[prop] * (massfromotherlayer / totalmixturemass_kg);
+                                                    temp_tex_som_kg[layer, prop] += mixture_kg[prop] * (massfromlayer / totalmixturemass_kg);
+                                                    massin_l += mixture_kg[prop] * (massfromlayer / totalmixturemass_kg);
+                                                    //mixture_kg[prop] = 0;  // that's not perse needed, but feels clean
+
+                                                    if (temp_tex_som_kg[layer, prop] < 0)
+                                                    {
+                                                        Debug.WriteLine("err_sbt15");
+                                                    }
+                                                    if (temp_tex_som_kg[otherlayer, prop] < 0)
+                                                    {
+                                                        Debug.WriteLine("err_sbt16");
+                                                    }
+                                                }
                                             }
-                                            otherdepth += layerthickness_m[row, col, otherlayer] / 2; // MM added, because only half other otherdepth was added in this version
+
+
+                                            //all sorts of checks - we should never have values under zero, or NotANumber NaN
+                                            if (temp_tex_som_kg[otherlayer, 1] < 0)
+                                            {
+                                                Debug.WriteLine(" texture 1 null " + t + " rc " + row + "  " + col + " otherlayers " + layer + " (" + total_layer_mass(row, col, layer) + "kg) " + otherlayer + " (" + total_layer_mass(row, col, otherlayer) + "kg) ");
+                                            }
+                                            if (temp_tex_som_kg[otherlayer, 2] < 0) { Debug.WriteLine(" texture 2 null " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
+                                            if (temp_tex_som_kg[otherlayer, 3] < 0) { Debug.WriteLine(" texture 3 null " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
+                                            if (temp_tex_som_kg[otherlayer, 4] < 0) { Debug.WriteLine(" texture 4 null " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
+                                            if (temp_tex_som_kg[otherlayer, 5] < 0) { Debug.WriteLine(" young som null " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
+                                            if (temp_tex_som_kg[otherlayer, 6] < 0) { Debug.WriteLine(" old som null " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
+
+                                            if (temp_tex_som_kg[layer, 1] < 0) { Debug.WriteLine(" texture 1 null " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
+                                            if (temp_tex_som_kg[layer, 2] < 0) { Debug.WriteLine(" texture 2 null " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
+                                            if (temp_tex_som_kg[layer, 3] < 0) { Debug.WriteLine(" texture 3 null " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
+                                            if (temp_tex_som_kg[layer, 4] < 0) { Debug.WriteLine(" texture 4 null " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
+                                            if (temp_tex_som_kg[layer, 5] < 0) { Debug.WriteLine(" young som null " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
+                                            if (temp_tex_som_kg[layer, 6] < 0) { Debug.WriteLine(" old som null " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
+
+                                            if (double.IsNaN(temp_tex_som_kg[otherlayer, 1]))
+                                            {
+                                                Debug.WriteLine(" texture 1 NaN " + t + " rc " + row + "  " + col + " otherlayers " + layer + " (" + total_layer_mass(row, col, layer) + "kg) " + otherlayer + " (" + total_layer_mass(row, col, otherlayer) + "kg) ");
+                                            }
+                                            if (double.IsNaN(temp_tex_som_kg[otherlayer, 2])) { Debug.WriteLine(" texture 2 NaN " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
+                                            if (double.IsNaN(temp_tex_som_kg[otherlayer, 3])) { Debug.WriteLine(" texture 3 NaN " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
+                                            if (double.IsNaN(temp_tex_som_kg[otherlayer, 4])) { Debug.WriteLine(" texture 4 NaN " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
+                                            if (double.IsNaN(temp_tex_som_kg[otherlayer, 5])) { Debug.WriteLine(" young som NaN " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
+                                            if (double.IsNaN(temp_tex_som_kg[otherlayer, 6])) { Debug.WriteLine(" old som NaN " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
+
+                                            if (double.IsNaN(temp_tex_som_kg[layer, 1])) { Debug.WriteLine(" texture 1 NaN " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
+                                            if (double.IsNaN(temp_tex_som_kg[layer, 2])) { Debug.WriteLine(" texture 2 NaN " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
+                                            if (double.IsNaN(temp_tex_som_kg[layer, 3])) { Debug.WriteLine(" texture 3 NaN " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
+                                            if (double.IsNaN(temp_tex_som_kg[layer, 4])) { Debug.WriteLine(" texture 4 NaN " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
+                                            if (double.IsNaN(temp_tex_som_kg[layer, 5])) { Debug.WriteLine(" young som NaN " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
+                                            if (double.IsNaN(temp_tex_som_kg[layer, 6])) { Debug.WriteLine(" old som NaN " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
                                         }
-                                        //if (Math.Round(check_mass_distance,4) != 1) { Debugger.Break(); }
-                                        //if (findnegativetexture()) { Debugger.Break(); }
-
-                                        // if (Math.Round(BT_fraction, 6) != 1) { Debugger.Break(); }
-                                        depth += layerthickness_m[row, col, layer] / 2;
+                                        otherdepth += layerthickness_m[row, col, otherlayer] / 2;
                                     }
-                                } // end for layer
-                                  // now we know the new, bioturbated amounts in every layer in this row col, let's store them in the main texture_kg variables
-                                for (layer = 0; layer < max_soil_layers; layer++)
-                                {
-                                    if (layer == 0 & temp_tex_som_kg[0, 2] == 0)
-                                    {
-                                        Debug.WriteLine("err_sbt_16a. empty top layer after BT 0: {0}, {1}, {2}, {3}, {4}, {5}, {6}. t {7}, row {8}, col {9}, dlayer {10}", layer_0[0], layer_0[1], layer_0[2], layer_0[3], layer_0[4], layer_0[5], layer_0[6], t, row, col, layerthickness_m[row, col, 0]);
-                                    }
-                                    for (int prop = 1; prop < 5; prop++)
-                                    {
-                                        if (temp_tex_som_kg[layer, prop] < 0)
-                                        {
-                                            Debug.WriteLine("err_sbt17");
-                                        }
-                                        texture_kg[row, col, layer, prop] = temp_tex_som_kg[layer, prop];
-                                        layer_0_after[prop] = temp_tex_som_kg[layer, prop];
-                                        temp_tex_som_kg[layer, prop] = 0;
-                                    }
-                                    young_SOM_kg[row, col, layer] = temp_tex_som_kg[layer, 5];
-                                    old_SOM_kg[row, col, layer] = temp_tex_som_kg[layer, 6];
-                                    layer_0_after[5] = temp_tex_som_kg[layer, 5];
-                                    layer_0_after[6] = temp_tex_som_kg[layer, 6];
-                                    temp_tex_som_kg[layer, 5] = 0;
-                                    temp_tex_som_kg[layer, 6] = 0;
-                                } //end for layer
-                                  // if (findnegativetexture()) { Debugger.Break(); }
+                                    //if (Math.Round(check_mass_distance,4) != 1) { Debugger.Break(); }
+                                    //if (findnegativetexture()) { Debugger.Break(); }
 
-                                mass_soil_after = total_soil_mass(row, col);
-                                mass_top_after = total_layer_mass(row, col, 0);
-
-                                if (Math.Abs(mass_soil_before - mass_soil_after) > 1E-8 | Math.Abs(mass_top_before - mass_top_after) > 1E-8)
-                                {
-                                    Debug.WriteLine("Mass loss during bioturbation");
-                                    // Debugger.Break(); 
+                                    // if (Math.Round(BT_fraction, 6) != 1) { Debugger.Break(); }
+                                    depth += layerthickness_m[row, col, layer] / 2;
                                 }
+                            } // end for layer
+                              // now we know the new, bioturbated amounts in every layer in this row col, let's store them in the main texture_kg variables
+                            for (layer = 0; layer < max_soil_layers; layer++)
+                            {
+                                if (layer == 0 & temp_tex_som_kg[0, 2] == 0)
+                                {
+                                    //Debug.WriteLine("err_sbt_16a. Possible empty top layer after BT 0: {0}, {1}, {2}, {3}, {4}, {5}, {6}. t {7}, row {8}, col {9}, dlayer {10}", layer_0[0], layer_0[1], layer_0[2], layer_0[3], layer_0[4], layer_0[5], layer_0[6], t, row, col, layerthickness_m[row, col, 0]);
+                                    //this does not really test for an empty top layer - just for a silt-less top layer.
+                                    if (layer == 0 & total_layer_fine_earth_mass(row, col, 0) == 0)
+                                    {
+                                        //this does!
+                                        //Debug.WriteLine("confirmed!");
+                                    }
+                                }
+                                for (int prop = 1; prop < 5; prop++)
+                                {
+                                    if (temp_tex_som_kg[layer, prop] < 0)
+                                    {
+                                        Debug.WriteLine("err_sbt17");
+                                    }
+                                    texture_kg[row, col, layer, prop] = temp_tex_som_kg[layer, prop];
+                                    layer_0_after[prop] = temp_tex_som_kg[layer, prop];
+                                    temp_tex_som_kg[layer, prop] = 0;
+                                }
+                                young_SOM_kg[row, col, layer] = temp_tex_som_kg[layer, 5];
+                                old_SOM_kg[row, col, layer] = temp_tex_som_kg[layer, 6];
+                                layer_0_after[5] = temp_tex_som_kg[layer, 5];
+                                layer_0_after[6] = temp_tex_som_kg[layer, 6];
+                                temp_tex_som_kg[layer, 5] = 0;
+                                temp_tex_som_kg[layer, 6] = 0;
+                            } //end for layer
+                              // if (findnegativetexture()) { Debugger.Break(); }
 
-                            } // end dtm!=-9999
-                        }// for col
-                    } // end for row
-                      // if (findnegativetexture()) { Debugger.Break(); }
+                            mass_soil_after = total_soil_mass(row, col);
+                            mass_top_after = total_layer_mass(row, col, 0);
+
+                            if (Math.Abs(mass_soil_before - mass_soil_after) > 1E-8 | Math.Abs(mass_top_before - mass_top_after) > 1E-8)
+                            {
+                                Debug.WriteLine("Mass loss during bioturbation");
+                                // Debugger.Break(); 
+                            }
+
+                        } // end dtm!=-9999
+                    }// for col
+                } // end for row
+                  // if (findnegativetexture()) { Debugger.Break(); }
 
 
-                    if (timeseries.total_mass_bioturbed_checkbox.Checked)
-                    {
-                        timeseries_matrix[t, timeseries_order[19]] = total_mass_bioturbed_kg;
-                    }
-                    if (NA_in_map(dtm) > 0 | NA_in_map(soildepth_m) > 0)
-                    {
-                        Debug.WriteLine("err_sbt20");
-                    }
-
+                if (timeseries.total_mass_bioturbed_checkbox.Checked)
+                {
+                    timeseries_matrix[t, timeseries_order[19]] = total_mass_bioturbed_kg;
                 }
+                if (NA_in_map(dtm) > 0 | NA_in_map(soildepth_m) > 0)
+                {
+                    Debug.WriteLine("err_sbt20");
+                }
+
             }
             catch { Debug.WriteLine(" No valid text in textbox bioturbation "); }
 
@@ -15249,7 +13683,6 @@ namespace LORICA4
             catch { Debug.WriteLine(" Crash in litter cycle "); }
         }
 
-
         void soil_carbon_cycle()
         {
             try
@@ -15260,7 +13693,6 @@ namespace LORICA4
                 double depth;
                 double total_soil_thickness;
                 double layer_OM_input_index, total_OM_input_index;
-                double dz_dx, dz_dy, slope_local, dynamic_TWI;
                 int layer;
                 total_OM_input_kg = 0;
                 if (version_lux_checkbox.Checked)
@@ -15294,8 +13726,7 @@ namespace LORICA4
                         {
                             if (aridity_vegetation[row, col] < 1) { potential_OM_input = 0.67; } // grassland
                             else { potential_OM_input = 0.62; } // forest
-                            if (t > (end_time - 300)) { potential_OM_input = 0.42; } // arable land
-                            if (t > (end_time - 100)) { potential_OM_input = 0.42*1.004; } // arable land // MM_soil2 4permille higher input. Does that work?
+                            if (t > (end_time - 500)) { potential_OM_input = 0.42; } // arable land
                         }
                         total_soil_thickness = 0;
                         for (layer = 0; layer < max_soil_layers; layer++)
@@ -15810,7 +14241,6 @@ namespace LORICA4
             }
             return (NA_count);
         }
-
 
         void calculate_water_ero_sed_daily()
         {
@@ -16390,10 +14820,9 @@ namespace LORICA4
 
         }
 
-
         void calculate_water_ero_sed()    //where the water starts flowing, eroding and transporting
         {
-            this.InfoStatusPanel.Text = "water erosion calculation";
+            //this.InfoStatusPanel.Text = "water erosion calculation";
             dhmax_errors = 0;
             //set all start q values effective precipitation at time t
             nb_ok = 0;  // nb_ok is 1 als er uberhaupt buren zijn, dus 0 als er alleen maar NODATA is
@@ -16404,7 +14833,7 @@ namespace LORICA4
             tel1 = 0; tel2 = 0; tel3 = 0; tel4 = 0;
             depressions_filled = 0; depressions_delta = 0; depressions_alone = 0; sediment_delta_m = 0; sediment_filled_m = 0; depressionvolume_filled_m = 0; crashed = false;
 
-            double powered_slope_sum, flow_between_cells_m3_per_m, total_sediment_in_transport_kg, organic_in_transport, mass_to_be_eroded, rock_fraction, bio_fraction, selectivity_fraction, potential_transported_amount_kg, organic_selectivity_fraction;
+            double powered_slope_sum, flow_between_cells_m3_per_m, total_sediment_in_transport_kg, organic_in_transport, mass_to_be_eroded, rock_fraction, selectivity_fraction, potential_transported_amount_kg;
             int size;
             double[] total_mass_eroded, total_mass_deposited_kg;
             total_mass_eroded = new double[7] { 0, 0, 0, 0, 0, 0, 0 };
@@ -16492,9 +14921,11 @@ namespace LORICA4
                 {
 
                     row = row_index[runner]; col = col_index[runner];
-                    //Debug.WriteLine(runner + " " + row + "  " + col + " nr " + nr + " nc " + nc + " nr*nc " + nr * nc + " data cells " + number_of_data_cells);
-                    if (t == 1 && row == 24 && col == 81) { diagnostic_mode = 1; }
+                    if (t == 750000) { Debug.WriteLine(runner + " " + row + "  " + col + " nr " + nr + " nc " + nc + " nr*nc " + nr * nc + " data cells " + number_of_data_cells); }
+                    //if (t == 262 && row == 203 && col == 27) { diagnostic_mode = 1; }
+                    if (t == 750000) { diagnostic_mode = 1; }
                     else { diagnostic_mode = 0; }
+
                     powered_slope_sum = 0; max_allowed_erosion = 0; dz_min = -9999.99;
                     direct = 20; dz_max = -10; dhtemp = -99999.99; maximum_allowed_deposition = -9999.99;
                     if (depression[row, col] < 0) { depression[row, col] = 0; }
@@ -16506,8 +14937,11 @@ namespace LORICA4
                     {
                         if (depressionconsidered[depression[row, col]] == 0)
                         {
+                            //diagnostic_mode = 1;
                             depressionnumber = depression[row, col];
                             depressionconsidered[depressionnumber] = 1;
+                            //if (t == 1429 && depressionnumber == 43) { diagnostic_mode = 1; }
+                            //else { diagnostic_mode = 0; }
                             if (diagnostic_mode == 1) { Debug.WriteLine(" now considering dep " + depressionnumber + " index " + runner); }
                             update_depression(depressionnumber);
                             if (depressionsum_sediment_m == 0)
@@ -16563,7 +14997,7 @@ namespace LORICA4
                                             if (dh > 0)
                                             {  // i j is a lower neighbour
                                                 if (dh > max_allowed_erosion - dh_tol) { max_allowed_erosion = (dh - dh_tol); }  // we keep track of the minimum difference in current altitude between this cell and its highest lower neighbour - we will not erode it more, even if we would like to
-                                                                                                                                 //if (diagnostic_mode == 1) { Debug.WriteLine("cell " + row + " " + col + " dtm " + dtm[row, col] + " now " + (dtm[row, col] + dz_sed[row, col] + dz_ero[row, col]) + " nb " + (row + i) + " " + (col + j) + " dtm " + dtm[row + i, col + j] + " is now " + (dtm[row + i, col + j] + dz_ero[row + i, col + j] + dz_sed[row + i, col + j])); }    
+                                                                                                                                 //if (diagnostic_mode == 1) { Debug.WriteLine("cell " + row + " " + col + " dtm " + dtm[row, col] + " now " + (dtm[row, col] + dz_sed_m[row, col] + dz_ero_m[row, col]) + " nb " + (row + i) + " " + (col + j) + " dtm " + dtm[row + i, col + j] + " is now " + (dtm[row + i, col + j] + dz_ero_m[row + i, col + j] + dz_sed_m[row + i, col + j])); }    
                                                 dh = dh / d_x;
                                                 dh = Math.Pow(dh, conv_fac);
                                                 powered_slope_sum = powered_slope_sum + dh;
@@ -16629,7 +15063,7 @@ namespace LORICA4
 
                                                 // Now, we first calculate the fraction of water and sediment that goes from row, col to row+i to col+j , always using current altitudes
                                                 // Then, we calculate the actual amounts of water and sediment, and with that, using the stream power equation, the transport capacity
-                                                // In future, the HjÃ¼lstrom diagram can be used to give texture-dependent erosion thresholds (or selectivity)
+                                                // In future, the Hjülstrom diagram can be used to give texture-dependent erosion thresholds (or selectivity)
 
                                                 dh /= d_x;  //dh is now slope
                                                 fraction = Math.Pow(dh, conv_fac) / powered_slope_sum;
@@ -16693,25 +15127,39 @@ namespace LORICA4
 
                                                             //first, calculate how much we are going to erode. Not as much as we want to if the soil is protected by rocks or plants
                                                             rock_fraction = texture_kg[row, col, 0, 0] / (texture_kg[row, col, 0, 0] + texture_kg[row, col, 0, 1] + texture_kg[row, col, 0, 2] + texture_kg[row, col, 0, 3] + texture_kg[row, col, 0, 4]);
+                                                            //if there are blocks on the surface, we determine how much of the cell surface is covered by them
+                                                            
+                                                            if (blocks_active==1) {
+                                                                double blocks_fraction = 0;
+                                                                foreach (var Block in Blocklist) {
+                                                                    if (Convert.ToInt32(Math.Floor(Block.Y_row)) == row && Convert.ToInt32(Math.Floor(Block.X_col)) == col) {
+                                                                        blocks_fraction += Block.Size_m * Block.Size_m;
+                                                                    }
+                                                                }
+                                                                blocks_fraction /= (dx * dx);
+                                                                rock_fraction = Math.Max(rock_fraction,blocks_fraction); }
                                                             if (version_lux_checkbox.Checked == false)
                                                             {
                                                                 mass_to_be_eroded = (transport_capacity_kg - total_sediment_in_transport_kg)
                                                                 * Math.Exp(-rock_protection_constant * rock_fraction)
                                                                 * Math.Exp(-bio_protection_constant * 0);
                                                             }
+
                                                             else
                                                             {  //for Luxemburg version, here we additially protect soil from erosion by its cover of 'bad' organic matter as litter (i.e. in top layer)
 
                                                                 // MvdM litter fraction is determined by the total amount of litter as fraction of the mineral soil in the top layer. This might be changed, because mineral content is variable and indepent of litter quantity
+
                                                                 //XIA change this number to 0.25 as well. For creep and no creep
                                                                 double litter_characteristic_protection_mass_kg_m2 = 0.01; // based on average litter contents in Luxembourg
                                                                 double litter_characteristic_protection_mass_kg = litter_characteristic_protection_mass_kg_m2 * dx * dx;
-                                                                double litter_protection_fraction = Math.Exp(-litter_characteristic_protection_mass_kg / (litter_kg[row, col, 0] + litter_kg[row, col, 1]));																																																			
-                                                                // double litter_fraction = (litter_kg[row, col, 0] + litter_kg[row, col, 0]) / (litter_kg[row, col, 0] + litter_kg[row, col, 0] + total_layer_mass(row, col, 0));
+                                                                double litter_protection_fraction = Math.Exp(-litter_characteristic_protection_mass_kg / (litter_kg[row, col, 0] + litter_kg[row, col, 1]));
+
+                                                                //double litter_fraction = (litter_kg[row, col, 0] + litter_kg[row, col, 1]) / (litter_kg[row, col, 0] + litter_kg[row, col, 1] + total_layer_mass(row, col, 0));
 
                                                                 //double litter_fraction = (old_SOM_kg[row, col, 0] + young_SOM_kg[row, col, 0]) / total_layer_mass(row, col, 0);
                                                                 //LUX Xia you have to set this parameter here in the code. Value between 0-1.
-                                                                // double litter_protection_constant = 0.5;
+                                                                //double litter_protection_constant = 0.5;
 
                                                                 mass_to_be_eroded = (transport_capacity_kg - total_sediment_in_transport_kg)
                                                                 * Math.Exp(-rock_protection_constant * rock_fraction)
@@ -16790,10 +15238,11 @@ namespace LORICA4
                                                             if (Double.IsNaN(clayerodedfraction_0))
                                                             {
                                                                 clayerodedfraction_0 = 0;
-                                                                Debug.WriteLine(" this should not have happened - no OM erosion possible");
+                                                                //Debug.WriteLine(" this should not have happened - no OM erosion possible"); 
                                                             }
                                                             if (Double.IsNaN(clayerodedfraction_1)) { clayerodedfraction_1 = 0; }
                                                             //if (row == 62 && col == 78) { Debug.WriteLine(clayerodedfraction_0 + "  " + clayerodedfraction_1); displaysoil(row, col); }
+                                                            
                                                             old_SOM_in_transport_kg[row, col] += old_SOM_kg[row, col, 0] * clayerodedfraction_0 + old_SOM_kg[row, col, 1] * clayerodedfraction_1;
                                                             young_SOM_in_transport_kg[row, col] += young_SOM_kg[row, col, 0] * clayerodedfraction_0 + young_SOM_kg[row, col, 1] * clayerodedfraction_1;
                                                             total_mass_eroded[5] += old_SOM_kg[row, col, 0] * clayerodedfraction_0 + old_SOM_kg[row, col, 1] * clayerodedfraction_1;
@@ -16806,7 +15255,7 @@ namespace LORICA4
                                                         }
                                                         else
                                                         {
-                                                            //do nothing. We wanted to erode, but not enough so to actually exceed the threshold and actually do that
+                                                            //do nothing. We wanted to erode, but not enough so to exceed the threshold and actually do that
                                                         }
                                                     }
                                                     if (transport_capacity_kg < total_sediment_in_transport_kg)
@@ -16897,9 +15346,8 @@ namespace LORICA4
                         if (only_waterflow_checkbox.Checked == false)
                         {
                             //erosion and deposition affect only the top two layers of soil. All others: unaffected.
-                            //So, we calculate the difference between the original and final thicknesses of these two layers to calculate dz_ero and dz_sed. 
+                            //So, we calculate the difference between the original and final thicknesses of these two layers to calculate dz_ero_m and dz_sed_m. 
                             //We already knew how much mass was involved in ero and sed, but we need the volumes to update the dtm.
-
                             for (i = 0; i < 2; i++)
                             {
                                 double pastlayer = layerthickness_m[row, col, i];
@@ -16919,7 +15367,8 @@ namespace LORICA4
                             volume_deposited += dz_sed_m[row, col];
                             dtmchange[row, col] += dz_ero_m[row, col] + dz_sed_m[row, col];  //attention: LAKE_sed and dz_sed_m are treated differently. 
                             dtm[row, col] += dz_ero_m[row, col] + dz_sed_m[row, col];                           //No need to add lake_sed to dtm in the next line
-                            sum_water_erosion[row, col] += dz_ero_m[row, col] + dz_sed_m[row, col] + lake_sed_m[row,col];
+                            soildepth_m[row,col] += dz_ero_m[row, col] + dz_sed_m[row, col];
+                            sum_water_erosion[row, col] += dz_ero_m[row, col] + dz_sed_m[row, col] + lake_sed_m[row, col];
 
                             if (-dz_ero_m[row, col] > timeseries.timeseries_erosion_threshold) { eroded_cells++; }
                             if (dz_sed_m[row, col] + lake_sed_m[row, col] > timeseries.timeseries_deposition_threshold) { deposited_cells++; }
@@ -17036,7 +15485,7 @@ namespace LORICA4
                 timeseries_matrix[t, timeseries_order[12]] = total_infil;
             }
             if (timeseries.timeseries_total_outflow_check.Checked)
-            { 
+            {
                 timeseries_matrix[t, timeseries_order[13]] = total_outflow;
             }
             if (timeseries.timeseries_total_rain_check.Checked)
@@ -17539,60 +15988,7 @@ namespace LORICA4
                 Debug.WriteLine("err_sli1");
             }
 
-        } // end calc_slide()  
-
-        Random randOslRowUpdate = new Random();
-        Random randOslColUpdate = new Random();
-        Random randOslLayUpdate = new Random();
-        Random randOslBleaching = new Random();
-        Random randOslSplitLayers = new Random();
-        Random randOslRandomLayer = new Random();
-        Random randOslLayerMixing = new Random();
-        Random randOslTillageTransport = new Random();
-
-        int returnRandomLayer(double[] probabilities)
-        {
-            for (int i = 1; i < probabilities.Length; i++) { probabilities[i] = probabilities[i] + probabilities[i - 1]; } // cumulate and
-            for (int i = 0; i < probabilities.Length; i++) { probabilities[i] /= probabilities[probabilities.Length - 1]; } // normalize probabilities
-
-            double prob = randOslRandomLayer.Next(0, 1000) / 1000.0; // determine probability
-
-            for (int i = 0; i < probabilities.Length; i++)
-            {
-                if (prob <= probabilities[i])
-                {
-                    return (i);
-                }
-            }
-            return (9999); // this cannot happen. Probability is always <= 1, which is the last value in [probabilities]
-        }
-
-        void update_and_bleach_OSL_ages(double bleaching_P)
-        {
-
-            int probRange = 10000;
-            int bleaching_P_int = Convert.ToInt32(Math.Round(bleaching_P * probRange));
-
-            for (int osl_i = 0; osl_i < OSL_age.GetLength(0); osl_i++) // loop over all rows
-            {
-                // Aging
-                for (int age_i = 3; age_i <= 4; age_i++) // For both stabilization ages [3] and deposition ages [4],
-                {
-                    if (OSL_age[osl_i, age_i] <= Int32.MaxValue) // if we don't exceed the maximum value for integers (for ~infinite ages),
-                    {
-                        OSL_age[osl_i, age_i] += 1; // we add a year to the age.
-                    }
-                }
-                // MdvM develop: bleaching probability in top layer as function of layer thickness (e.g. if only the top 3 mm gets bleached, the amount of grains that get bleached = 0.003/layerthickness)
-
-                // Bleaching
-                if (OSL_age[osl_i, 2] == 0 & (randOslBleaching.Next(0, probRange) < bleaching_P_int ? 1 : 0) == 1) // if in top layer and bleaching occurs
-                {
-                    OSL_age[osl_i, 3] = 0;
-                    // OSL_age[i,4] = 0; // Deposition age isn't bleached here. That is only done during transport
-                }
-            }
-        }
+        } // end calc_slide()      
 
         private void calculate_tillage()
         {
@@ -17605,8 +16001,7 @@ namespace LORICA4
                 }, CancellationToken.None, TaskCreationOptions.None, guiThread);
                 
                 int row, col, i, j;
-                double slope_sum, dz_min, d_x, dz_max, dh, fraction, temptill, tempdep, temptill_kg,
-                            slope;
+                double slope_sum, dz_min, d_x, dz_max, dh, fraction, temptill, tempdep, slope;
 
                 nb_ok = 0; nb_check = 0;
                 for (row = 0; row < nr; row++)
@@ -17622,7 +16017,7 @@ namespace LORICA4
                 for (runner = number_of_data_cells - 1; runner >= 0; runner--)
                 {           // the index is sorted from low to high values, but flow goes from high to low
                     row = row_index[runner]; col = col_index[runner];
-                    //  Debug.WriteLine("till1");
+                    // Debug.WriteLine("till1");
 
                     if (tillfields[row, col] == 1)
                     {
@@ -17643,7 +16038,7 @@ namespace LORICA4
                          // Debug.WriteLine("till2");
                         double[] tilled_text = new double[5]; // includes soil 
                         double[] tilled_om = new double[2]; // includes OM
-                        double[] alldepths = new double[completelayers + 1]; // contains thicknesses of all layers
+                        double[] alldepths = new double[completelayers]; // contains thicknesses of all layers
                         double[] fraction_mixed = new double[completelayers + 1];
 
                         // add material from complete layers
@@ -17665,13 +16060,11 @@ namespace LORICA4
                         // Debug.WriteLine("till3");
                         // add material from partial layer and appoint mixed material, and give back material at the same time
                         double frac_ap = (plough_depth - completelayerdepth) / layerthickness_m[row, col, completelayers];
-                        fraction_mixed[completelayers] = frac_ap; // fraction of layer that is mixed
-                        alldepths[completelayers] = plough_depth - completelayerdepth; // part of layer [m] that is considered
+                        fraction_mixed[completelayers] = frac_ap;
                         if (frac_ap > 1)
                         {
                             Debug.WriteLine("err_ti1");
                         }
-
                         for (int tex = 0; tex < 5; tex++) // add partial mass of partial layer
                         {
                             tilled_text[tex] += texture_kg[row, col, completelayers, tex] * frac_ap; // add fraction from partial layer
@@ -17698,44 +16091,16 @@ namespace LORICA4
                             old_SOM_kg[row, col, lay] = tilled_om[0] * (alldepths[lay] / plough_depth);
                             young_SOM_kg[row, col, lay] = tilled_om[1] * (alldepths[lay] / plough_depth);
 
+
                             layerthickness_m[row, col, lay] = thickness_calc(row, col, lay);
                             layerthickness_m[row, col, lay] = thickness_calc(row, col, lay);
                             newdepth += layerthickness_m[row, col, lay];
                         }
                         newdepth += layerthickness_m[row, col, completelayers];
 
-                        // MvdM Develop: link mixing to sand or silt fraction, or is that not necessary in this case of complete mixing?
-                        if (OSL_checkbox.Checked) // Mix grains from the top layers
-                        {
-                            // Debug.WriteLine("err_tiOSl_1_1");
-                            double[] probs = new double[alldepths.Length];
 
-                            for (int osl_i = 0; osl_i < OSL_age.GetLength(0); osl_i++)
-                            {
-                                if (OSL_age[osl_i, 0] == row & OSL_age[osl_i, 1] == col)
-                                {
-                                    if (OSL_age[osl_i, 2] <= completelayers)
-                                    {
-                                        // Debug.WriteLine("err_tiOSl_1_2");
-                                        int lay = OSL_age[osl_i, 2];
-                                        int P_mixing = Convert.ToInt32(Math.Round(fraction_mixed[lay] * 1000)); // determine probability that a grain gets mixed based on fraction of layer that is mixed
 
-                                        if ((randOslLayerMixing.Next(0, 1000) < P_mixing ? 1 : 0) == 1) // if grain gets mixed
-                                        {
-                                            //Debug.WriteLine("err_tiOSl_1_3");
-                                            for (int iii = 0; iii < alldepths.Length; iii++) { probs[iii] = alldepths[iii]; } // Make a copy of the mixed depths for calculating probabilities
-                                            OSL_age[osl_i, 2] = returnRandomLayer(probs); // determine new layer number based on these probabilities
-                                        }
-                                        // Debug.WriteLine("err_tiOSl_1_4");
-                                    }
-                                }
-                            }
-                        }
-                        double mass_soil_after = total_soil_mass(row, col);
-                        if (Math.Abs(mass_soil_before - mass_soil_after) > 0.0001)
-                        {
-                            Debug.WriteLine("err_ti2");
-                        }
+
 
                         // Debug.WriteLine("till5");
                         // 2. Calculate redistribution of material
@@ -17769,7 +16134,11 @@ namespace LORICA4
                         // than its lowest lower neighbour (avoiding sinks).
                         // we are also going to limit the tilled amount to avoid row+i, col+j becoming higher than its own lowest higher nb.
                         // that avoids sinks as well.
-
+                        double mass_soil_after = total_soil_mass(row, col);
+                        if (Math.Abs(mass_soil_before - mass_soil_after) > 0.0001)
+                        {
+                            Debug.WriteLine("err_ti2");
+                        }
                         // Debug.WriteLine("till6");
                         for (i = (-1); i <= 1; i++)
                         {
@@ -17839,17 +16208,15 @@ namespace LORICA4
 
                                             //double dz_till_m = temptill;
                                             // Debug.WriteLine("till7");
-
                                             // 2.c update soil properties which are tilled
                                             // top layers are mixed, so it doesn't matter where eroded material comes from.
                                             // problems can arise when eroded depth is larger than plough depth. 
-                                            // DEVELOP MvdM: development needed for layers with varying bulk density, in the case this occurs in an Ap horizon
-                                            double mass_partial_layer, frac_eroded, total_mass_start, total_mass_end;
+                                            // development needed for layers with varying bulk density, in the case this occurs in an Ap horizon
+                                            double frac_eroded;
 
                                             //total_mass_start = total_soil_mass(row, col);
                                             int layero = 0;
                                             double temptill0 = temptill;
-                                            double frac_sand_eroded = 0;
                                             while (temptill >= layerthickness_m[row, col, layero] | layero >= max_soil_layers) // hele laag wordt verwijderd, al het materiaal naar de volgende cel
                                             {
                                                 for (int tex = 0; tex < 5; tex++)
@@ -17857,8 +16224,6 @@ namespace LORICA4
                                                     texture_kg[row + i, col + j, 0, tex] += texture_kg[row, col, layero, tex];
                                                     texture_kg[row, col, layero, tex] = 0;
                                                 }
-                                                frac_sand_eroded = 1;
-
                                                 young_SOM_kg[row + i, col + j, 0] += young_SOM_kg[row, col, layero];
                                                 young_SOM_kg[row, col, layero] = 0;
                                                 old_SOM_kg[row + i, col + j, 0] += old_SOM_kg[row, col, layero];
@@ -17869,7 +16234,6 @@ namespace LORICA4
                                                 layero++;
                                             }
                                             // Debug.WriteLine("till8");
-
                                             // transport eroded fraction
                                             frac_eroded = temptill / layerthickness_m[row, col, layero];
                                             // mass fraction eroded
@@ -17883,38 +16247,6 @@ namespace LORICA4
                                             old_SOM_kg[row + i, col + j, 0] += old_SOM_kg[row, col, layero] * frac_eroded;
                                             old_SOM_kg[row, col, layero] -= old_SOM_kg[row, col, layero] * frac_eroded;
 
-
-                                            if (OSL_checkbox.Checked)
-                                            {
-                                                int probRange = 1000;
-                                                int transport_P_int;
-                                                // Debug.WriteLine("err_tiOSl1");
-                                                for (int osl_i = 0; osl_i < OSL_age.GetLength(0); osl_i++) // loop over all rows
-                                                {
-                                                    if (OSL_age[osl_i, 0] == row & OSL_age[osl_i, 1] == col & OSL_age[osl_i, 2] <= layero) // do row, col and layer match?
-                                                    {
-                                                        // Probability that a grain is eroded is equal to the fraction of the layer that is eroded
-                                                        transport_P_int = Convert.ToInt32(Math.Round(frac_eroded * probRange));
-
-                                                        // In case the whole layer is eroded, this probability is set to 1
-                                                        if (OSL_age[osl_i, 2] < layero) { transport_P_int = 1 * probRange; }
-                                                        // Debug.WriteLine("err_tiOSl2");
-                                                        if ((randOslTillageTransport.Next(0, probRange) < transport_P_int ? 1 : 0) == 1) // does transport occur?
-                                                        {
-                                                            // Transport to top layer 0 at row+i and col+j, just as the sediments
-                                                            OSL_age[osl_i, 0] = row + i;
-                                                            OSL_age[osl_i, 1] = col + j;
-                                                            OSL_age[osl_i, 2] = 0;
-
-                                                            // Reset deposition and stabilization age (complete mixing during transport)
-                                                            // MvdM DEVELOP: incomplete bleaching during transport
-                                                            OSL_age[osl_i, 3] = 0;
-                                                            OSL_age[osl_i, 4] = 0;
-                                                        }
-                                                        // Debug.WriteLine("err_tiOSl3");
-                                                    }
-                                                }
-                                            }
 
                                             layerthickness_m[row, col, layero] = thickness_calc(row, col, layero);
                                             layerthickness_m[row + i, col + j, 0] = thickness_calc(row, col, layero);
@@ -17932,8 +16264,8 @@ namespace LORICA4
                         }//end for i
                     } //end if tillfields
                 }   // end  for 
-                // Debug.WriteLine("till9");
-                // 3. Update elevation changes
+                    // Debug.WriteLine("till9");
+                    // 3. Update elevation changes
                 for (row = 0; row < nr; row++)
                 {
                     for (col = 0; col < nc; col++)
@@ -18267,7 +16599,7 @@ namespace LORICA4
 
         private void calculate_creep()
         {
-            // Debug.WriteLine("start of creep");
+            Debug.WriteLine("start of creep");
             try
             {
                 if (NA_in_map(dtm) > 0 | NA_in_map(soildepth_m) > 0)
@@ -18282,15 +16614,14 @@ namespace LORICA4
                 
                 int row, col,
                             i, j,
-                            nb_ok,
-                            NA_dem;
+                            nb_ok;
                 double
                             dhmin, dhe_tol, dhs_tol,
                             slope_sum, dhmax, dz_min, d_x, dz_max, dh1, dh,
                             fraction,
-                            temp, tempcreep, tempdep,
+                            temp, tempcreep_kg,
                             slope,
-                            local_creep_kg = 0;
+                            potential_creep_kg = 0, local_creep_kg = 0;
 
                 nb_ok = 0; nb_check = 0; all_grids = 0;
                 dhmin = -9999; dhe_tol = 0.00000; dhs_tol = 0.00000;
@@ -18353,25 +16684,20 @@ namespace LORICA4
                         {
                             Debug.WriteLine("err_cr4");
                         }
-                        //Debug.WriteLine("cr2"); 
+                        //Debug.WriteLine("cr2");
 
                         // calculate potential creep in kg
                         double maxslope = Math.Atan(dz_max); // max slope in radians
-                        // potential_creep_kg = 4.5; //MvdM parameter is now set in the interface
-						// potential_creep_kg = Convert.ToDouble(potential_bioturbation_textbox.Text); // MvdM use BT rate, or also different creep rate, as it is now?
-																		   
+                        // potential_creep_kg = 4.5;
+                        potential_creep_kg = Convert.ToDouble(potential_bioturbation_textbox.Text);
                         if (daily_water.Checked)
                         {
                             if (aridity_vegetation[row, col] < 1) { potential_creep_kg = 4 + 0.3; } // grassland
                             else { potential_creep_kg = 4 + 1.3; } // forest
                                                                    // standard potential creep of 4 kg. 0.3 or 1.3 is added, based on vegetation type. Rates are derived from Wilkinson 2009: breaking ground and Gabet
                         }
-
-
-
                         local_creep_kg = potential_creep_kg * Math.Sin(maxslope) * Math.Cos(maxslope) * dx * dx * dt; //Equation from gabet et al., 2003 https://doi.org/10.1146/annurev.earth.31.100901.141314 
                                                                                                                       //Debug.WriteLine("cr3");
-
                         if (local_creep_kg > 0)
                         {
 
@@ -18410,9 +16736,8 @@ namespace LORICA4
                                                 dh = dh / d_x;
                                                 dh = Math.Pow(dh, conv_fac);
                                                 fraction = (dh / slope_sum);
-                                                tempcreep = fraction * local_creep_kg; //MM develop. Original function was fraction*slope*diffusivity. Do I need to add slope in calculations?
-
-
+                                                tempcreep_kg = fraction * local_creep_kg; //MM develop. Original function was fraction*slope*diffusivity. Do I need to add slope in calculations?
+                                                //ArT:No, I don't think so. Just a fraction that you correctly calculated using slope (i.e. dh power conv fac).
 
                                                 //// oldsoildepths
                                                 double dsoil_source = total_soil_thickness(row, col);
@@ -18423,7 +16748,7 @@ namespace LORICA4
                                                 double oldmass_source = total_soil_mass(row, col);
                                                 double oldmass_sink = total_soil_mass(row + i, col + j);
 
-                                                calc_creep_layers(row, col, i, j, tempcreep);
+                                                calc_creep_layers(row, col, i, j, tempcreep_kg);
 
 
                                                 // update soil depths                                               
@@ -18445,8 +16770,74 @@ namespace LORICA4
 
                                                 //displaysoil(row + i, col + j);
 
-                                                double dz_source = total_soil_thickness(row, col) - dsoil_source; // change in soil depth
-                                                double dz_sink = total_soil_thickness(row + i, col + j) - dsoil_sink; // change in soil depth
+                                                double dz_source = dsoil_source_new - dsoil_source; // change in soil depth
+                                                double dz_sink = dsoil_sink_new - dsoil_sink; // change in soil depth
+                                                //at this stage, we should connect to any blocks that are in the source and sink cells,
+                                                //and add dz_source and sink to their accum creep counters
+                                                //first, see if there are any blocks in here
+                                                if (blocks_active == 1)
+                                                {
+                                                    // need to precalculate total block surface area per cell in a function (not from here) 
+                                                    // to allow correction for more blocks having more stopping power and higher buildup behind them
+                                                    foreach (var Block in Blocklist)
+                                                    {
+                                                        int blrow = Convert.ToInt32(Math.Floor(Block.Y_row));
+                                                        int blcol = Convert.ToInt32(Math.Floor(Block.X_col));
+                                                        if (row == blrow && col == blcol)
+                                                        {
+                                                            //then we have blocks that are giving in this direction, so should subtract from accum_creep
+                                                            //i, j will tell us where this creep went to, so which of our 8 values we shoudl subrtact from
+                                                            switch (10 * j + i)
+                                                            {
+                                                                case -1:  //To N
+                                                                    Block.Accumulated_creep_m_0 += Convert.ToSingle(dz_source); break;
+                                                                case 9: // To NE
+                                                                    Block.Accumulated_creep_m_1 += Convert.ToSingle(dz_source); break;
+                                                                case 10: //To E
+                                                                    Block.Accumulated_creep_m_2 += Convert.ToSingle(dz_source); break;
+                                                                case 11: //To SE
+                                                                    Block.Accumulated_creep_m_3 += Convert.ToSingle(dz_source); break;
+                                                                case 1: //To S
+                                                                    Block.Accumulated_creep_m_4 += Convert.ToSingle(dz_source); break;
+                                                                case -9: //To SW
+                                                                    Block.Accumulated_creep_m_5 += Convert.ToSingle(dz_source); break;
+                                                                case -10: //To W
+                                                                    Block.Accumulated_creep_m_6 += Convert.ToSingle(dz_source); break;
+                                                                case -11: //To NW
+                                                                    Block.Accumulated_creep_m_7 += Convert.ToSingle(dz_source); break;
+                                                                default:
+                                                                    break;
+                                                            }
+                                                        }
+                                                        if ((row + i) == blrow && (col + j) == blcol)
+                                                        {
+                                                            //then we have blocks that are receiving FROM this direction, so should add to accum_creep
+                                                            //note the changed SWITCH VALUES
+                                                            switch (10 * j + i)
+                                                            {
+                                                                case -1:  //From N, To S, etc
+                                                                    Block.Accumulated_creep_m_4 += Convert.ToSingle(dz_sink); break;
+                                                                case 9: // From NE
+                                                                    Block.Accumulated_creep_m_5 += Convert.ToSingle(dz_sink); break;
+                                                                case 10: //From E
+                                                                    Block.Accumulated_creep_m_6 += Convert.ToSingle(dz_sink); break;
+                                                                case 11: //From SE
+                                                                    Block.Accumulated_creep_m_7 += Convert.ToSingle(dz_sink); break;
+                                                                case 1: //From S
+                                                                    Block.Accumulated_creep_m_0 += Convert.ToSingle(dz_sink); break;
+                                                                case -9: //From SW
+                                                                    Block.Accumulated_creep_m_1 += Convert.ToSingle(dz_sink); break;
+                                                                case -10: //From W
+                                                                    Block.Accumulated_creep_m_2 += Convert.ToSingle(dz_sink); break;
+                                                                case -11: //From NW
+                                                                    Block.Accumulated_creep_m_3 += Convert.ToSingle(dz_sink); break;
+                                                                default:
+                                                                    break;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
                                                 double newmass = total_soil_mass(row, col) + total_soil_mass(row + i, col + j);
                                                 creep[row, col] += dz_source;
                                                 creep[row + i, col + j] += dz_sink;
@@ -18472,7 +16863,7 @@ namespace LORICA4
 
                                                 } //MM Qua hoogte lijkt het hieronder nog mis te gaan. De gewichtscheck hierboven gaat wel goed. 
                                                   // Op DTM zijn de verschillen niet te zien, op creep[,] wel
-                                                if (Math.Abs(dz_source + dz_sink) > 0.001 & t > 1)
+                                                if (Math.Abs(dz_source + dz_sink) > 0.01 & t > 1)
                                                 {
                                                     // Can occur with a thick lower soil layer, due to small changes in depth->bulk density->thickness. Can be 4 cm for a total soil thickness of 100  m.
                                                     Debug.WriteLine("Creep: Thickness erosion and deposition are not approximately equal");
@@ -18521,35 +16912,62 @@ namespace LORICA4
                 int layerreceiver = 0;
                 double creep_depth_decay_constant = Convert.ToDouble(bioturbation_depth_decay_textbox.Text);
 
-                double frac_dz_lay, frac_overlap_lay, upperdepthdonor = 0, lowerdepthdonor = 0, upperdepthreceiver = 0, lowerdepthreceiver = 0, dsoil = 0, upp_z_lay = 0, int_curve_total, int_curve_lay, mass_export_lay_kg;
+                double frac_overlap_lay, upperdepthdonor = 0, lowerdepthdonor = 0, upperdepthreceiver = 0, lowerdepthreceiver = 0, dsoil = 0, upp_z_lay = 0, int_curve_total, int_curve_lay, mass_export_lay_kg;
                 bool C_done = false, lastlayer = false;
 
                 dsoil = total_soil_thickness(row1, col1);
+                
+                //expanding soil thickness to if blocks are active to account of openness of (possibly) underlying hardlayer:
+                if (blocks_active == 1) {
+                    //this condition may be too strict or too lax 
+                    if ((dtm[row1, col1] - dsoil) <= (hardlayerelevation_m + 0.001) && (dtm[row1, col1] - dsoil) > hardlayerelevation_m - 0.001) {
+                        //Debug.WriteLine(" r " + row1 + " c " + col1 + "  increasing total creeping soildepth from " + dsoil + " to " + (dtm[row1, col1] - (hardlayerelevation_m - (hardlayerthickness_m * hardlayeropenness_fraction[row1, col1]))));
+                        dsoil = Math.Max(dsoil, (dtm[row1, col1] - (hardlayerelevation_m - (hardlayerthickness_m*hardlayeropenness_fraction[row1,col1]))));
+                        //Debug.WriteLine(" soildepth now " + dsoil );
+                    } 
+                }
 
                 int_curve_total = 1 / (-creep_depth_decay_constant) * Math.Exp(-creep_depth_decay_constant * 0) - 1 / (-creep_depth_decay_constant) * Math.Exp(-creep_depth_decay_constant * dsoil); // integral over depth decay function, from depth 0 to total soil depth
                 upperdepthdonor = 0; //  dtm[row1, col1]; using 0 leads to a continuous landscapes, instead of a step-wise pattern
                 upperdepthreceiver = 0; // dtm[row1 + iiii, col1 + jjjj];
                 lowerdepthreceiver = upperdepthreceiver - layerthickness_m[row1 + iiii, col1 + jjjj, layerreceiver];
 
-                //if (row1 == 0 & col1 == 0)
-                //{
-                //    displaysoil(row1, col1);
-                //    displaysoil(row1 + iiii, col1 + jjjj);
-
-                //}
-
                 //if (row == 31 && col == 12) { Debug.WriteLine("creep4a. tempcreep = {0}",tempcreep); displaysoil(row, col); }
 
                 for (int lay = 0; lay < max_soil_layers; lay++) // test per layer where material moves to
                 {
 
-                    if (layerthickness_m[row1, col1, lay] > 0)
+                    double laythick_m = layerthickness_m[row1, col1, lay];
+                    if (laythick_m > 0)
                     {
-                        int_curve_lay = 1 / (-creep_depth_decay_constant) * Math.Exp(-creep_depth_decay_constant * upp_z_lay) - 1 / (-creep_depth_decay_constant) * Math.Exp(-creep_depth_decay_constant * (upp_z_lay + layerthickness_m[row1, col1, lay]));//integral over depth decay function, from top of layer to bottom of layer
-                        upp_z_lay += layerthickness_m[row1, col1, lay];
-                        lowerdepthdonor = upperdepthdonor - layerthickness_m[row1, col1, lay]; // elevation range donor layer  
+                        if (blocks_active == 1)
+                        {
+                            if ((dtm[row1, col1] - (upp_z_lay+ laythick_m)) <= (hardlayerelevation_m + 0.001) && (dtm[row1, col1] - (upp_z_lay+ laythick_m)) > hardlayerelevation_m - 0.001)
+                            {
+                                //even though we change layer thickness here, we are not adapting how much mass is in it. 
+                                //also for layers that currently end slightly IN hardlayer (for reasons unknown), and openness really small, we may actually end up reducing their thickness
+                                //and if those layers are already very thin, we may end up with negative layerthicknes..
+                                if (((dtm[row1, col1] - upp_z_lay) - (hardlayerelevation_m - (hardlayerthickness_m * hardlayeropenness_fraction[row1, col1])) - laythick_m) < -0.001)
+                                {
+                                    Debug.WriteLine(" last layer thick_m " + laythick_m + " will be adding " + ((dtm[row1, col1] - upp_z_lay) - (hardlayerelevation_m - (hardlayerthickness_m * hardlayeropenness_fraction[row1, col1])) - laythick_m));
+                                }
+                                laythick_m = (dtm[row1, col1] - upp_z_lay) - (hardlayerelevation_m - (hardlayerthickness_m * hardlayeropenness_fraction[row1, col1]));
+                                //Debug.WriteLine("adapted thickness of last layer to " + laythick_m );
+                                if(laythick_m < 0) { 
+                                    Debug.WriteLine(" yikes " + laythick_m + " laythick - less than zero ");
+                                    Debug.WriteLine("adapted thickness of last layer to " + laythick_m );
+                                    laythick_m = 0;
+                                }
+                            }
+                        }
+                        int_curve_lay = 1 / (-creep_depth_decay_constant) * Math.Exp(-creep_depth_decay_constant * upp_z_lay) - 1 / (-creep_depth_decay_constant) * Math.Exp(-creep_depth_decay_constant * (upp_z_lay + laythick_m));//integral over depth decay function, from top of layer to bottom of layer
+                        upp_z_lay += laythick_m;
+                        lowerdepthdonor = upperdepthdonor - laythick_m; // elevation range donor layer  
                         mass_export_lay_kg = mass_export_soil_kg * (int_curve_lay / int_curve_total); // mass to be removed from layer in kg 
-
+                        if(mass_export_lay_kg < 0){
+                            Debug.Write(" YIKES" + mass_export_lay_kg + " will be exported ");
+                            mass_export_lay_kg = 0;
+                        }
                         //frac_dz_lay = (tempcreep * int_curve_lay / int_curve_total) / layerthickness_m[row1, col1, lay]; // fraction that has to be removed
                         frac_overlap_lay = 0; // this fraction will be used to correct for partally overlapping layers 
 
@@ -18681,14 +17099,6 @@ namespace LORICA4
                                 creep_transport(row1, col1, lay, row1 + iiii, col1 + jjjj, 0, mass_export_lay_kg, frac_overlap_lay);
                             }
                         }
-
-
-
-
-
-
-
-
 
                         upperdepthdonor = lowerdepthdonor;
                         C_done = false;
@@ -19119,6 +17529,7 @@ namespace LORICA4
         private void calculate_bedrock_weathering()
         {
             // as function of infiltration?
+            //Debug.WriteLine("Entered bedrock weathering");
             double Iavg = 0, Imin = 10000000, Imax = 0;
             if (daily_water.Checked)
             {
@@ -19145,19 +17556,24 @@ namespace LORICA4
                 {
                     if (dtm[row, col] != -9999)
                     {
+                        double weatheringdepth = 0;
+                        //Debug.WriteLine(" bedrock weathering at r " + row + " c " + col);
+                        //if the first occurrence of bedrock is the hardlayer, then no weathering should occur.
+                        //if more weathering is calculated than needed to get to the hardlayer, then it should be thus limited. 
+
+                        weatheringdepth = soildepth_m[row, col];
 
                         // humped
                         if (rockweath_method.SelectedIndex == 0)
                         {
-                            bedrock_weathering_m[row, col] = P0 * (Math.Exp(-k1 * soildepth_m[row, col]) - Math.Exp(-k2 * soildepth_m[row, col])) + Pa;
+                            bedrock_weathering_m[row, col] = P0 * (Math.Exp(-k1 * weatheringdepth) - Math.Exp(-k2 * weatheringdepth)) + Pa;
 
                         }
                         if (rockweath_method.SelectedIndex == 1)
                         {
                             // exponential (Heimsath, Chappell et al., 2000)
-                            bedrock_weathering_m[row, col] = P0 * (Math.Exp(-k1 * soildepth_m[row, col]));
+                            bedrock_weathering_m[row, col] = P0 * Math.Exp(-k1 * weatheringdepth);
                         }
-
 
                         if (rockweath_method.SelectedIndex == 2)
                         {
@@ -19166,20 +17582,40 @@ namespace LORICA4
                                 bedrock_weathering_m[row, col] = P0 * -k1 * (Iy[row, col] - Imin) / (Imax - Imin);
                             }
                         }
-
+                        //we now know how deep we would weather into normal bedrock
+                        if (blocks_active == 1)
+                        {
+                            double newlowestelevsoil = dtm[row, col] - soildepth_m[row, col] - bedrock_weathering_m[row, col];
+                            double oldlowestelevsoil = dtm[row, col] - soildepth_m[row, col];
+                            if (newlowestelevsoil < hardlayerelevation_m && oldlowestelevsoil >= hardlayerelevation_m)
+                            {
+                                //we limit bedrock weathering to the part of the bedrock above hardlayer:
+                                bedrock_weathering_m[row, col] = (dtm[row, col] - soildepth_m[row, col]) - hardlayerelevation_m;
+                                Debug.WriteLine(" limited bedrock weathering to stop at hardlayer r " + row + " c " + col + " dtm "+ dtm[row,col]);
+                                //and apply the rest of the weathering to increasing openness of the hardlayer:
+                                hardlayeropenness_fraction[row, col] += Convert.ToSingle((hardlayerelevation_m - newlowestelevsoil) * hardlayer_weath_contrast);
+                                Debug.WriteLine(" increased openness of hardlayer to " + hardlayeropenness_fraction[row, col]);
+                                if (hardlayeropenness_fraction[row, col] > 0.5) { hardlayeropenness_fraction[row, col] = 0.5f; }
+                            }
+                        }
 
                         soildepth_m[row, col] += bedrock_weathering_m[row, col]; // this will really be updated at the end of this timestep, but this is a good approximation for the moment
-                                                                                 //we also add this amount of coarse material to the lowest layer of our soil
+
+                        //we also add this amount of coarse material to the lowest layer of our soil
                         soil_layer = 0; lowest_soil_layer = 0;
-                        while (layerthickness_m[row, col, soil_layer] > 0 & soil_layer < max_soil_layers) // MvdM added second conditional for when all layers are already filled
+                        while (layerthickness_m[row, col, soil_layer] > 0 )
                         {
                             lowest_soil_layer = soil_layer;
                             soil_layer++;
+                            //Debug.WriteLine(" lowest soil layer now " + soil_layer);
+                            if (lowest_soil_layer == max_soil_layers - 1) { break; }
                         }
                         texture_kg[row, col, lowest_soil_layer, 0] += bedrock_weathering_m[row, col] * 2700 * dx * dx;   // to go from m (=m3/m2) to kg, we multiply by m2 and by kg/m3
                     }
+
                 }
             }
+            //Debug.WriteLine("finished weathering bedrock ");
         }
 
         private void calculate_tilting()
@@ -19201,7 +17637,7 @@ namespace LORICA4
                     if (tilt_location == 3) { dtm[row, col] += tilt_intensity * ((nr - row) / nr); }
                 }
             }
-        } //back to the game_clock
+        } 
 
         private void calculate_uplift()
         {
@@ -19222,43 +17658,7 @@ namespace LORICA4
                     if (lift_location == 3 && row > lift_location) { dtm[row, col] += lift_intensity; }
                 }
             }
-        } //back to the game_clock
-
-        private void calculate_collapse(double max_slope)
-        {
-            double slope;
-            bool last_time_activity = true;
-            while (last_time_activity == true)
-            //while ( dh > 150;dh / (d_x * Math.Sqrt(2)) > 7.5)
-            {
-                last_time_activity = false;
-                for (row = 0; row < nr; row++)
-                {        //visit all cells in the DEM and  ...
-                    for (col = 0; col < nc; col++)
-                    {
-                        for (i = (-1); i <= 1; i++)
-                        {   // maakt een rondje om de cel
-                            for (j = (-1); j <= 1; j++)
-                            {
-                                if (((row + i) >= 0) && ((row + i) < nr) && ((col + j) >= 0) && ((col + j) < nc) && !((i == 0) && (j == 0)))
-                                {
-                                    dh = dtm[row, col] - dtm[row + i, col + j]; // Hoogteverschil					
-                                    if ((row != row + i) && (col != col + j)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; } // schuin rakende gridcellen anders Recht rakende gridcellen 				
-                                    slope = dh / d_x;
-                                    dh_tol = d_x * max_slope;
-                                    if (slope > max_slope)
-                                    {
-                                        dtm[row, col] -= (dh - dh_tol) / 2;
-                                        dtm[row + i, col + j] += (dh - dh_tol) / 2;
-                                        last_time_activity = true;
-                                    }
-                                } // end height difference                
-                            } // end j rondje
-                        } // end i rondje
-                    } // end col visit
-                } // end row visit visit
-            } // end while loop
-        } // end void collapse ()
+        } 
 
         //void update_OSL_age()
         //{
@@ -19281,6 +17681,296 @@ namespace LORICA4
         //        }
         //    }
         //}
+
+        #endregion
+
+        # region Hardlayer and block code
+
+        void hardlayer_breaking()
+        {
+            //layers break off blocks when dz across the layer is larger than layer thickness
+            //by a certain margin > 1 (I imagine)
+            //Debug.WriteLine(" started breaking hard layer");
+            //Debug.WriteLine(" Current number of blocks is " + Blocklist.Count);
+            Random location_gen = new Random(t); // t as random seed to get deterministic results
+            for (int hrd_lyr = 0; hrd_lyr < nhardlayers; hrd_lyr++)
+            {
+                for (int row = 0; row < nr; row++)
+                {
+                    for (int col = 0; col < nc; col++)
+                    {
+                        if (dtm[row, col] != -9999)
+                        {
+                            if (hardlayer_near_surface(row, col) == true)
+                            {
+                                //Debug.WriteLine(" hard layer is near surface for " + row + " " + col + " dtm " + dtm[row,col] + " layer " + hardlayerelevation_m);
+                                int n_to_s = 5;  //impossible values
+                                int e_to_w = 5;
+                                //Debug.WriteLine("hardlayerthick " + hardlayerthickness_m + "max_dz_across_layer" + max_dz_across_hardlayer_m(row, col, out n_to_s, out e_to_w));
+                                if (max_dz_across_hardlayer_m(row, col, out n_to_s, out e_to_w) > hardlayerthickness_m * 1.25)
+                                {
+                                    //Debug.WriteLine(" hardlayer breaking at row " + row + " " + col );
+                                    dtm[row, col] -= hardlayerthickness_m;
+                                    if(n_to_s == 5 | e_to_w == 5) { Debug.WriteLine("invalid direction returned from max_dz_across layer at r" + row + " c " + col); }
+                                    //break off blocks and drop  them in direction of max_dz
+                                    //floor ensures that blocks are not filling that cell up entirely  
+                                    int ndropblocks = Convert.ToInt32(Math.Floor((dx * dx) * (1 - hardlayeropenness_fraction[row, col]) / hardlayerthickness_m));
+                                    //Debug.WriteLine(" adding " + ndropblocks + " with size " + hardlayerthickness_m);
+                                    for (int blck = 0; blck < ndropblocks; blck++)
+                                    {
+                                        //Debug.Write(" adding block ");
+                                        Blocklist.Add(new Block(Convert.ToSingle(row - n_to_s + location_gen.NextDouble()), Convert.ToSingle(col + e_to_w + location_gen.NextDouble()), hardlayerthickness_m, 0, 0, 0, 0, 0, 0, 0, 0));
+                                        
+                                    }
+                                    blocksproduced += ndropblocks;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            //Debug.WriteLine(" New number of blocks is " + Blocklist.Count);
+        }
+
+        bool hardlayer_near_surface(int rowt, int colt)
+        {
+            if (dtm[rowt, colt] <= (hardlayerelevation_m +0.1) && dtm[rowt, colt] > (hardlayerelevation_m - 0.001))
+            { return true; }
+            else { return false; }
+        }
+
+        float max_dz_across_hardlayer_m(int nowrow, int nowcol, out int n_to_s, out int e_to_w)
+        {
+            //Debug.WriteLine(" calculating max dz across hardlayer for " + nowrow + " " + nowcol);
+            float max_dz_m = 0;
+            n_to_s = 5;
+            e_to_w = 5;
+            //development possible to account for presence of blocks in downslope cells
+            //Debug.WriteLineIf(nowrow == 0 && nowcol == 88,"x");
+            //Debug.WriteLineIf(nowrow == 0 && nowcol == 88,  "dtm" + dtm[nowrow, nowcol]);
+            if (nowrow > 0 && nowcol > 0) { if (dtm[nowrow - 1, nowcol - 1] != -9999) {         if ((dtm[nowrow, nowcol] - dtm[nowrow - 1, nowcol - 1]) > max_dz_m) {       max_dz_m = Convert.ToSingle(dtm[nowrow, nowcol] - dtm[nowrow - 1, nowcol - 1]); n_to_s = 1; e_to_w = -1; } } }
+            if (nowrow > 0) {               if (dtm[nowrow - 1, nowcol] != -9999) {             if ((dtm[nowrow, nowcol] - dtm[nowrow - 1, nowcol]) > max_dz_m) {           max_dz_m = Convert.ToSingle(dtm[nowrow, nowcol] - dtm[nowrow - 1, nowcol]); n_to_s = 1; e_to_w = 0; } } }
+            if (nowrow > 0 && (nowcol + 1) < nc){ if( dtm[nowrow - 1, nowcol + 1] != -9999) {     if ((dtm[nowrow, nowcol] - dtm[nowrow - 1, nowcol + 1]) > max_dz_m) {       max_dz_m = Convert.ToSingle(dtm[nowrow, nowcol] - dtm[nowrow - 1, nowcol + 1]); n_to_s = 1; e_to_w = 1; } } }
+            if (nowcol > 0) {               if(dtm[nowrow , nowcol - 1] != -9999  ) {           if ((dtm[nowrow, nowcol] - dtm[nowrow, nowcol - 1]) > max_dz_m) {           max_dz_m = Convert.ToSingle(dtm[nowrow, nowcol] - dtm[nowrow, nowcol - 1]); n_to_s = 0; e_to_w = -1; } } }
+            if ((nowcol + 1) < nc){           if (dtm[nowrow , nowcol + 1] != -9999 ) {           if ((dtm[nowrow, nowcol] - dtm[nowrow, nowcol + 1]) > max_dz_m) {           max_dz_m = Convert.ToSingle(dtm[nowrow, nowcol] - dtm[nowrow, nowcol + 1]);     n_to_s = 0; e_to_w = 1; } } }
+            if ((nowrow + 1) < nr && nowcol > 0){ if(dtm[nowrow + 1, nowcol - 1] != -9999 ) {     if ((dtm[nowrow, nowcol] - dtm[nowrow + 1, nowcol - 1]) > max_dz_m) {       max_dz_m = Convert.ToSingle(dtm[nowrow, nowcol] - dtm[nowrow + 1, nowcol - 1]); n_to_s = -1; e_to_w = -1; } } }
+            if ((nowrow + 1) < nr ){          if(dtm[nowrow + 1, nowcol ] != -9999 ) {            if ((dtm[nowrow, nowcol] - dtm[nowrow + 1, nowcol]) > max_dz_m) {           max_dz_m = Convert.ToSingle(dtm[nowrow, nowcol] - dtm[nowrow + 1, nowcol]);     n_to_s = -1; e_to_w = 0; } } }
+            if ((nowrow + 1) < nr && (nowcol + 1) < nc){ if(dtm[nowrow + 1, nowcol + 1] != -9999 ) {if ((dtm[nowrow, nowcol] - dtm[nowrow + 1, nowcol + 1]) > max_dz_m) {       max_dz_m = Convert.ToSingle(dtm[nowrow, nowcol] - dtm[nowrow + 1, nowcol + 1]); n_to_s = -1; e_to_w = 1; } } }
+            return max_dz_m;
+        }
+
+        void block_weathering()
+        {
+            //blocks are cubic and weather smaller as a function of surface area (size squared)
+            if (diagnostic_mode == 1) { Debug.WriteLine(" starting block weathering"); }
+            Random location_gen = new Random(t); // t as random seed to get deterministic results
+            if (Blocklist.Count > 0)
+            {
+                int index = 0;
+                while (index < Blocklist.Count)
+                {
+                    //Debug.WriteLine(Blocklist[0].Size_m);
+                    //Debug.WriteLine(" Block " + index + " will be weathered. Now size is " + Blocklist[index].Size_m + " total blocks " + Blocklist.Count);
+                    //Blocklist[index].Size_m *= blockweatheringratio * Convert.ToSingle(location_gen.NextDouble()+0.5);
+                    Blocklist[index].Size_m *= blockweatheringratio ;
+                    //Debug.WriteLine(" Block " + index + " was weathered. Now size is " + Blocklist[index].Size_m + " total blocks " + Blocklist.Count);
+                    if (Blocklist[index].Size_m < blocksizethreshold_m)
+                    {
+                        texture_kg[Convert.ToInt32(Math.Floor(Blocklist[index].Y_row)), Convert.ToInt32(Math.Floor(Blocklist[index].X_col)), 0, 0] += Math.Pow(Blocklist[index].Size_m, 3) * hardlayerdensity_kg_m3;
+                        Blocklist.RemoveAt(index);
+                        //this will also update Blocklist.Count, so we don't count too far. 
+                        
+                    }
+                    index++;
+                }
+            }
+            else
+            {
+                Debug.WriteLine(" currently no blocks to weather ");
+            }
+
+        }
+
+        void block_movement()
+        {
+            //blocks either roll or creep along
+            // function of size, but not shape for now
+            //accum_creep_alt (8 directions) += creep_alt_timestep
+            //creep_alt_timestep (8 directions) = creep volume / (cell surface area - cell block area)
+            //two options      :
+            //EITHER
+            //block rolls if slope in cell + (net_accum_creep_alt in any direction/size block) > 1 (45 degrees)
+            //if block rolls, it rolls in first direction where the condition is met
+            //by exactly one block size
+            //accum creep alt in that direction is reset, others are kept
+
+            //OR
+            //block moves with creeping soil (which should always be less ?))
+            //distance in any direction is volume of creep from that direction/cell size/soildepth in cell
+            //average all distances and average their direction
+            //pythagoras
+            //does not reset accum_creep_alt
+
+            // this way of thinking means that all blocks will roll, some more than others. Not nice
+            // Also, many blocks in a cell or few blocks in a cell makes no difference.
+            // In reality, it probably should because more blocks, less space, more bunching up of regolith, more roll
+            // That can later be solved by taking dz_source or dz_sink DIV (1-blockcover) in creep calculations.
+            if (diagnostic_mode == 1) { Debug.WriteLine(" starting block movement"); }
+            Random location_gen = new Random(t);
+            //Debug.WriteLine(" starting block movement");
+            List<Block> removelist = new List<Block>();
+            if (Blocklist.Count > 0)
+            {
+                //Debug.WriteLine(" blockcount now " + Blocklist.Count);
+                foreach (var Block in Blocklist)
+                {
+                    int row = Convert.ToInt32(Math.Floor(Block.Y_row));
+                    int col = Convert.ToInt32(Math.Floor(Block.X_col));
+                    //Debug.WriteLine(" block in cell " + row + " " + col);
+                    if (row==0 || row==(nr-1) || col == 0 || col == (nc - 1)) { 
+                        removelist.Add(Block);
+                        //Debug.WriteLine(" added to remove list ");
+                    }
+                    else if (dtm[row, col] != -9999)
+                    {
+                        // we calculate for four possible directions whether the block should roll:
+                        bool block_has_rolled = false;
+                        //from north to south
+                        double averageslope = (dtm[row - 1, col] - dtm[row + 1, col]) / (2 * dx); // averaged over two cells
+                        double additionalslope = (Block.Accumulated_creep_m_0 - Block.Accumulated_creep_m_4) / Block.Size_m;
+                        double totalslope = averageslope + additionalslope;                      
+                        if (totalslope > 1)
+                        {
+                            //Debug.WriteLine(" block rolling. dtm1 " + dtm[row - 1, col] + " dtm2 " + dtm[row + 1, col] + " avslope " + averageslope + " addslope " + additionalslope + " totslope " + totalslope + "rownow " + Block.Y_row + " sizenow " + Block.Size_m);
+                            Block.Y_row -= Block.Size_m;
+                            block_has_rolled = true;
+                            Block.Accumulated_creep_m_0 = 0;
+                            Block.Accumulated_creep_m_4 = 0;
+                            topoconttoroll += Math.Abs(averageslope);
+                            creepconttoroll += Math.Abs(additionalslope);
+                            //Debug.WriteLine(" block rolled n to s");
+                            if (Math.Floor(Block.Y_row) == nr) { Blocklist.Remove(Block); }
+                        } // rolls to south
+                        if (totalslope < -1)
+                        {
+                            //Debug.WriteLine(" block rolling. dtm1 " + dtm[row - 1, col] + " dtm2 " + dtm[row + 1, col] + " avslope " + averageslope + " addslope " + additionalslope + " totslope " + totalslope + "rownow " + Block.Y_row + " sizenow " + Block.Size_m);
+                            Block.Y_row += Block.Size_m;
+                            block_has_rolled = true;
+                            Block.Accumulated_creep_m_0 = 0;
+                            Block.Accumulated_creep_m_4 = 0;
+                            topoconttoroll += Math.Abs(averageslope);
+                            creepconttoroll += Math.Abs(additionalslope);
+                            //Debug.WriteLine(" block rolled s to n, lowered row");
+                            if (Math.Floor(Block.Y_row) == -1) { Blocklist.Remove(Block); }
+                        } // rolls to north
+
+                        if (block_has_rolled == false)
+                        {
+                            //from NE to SW (note different slope calculation)
+                            averageslope = (dtm[row - 1, col + 1] - dtm[row + 1, col - 1]) / (2 * dx * Math.Sqrt(2)); // averaged over two cells, diagonally
+                            additionalslope = (Block.Accumulated_creep_m_1 - Block.Accumulated_creep_m_5) / Block.Size_m;
+                            totalslope = averageslope + additionalslope;
+                            if (totalslope > 1)
+                            {   //higher on the NE, rolls to the SW
+                                block_has_rolled = true;
+                                Block.Y_row -= Convert.ToSingle(1.4142135 * Block.Size_m);
+                                Block.X_col += Convert.ToSingle(1.4142135 * Block.Size_m);
+                                Block.Accumulated_creep_m_1 = 0;
+                                Block.Accumulated_creep_m_5 = 0;
+                                //Debug.WriteLine(" block rolled");
+                                topoconttoroll += Math.Abs(averageslope);
+                                creepconttoroll += Math.Abs(additionalslope);
+                                if (Math.Floor(Block.Y_row) == nr | Math.Floor(Block.X_col) == -1) { Blocklist.Remove(Block); }
+                            }
+                            if (totalslope < -1)
+                            {
+                                block_has_rolled = true;
+                                Block.Y_row += Convert.ToSingle(1.4142135 * Block.Size_m);
+                                Block.X_col -= Convert.ToSingle(1.4142135 * Block.Size_m);
+                                Block.Accumulated_creep_m_1 = 0;
+                                Block.Accumulated_creep_m_5 = 0;
+                                //Debug.WriteLine(" block rolled");
+                                topoconttoroll += Math.Abs(averageslope);
+                                creepconttoroll += Math.Abs(additionalslope);
+                                if (Math.Floor(Block.Y_row) == -1 | Math.Floor(Block.X_col) == nc) { Blocklist.Remove(Block); }
+                            }
+                        }
+                        if (block_has_rolled == false)
+                        {
+                            //from E to W
+                            averageslope = (dtm[row, col + 1] - dtm[row, col - 1]) / (2 * dx); // averaged over two cells 
+                            additionalslope = (Block.Accumulated_creep_m_2 - Block.Accumulated_creep_m_6) / Block.Size_m;
+                            totalslope = averageslope + additionalslope;
+                            if (totalslope > 1)
+                            {
+                                Block.X_col += Block.Size_m;
+                                block_has_rolled = true;
+                                Block.Accumulated_creep_m_2 = 0;
+                                Block.Accumulated_creep_m_6 = 0;
+                                //Debug.WriteLine(" block rolled");
+                                topoconttoroll += Math.Abs(averageslope);
+                                creepconttoroll += Math.Abs(additionalslope);
+                                if (Math.Floor(Block.X_col) == -1) { Blocklist.Remove(Block); }
+                            }
+                            if (totalslope < -1)
+                            {
+                                Block.X_col -= Block.Size_m;
+                                block_has_rolled = true;
+                                Block.Accumulated_creep_m_2 = 0;
+                                Block.Accumulated_creep_m_6 = 0;
+                                //Debug.WriteLine(" block rolled");
+                                topoconttoroll += Math.Abs(averageslope);
+                                creepconttoroll += Math.Abs(additionalslope);
+                                if (Math.Floor(Block.X_col) == nr) { Blocklist.Remove(Block); }
+                            }
+                        }
+                        if (block_has_rolled == false)
+                        {
+                            //from SE to NW (note different slope calculation)
+                            averageslope = (dtm[row + 1, col + 1] - dtm[row - 1, col - 1]) / (2 * dx * Math.Sqrt(2)); // averaged over two cells, diagonally
+                            additionalslope = (Block.Accumulated_creep_m_3 - Block.Accumulated_creep_m_7) / Block.Size_m;
+                            totalslope = averageslope + additionalslope;
+                            if (totalslope > 1)
+                            {
+                                block_has_rolled = true;
+                                Block.Y_row += Convert.ToSingle(1.4142135 * Block.Size_m);
+                                Block.X_col += Convert.ToSingle(1.4142135 * Block.Size_m);
+                                Block.Accumulated_creep_m_3 = 0;
+                                Block.Accumulated_creep_m_7 = 0;
+                                //Debug.WriteLine(" block rolled");
+                                topoconttoroll += Math.Abs(averageslope);
+                                creepconttoroll += Math.Abs(additionalslope);
+                                if (Math.Floor(Block.Y_row) == -1 | Math.Floor(Block.X_col) == -1) { Blocklist.Remove(Block); }
+                            }
+                            if (totalslope < -1)
+                            {
+                                block_has_rolled = true;
+                                Block.Y_row -= Convert.ToSingle(1.4142135 * Block.Size_m);
+                                Block.X_col -= Convert.ToSingle(1.4142135 * Block.Size_m);
+                                Block.Accumulated_creep_m_3 = 0;
+                                Block.Accumulated_creep_m_7 = 0;
+                                //Debug.WriteLine(" block rolled");
+                                topoconttoroll += Math.Abs(averageslope);
+                                creepconttoroll += Math.Abs(additionalslope);
+                                if (Math.Floor(Block.Y_row) == nr | Math.Floor(Block.X_col) == nr) { Blocklist.Remove(Block); }
+                            }
+                        }
+                        if (block_has_rolled == false)
+                        {
+                            //find steepest lower nb, calculate creep to it, calculate distance from kg -> m3 -> 
+                            
+                        }
+                        if (block_has_rolled==true) { blocksrolled++;  }
+                    }
+                }
+            } else
+            {
+                //Debug.WriteLine(" currently no blocks to move ");
+            }
+            Blocklist.RemoveAll(x => removelist.Contains(x));
+            //Debug.WriteLine(" removed " + removelist.Count + " blocks from list, leaving blockcount now " + Blocklist.Count);
+        }
+
         #endregion
 
         #region Vegetation code
@@ -19290,7 +17980,7 @@ namespace LORICA4
         void determine_vegetation_type()
         {
             aridity_vegetation = new double[nr, nc];
-            double outflow = 0, aridity, averageOF, outflowcells = 0;
+            double outflow = 0, aridity, outflowcells = 0;
 
             for (int vrow = 0; vrow < nr; vrow++)
             {
@@ -19328,7 +18018,6 @@ namespace LORICA4
             }
         }
 
-
         double[,] veg_correction_factor;
         void change_vegetation_parameters()
         {
@@ -19341,7 +18030,7 @@ namespace LORICA4
                     {
                         if (aridity_vegetation[vrow, vcol] < 1) { veg_correction_factor[vrow, vcol] = .75; } // all year long, according to FAO report 56
                         else { veg_correction_factor[vrow, vcol] = .85; } // I took the mid-season coefficient (95) of most deciduous crops and decreased it to 85 to account for less vegetation in other times of the year
-                        if (t >= (end_time - 300)) { veg_correction_factor[vrow, vcol] = .45; }  // if there is agriculture
+                        if (t >= (end_time - 500)) { veg_correction_factor[vrow, vcol] = .45; }  // if there is agriculture
 
                     }
                 }
@@ -19355,8 +18044,6 @@ namespace LORICA4
 
 
         }
-
-
 
         void calculate_TPI(int windowsize)
         {
@@ -19572,557 +18259,6 @@ namespace LORICA4
 
                     }
                 }
-            }
-        }
-
-
-        void calc_hillshade() // 
-        {
-            //Local variables
-            int row, col;
-
-            double slopemax;
-            double slope;
-            int slopetot;
-            double local_Illumination;
-
-            // Initialize Hillshade Paramaters
-            double azimuth = 315 * (3.141592654 / 180); // Default of 315 degrees converted to radians
-            double altitude = 45 * (3.141592654 / 180); // Default of 45 degrees converted to radians
-
-            for (row = 1; row < nr - 1; row++)
-            {
-                for (col = 1; col < nc - 1; col++)
-                {
-                    if (dtm[row, col] != -9999 && dtm[row, col] > 0)
-                    {
-                        slopemax = 0;
-                        slope = 0;
-                        slopetot = 0;
-
-                        // Do slope analysis and Aspect Calculation first
-                        if (dtm[row, col] > dtm[row - 1, col] && dtm[row - 1, col] != -9999) // North 0
-                        {
-                            slope = Math.Pow((dtm[row, col] - dtm[row - 1, col]) / root, 1);
-                            if (slope > slopemax)
-                            {
-                                slopemax = slope;
-                                slopetot++;
-                                aspect[row, col] = 0 * (3.141592654 / 180);
-                            }
-
-                        }
-                        if (dtm[row, col] > dtm[row - 1, col + 1] && dtm[row - 1, col + 1] != -9999) // Northeast 45
-                        {
-                            slope = Math.Pow((dtm[row, col] - dtm[row - 1, col + 1]) / d_x, 1);
-                            if (slope > slopemax)
-                            {
-                                slopemax = slope;
-                                slopetot++;
-                                aspect[row, col] = 45 * (3.141592654 / 180);
-                            }
-                        }
-                        if (dtm[row, col] > dtm[row, col + 1] && dtm[row, col + 1] != -9999) // East 90
-                        {
-                            slope = Math.Pow((dtm[row, col] - dtm[row, col + 1]) / root, 1);
-                            if (slope > slopemax)
-                            {
-                                slopemax = slope;
-                                slopetot++;
-                                aspect[row, col] = 90 * (3.141592654 / 180);
-                            }
-                        }
-                        if (dtm[row, col] > dtm[row + 1, col + 1] && dtm[row + 1, col + 1] != -9999) // SouthEast 135
-                        {
-                            slope = Math.Pow((dtm[row, col] - dtm[row + 1, col + 1]) / root, 1);
-                            if (slope > slopemax)
-                            {
-                                slopemax = slope;
-                                slopetot++;
-                                aspect[row, col] = 135 * (3.141592654 / 180);
-                            }
-
-                        }
-                        if (dtm[row, col] > dtm[row + 1, col] && dtm[row + 1, col] != -9999) // South 180
-                        {
-                            slope = Math.Pow((dtm[row, col] - dtm[row + 1, col]) / d_x, 1);
-                            if (slope > slopemax)
-                            {
-                                slopemax = slope;
-                                slopetot++;
-                                aspect[row, col] = 180 * (3.141592654 / 180);
-                            }
-                        }
-                        if (dtm[row, col] > dtm[row + 1, col - 1] && dtm[row + 1, col - 1] != -9999) // SouthWest 225
-                        {
-                            slope = Math.Pow((dtm[row, col] - dtm[row + 1, col - 1]) / root, 1);
-                            if (slope > slopemax)
-                            {
-                                slopemax = slope;
-                                slopetot++;
-                                aspect[row, col] = 225 * (3.141592654 / 180);
-                            }
-                        }
-                        if (dtm[row, col] > dtm[row, col - 1] && dtm[row, col - 1] != -9999) // West 270
-                        {
-                            slope = Math.Pow((dtm[row, col] - dtm[row, col - 1]) / root, 1);
-                            if (slope > slopemax)
-                            {
-                                slopemax = slope;
-                                slopetot++;
-                                aspect[row, col] = 270;
-                            }
-                        }
-                        if (dtm[row, col] > dtm[row - 1, col - 1] && dtm[row - 1, col - 1] != -9999) // Northwest 315
-                        {
-                            slope = Math.Pow((dtm[row, col] - dtm[row - 1, col - 1]) / d_x, 1);
-                            if (slope > slopemax)
-                            {
-                                slopemax = slope;
-                                slopetot++;
-                                aspect[row, col] = 315 * (3.141592654 / 180);
-                            }
-                        }
-
-                        if (slope > 0) slopeAnalysis[row, col] = slopemax;// Tom's: (slope/slopetot); ?
-
-                        // Convert slope to radians
-                        slopeAnalysis[row, col] = System.Math.Atan(slopeAnalysis[row, col]);
-
-
-                        // Do Hillshade Calculation
-                        local_Illumination = 255 * ((System.Math.Cos(azimuth)
-                                                     * System.Math.Sin(slopeAnalysis[row, col])
-                                                     * System.Math.Cos(aspect[row, col] - azimuth))
-                                                   + (System.Math.Sin(altitude)
-                                                     * System.Math.Cos(slopeAnalysis[row, col])));
-
-                        hillshade[row, col] = System.Math.Abs(local_Illumination);
-                    }
-                }
-            }
-
-        }       // End calc_hillshade() <JOE 20051605- end>
-
-        void Color_HSVtoRGB()   // <JOE 20051605>
-        {
-            // Convert HSV to RGB.
-            // Made this a seperate function as it is called multiple times in draw_map().
-
-            if (sat == 0)
-            {
-                // If sat is 0, all colors are the same.
-                // This is some flavor of gray.
-                red = val;
-                green = val;
-                blue = val;
-            }
-            else
-            {
-                double pFactor;
-                double qFactor;
-                double tFactor;
-
-                double fractionalSector;
-                int sectorNumber;
-                double sectorPos;
-
-                // The color wheel consists of six 60 degree sectors.
-                // Figure out which sector you are in.
-                sectorPos = hue / 60;
-                sectorNumber = (int)(Math.Floor(sectorPos));
-
-                // get the fractional part of the sector.
-                // That is, how many degrees into the sector are you?
-                fractionalSector = sectorPos - sectorNumber;
-
-                // Calculate values for the three axes
-                // of the color. 
-                pFactor = val * (1 - sat);
-                qFactor = val * (1 - (sat * fractionalSector));
-                tFactor = val * (1 - (sat * (1 - fractionalSector)));
-
-                // Assign the fractional colors to r, g, and b based on the sector the angle is in.
-                switch (sectorNumber)
-                {
-                    case 0:
-                        red = val;
-                        green = tFactor;
-                        blue = pFactor;
-                        break;
-                    case 1:
-                        red = qFactor;
-                        green = val;
-                        blue = pFactor;
-                        break;
-                    case 2:
-                        red = pFactor;
-                        green = val;
-                        blue = tFactor;
-                        break;
-                    case 3:
-                        red = pFactor;
-                        green = qFactor;
-                        blue = val;
-                        break;
-                    case 4:
-                        red = tFactor;
-                        green = pFactor;
-                        blue = val;
-                        break;
-                    case 5:
-                        red = val;
-                        green = pFactor;
-                        blue = qFactor;
-                        break;
-                }
-            }
-        }
-
-        void draw_map(System.Drawing.Graphics graphics)// <JMW 20041018>
-        {
-            Debug.WriteLine("\n--drawing maps--");
-            Graphics objGraphics;
-            objGraphics = Graphics.FromImage(m_objDrawingSurface);
-            objGraphics.Clear(SystemColors.Control);
-
-            int row, col, z;
-            int redcol = 0, greencol = 0, bluecol = 0, alphacol = 255;
-            int t = 0;
-
-            // Set Graphics Display Size
-            if (nc <= 0) nc = 1;
-
-            //set scaling of graphics - so X bmp pixels to every model pixel.
-            t = graphics_scale;
-
-            // These loop through the entire grid
-            // DEM <JOE 20050905>
-            if (1 == 1)
-            {
-                double zDEM;
-                double zCalc, zMin = 100000, zMax = 0, zRange, hsMin = 0, hsMax = 255, hs;
-                double valMin = 0;
-                double valMax = 1;
-
-                calc_hillshade();       // Call up routine 
-
-                // First, find max, min and range of DEM and Hillshade
-                for (row = 0; row < nr; row++)
-                {
-                    for (col = 0; col < nc; col++)
-                    {
-                        zCalc = dtm[row, col];
-                        if (zCalc != -9999)
-                        {
-                            if (zCalc < zMin) zMin = zCalc;
-                            if (zCalc > zMax) zMax = zCalc;
-                            hs = hillshade[row, col];
-                            if (hs < hsMin) hsMin = hs;
-                            if (hs > hsMax) hsMax = hs;
-                            if (zCalc < -9900) { Debug.WriteLine(" Cell " + row + " " + col + " has altitude " + zCalc); }
-                        }
-
-
-
-                    }
-                }
-                if (zMin < 0) { zMin = 0; }
-                zRange = zMax - zMin;     //makes the value
-
-                Debug.WriteLine(" zMax, zMin, zRange : " + zMax + " " + zMin + " " + zRange);
-
-                for (row = 0; row < nr - 1; row++)
-                {
-                    for (col = 0; col < nc - 1; col++)
-                    {
-                        if (dtm[row, col] > 0)
-                        {
-                            // HILLSHADE: Draw first underneath
-                            // set gray scale intensity
-                            hue = 360;  // hue doesn't matter for gray shade
-                            sat = 0;        // ensures gray shade
-                            valMin = 0;
-                            valMax = 1;
-                            val = ((hillshade[row, col] / 255) * (valMax - valMin)) + valMin; // uses maximum contrast
-
-                            Color_HSVtoRGB();   // Call up color conversion
-                            redcol = System.Convert.ToInt32(red * 255);
-                            greencol = System.Convert.ToInt32(green * 255);
-                            bluecol = System.Convert.ToInt32(blue * 255);
-                            alphacol = 255;
-
-                            SolidBrush brush2 = new SolidBrush(Color.FromArgb(alphacol, redcol, greencol, bluecol));
-                            objGraphics.FillRectangle(brush2, (col) * t, (row) * t, t, t);
-
-                            // DEM: Colouring based on altitude	
-                            zDEM = (dtm[row, col]);
-                            // Sets hue based on desired color range (in decimal degrees; max 360)
-                            double hueMin = 20; //30 = orange   // 20 = reddish orange
-                            double hueMax = 140; //85 = green   // 140 = greenish blue
-                            hue = hueMax - (((zDEM - zMin) / (zRange)) * (hueMax - hueMin)); // Reverse
-
-                            // Set saturation based on desired range
-                            double satMin = 0.50;
-                            double satMax = 0.95;
-                            sat = (((zDEM - zMin) / (zRange)) * (satMax - satMin)) + satMin;
-                            //sat = 0; // Use for grey-scale DEM only!
-
-                            // Set value based on desired range
-                            valMin = 0.40;
-                            valMax = 0.80;
-                            val = (((zDEM - zMin) / (zRange)) * (valMax - valMin)) + valMin;
-                            //							val = valMax - (((zDEM - zMin)/(zRange)) * (valMax - valMin));
-
-                            Color_HSVtoRGB();   // Call up color conversion
-                            redcol = System.Convert.ToInt32(red * 255);
-                            greencol = System.Convert.ToInt32(green * 255);
-                            bluecol = System.Convert.ToInt32(blue * 255);
-                            alphacol = 125;
-
-                            SolidBrush brush = new SolidBrush(Color.FromArgb(alphacol, redcol, greencol, bluecol));
-                            objGraphics.FillRectangle(brush, (col) * t, (row) * t, t, t);
-                        }   // Close of Entire Grid Mask
-                    }       // Close of Column Loop 
-                }           // Close of Row Loop
-            }               // Close of DEM check box (menuitem34) 
-
-
-            // All these loop through just the 'Active Area'
-            for (row = 0; row < nr - 1; row++)
-            {
-                for (col = 0; col < nc - 1; col++)
-                {
-                    if (1 > 0) // Index masks out so only 'active cells' shown	was if(index[row,col]>-9999)		
-                    {
-                        // Water Depth
-                        if (Menu_map_waterflow.Checked == true && waterflow_m3[row, col] > 20)
-                        {
-                            try { z = (int)(waterflow_m3[row, col] * 0.1 * contrastMultiplier); }
-                            catch { z = 2147483647; } // this is the maximum integer value.
-                            if (z < 0) z = 0;
-                            if (z > 255) z = 254;
-                            greencol = 255 - z;
-                            redcol = z;
-                            bluecol = 255;
-                            alphacol = 255;
-                            SolidBrush brush = new SolidBrush(Color.FromArgb(alphacol, redcol, greencol, bluecol));
-                            objGraphics.FillRectangle(brush, (col) * t, (row) * t, t, t);
-                        }
-                        // Total erosion/ deposition
-                        if (Menu_map_total_sediment.Checked == true)
-                        {
-                            if (dtmchange[row, col] < -0.05) //eroding
-                            {
-                                z = (int)(-dtmchange[row, col] * 200 * contrastMultiplier);
-                                if (z < 0) z = 0;
-                                if (z > 254) z = 254;
-                                greencol = 255 - z;
-                                redcol = z;
-                                SolidBrush brush = new SolidBrush(Color.FromArgb(255, greencol, greencol));
-                                objGraphics.FillRectangle(brush, (col) * t, (row) * t, t, t);
-                            }
-                            if (dtmchange[row, col] > 0.01) //depositing
-                            {
-                                z = (int)(dtmchange[row, col] * 1000 * contrastMultiplier);
-                                if (z < 0) z = 0;
-                                if (z > 254) z = 254;
-                                greencol = z;
-                                redcol = 255 - z;
-                                SolidBrush brush = new SolidBrush(Color.FromArgb(redcol, 255, redcol));
-                                objGraphics.FillRectangle(brush, (col) * t, (row) * t, t, t);
-                            }
-                        }
-                        // Water erosion/ deposition
-                        if (Menu_map_water_ero.Checked == true)
-                        {
-                            if (sum_water_erosion[row, col] / 25 < -0.05) //eroding
-                            {
-                                z = (int)(-sum_water_erosion[row, col] * 40 * contrastMultiplier);
-                                if (z < 0) z = 0;
-                                if (z > 254) z = 254;
-                                greencol = 255 - z;
-                                redcol = z;
-                                SolidBrush brush = new SolidBrush(Color.FromArgb(255, greencol, greencol));
-                                objGraphics.FillRectangle(brush, (col) * t, (row) * t, t, t);
-                            }
-                            if (sum_water_erosion[row, col] / 25 > 0.05) //depositing
-                            {
-                                z = (int)(sum_water_erosion[row, col] * 40 * contrastMultiplier);
-                                if (z < 0) z = 0;
-                                if (z > 254) z = 254;
-                                greencol = z;
-                                redcol = 255 - z;
-                                SolidBrush brush = new SolidBrush(Color.FromArgb(redcol, 255, redcol));
-                                objGraphics.FillRectangle(brush, (col) * t, (row) * t, t, t);
-                            }
-                        }
-                        // Tillage 
-                        if (Menu_map_tillage.Checked == true)
-                        {
-                            if (sum_tillage[row, col] < -0.05) //eroding
-                            {
-                                z = (int)(-sum_tillage[row, col] * 200 * contrastMultiplier);
-                                if (z < 0) z = 0;
-                                if (z > 254) z = 254;
-                                greencol = 255 - z;
-                                redcol = z;
-                                SolidBrush brush = new SolidBrush(Color.FromArgb(255, greencol, greencol));
-                                objGraphics.FillRectangle(brush, (col) * t, (row) * t, t, t);
-                            }
-                            if (sum_tillage[row, col] > 0.05) //depositing
-                            {
-                                z = (int)(sum_tillage[row, col] * 200 * contrastMultiplier);
-                                if (z < 0) z = 0;
-                                if (z > 254) z = 254;
-                                greencol = z;
-                                redcol = 255 - z;
-                                SolidBrush brush = new SolidBrush(Color.FromArgb(redcol, 255, redcol));
-                                objGraphics.FillRectangle(brush, (col) * t, (row) * t, t, t);
-                            }
-                        }
-                        // Creep 
-                        if (Menu_map_creep.Checked == true)
-                        {
-                            if (sum_creep_grid[row, col] < -0.05) //eroding
-                            {
-                                z = (int)(-sum_creep_grid[row, col] * 200 * contrastMultiplier);
-                                if (z < 0) z = 0;
-                                if (z > 254) z = 254;
-                                greencol = 255 - z;
-                                redcol = z;
-                                SolidBrush brush = new SolidBrush(Color.FromArgb(255, greencol, greencol));
-                                objGraphics.FillRectangle(brush, (col) * t, (row) * t, t, t);
-                            }
-                            if (sum_creep_grid[row, col] > 0.05) //depositing
-                            {
-                                z = (int)(sum_creep_grid[row, col] * 200 * contrastMultiplier);
-                                if (z < 0) z = 0;
-                                if (z > 254) z = 254;
-                                greencol = z;
-                                redcol = 255 - z;
-                                SolidBrush brush = new SolidBrush(Color.FromArgb(redcol, 255, redcol));
-                                objGraphics.FillRectangle(brush, (col) * t, (row) * t, t, t);
-                            }
-                        }
-                        // Weathering
-                        if (Menu_map_weathering.Checked == true && sum_biological_weathering[row, col] > 0.001)
-                        {
-                            z = (int)(sum_biological_weathering[row, col] * 1000 * contrastMultiplier);
-                            if (z < 0) z = 0;
-                            if (z > 255) z = 254;
-                            greencol = 255;
-                            redcol = z;
-                            bluecol = 255 - z;
-                            alphacol = 255;
-                            SolidBrush brush = new SolidBrush(Color.FromArgb(alphacol, redcol, greencol, bluecol));
-                            objGraphics.FillRectangle(brush, (col) * t, (row) * t, t, t);
-                        }
-                        // Landsliding
-                        if (Menu_map_landsliding.Checked == true)
-                        {
-                            if (sum_landsliding[row, col] < -0.1) //eroding
-                            {
-                                z = (int)(-sum_landsliding[row, col] * 40 * contrastMultiplier);
-                                if (z < 0) z = 0;
-                                if (z > 254) z = 254;
-                                greencol = 255 - z;
-                                redcol = z;
-                                SolidBrush brush = new SolidBrush(Color.FromArgb(255, greencol, greencol));
-                                objGraphics.FillRectangle(brush, (col) * t, (row) * t, t, t);
-                            }
-                            if (sum_landsliding[row, col] > 0.1) //depositing
-                            {
-                                z = (int)(sum_landsliding[row, col] * 40 * contrastMultiplier);
-                                if (z < 0) z = 0;
-                                if (z > 254) z = 254;
-                                greencol = z;
-                                redcol = 255 - z;
-                                SolidBrush brush = new SolidBrush(Color.FromArgb(redcol, 255, redcol));
-                                objGraphics.FillRectangle(brush, (col) * t, (row) * t, t, t);
-                            }
-                        }
-                        //Critical rainfall (for landsliding)
-                        if (Menu_map_critical_rainfall.Checked == true && crrain[row, col] != 99) // no colours for unconditionally stable areas
-                        {
-                            z = (int)(crrain[row, col] * 1000 * contrastMultiplier);
-                            if (z < 0) z = 0;
-                            if (z > 254) z = 254;
-                            greencol = z;
-                            redcol = 255 - z;
-                            SolidBrush brush = new SolidBrush(Color.FromArgb(redcol, 255, redcol));
-                            objGraphics.FillRectangle(brush, (col) * t, (row) * t, t, t);
-                        }
-                    }           // Close of nodata check for 'active' grid only
-                }               // Close of Column Loop
-            }                   // Close of Row Loop
-
-            objGraphics.Dispose();
-            Mapwindow.Image = m_objDrawingSurface;
-
-        }
-
-        #endregion
-
-        #region analysis after simulation code
-
-        void filter_timeseries(double[] series, int window)
-        {
-            double[] temp_series = new double[series.Length];
-            int iterator;
-            int one_sided_window = (window - 1) / 2;
-            double sum;
-            int adder;
-            //for the first couple numbers
-            for (iterator = 0; iterator < one_sided_window; iterator++)
-            {
-                sum = 0;
-                for (adder = 0; adder <= iterator + one_sided_window; adder++)
-                {
-                    sum += series[adder];
-                }
-                temp_series[iterator] = sum / adder;
-            }
-            //for the (large) middle section of series
-            for (iterator = one_sided_window; iterator < (series.Length - one_sided_window); iterator++)
-            {
-                sum = 0;
-                for (adder = iterator - one_sided_window; adder <= iterator + one_sided_window; adder++)
-                {
-                    sum += series[adder];
-                }
-                temp_series[iterator] = sum / window;
-            }
-            //for the last couple datapoints
-            for (iterator = (series.Length - one_sided_window); iterator < series.Length; iterator++)
-            {
-                sum = 0; int numbers = 0;
-                for (adder = iterator - one_sided_window; adder <= series.Length; adder++)
-                {
-                    sum += series[adder]; numbers++;
-                }
-                temp_series[iterator] = sum / numbers;
-            }
-            //paste into original series
-            for (iterator = 0; iterator < series.Length; iterator++)
-            {
-                Debug.WriteLine(" replacing " + series[iterator] + " with " + temp_series[iterator]);
-                series[iterator] = temp_series[iterator];
-            }
-
-        }
-
-        void calc_write_fourier_transform(double[] timeseries_signal)
-        {
-            filter_timeseries(timeseries_signal, 9);
-            Complex[] signal = new Complex[Convert.ToInt32(end_time)];
-            // we have made an empty array of complex numbers which we will fill with the information in our input timeseries   
-            for (int i = 0; i < end_time; i++) { signal[i] = timeseries_signal[i]; }
-            Transform.FourierForward(signal);
-            // we have now transformed the raw signal to frequency space, and signal holds that information. Now what?
-            for (int i = 0; i < end_time; i++)
-            {
-                Debug.WriteLine(signal[i]);
             }
         }
 
@@ -20388,199 +18524,6 @@ Example: rainfall.asc can look like:
 " */
         }
 
-        private void Menu_map_sediment_Click(object sender, EventArgs e)
-        {
-            Menu_map_total_sediment.Checked = (!Menu_map_total_sediment.Checked);
-            if (Menu_map_total_sediment.Checked)
-            {
-                Menu_map_waterflow.Checked = false;
-                Menu_map_creep.Checked = false;
-                Menu_map_tillage.Checked = false;
-                Menu_map_water_ero.Checked = false;
-                Menu_map_weathering.Checked = false;
-                Menu_map_landsliding.Checked = false;
-                Menu_map_critical_rainfall.Checked = false;
-            }
-            updateClick = 1;
-        }
-
-        private void Menu_map_waterflow_Click(object sender, EventArgs e)
-        {
-            if (water_ero_active)
-            {
-                Menu_map_waterflow.Checked = (!Menu_map_waterflow.Checked);
-                if (Menu_map_waterflow.Checked)
-                {
-                    Menu_map_total_sediment.Checked = false;
-                    Menu_map_creep.Checked = false;
-                    Menu_map_tillage.Checked = false;
-                    Menu_map_water_ero.Checked = false;
-                    Menu_map_weathering.Checked = false;
-                    Menu_map_landsliding.Checked = false;
-                    Menu_map_critical_rainfall.Checked = false;
-                }
-                updateClick = 1;
-            }
-            else
-            {
-                MessageBox.Show("water erosion is not active");
-            }
-        }
-
-        private void Menu_map_tillage_Click(object sender, EventArgs e)
-        {
-            if (tillage_active)
-            {
-                Menu_map_tillage.Checked = (!Menu_map_tillage.Checked);
-                if (Menu_map_tillage.Checked)
-                {
-                    Menu_map_total_sediment.Checked = false;
-                    Menu_map_creep.Checked = false;
-                    Menu_map_waterflow.Checked = false;
-                    Menu_map_water_ero.Checked = false;
-                    Menu_map_weathering.Checked = false;
-                    Menu_map_landsliding.Checked = false;
-                    Menu_map_critical_rainfall.Checked = false;
-                }
-                updateClick = 1;
-            }
-            else
-            {
-                MessageBox.Show("this process is not active");
-            }
-        }
-
-        private void Menu_map_water_ero_Click(object sender, EventArgs e)
-        {
-            if (water_ero_active)
-            {
-                Menu_map_water_ero.Checked = (!Menu_map_water_ero.Checked);
-                if (Menu_map_water_ero.Checked)
-                {
-                    Menu_map_total_sediment.Checked = false;
-                    Menu_map_creep.Checked = false;
-                    Menu_map_waterflow.Checked = false;
-                    Menu_map_tillage.Checked = false;
-                    Menu_map_weathering.Checked = false;
-                    Menu_map_landsliding.Checked = false;
-                    Menu_map_critical_rainfall.Checked = false;
-                }
-                updateClick = 1;
-            }
-            else
-            {
-                MessageBox.Show("this process is not active");
-            }
-        }
-
-        private void Menu_map_creep_Click(object sender, EventArgs e)
-        {
-            if (creep_active)
-            {
-                Menu_map_creep.Checked = (!Menu_map_creep.Checked);
-                if (Menu_map_creep.Checked)
-                {
-                    Menu_map_total_sediment.Checked = false;
-                    Menu_map_water_ero.Checked = false;
-                    Menu_map_waterflow.Checked = false;
-                    Menu_map_tillage.Checked = false;
-                    Menu_map_weathering.Checked = false;
-                    Menu_map_landsliding.Checked = false;
-                    Menu_map_critical_rainfall.Checked = false;
-                }
-                updateClick = 1;
-            }
-            else
-            {
-                MessageBox.Show("this process is not active");
-            }
-        }
-
-        private void Menu_map_landsliding_Click(object sender, EventArgs e)
-        {
-            if (landslide_active)
-            {
-                Menu_map_landsliding.Checked = (!Menu_map_landsliding.Checked);
-                if (Menu_map_landsliding.Checked)
-                {
-                    Menu_map_total_sediment.Checked = false;
-                    Menu_map_water_ero.Checked = false;
-                    Menu_map_waterflow.Checked = false;
-                    Menu_map_tillage.Checked = false;
-                    Menu_map_creep.Checked = false;
-                    Menu_map_weathering.Checked = false;
-                    Menu_map_critical_rainfall.Checked = false;
-                }
-                updateClick = 1;
-            }
-            else
-            {
-                MessageBox.Show("this process is not active");
-            }
-        }
-
-        private void Menu_map_critical_rainfall_Click(object sender, EventArgs e)
-        {
-            if (landslide_active)
-            {
-                Menu_map_critical_rainfall.Checked = (!Menu_map_critical_rainfall.Checked);
-                if (Menu_map_critical_rainfall.Checked)
-                {
-                    Menu_map_total_sediment.Checked = false;
-                    Menu_map_water_ero.Checked = false;
-                    Menu_map_waterflow.Checked = false;
-                    Menu_map_tillage.Checked = false;
-                    Menu_map_creep.Checked = false;
-                    Menu_map_weathering.Checked = false;
-                    Menu_map_landsliding.Checked = false;
-                }
-                updateClick = 1;
-            }
-            else
-            {
-                MessageBox.Show("this process is not active");
-            }
-        }
-
-        private void Menu_map_weathering_Click(object sender, EventArgs e)
-        {
-            if (bedrock_weathering_active)
-            {
-                Menu_map_weathering.Checked = (!Menu_map_weathering.Checked);
-                if (Menu_map_weathering.Checked)
-                {
-                    Menu_map_total_sediment.Checked = false;
-                    Menu_map_water_ero.Checked = false;
-                    Menu_map_waterflow.Checked = false;
-                    Menu_map_tillage.Checked = false;
-                    Menu_map_creep.Checked = false;
-                    Menu_map_landsliding.Checked = false;
-                    Menu_map_critical_rainfall.Checked = false;
-                }
-                updateClick = 1;
-            }
-            else
-            {
-                MessageBox.Show("this process is not active");
-            }
-        }
-
-        private void View_tabs_checkbox_CheckedChanged(object sender, EventArgs e)
-        {
-            if (View_tabs_checkbox.Checked)
-            {
-                tabControl1.Visible = true;
-                graphicToGoogleEarthButton.Visible = false;
-                Mapwindow.Visible = false;
-            }
-            else
-            {
-                tabControl1.Visible = false;
-                graphicToGoogleEarthButton.Visible = true;
-                Mapwindow.Visible = true;
-            }
-        }
-
         private void dtm_input_filename_textbox_Click(object sender, EventArgs e)
         {
             /*FolderBrowserDialog arnaudsdialog = new FolderBrowserDialog();
@@ -20732,28 +18675,7 @@ Example: rainfall.asc can look like:
             }
         }
 
-        private void trackBar1_Scroll(object sender, EventArgs e)
-        {
-            contrastMultiplier = contrastFactor[trackBar1.Value];
-            this.view_maps_checkbox.Checked = true;
-            draw_map(mygraphics);
-        }
-
-        private void trackBar2_Scroll(object sender, EventArgs e)
-        {
-            magnifyValue = zoomFactor[this.trackBar2.Value];
-            Mapwindow.setZoom();
-        }
-
-        private void comboBox1_SelectedValueChanged(object sender, EventArgs e)
-        {
-            updateClick = 1;
-            this.Refresh();
-            this.view_maps_checkbox.Checked = true;
-            draw_map(mygraphics);
-        }
-
-        private void soil_specify_button_Click(object sender, EventArgs e)
+         private void soil_specify_button_Click(object sender, EventArgs e)
         {
             soildata.Visible = true;
         }
@@ -20888,7 +18810,7 @@ Example: rainfall.asc can look like:
             double simulated_ero_m3 = 0;
             double simulated_ero_kg_m2_y = 0;
             double known_ero_kg_m2_y = 0.0313;
-            double total_bulk_density = 0 ;
+            double total_bulk_density = 0;
             double average_bulk_density = 0;
             int objective_function_cells = 0;
             for (int row = 0; row < nr; row++)
@@ -20897,15 +18819,15 @@ Example: rainfall.asc can look like:
                 {
                     if (dtm[row, col] != -9999)
                     {
-                        simulated_ero_m3 -= sum_water_erosion[row, col] *dx *dx;
+                        simulated_ero_m3 -= sum_water_erosion[row, col] * dx * dx;
                         total_bulk_density += bulkdensity[row, col, 0];
                         objective_function_cells++;
                     }
                 }
             }
             average_bulk_density = total_bulk_density / objective_function_cells;
-            simulated_ero_kg_m2_y = average_bulk_density * simulated_ero_m3 / end_time / (objective_function_cells*dx*dx);
-
+            simulated_ero_kg_m2_y = average_bulk_density * simulated_ero_m3 / end_time / (objective_function_cells * dx * dx);
+            ;
             Debug.WriteLine(" calib tst - calib_objective_function - error is " + Math.Abs(known_ero_kg_m2_y - simulated_ero_kg_m2_y) + "kg per m2 per year");
             return Math.Abs(known_ero_kg_m2_y - simulated_ero_kg_m2_y);
         }
@@ -20917,9 +18839,9 @@ Example: rainfall.asc can look like:
             Debug.WriteLine(" updating parameter set for best scored run");
             // add/change lines below
             best_parameters[0] = advection_erodibility;
-            // best_parameters[1] = conv_fac;
+            //best_parameters[1] = conv_fac;
             Debug.WriteLine(" best erodib " + best_parameters[0]);
-            // Debug.WriteLine(" best conv_fac " + best_parameters[1]);
+            //Debug.WriteLine(" best conv_fac " + best_parameters[1]);
         }
 
         #endregion
@@ -20958,11 +18880,6 @@ Example: rainfall.asc can look like:
 
                 try { end_time = int.Parse(Number_runs_textbox.Text); }
                 catch { input_data_error = true; MessageBox.Show("Invalid number of years"); }
-                try { max_soil_layers = int.Parse(textbox_max_soil_layers.Text); }
-                catch { input_data_error = true; MessageBox.Show("Invalid number of soil layers"); }
-                try { dz_standard = double.Parse(textBox_layer_thickness.Text); }
-                catch { input_data_error = true; MessageBox.Show("Invalid standard thickness of soil layers"); }
-
                 try { ntr = System.Convert.ToInt32(end_time); }     // WVG initialise ntr: number of rows in timeseries matrix   
                 catch (OverflowException)
                 {
@@ -20982,14 +18899,11 @@ Example: rainfall.asc can look like:
                     tillage_active = true;
                     //this.ProcessStatusPanel.Text += "TI ";
                 }
-<<<<<<< HEAD
                 if (blocks_active_checkbox.Checked)
                 {
                     blocks_active = 1;
                    // this.ProcessStatusPanel.Text += "BL ";
                 }
-=======
->>>>>>> main
                 if (Landslide_checkbox.Checked)
                 {
                     landslide_active = true;
@@ -21045,7 +18959,6 @@ Example: rainfall.asc can look like:
                     soil_carbon_active = true;
                     //this.ProcessStatusPanel.Text += "CC ";
                 }
-
 
                 //INPUTS
                 //GENERAL INPUTS
@@ -21206,7 +19119,6 @@ Example: rainfall.asc can look like:
                         try { lift_location = int.Parse(text_lift_row_more.Text); }
                         catch { input_data_error = true; MessageBox.Show("value for parameter tilting rate is not valid"); }
                     }
-<<<<<<< HEAD
                     if (lift_type == 2)
                     {
                         try { lift_location = int.Parse(text_lift_col_less.Text); }
@@ -21216,16 +19128,6 @@ Example: rainfall.asc can look like:
                     {
                         try { lift_location = int.Parse(text_lift_col_more.Text); }
                         catch { input_data_error = true; MessageBox.Show("value for parameter tilting rate is not valid"); }
-=======
-
-                    //CREEP PARAMETER
-                    if (creep_active)
-                    {
-                        try { conv_fac = double.Parse(parameter_conv_textbox.Text); }
-                        catch { input_data_error = true; MessageBox.Show("value for parameter p is not valid"); }
-                        try { potential_creep_kg = double.Parse(parameter_diffusivity_textbox.Text); }
-                        catch { input_data_error = true; MessageBox.Show("value for parameter potential_creep_kg is not valid"); }
->>>>>>> main
                     }
                     try { lift_intensity = double.Parse(Uplift_rate_textbox.Text); }
                     catch { input_data_error = true; MessageBox.Show("value for parameter tilting rate is not valid"); }
@@ -21360,13 +19262,8 @@ Example: rainfall.asc can look like:
                         }
                         if (check_space_evap.Checked != true && check_time_evap.Checked != true)
                         {
-<<<<<<< HEAD
                             try { evap_value_m = double.Parse(evap_constant_value_box.Text); }
                             catch { MessageBox.Show("value for parameter evapotranspiration is not valid"); }
-=======
-                            potential_bioturbation_kg_m2_y = Convert.ToDouble(potential_bioturbation_textbox.Text); // MvdM changed name to match parameter in BT process
-                            bioturbation_depth_decay_constant = Convert.ToDouble(bioturbation_depth_decay_textbox.Text);
->>>>>>> main
                         }
                         if (check_space_infil.Checked != true && check_time_infil.Checked != true)
                         {
@@ -21386,7 +19283,6 @@ Example: rainfall.asc can look like:
                             catch { MessageBox.Show("value for parameter temperature is not valid"); }
                         }
                     }
-<<<<<<< HEAD
                     catch
                     {
                         MessageBox.Show("there was a problem reading input values"); input_data_error = true;
@@ -21434,197 +19330,89 @@ Example: rainfall.asc can look like:
                             //Debug.WriteLine("Second ratio number: " + rat_number);
                             // Debug.WriteLine("erodib " + advection_erodibility + " conv fac " + conv_fac);
                         }
-=======
-                    //string workdir_ini = workdir;
-                    //int[] scenarios = new int[] { 0, 1, 2 };
-                    //for (int scen = 0; scen < 2; scen++)
-                    //{
-                    //    P_scen = scen * 600 + 300; // define rainfall scenario
 
-                    //    workdir = workdir_ini + "\\scen" + P_scen;
-                    //    System.IO.Directory.CreateDirectory(workdir);
-
-
-                        try
-                        {
-                            filename = dtmfilename;             //for directory input
-                            dtm_file(filename);                 // from dtm_file(), almost all memory for the model is claimed
-                        }
-                        catch { Debug.WriteLine(" failed to initialise dtm "); }
-
+                        timeseries_matrix = new double[System.Convert.ToInt32(end_time), number_of_outputs];
                         if (input_data_error == false)
                         {
-                            try
+                            if (input_data_error == false)
                             {
-
-                                //Debug.WriteLine("reading general values");
-                                if (check_space_soildepth.Checked != true)
-                                {
-                                    try { soildepth_value = double.Parse(soildepth_constant_value_box.Text); }
-                                    catch { MessageBox.Show("value for parameter soildepth is not valid"); }
-                                }
-                                if (check_space_landuse.Checked != true && check_time_landuse.Checked != true)
-                                {
-                                    try { landuse_value = int.Parse(landuse_constant_value_box.Text); }
-                                    catch { MessageBox.Show("value for parameter landuse is not valid"); }
-                                }
-                                if (check_space_evap.Checked != true && check_time_evap.Checked != true)
-                                {
-                                    try { evap_value_m = double.Parse(evap_constant_value_box.Text); }
-                                    catch { MessageBox.Show("value for parameter evapotranspiration is not valid"); }
-                                }
-                                if (check_space_infil.Checked != true && check_time_infil.Checked != true)
-                                {
-                                    try { infil_value_m = double.Parse(infil_constant_value_box.Text); }
-                                    catch { MessageBox.Show("value for parameter infiltration is not valid"); }
-                                }
-
-                                if (check_space_rain.Checked != true && check_time_rain.Checked != true)
-                                {
-                                    try { rain_value_m = double.Parse(rainfall_constant_value_box.Text); }
-                                    catch { MessageBox.Show("value for parameter rainfall is not valid"); }
-                                }
-
-                                if (check_time_T.Checked != true)
-                                {
-                                    try { temp_value_C = int.Parse(temp_constant_value_box.Text); }
-                                    catch { MessageBox.Show("value for parameter temperature is not valid"); }
-                                }
-
-                            }
-                            catch { MessageBox.Show("there was a problem reading input values"); input_data_error = true; }
-                            // Debug.WriteLine("initialising non-general inputs");
-                            try { initialise_once(); } // reading input files
-                            catch { MessageBox.Show("there was a problem reading input files "); input_data_error = true; }
-
->>>>>>> main
-
-                            //CALIB_USER: multiply parameter values with current ratio
-                            //Note the correspondence between the formulas. Change only 1 value for additional parameters!
-                            if (Calibration_button.Checked == true)
-                            {
-<<<<<<< HEAD
                                 int count_intervene = 0;
                                 t_intervene = 0;
                                 if (t_intervene > 0) { read_soil_elevation_distance_from_output(t_intervene, workdir); } //this never runs?
-=======
-                                //Debug.WriteLine("erodib " + advection_erodibility + " conv fac " + conv_fac);
-                                int rat_number = Convert.ToInt32(Math.Floor(run_number / Math.Pow(user_specified_number_of_ratios, 0)) % user_specified_number_of_ratios);
-                                advection_erodibility *= calib_ratios[0, rat_number];
-                                Debug.WriteLine("First ratio number: " + rat_number);
-                                //rat_number = Convert.ToInt32(Math.Floor(run_number / Math.Pow(user_specified_number_of_ratios, 1)) % user_specified_number_of_ratios);
-                                //conv_fac *= calib_ratios[1, rat_number];
-                                //Debug.WriteLine("Second ratio number: " + rat_number);
-                                //Debug.WriteLine("erodib " + advection_erodibility + " conv fac " + conv_fac);
-                            }
->>>>>>> main
 
-                            timeseries_matrix = new double[System.Convert.ToInt32(end_time), number_of_outputs];
-                            if (input_data_error == false)
-                            {
-                                try
+                                for (t = t_intervene; t < end_time; t++)
                                 {
-                                    /*tabControl1.Visible = false;  
-                                    Mapselector.Enabled = true; 
-                                    try {View_tabs_checkbox.Checked = false;}
-                                    catch { Debug.WriteLine(" failed to set view_tabs to unchecked "); }
-                                    graphicToGoogleEarthButton.Visible = true;
-                                    graphics_scale = 4;
-                                    double c_scale = System.Convert.ToDouble(780) / System.Convert.ToDouble(nc);
-                                    double r_scale = System.Convert.ToDouble(330) / System.Convert.ToDouble(nr);
-                                    if (c_scale < r_scale) { graphics_scale = System.Convert.ToInt32(Math.Floor(c_scale)); }
-                                    else { graphics_scale = System.Convert.ToInt32(Math.Floor(r_scale)); }
-                                    if (graphics_scale < 1) { graphics_scale = 1; }
-                                    m_objDrawingSurface = new Bitmap(nc * graphics_scale, nr * graphics_scale, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-                                    mygraphics = this.CreateGraphics();
-                                    Mapwindow.Visible = true;
-                                    //map_controls.Visible = true; */
-                                }
-                                catch { Debug.WriteLine("graphics initialisation failed "); input_data_error = true; }
-                                if (input_data_error == false)
-                                {
-                                    int count_intervene = 0;
-                                    if(checkbox_t_intervene.Checked)
+
+                                    try
                                     {
-                                        t_intervene = int.Parse(textbox_t_intervene.Text);
+                                        every_timestep();
                                     }
-                                    // t_intervene = 11500;
-                                    if (t_intervene > 0) { read_soil_elevation_distance_from_output(t_intervene, workdir); }
-
-                                    for (t = t_intervene; t < end_time; t++)
+                                    catch
                                     {
-
-                                        try
+                                        Debug.WriteLine("failed to run in timestep " + t);
+                                        // Catch for when the model crashes due to unknown reasons. The model will read the latest output and start calculating again from there which I named an intervention). When the crash occurs five times, the model breaks MM
+                                        if (count_intervene < 5)
                                         {
-                                            every_timestep();
+                                            count_intervene += 1;
+                                            t_intervene = t - (t % (int.Parse(Box_years_output.Text)));
+                                            Debug.WriteLine("intervening at t" + t_intervene);
+                                            read_soil_elevation_distance_from_output(t_intervene, workdir);
                                         }
-                                        catch
+                                        else
                                         {
-                                            Debug.WriteLine("failed to run in timestep " + t);
-                                            // Catch for when the model crashes due to unknown reasons. The model will read the latest output and start calculating again from there which I named an intervention). When the crash occurs five times, the model breaks MM
-                                            if (count_intervene < 5)
-                                            {
-                                                count_intervene += 1;
-                                                t_intervene = t - (t % (int.Parse(Box_years_output.Text)));
-                                                Debug.WriteLine("intervening at t" + t_intervene);
-                                                read_soil_elevation_distance_from_output(t_intervene, workdir);
-                                            }
-                                            else
-                                            {
-                                                break;
-                                            }
+                                            break;
                                         }
                                     }
                                 }
+
                             }
                         }
-                        if (input_data_error == true)
-                        {
-                            MessageBox.Show("input data error - program can not yet run");
-                            tabControl1.Visible = true;
-                            Mapselector.Enabled = false;
-                            map_controls.Visible = false;
-                        }
+                    }
+                    if (input_data_error == true)
+                    {
+                        MessageBox.Show("input data error - program can not yet run");
+                        tabControl1.Visible = true;
+                    }
 
-                        if (Calibration_button.Checked == true)
+                    if (Calibration_button.Checked == true)
+                    {
+                        //calculate how good this run was:
+                        double current_error = calib_objective_function();
+                        //store that information along with the parameter values used to achieve it:
+                        calib_update_report(current_error);
+                        if (current_error < best_error) { best_error = current_error; calib_update_best_paras(); best_run = run_number; }
+                        //and check whether one 'level' of calibration has finished. If so, we have to change parameter values
+                        Debug.WriteLine("run " + run_number + " number paras " + user_specified_number_of_calibration_parameters + " number ratios " + calibration_ratios_textbox.Text.Split(';').Length);
+                        if ((run_number + 1) % Convert.ToInt32(Math.Pow(calibration_ratios_textbox.Text.Split(';').Length, user_specified_number_of_calibration_parameters)) == 0)
                         {
-                            //calculate how good this run was:
-                            double current_error = calib_objective_function();
-                            //store that information along with the parameter values used to achieve it:
-                            calib_update_report(current_error);
-                            if (current_error < best_error) { best_error = current_error; calib_update_best_paras(); best_run = run_number; }
-                            //and check whether one 'level' of calibration has finished. If so, we have to change parameter values
-                            Debug.WriteLine("run " + run_number + " number paras " + user_specified_number_of_calibration_parameters + " number ratios " + calibration_ratios_textbox.Text.Split(';').Length);
-                            if ((run_number + 1) % Convert.ToInt32(Math.Pow(calibration_ratios_textbox.Text.Split(';').Length, user_specified_number_of_calibration_parameters)) == 0)
+
+                            //a level of calibration has finished
+
+                            //If it was the last level, we are now done
+                            currentlevel++;
+                            Debug.WriteLine(" successfully finished a level of calibration runs");
+                            if (run_number == maxruns - 1)
                             {
-
-                                //a level of calibration has finished
-
-                                //If it was the last level, we are now done
-                                currentlevel++;
-                                Debug.WriteLine(" successfully finished a level of calibration runs");
-                                if (run_number == maxruns - 1)
-                                {
-                                    Debug.WriteLine(" successfully finished last level of calibration runs");
-                                    calib_finish_report();
-                                }
-                                else
-                                {
-                                    Debug.WriteLine(" setting new ratios ");
-                                    //CALIB_USER INPUT NEEDED HERE IN CODE
-                                    //check whether the best run was on the edge of parameter space or inside, shift to that place and zoom out or in
-                                    calib_shift_and_zoom(0, double.Parse(calibration_ratio_reduction_parameter_textbox.Text), double.Parse(parameter_K_textbox.Text));
-                                    //calib_shift_and_zoom(1, double.Parse(calibration_ratio_reduction_parameter_textbox.Text), double.Parse(parameter_conv_textbox.Text));
-                                }
+                                Debug.WriteLine(" successfully finished last level of calibration runs");
+                                calib_finish_report();
                             }
                             else
                             {
-                                //nothing. Parameter values are adapted with the corresponding ratios to continue calibration above.
+                                Debug.WriteLine(" setting new ratios ");
+                                //CALIB_USER INPUT NEEDED HERE IN CODE
+                                //check whether the best run was on the edge of parameter space or inside, shift to that place and zoom out or in
+                                calib_shift_and_zoom(0, double.Parse(calibration_ratio_reduction_parameter_textbox.Text), double.Parse(parameter_K_textbox.Text));
+                                //calib_shift_and_zoom(1, double.Parse(calibration_ratio_reduction_parameter_textbox.Text), double.Parse(parameter_conv_textbox.Text));
                             }
                         }
+                        else
+                        {
+                            //nothing. Parameter values are adapted with the corresponding ratios to continue calibration above.
+                        }
+                    }
 
-                    // } // exit point for consecutive runs
-                }
+                } // exit point for consecutive runs
+
 
             } // end try
             catch
@@ -21666,53 +19454,33 @@ Example: rainfall.asc can look like:
         private void every_timestep()    //performs actions in every timestep
         {
             // If a cell should remain at the same fixed elevation (e.g. fixed elevation boundary condition), here the cell can be selected
-            if(daily_water.Checked)
-            //if (nr > 50 & nc > 100)
-            {
-                if (t == t_intervene) { dtm00 = dtm[50, 100]; }
+            //if(nr>50&nc>100)
+            //{ 
+            //    if (t == t_intervene) { dtm00 = dtm[50, 100]; }
 
-<<<<<<< HEAD
             //    // force no-change boundary op de outlet CLORPT
             //    dtm[50, 100] = dtm00;
             //}
-=======
-                // force no-change boundary op de outlet CLORPT
-                dtm[50, 100] = dtm00;
-
-            }
->>>>>>> main
 
             DateTime geo_start, pedo_start, hydro_start;
 
 
             //if (t == 0 | t == 1) { displaysoil(50, 0); }
             int i = 0;
-<<<<<<< HEAD
             Task.Factory.StartNew(() =>
             {
                 this.TimeStatusPanel.Text = "timestep " + (t + 1) + "/" + +end_time;
             }, CancellationToken.None, TaskCreationOptions.None, guiThread);
-=======
-            this.TimeStatusPanel.Text = "timestep " + (t + 1) + "/" + +end_time;
-            updateClick = 1;
->>>>>>> main
             // Debug.WriteLine("starting calculations - TIME " + t);
 
-            if (Spitsbergen_case_study.Checked)
+            if (Ik_ben_Marijn.Checked)
             { calculate_overwater_landscape_Spitsbergen(); }
-            //displaysoil(0, 0);
 
             #region hydrological processes
-            //Debug.WriteLine("before water {0}",texture_kg[0,0,0,2]);
-            //Debug.WriteLine("before water balance");
             hydro_start = DateTime.Now;
             if (daily_water.Checked)
             {
-
-                // Debug.WriteLine("Running daily water balance");
                 water_balance();
-                // Debug.WriteLine("Daily water balance finished");
-
             }
             //print_spatial_water_balance();
             // print_P_ET0();
@@ -21752,42 +19520,32 @@ Example: rainfall.asc can look like:
                 }
                 else
                 {
-                    //Debug.WriteLine("calculating water erosion");
                     findsinks();
                     searchdepressions();
                     define_fillheight_new();
                     if (NA_anywhere_in_soil() == true) { Debug.WriteLine("NA found before erosed"); }
                     calculate_water_ero_sed();
-
-                    //Debug.WriteLine("Overland flow in t " + t+" with a flow of "+Math.Round(rain_value_m-infil_value_m-evap_value_m,4)+" m");
+                    soil_update_split_and_combine_layers();
                     if (NA_anywhere_in_soil() == true) { Debug.WriteLine("NA found after erosed"); }
                     if (crashed) { Debug.WriteLine("crashed while calculating water erosion"); }
-                    //else { Debug.WriteLine("successfully finished water erosion calculation"); }
                 }
             }
 
             // Debug.WriteLine("before TF");
             if (treefall_checkbox.Checked)
             {
-                if (t <= (end_time - 300)) // if there is no tillage
+                if (t <= (end_time - 500)) // if there is no tillage
                 {
                     calculate_tree_fall();
                 }
-
-                // Debug.WriteLine("Calculating tree fall");
             }
-
-            //displaysoil(0, 0);
 
             if (bedrock_weathering_active)
             {
-                //Debug.WriteLine("calculating bedrock weathering");
                 calculate_bedrock_weathering();
                 soil_update_split_and_combine_layers();
-                //if (t % 25 == 0) { displaysoil(55, 108); }
             }
-            // Debug.WriteLine("before CR");
-            //displaysoil(0, 0);
+
             if (creep_active)
             {
                 try
@@ -21800,7 +19558,6 @@ Example: rainfall.asc can look like:
                 }
                 catch { Debug.WriteLine(" failed during creep calculations"); }
             }
-<<<<<<< HEAD
             /*
             if (blocks_active==1)
             {
@@ -21828,38 +19585,24 @@ Example: rainfall.asc can look like:
                 catch { Debug.WriteLine(" failed during block calculations"); }
             }
             */
-=======
-
-
-            // Debug.WriteLine("before TI");
-            //displaysoil(0, 0);
->>>>>>> main
             if (tillage_active)
             {
                 comb_sort();
                 int tilltime = 0;
-                if (check_time_till_fields.Checked) { tilltime = till_record[t]; }
-                else { tilltime = 1; }
+                //if (check_time_till_fields.Checked) { tilltime = till_record[t]; }
+                //else { tilltime = 1; }
 
-                if (t > (end_time - 300)) { tilltime = 1; } //MvdM Code to simulate tillage only in the last 500 years of the run. Used in SOIL paper SOIl2: to 200 a 
-                if (t > (end_time - 100)) { tilltime = 0; } //MvdM Code to simulate tillage only in the last 500 years of the run. Used in SOIL paper SOIl2: to 200 a 
-
+                if (t > (end_time - 500)) { tilltime = 1; }
                 if (tilltime == 1)
                 {
+
+
                     initialise_every_till();
                     calculate_tillage();
-
                     soil_update_split_and_combine_layers();
-
                 }
-            }
 
-            if (OSL_checkbox.Checked)
-            {
-                double bleaching_p = 1.0; // complete bleaching of top layer for now
-                update_and_bleach_OSL_ages(bleaching_p);
             }
-
             //Debug.WriteLine("after TI");
             //displaysoil(0, 0);
             if (landslide_active)
@@ -21875,7 +19618,7 @@ Example: rainfall.asc can look like:
 
             #endregion
 
-            #region Pedogenic processes
+            #region pedogenic processes
 
 
             pedo_start = DateTime.Now;
@@ -21885,7 +19628,7 @@ Example: rainfall.asc can look like:
             if (soil_phys_weath_active)
             {
                 // Debug.WriteLine("calculating soil physical weathering");
-                if (Spitsbergen_case_study.Checked == false) { soil_physical_weathering(); }
+                if (Ik_ben_Marijn.Checked == false) { soil_physical_weathering(); }
                 else
                 {
                     SPITS_soil_physical_weathering();
@@ -21930,7 +19673,7 @@ Example: rainfall.asc can look like:
             {
                 // Debug.WriteLine("calculating soil clay dynamics ");
 
-                if (Spitsbergen_case_study.Checked == true)
+                if (Ik_ben_Marijn.Checked == true)
                 {
                     soil_silt_translocation(); // Spitsbergen case study
                 }
@@ -21964,9 +19707,7 @@ Example: rainfall.asc can look like:
                 else
                 {
                     soil_carbon_cycle();
-                    soil_update_split_and_combine_layers();
                 }
-
 
             }
             if (NA_anywhere_in_soil() == true) { Debug.WriteLine("NA found after soil carbon"); }
@@ -21984,7 +19725,7 @@ Example: rainfall.asc can look like:
                     {
                         update_all_soil_thicknesses(row, col);
                     }
-                }				 
+                }
                 // Debug.WriteLine("calculating bioturbation");
                 soil_bioturbation();
                 // if (findnegativetexture()) { Debugger.Break(); }
@@ -22003,13 +19744,7 @@ Example: rainfall.asc can look like:
             #region write output
 
             // Debug.WriteLine("before output");
-            //if (view_maps_checkbox.Checked == true && t == end_time - 1) { draw_map(mygraphics); updateClick = 1; }
-            if (view_maps_checkbox.Checked == true && t == end_time - 1) { updateClick = 1; }
             numfile++;
-
-
-
-
 
             int t_out = t + 1;
             if ((Final_output_checkbox.Checked && t_out == end_time) || (Regular_output_checkbox.Checked && ((t_out) % (int.Parse(Box_years_output.Text)) == 0)))
@@ -22114,7 +19849,7 @@ Example: rainfall.asc can look like:
                         catch { MessageBox.Show("TPI output has not been written"); }
 
                         /* CODE BLOCK BELOW WRITES OUT DIFFERENT ORGANIC MATTER MAPS. THIS IS NOT NECESSARY ANYMORE NOW LITTER IS STORED IN ITS OWN MATRIX
-                         * 
+                            * 
                         // outputs for case study Luxembourg. Focus on different organic matter types
                         // young labile OM is hornbeam, old stable OM is beech
                         // Outputs:
@@ -22297,15 +20032,6 @@ Example: rainfall.asc can look like:
                         catch { MessageBox.Show("tillage has not been written"); }
                     }
                 }
-
-                if (OSL_checkbox.Checked)
-                {
-                    try { writeOSLages(); }
-                    catch
-                    {
-                        Debug.WriteLine("OSl ages have not been written");
-                    }
-                }
                 if (Landslide_checkbox.Checked)
                 {
                     try { out_double(workdir + "\\" + run_number + "_" + t_out + "_crrain.asc", crrain); }
@@ -22437,61 +20163,14 @@ Example: rainfall.asc can look like:
                 //Debug.WriteLine("after outputs");
 
             }
-            //Google Earth Animation
-            if ((googleAnimationCheckbox.Checked) && (t % (int.Parse(googAnimationSaveInterval.Text)) == 0))
-            {
-                try { Google_Earth_Output(); }
-                catch { Debug.WriteLine("Error writing Google Output"); }
-            }
-            //AVI file output
-            if ((checkBoxGenerateAVIFile.Checked) && (t % (int.Parse(saveintervalbox.Text)) == 0))
-            {
-                try { AVI_Output(); }
-                catch { Debug.WriteLine("Error writing video Output"); }
-            }
-            //if (t % 10 == 1)
-            //{
-            //    //displaysoil(25, 50);
-            //}
+
             if (t == end_time - 1)
             {
 
-<<<<<<< HEAD
                 Task.Factory.StartNew(() =>
                 {
                     this.InfoStatusPanel.Text = " --finished--";
                 }, CancellationToken.None, TaskCreationOptions.None, guiThread);
-=======
-
-                try
-                {
-                    //close google earth animation
-                    if (googleAnimationCheckbox.Checked == true)
-                    {
-                        StreamWriter kmlsr = File.AppendText(KML_FILE_NAME);
-                        kml = "\n</Folder>"
-                              + "\n</kml>";
-                        kmlsr.WriteLine(kml);
-                        kmlsr.Close();
-                    }
-                }
-                catch
-                {
-                    Debug.WriteLine("Error finishing Google Earth Output");
-                }
-                //close AVI file
-                try
-                {
-                    if (checkBoxGenerateAVIFile.Checked)
-                        aw.Close();  //JMW 20041109
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine("Error finishing video output");
-                }
-
-                this.InfoStatusPanel.Text = " --finished--";
->>>>>>> main
                 stopwatch.Stop();
                 Debug.WriteLine("Elapsed time: " + stopwatch.Elapsed);
                 //Timeseries output
@@ -22579,7 +20258,7 @@ Example: rainfall.asc can look like:
                     } // end if
                     i++;
                 }  // end while
-                   //if (gap < 4) { Debug.WriteLine("i " + i + " gap " + gap + " tot swaps " + total_swaps); }
+                    //if (gap < 4) { Debug.WriteLine("i " + i + " gap " + gap + " tot swaps " + total_swaps); }
             } //end while
             int sorting_error = 0;
             for (i = 0; i < number_of_data_cells - 1; i++)
@@ -22594,21 +20273,6 @@ Example: rainfall.asc can look like:
             {
                 //Debug.WriteLine(" Sorting test successful ");
             }
-        }
-
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label13_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox3_TextChanged(object sender, EventArgs e)
-        {
-
         }
 
         private void statusBar1_PanelClick(object sender, StatusBarPanelClickEventArgs e)
@@ -22626,285 +20290,14 @@ Example: rainfall.asc can look like:
 
         }
 
-        private void label95_Click_1(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label111_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label112_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void textBox3_TextChanged_4(object sender, EventArgs e)
         {
 
         }
 
-        /*private void Quicksort()        
-        {
-            //Quicksort(unsorted, 0, unsorted.Length - 1);
-            int number_of_data_cells;
-            int i = 0;
-            if (t == 0)  // only in the first timestep;
-            {
-                number_of_data_cells = 0;
-                for (row = 0; row < nr; row++)  
-                {
-                    for (col = 0; col < nc; col++)
-                    {
-                        if (dtm[row, col] != -9999)
-                        {
-                            index[i] = dtm[row, col]; row_index[i] = row; col_index[i] = col;
-                            i++;
-                        }
-                    }
-                }
-                number_of_data_cells = i;
-            }
-            i = 0; j = number_of_data_cells;           
-            IComparable pivot = elements[(left + right) / 2];             
-            while (i <= j)            {                
-                while (elements[i].CompareTo(pivot) < 0)                
-                {                    
-                    i++;                
-                }                 
-                while (elements[j].CompareTo(pivot) > 0)                
-                {                    
-                    j--;                
-                }                 
-                if (i <= j)                
-                {                    
-                    // Swap                    
-                    IComparable tmp = elements[i];                    
-                    elements[i] = elements[j];                    
-                    elements[j] = tmp;                     
-                    i++;                    
-                    j--;                
-                }            
-            }             
-            // Recursive calls            
-            if (left < j)            
-            {                
-                Quicksort(elements, left, j);            
-            }             
-            if (i < right)            
-            {                
-                Quicksort(elements, i, right);            
-            }        
-        } */
-
         #endregion
 
-
+        }
     }
-
-    #region for projection of coordinates
-    class point
-    {
-        //lat long variables
-        public double xcoord;
-        public double ycoord;
-        public int UTMzone;
-        public bool south;
-        double transParallelX = 446.448;
-        double transParallelY = -125.157;
-        double transParallelZ = 542.060;
-        double scaleChange = -20.4894 * 0.000001;
-        double rotX = (0.1502 / 3600) * (Math.PI / 180);
-        double rotY = (0.2470 / 3600) * (Math.PI / 180);
-        double rotZ = (0.8421 / 3600) * (Math.PI / 180);
-        double a = 6377563.396; //airy 1830 semi-major axis
-        double b = 6356256.910; //airy 1830 semi-minor axis
-        double a2 = 6378137.000;
-        double b2 = 6356752.3142;
-        double eSquared = 0;
-        double eSquared2 = 0;
-        double nO = -100000;//northing of true origin
-        double eO = 400000;//easting of true origin
-        double fO = 0.9996012717;//scale factor
-        double latTrue = 49.0 * (Math.PI / 180.0);//latitude of true origin
-        double longTrue = -2.0 * (Math.PI / 180.0);//longitude of true origin
-        double psiHash, MBig, v, v2, v3, nLittle, rho, nSquare = 0;
-        double vii, viii, ix, Tx2, xi, xii, xiia = 0;
-        double helmertX, helmertY, helmertZ, cartX, cartY, cartZ;
-        double Height2 = 0;
-        double Height3 = 0;
-        double finalLati, finalLongi, latiRad, longiRad = 0;
-        double rootXYSqr = 0;
-        double PHI1, PHI2, PHI = 0;
-
-        public point(double theXcoord, double theYcoord)//constructor
-        {
-            this.xcoord = theXcoord;
-            this.ycoord = theYcoord;
-        }
-
-        public void transformPoint()//british os to lat long
-        {
-            eSquared = (Math.Pow(a, 2) - Math.Pow(b, 2)) / Math.Pow(a, 2);
-            Height2 = 0;
-            Height3 = 0;
-            //OSGB36 easting and northing to OSGB36 latitude and longitude (lower left corner of DTM)
-            psiHash = ((this.ycoord - nO) / (a * fO)) + latTrue;
-            nLittle = (a - b) / (a + b);
-            MBig = b * fO * (((1 + nLittle + ((5.0 / 4.0) * Math.Pow(nLittle, 2)) + ((5.0 / 4.0) * Math.Pow(nLittle, 3))) * (psiHash -
-                     latTrue))
-               - (((3.0 * nLittle) + (3.0 * Math.Pow(nLittle, 2)) + ((21.0 / 8.0) * Math.Pow(nLittle, 3))) *
-                     Math.Sin(psiHash - latTrue) * Math.Cos(psiHash + latTrue))
-               + (((15.0 / 8.0 * Math.Pow(nLittle, 2)) + (15.0 / 8.0 * Math.Pow(nLittle, 3))) * Math.Sin(2.0 * (psiHash - latTrue)) * Math.Cos(2.0 * (psiHash + latTrue)))
-               - ((35.0 / 24.0 * Math.Pow(nLittle, 3)) * Math.Sin(3.0 * (psiHash - latTrue)) * Math.Cos(3.0 * (psiHash + latTrue))));
-            if (Math.Abs((this.ycoord - nO - MBig)) >= 0.01)
-            {
-                while (Math.Abs((this.ycoord - nO - MBig)) >= 0.01)
-                {
-                    psiHash = ((this.ycoord - nO - MBig) / (a * fO)) + psiHash;
-                    MBig = b * fO * (((1 + nLittle + ((5.0 / 4.0) * Math.Pow(nLittle, 2)) + ((5.0 / 4.0) * Math.Pow(nLittle, 3))) * (psiHash -
-                       latTrue))
-                 - (((3.0 * nLittle) + (3.0 * Math.Pow(nLittle, 2)) + ((21.0 / 8.0) * Math.Pow(nLittle, 3))) *
-                       Math.Sin(psiHash - latTrue) * Math.Cos(psiHash + latTrue))
-                 + (((15.0 / 8.0 * Math.Pow(nLittle, 2)) + (15.0 / 8.0 * Math.Pow(nLittle, 3))) * Math.Sin(2.0 * (psiHash - latTrue)) * Math.Cos(2.0 * (psiHash + latTrue)))
-                 - ((35.0 / 24.0 * Math.Pow(nLittle, 3)) * Math.Sin(3.0 * (psiHash - latTrue)) * Math.Cos(3.0 * (psiHash + latTrue))));
-                }
-            }
-            v = a * fO * Math.Pow(1 - eSquared * Math.Pow(Math.Sin(psiHash), 2), -.5);
-            rho = a * fO * (1 - eSquared) * Math.Pow(1.0 - eSquared * Math.Pow(Math.Sin(psiHash), 2), -1.5);
-            nSquare = v / rho - 1.0;
-            vii = (Math.Tan(psiHash)) / (2.0 * rho * v);
-            viii = ((Math.Tan(psiHash)) / (24.0 * rho * Math.Pow(v, 3))) * (5 + 3.0 * Math.Pow(Math.Tan(psiHash), 2) + nSquare - 9.0 * (Math.Pow(Math.Tan(psiHash), 2) * nSquare));
-            ix = (Math.Tan(psiHash) / ((720.0 * rho * Math.Pow(v, 5)))) * (61 + 90.0 * Math.Pow(Math.Tan(psiHash), 2) + 45.0 * Math.Pow(Math.Tan(psiHash), 4));
-            Tx2 = (1.0 / Math.Cos(psiHash)) / v;
-            xi = (1.0 / Math.Cos(psiHash)) / (6.0 * Math.Pow(v, 3)) * ((v / rho) + (2.0 * Math.Pow(Math.Tan(psiHash), 2)));
-            xii = (1.0 / Math.Cos(psiHash)) / (120.0 * Math.Pow(v, 5)) * (5.0 + (28.0 * Math.Pow(Math.Tan(psiHash), 2)) + (24.0 * Math.Pow(Math.Tan(psiHash), 4)));
-            xiia = ((1.0 / Math.Cos(psiHash)) / (5040.0 * Math.Pow(v, 7))) * (61.0 + (662.0 * Math.Pow(Math.Tan(psiHash), 2)) + (1320.0 * Math.Pow(Math.Tan(psiHash), 4)) + (720.0 * Math.Pow(Math.Tan(psiHash), 6)));
-            latiRad = psiHash - (vii * Math.Pow((this.xcoord - eO), 2)) + (viii * Math.Pow((this.xcoord - eO), 4)) - (ix * Math.Pow((this.xcoord - eO), 6));
-            longiRad = longTrue + (Tx2 * (this.xcoord - eO)) - (xi * (Math.Pow((this.xcoord - eO), 3))) + (xii * (Math.Pow((this.xcoord - eO), 5))) - (xiia * (Math.Pow((this.xcoord - eO), 7)));
-            //Debug.WriteLine(latiRad * (180 / Math.PI));
-            //Debug.WriteLine(longiRad * (180 / Math.PI));
-            //OSGB36 Latitude Longitude Height to OSGB36 Cartesian XYZ
-            v2 = a / (Math.Sqrt(1 - (eSquared * ((Math.Pow(Math.Sin(latiRad), 2))))));
-            cartX = (v2 + Height2) * Math.Cos(latiRad) * Math.Cos(longiRad);
-            cartY = (v2 + Height2) * (Math.Cos(latiRad) * Math.Sin(longiRad));
-            cartZ = ((v2 * (1 - eSquared)) + Height2) * Math.Sin(latiRad);
-            //Debug.WriteLine();
-            //Debug.WriteLine(cartX);
-            //Debug.WriteLine(cartY);
-            //Helmert Datum Transformation (OSGB36 to WGS84)
-            helmertX = cartX + (cartX * scaleChange) - (cartY * rotZ) + (cartZ * rotY) + transParallelX;
-            helmertY = (cartX * rotZ) + cartY + (cartY * scaleChange) - (cartZ * rotX) + transParallelY;
-            helmertZ = (-1 * cartX * rotY) + (cartY * rotX) + cartZ + (cartZ * scaleChange) + transParallelZ;
-            //Debug.WriteLine();
-            //Debug.WriteLine(helmertX);
-            //Debug.WriteLine(helmertY);
-            //WGS84 Cartesian XYZ to WGS84 Latitude, longitude and Ellipsoidal height								
-            rootXYSqr = Math.Sqrt((Math.Pow(helmertX, 2)) + (Math.Pow(helmertY, 2)));
-            eSquared2 = (Math.Pow(a2, 2) - Math.Pow(b2, 2)) / Math.Pow(a2, 2);
-            PHI1 = Math.Atan(helmertZ / (rootXYSqr * (1 - eSquared2)));
-            v3 = a2 / (Math.Sqrt(1.0 - (eSquared2 * ((Math.Pow(Math.Sin(PHI1), 2))))));
-            PHI2 = Math.Atan((helmertZ + (eSquared2 * v3 * (Math.Sin(PHI1)))) / rootXYSqr);
-            while (Math.Abs(PHI1 - PHI2) > 0.000000001)
-            {
-                PHI1 = PHI2;
-                v3 = a2 / (Math.Sqrt(1 - (eSquared2 * ((Math.Pow(Math.Sin(PHI1), 2))))));
-                PHI2 = Math.Atan((helmertZ + (eSquared2 * v3 * (Math.Sin(PHI1)))) / rootXYSqr);
-            }
-            PHI = PHI2;
-            finalLati = PHI * (180.0 / Math.PI);
-            finalLongi = (Math.Atan(helmertY / helmertX)) * (180.0 / Math.PI);
-            this.xcoord = finalLongi;
-            this.ycoord = finalLati;
-        }
-
-        public void transformUTMPoint()
-        {
-            //transforms coordinates in UTM WGS84 to lat long
-            //requires x, y, zone and north/south
-            //the code in this function was found at http://home.hiwaay.net/~taylorc/toolbox/geography/geoutm.html
-            //made by Chuck Taylor
-            //tested in xls for points in Poland, Turkey and South Africa
-
-            // The code first calculates TM coordinates from UTM coordinates
-            // Then calculates corresponding latitude and longitude in radians
-            // Before converting back to degrees
-
-            // first version ArT 12-06-09 
-
-            double footpointlatitude = 0;
-            double UTMscalefactor = 0.9996;
-            double centralmeridian_deg = 0;
-            double centralmeridian_rad = 0;
-            double y_ = 0;
-            double WGS84_sm_a = 6378137;
-            double WGS84_sm_b = 6356752.314;
-            double n = (WGS84_sm_a - WGS84_sm_b) / (WGS84_sm_a + WGS84_sm_b);
-
-            this.xcoord = (this.xcoord - 500000) / UTMscalefactor;
-            if (this.south) this.ycoord = (this.ycoord - 10000000) / UTMscalefactor;
-            else this.ycoord /= UTMscalefactor;
-
-            centralmeridian_deg = -183 + (this.UTMzone * 6);
-            centralmeridian_rad = centralmeridian_deg / 180 * Math.PI;
-
-            double alpha = (((WGS84_sm_a + WGS84_sm_b) / 2) * (1 + Math.Pow(n, 2) / 4) + (Math.Pow(n, 4) / 64));
-            double beta = (3 * n / 2) + (-27 * Math.Pow(n, 3) / 32) + (269 * Math.Pow(n, 5) / 512);
-            double gamma = (21 * Math.Pow(n, 2) / 16) + (-55 * Math.Pow(n, 4) / 32);
-            double delta = (151 * Math.Pow(n, 3) / 96) + (-417 * Math.Pow(n, 5) / 128);
-            double epsilon = (1097 * Math.Pow(n, 4) / 512);
-
-            y_ = this.ycoord / (alpha);
-            footpointlatitude = y_ + (beta * Math.Sin(2 * y_)) + (gamma * Math.Sin(4 * y_)) + (delta * Math.Sin(6 * y_)) + (epsilon * Math.Sin(8 * y_));
-
-            double ep2 = (Math.Pow(WGS84_sm_a, 2) - Math.Pow(WGS84_sm_b, 2)) / Math.Pow(WGS84_sm_b, 2);
-            double cf = Math.Cos(footpointlatitude);
-            double nuf2 = ep2 * Math.Pow(cf, 2);
-            double nf = Math.Pow(WGS84_sm_a, 2) / (WGS84_sm_b * Math.Sqrt(1 + nuf2));
-
-            double tf = Math.Tan(footpointlatitude);
-            double tf2 = Math.Pow(tf, 2);
-            double tf4 = Math.Pow(tf, 4);
-
-            double x1frac = 1 / (1 * Math.Pow(nf, 1) * cf);
-            double x2frac = tf / (2 * Math.Pow(nf, 2));
-            double x3frac = 1 / (6 * Math.Pow(nf, 3) * cf);
-            double x4frac = tf / (24 * Math.Pow(nf, 4));
-            double x5frac = 1 / (120 * Math.Pow(nf, 5) * cf);
-            double x6frac = tf / (720 * Math.Pow(nf, 6));
-            double x7frac = 1 / (5040 * Math.Pow(nf, 7) * cf);
-            double x8frac = tf / (40320 * Math.Pow(nf, 8));
-
-            double x2poly = -1 - nuf2;
-            double x3poly = -1 - nuf2 - (2 * tf2);
-            double x4poly = 5 + 3 * tf2 + 6 * nuf2 - 6 * tf2 * nuf2 - 3 * Math.Pow(nuf2, 2) - 9 * tf2 * nuf2 * nuf2;
-            double x5poly = 5 + 28 * tf2 + 24 * tf4 + 6 * nuf2 + 8 * tf2 * nuf2;
-            double x6poly = -61 - 90 * tf2 - 45 * tf4 - 107 * nuf2 + 162 * tf2 * nuf2;
-            double x7poly = -61 - 662 * tf2 - 1320 * tf4 - 720 * tf4 * tf2;
-            double x8poly = 1385 + 3633 * tf2 + 4095 * tf4 + 1575 * tf4 * tf2;
-
-            double latitude = footpointlatitude
-                            + x2frac * x2poly * Math.Pow(this.xcoord, 2)
-                            + x4frac * x4poly * Math.Pow(this.xcoord, 4)
-                            + x6frac * x6poly * Math.Pow(this.xcoord, 6)
-                            + x8frac * x8poly * Math.Pow(this.xcoord, 8);
-            double longitude = centralmeridian_rad
-                            + x1frac * 1 * Math.Pow(this.xcoord, 1)
-                            + x3frac * x3poly * Math.Pow(this.xcoord, 3)
-                            + x5frac * x5poly * Math.Pow(this.xcoord, 5)
-                            + x7frac * x7poly * Math.Pow(this.xcoord, 7);
-
-            this.ycoord = latitude / Math.PI * 180;
-            this.xcoord = longitude / Math.PI * 180;
-        }
-
-    }
-    #endregion
-
-
-}
-
 
 
