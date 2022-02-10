@@ -19316,7 +19316,7 @@ Example: rainfall.asc can look like:
                         // Debug.WriteLine("initialising non-general inputs");
                         //try { initialise_once(); } // reading input files
                         //catch { MessageBox.Show("there was a problem reading input files "); input_data_error = true; }
-                        initialize_values_testing();
+                        initialize_once_testing();
                         
                         
 
