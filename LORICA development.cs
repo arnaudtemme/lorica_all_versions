@@ -307,12 +307,10 @@ namespace LORICA4
         private Button button2;
         private Button button3;
         private Button button1;
-<<<<<<< HEAD
-        private CheckBox view_maps_checkbox; //this was previously missing but its only needed for reading input .xml file currently
-=======
+
         private CheckBox view_maps_checkbox;
         private MenuItem Menu_map_landsliding;
->>>>>>> main
+
         private Label label37;
         private TextBox outputcode_textbox;
         private CheckBox diagnostic_output_checkbox;
@@ -702,17 +700,17 @@ namespace LORICA4
         //USER INPUT NEEDED: establish best versions of parameters varied in calibration:
         double[] best_parameters;
         double[,] calib_ratios;
-<<<<<<< HEAD
+
         private TabPage tabPage3;
         private CheckBox blocks_active_checkbox;
         private Label label121;
-        private Label label63;
-        private Label label62;
+        //private Label label63;
+        //private Label label62;
         private TextBox hardlayerdensity_textbox;
         private TextBox hardlayerweath_textbox;
         private TextBox hardlayerelevation_textbox;
         private TextBox hardlayerthickness_textbox;
-        private Label label61;
+        //private Label label61;
         private Label label122;
         private Label label123;
         private TextBox blockweath_textbox;
@@ -721,8 +719,7 @@ namespace LORICA4
         private Label uxNumberCoresLabel;
         private Label uxNumberLogicalProcessorsLabel;
         private Label uxThreadLabel;
-=======
->>>>>>> main
+
         double[] original_ratios;
 
         private void rain_input_filename_textbox_TextChanged_1(object sender, EventArgs e)
@@ -1180,8 +1177,7 @@ namespace LORICA4
 
         List<Block> Blocklist = new List<Block>();
 
-=======
->>>>>>> main
+
         #endregion
 
         public Mother_form()
@@ -1768,15 +1764,11 @@ namespace LORICA4
             Landsliding.Controls.Add(this.label18);
             Landsliding.Controls.Add(this.pictureBox4);
             Landsliding.Controls.Add(this.Landslide_checkbox);
-<<<<<<< HEAD
-            Landsliding.Location = new System.Drawing.Point(4, 25);
-            Landsliding.Name = "Landsliding";
-            Landsliding.Size = new System.Drawing.Size(732, 247);
-=======
+
             Landsliding.Location = new System.Drawing.Point(4, 22);
             Landsliding.Name = "Landsliding";
             Landsliding.Size = new System.Drawing.Size(732, 250);
->>>>>>> main
+
             Landsliding.TabIndex = 2;
             Landsliding.Text = "Landsliding";
             Landsliding.UseVisualStyleBackColor = true;
@@ -1796,11 +1788,9 @@ namespace LORICA4
             this.radio_ls_fraction.Checked = true;
             this.radio_ls_fraction.Location = new System.Drawing.Point(53, 83);
             this.radio_ls_fraction.Name = "radio_ls_fraction";
-<<<<<<< HEAD
+
             this.radio_ls_fraction.Size = new System.Drawing.Size(17, 16);
-=======
-            this.radio_ls_fraction.Size = new System.Drawing.Size(14, 13);
->>>>>>> main
+
             this.radio_ls_fraction.TabIndex = 29;
             this.radio_ls_fraction.TabStop = true;
             this.radio_ls_fraction.UseVisualStyleBackColor = true;
