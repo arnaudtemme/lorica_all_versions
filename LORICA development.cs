@@ -5745,7 +5745,7 @@ namespace LORICA4
             Array.Clear(dtm, 0, dtm.Length);
             if (merely_calculating_derivatives == false)
             {
-                Array.Clear(OSL_age, 0, OSL_age.Length);
+                //Array.Clear(OSL_age, 0, OSL_age.Length);
                 Array.Clear(soildepth_m, 0, soildepth_m.Length);
                 Array.Clear(dtmchange, 0, dtmchange.Length);
                 Array.Clear(dz_soil, 0, dz_soil.Length);
@@ -5895,7 +5895,7 @@ namespace LORICA4
             dtm = new double[nr, nc];
             if (merely_calculating_derivatives == false)
             {
-                OSL_age = new int[nr * nc * max_soil_layers * ngrains, 5];
+                //OSL_age = new int[nr * nc * max_soil_layers * ngrains, 5];
                 soildepth_m = new double[nr, nc];
                 dtmchange = new double[nr, nc];
                 dz_soil = new double[nr, nc];

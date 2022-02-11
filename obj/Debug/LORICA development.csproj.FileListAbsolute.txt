@@ -1,3 +1,9 @@
+C:\Users\19132\source\repos\lorica_all_versions\bin\Debug\LORICA.exe.manifest
+C:\Users\19132\source\repos\lorica_all_versions\bin\Debug\LORICA.application
+C:\Users\19132\source\repos\lorica_all_versions\bin\Debug\LORICA.exe
+C:\Users\19132\source\repos\lorica_all_versions\bin\Debug\LORICA.pdb
+C:\Users\19132\source\repos\lorica_all_versions\bin\Debug\MathNet.Numerics.dll
+C:\Users\19132\source\repos\lorica_all_versions\bin\Debug\MathNet.Numerics.xml
 C:\Users\19132\source\repos\lorica_all_versions\obj\Debug\LORICA development.csproj.AssemblyReference.cache
 C:\Users\19132\source\repos\lorica_all_versions\obj\Debug\LORICA4.About_LORICA.resources
 C:\Users\19132\source\repos\lorica_all_versions\obj\Debug\LORICA4.Landuse_determinator.resources
@@ -8,12 +14,6 @@ C:\Users\19132\source\repos\lorica_all_versions\obj\Debug\LORICA4.Properties.Res
 C:\Users\19132\source\repos\lorica_all_versions\obj\Debug\LORICA4.Soil_specifier.resources
 C:\Users\19132\source\repos\lorica_all_versions\obj\Debug\LORICA development.csproj.GenerateResource.cache
 C:\Users\19132\source\repos\lorica_all_versions\obj\Debug\LORICA development.csproj.CoreCompileInputs.cache
-C:\Users\19132\source\repos\lorica_all_versions\bin\Debug\LORICA.exe.manifest
-C:\Users\19132\source\repos\lorica_all_versions\bin\Debug\LORICA.application
-C:\Users\19132\source\repos\lorica_all_versions\bin\Debug\LORICA.exe
-C:\Users\19132\source\repos\lorica_all_versions\bin\Debug\LORICA.pdb
-C:\Users\19132\source\repos\lorica_all_versions\bin\Debug\MathNet.Numerics.dll
-C:\Users\19132\source\repos\lorica_all_versions\bin\Debug\MathNet.Numerics.xml
 C:\Users\19132\source\repos\lorica_all_versions\obj\Debug\LORICA.exe.manifest
 C:\Users\19132\source\repos\lorica_all_versions\obj\Debug\LORICA.application
 C:\Users\19132\source\repos\lorica_all_versions\obj\Debug\LORICA development.csproj.CopyComplete
