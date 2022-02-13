@@ -12121,6 +12121,346 @@ namespace LORICA4
 
             //displaysoil(0,0);
             double mass_before = total_catchment_mass();
+
+            //potential parallel critial section variables (update at the end)
+            total_average_soilthickness_m = 0; //race condition 1
+            number_soil_thicker_than = 0; //race condition 2
+            number_soil_coarser_than = 0; //race condition 3
+            local_soil_depth_m = 0; //race condition 4
+            local_soil_mass_kg = 0; //race condition 5
+
+
+            int numberoflayers = 0; //needs different implementation with parallel for loops
+            double depth_m;  // keep better track of this, currently not OK yet
+            try
+            {
+                double total_average_soilthickness_m_check = 0;
+                Double.TryParse(timeseries.timeseries_soil_thicker_textbox.Text, out total_average_soilthickness_m_check);
+                int local_soil_depth_m_row_check;
+                int local_soil_depth_m_col_check;
+                int.TryParse(timeseries.timeseries_soil_cell_row.Text, out local_soil_depth_m_row_check); //comes out as zero if fails
+                int.TryParse(timeseries.timeseries_soil_cell_col.Text, out local_soil_depth_m_col_check);
+
+                //parallel array holders for each global variable (dynamically allocated)
+                
+                double[] total_average_soilthickness_m_array = new double[nr];
+                int[] number_soil_thicker_than_array = new int[nr]; //race condition 2
+                int[] number_soil_coarser_than_array = new int[nr];
+                double[] local_soil_depth_m_array = new double[nr];
+                double[] local_soil_mass_kg_array = new double[nr]; //this even used?
+
+                double higher_end_split_check = dz_standard * (1 + tolerance);
+                double lower_end_combine_check = dz_standard * (1 - tolerance);
+
+                //displaysoil(0, 0);
+                depth_m = 0;
+
+                var options = new ParallelOptions()
+                {
+                    MaxDegreeOfParallelism = NumParallelThreads
+                };
+                Parallel.For(0, nr, options, row =>
+                {
+                    double old_thickness;
+                    double new_thickness;
+                    double old_soil_mass;
+                    double new_soil_mass;
+                    for (int col = 0; col < nc; col++)
+                    {
+                        if (dtm[row, col] != -9999)
+                        {
+                            remove_empty_layers(row, col); //why twice?
+                            remove_empty_layers(row, col);
+
+                            update_all_soil_thicknesses(row, col);
+
+                            /*if (NA_in_soil(row, col))
+                            {
+                                Debug.WriteLine("err_uscl8");
+                            }*/
+
+
+                            old_soil_mass = total_soil_mass(row, col);
+                            // Debug.WriteLine("suscl0" + row + ", " + col + ", " + t + " " + total_soil_mass(row, col));
+                            //Debug.WriteLine("soil before splitting");
+                            // if (row == 0 & col == 0) { displaysoil(row, col); }
+                            depth_m = 0; numberoflayers = 0;
+                            //bool boolsplit = false; //not used
+                            //bool boolcombine = false; //not used
+                            for (int layer = 0; layer < (max_soil_layers - 1); layer++)
+                            {
+                                if (total_layer_mass(row, col, layer) > 0)
+                                {
+
+                                    //Debug.WriteLine("depth is now " + depth + " for lyr " +  layer);
+                                    //numberoflayers++; not properly implemented
+                                    if (layer == 0)
+                                    {
+                                        if (layerthickness_m[row, col, layer] < 0.001 | total_soil_mass(row, col) < 0.001) // smaller than one mm, lighter than 1 gram -> merge with layer below, to avoid numerical problems when always a fraction leaves the profile (e.g. with creep)
+                                        {
+                                            combine_layers(row, col, layer, layer + 1);
+
+                                            //update_all_soil_thicknesses(row, col); : START
+                                            for (int layer_update = 0; layer_update < max_soil_layers; layer_update++)
+                                            {
+                                                //thickness_calc(int rowwer, int coller, int lay1)
+                                                layerthickness_m[row, col, layer_update] = thickness_calc(row, col, layer_update);
+                                                layerthickness_m[row, col, layer_update] = thickness_calc(row, col, layer_update);
+                                            } //update_all_soil_thicknesses(row, col); : END
+
+                                            //boolcombine = true;
+                                            if (Math.Round(old_soil_mass, 6) != Math.Round(total_soil_mass(row, col), 6))
+                                            {
+                                                Debug.WriteLine("err_uscl9");
+                                            }
+                                        }
+                                        while (layerthickness_m[row, col, layer] > higher_end_split_check) //Higher end, split
+                                        { //split 
+                                          // Debug.WriteLine("splitting after combining 1");
+                                          // Debug.WriteLine("d_layer {0}", layerthickness_m[row, col, layer]);
+
+                                            split_layer(row, col, layer, depth_m);
+                                            // Debug.WriteLine("d_layer {0}", layerthickness_m[row, col, layer]);
+
+                                            //update_all_soil_thicknesses(row, col); : START
+                                            for (int layer_update = 0; layer_update < max_soil_layers; layer_update++)
+                                            {
+                                                //thickness_calc(int rowwer, int coller, int lay1)
+                                                layerthickness_m[row, col, layer_update] = thickness_calc(row, col, layer_update);
+                                                layerthickness_m[row, col, layer_update] = thickness_calc(row, col, layer_update);
+                                            } //update_all_soil_thicknesses(row, col); : END
+
+                                            // Debug.WriteLine("d_layer {0}", layerthickness_m[row, col, layer] );
+                                            //boolsplit = true;
+                                        }
+                                    }
+                                    //if (layer != 0)
+                                    else
+                                    {
+                                        if (layerthickness_m[row, col, layer] < lower_end_combine_check) // Lower end, combine
+                                        {
+                                            if (layer_difference(row, col, layer, layer - 1) > layer_difference(row, col, layer, layer + 1))
+                                            {
+                                                //total_soil_mass(row, col); :
+                                                double tot_mass = 0;
+                                                for (int lay = 0; lay < max_soil_layers; lay++)
+                                                {
+                                                    for (int ii = 0; ii < n_texture_classes; ii++)
+                                                    {
+                                                        tot_mass += texture_kg[row, col, lay, ii];
+                                                    }
+                                                    tot_mass += old_SOM_kg[row, col, lay];
+                                                    tot_mass += young_SOM_kg[row, col, lay];
+                                                }
+
+                                                if (Math.Abs(old_soil_mass - tot_mass) > 0.00001)
+                                                {
+                                                    Debug.WriteLine("err_uscl10");
+                                                }
+                                                combine_layers(row, col, layer, layer + 1);
+                                                update_all_soil_thicknesses(row, col);
+                                                //boolcombine = true;
+                                                //total_soil_mass(row, col); : START
+                                                tot_mass = 0;
+                                                for (int lay = 0; lay < max_soil_layers; lay++)
+                                                {
+                                                    for (int ii = 0; ii < n_texture_classes; ii++)
+                                                    {
+                                                        tot_mass += texture_kg[row, col, lay, ii];
+                                                    }
+                                                    tot_mass += old_SOM_kg[row, col, lay];
+                                                    tot_mass += young_SOM_kg[row, col, lay];
+                                                } //total_soil_mass(row, col); : END
+
+                                                if (Math.Round(old_soil_mass, 6) != Math.Round(tot_mass, 6))
+                                                {
+                                                    Debug.WriteLine("err_uscl11");
+                                                }
+                                            }
+                                            else
+                                            {
+                                                //total_soil_mass(row, col); : START
+                                                double tot_mass = 0;
+                                                for (int lay = 0; lay < max_soil_layers; lay++)
+                                                {
+                                                    for (int ii = 0; ii < n_texture_classes; ii++)
+                                                    {
+                                                        tot_mass += texture_kg[row, col, lay, ii];
+                                                    }
+                                                    tot_mass += old_SOM_kg[row, col, lay];
+                                                    tot_mass += young_SOM_kg[row, col, lay];
+                                                } //total_soil_mass(row, col); : END
+
+                                                if (Math.Abs(old_soil_mass - tot_mass) > 0.00001)
+                                                {
+                                                    Debug.WriteLine("err_uscl12");
+                                                }
+                                                combine_layers(row, col, layer - 1, layer);
+                                                layer--;  //because we combined with the previous one, the current one has been replaced with one that has not yet been considered
+
+
+                                                //update_all_soil_thicknesses(row, col); : START
+                                                for (int layer_update = 0; layer_update < max_soil_layers; layer_update++)
+                                                {
+                                                    //thickness_calc(int rowwer, int coller, int lay1)
+                                                    layerthickness_m[row, col, layer_update] = thickness_calc(row, col, layer_update);
+                                                    layerthickness_m[row, col, layer_update] = thickness_calc(row, col, layer_update);
+                                                } //update_all_soil_thicknesses(row, col); : END
+
+                                                //boolcombine = true;
+                                                // if (Math.Round(old_soil_mass, 6) != Math.Round(total_soil_mass(row, col), 6)) { Debugger.Break(); }
+
+                                                //total_soil_mass(row, col); : START
+                                                tot_mass = 0;
+                                                for (int lay = 0; lay < max_soil_layers; lay++)
+                                                {
+                                                    for (int ii = 0; ii < n_texture_classes; ii++)
+                                                    {
+                                                        tot_mass += texture_kg[row, col, lay, ii];
+                                                    }
+                                                    tot_mass += old_SOM_kg[row, col, lay];
+                                                    tot_mass += young_SOM_kg[row, col, lay];
+                                                } //total_soil_mass(row, col); : END
+
+                                                if (Math.Abs(old_soil_mass - tot_mass) > 0.00001)
+                                                {
+                                                    Debug.WriteLine("err_uscl13");
+                                                }
+
+                                            }
+                                        }
+                                        if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00001)
+                                        {
+                                            Debug.WriteLine("err_uscl14");
+                                        }
+                                        if (NA_in_soil(row, col))
+                                        {
+                                            Debug.WriteLine("err_uscl15");
+                                        }
+
+                                        while (layerthickness_m[row, col, layer] > higher_end_split_check) //Higher end, split
+                                        { //split 
+                                          // Debug.WriteLine("splitting after combining 1");
+                                            split_layer(row, col, layer, depth_m);
+                                            update_all_soil_thicknesses(row, col);
+                                            //boolsplit = true;
+                                            // if (Math.Abs(old_soil_mass-total_soil_mass(row, col))>0.00000001) { Debugger.Break(); }
+                                        }
+                                        if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00001)
+                                        {
+                                            Debug.WriteLine("err_uscl16");
+                                        }
+
+                                        //Debug.WriteLine("depth is now " + depth + " and number of layers is  " + numberoflayers);
+                                    }
+                                    if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00001)
+                                    {
+                                        Debug.WriteLine("err_uscl17");
+                                    }
+
+                                }
+                            } // end layer
+                              //Debug.WriteLine("suscl1" + row + ", " + col + ", " + t);
+                            if (NA_in_soil(row, col))
+                            {
+                                Debug.WriteLine("err_uscl18");
+                            }
+
+                            for (int layupdate = 0; layupdate < max_soil_layers; layupdate++)
+                            {
+                                layerthickness_m[row, col, layupdate] = thickness_calc(row, col, layupdate);
+                            }
+                            //Debug.WriteLine("Soil after splitting");
+                            //if (row == 0 & col == 0) { displaysoil(row, col); }
+
+                            // Debug.WriteLine("suscl4");
+                            //displaysoil(0, 0);
+                            if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00001)
+                            {
+                                Debug.WriteLine("err_uscl19");
+                            }
+                            new_soil_mass = total_soil_mass(row, col);
+                            // if (numberoflayers > max_soil_layers)
+                            if (Math.Abs(old_soil_mass - new_soil_mass) > 0.00000001)
+                            {
+                                // this should never happen, because the data of the lowest layers have then been lost.
+                                // Debug.WriteLine("{0}", t);
+                                Debug.WriteLine(" Warning - loss of soil data ");
+                                //displaysoil(row, col);
+                                Debug.WriteLine("err_uscl20");
+
+                            }
+                            if (timeseries.timeseries_number_soil_thicker_checkbox.Checked && total_average_soilthickness_m_check < depth_m)
+                            {
+                                number_soil_coarser_than_array[row]++; //race condition 2
+                            }
+                            if (timeseries.total_average_soilthickness_checkbox.Checked)
+                            {
+                                total_average_soilthickness_m_array[row] += depth_m; //race condition 1
+                            }
+                            if (timeseries.timeseries_soil_depth_checkbox.Checked && local_soil_depth_m_row_check == row && local_soil_depth_m_col_check == col)
+                            {
+                                local_soil_depth_m_array[row] = depth_m; //race condition 4
+                            }
+
+                            //Debug.WriteLine("suscl0" + row + ", " + col + ", " + t + " " + total_soil_mass(row, col));
+                            // update dtm and soil thickness map //MMS
+                            update_all_soil_thicknesses(row, col);
+                            old_thickness = soildepth_m[row, col];
+                            new_thickness = total_soil_thickness(row, col);
+                            dtm[row, col] += new_thickness - old_thickness;
+                            soildepth_m[row, col] = new_thickness;
+                            dtmchange[row, col] += new_thickness - old_thickness;
+                            dz_soil[row, col] += new_thickness - old_thickness;
+                        } // end dtm!=-9999
+                    } // end col
+                }); // end row PARALLEL
+                //ACCUMULATE RESULTS after Parallel loops
+                for (int row = 0; row < nr; row++)
+                {
+                    total_average_soilthickness_m += total_average_soilthickness_m_array[row];
+                    number_soil_thicker_than += number_soil_thicker_than_array[row];
+                    number_soil_coarser_than += number_soil_coarser_than_array[row];
+                    local_soil_depth_m = local_soil_depth_m_array[row]; //last element? not very useful
+                    local_soil_mass_kg += local_soil_mass_kg_array[row]; //not even used?
+                }
+                if (timeseries.total_average_soilthickness_checkbox.Checked) { total_average_soilthickness_m /= number_of_data_cells; }
+            }
+            catch
+            {
+                Debug.WriteLine("err_uscl21");
+            }
+            double mass_after = total_catchment_mass();
+
+        } // aangepast voor constante diktes
+
+        void soil_update_split_and_combine_layers_old()
+        {
+            double dz_standard = 0.1;
+            double tolerance = 0.55; // fraction of standard thickness
+                                     //where at the end of soil development, splitting and combining of soil layers is performed.
+
+            //per layer: if too thin: combine with one of the two neighbours (the closest one in properties). 
+            // too thick: split
+            // if total too much - combine the most similar two layers although the product conforms to most restrictive rule about thicknesses
+            //maat voor verschil is som (absolute differences in de vijf text classes and two organic matter classes)
+
+            // 0-50 cm    min 2.5   insteek 5    maximum 10 cm       n=10    bovenste laag geen minimum (sediment HOEFT niet meteen weggemiddeld te worden - pas als nodig)
+            // 50-200 cm  min 10    insteek 15    maximum 50 cm      n=8
+            // daarna     min 40    insteek 50  geen max            n=4
+
+            //for combining : only when matrix size exceeded, then those two layers that are most equal are combined
+            //do not combine two layers that together are too thick for their position in the profile. If needed, make lowest layer thicker. Therefore, approach from above
+
+            //MISSING: HOW DO WE GO FROM MAX TO LESS LAYERS? ART
+            // Debug.WriteLine("suscl1 ");
+            if (NA_in_map(dtm) > 0 | NA_in_map(soildepth_m) > 0)
+            {
+                Debug.WriteLine("err_uscl7");
+            }
+
+            //displaysoil(0,0);
+            double mass_before = total_catchment_mass();
             total_average_soilthickness_m = 0;
             number_soil_thicker_than = 0;
             number_soil_coarser_than = 0;
@@ -12176,13 +12516,13 @@ namespace LORICA4
 
                 //displaysoil(0, 0);
                 depth_m = 0;
-                for (int row  = 0; row < nr; row++)
+                for (int row = 0; row < nr; row++)
                 {
                     for (int col = 0; col < nc; col++)
                     {
                         if (dtm[row, col] != -9999)
                         {
-                            remove_empty_layers(row, col);
+                            remove_empty_layers(row, col); //why twice?
                             remove_empty_layers(row, col);
 
                             update_all_soil_thicknesses(row, col);
@@ -12357,7 +12697,7 @@ namespace LORICA4
             }
             double mass_after = total_catchment_mass();
 
-        } // aangepast voor constante diktes
+        }
 
 
         private void find_negative_texture()
@@ -12477,7 +12817,7 @@ namespace LORICA4
         double bulk_density_calc(double coarse_mass, double sand_mass, double silt_mass, double clay_mass, double fine_clay_mass, double OMo_mass, double OMy_mass, double depth)
         {
             if (depth == 0) { depth = 0.001; } //MvdM value to prevent no data when calculating BD for layers that were previously empty, or for sediments that are deposited. A value of 1 results in an infinite value
-            double bd = 2700, combined_frac, m_finesoil;
+            double bd, combined_frac, m_finesoil;
             m_finesoil = sand_mass + silt_mass + clay_mass + fine_clay_mass;
             if (m_finesoil > 0)
             {
@@ -12492,7 +12832,7 @@ namespace LORICA4
             {
                 bd = 2700;
             }
-            if (double.IsNaN(bd) | double.IsInfinity(bd)) { Debugger.Break(); }
+            //if (double.IsNaN(bd) | double.IsInfinity(bd)) { Debugger.Break(); } //removed this to see performance gain
             return bd;
             // return 1500;
         }
@@ -12741,7 +13081,7 @@ namespace LORICA4
                 if (diagnostic_mode == 1) { Debug.WriteLine("total soil mass = " + total_soil_mass(rowwer, coller)); }
                 double mass_lowest_layer = total_layer_mass(rowwer, coller, max_soil_layers - 1);
                 if (diagnostic_mode == 1){ Debug.WriteLine("total mass last layer = {0}", mass_lowest_layer);}
-                if ((total_layer_mass(rowwer, coller, max_soil_layers - 1) > 0))  // so, if we are using the lowest possible layer already (even if it's not this layer):
+                if (mass_lowest_layer > 0)  // so, if we are using the lowest possible layer already (even if it's not this layer):
                 {
                     //this breaks now because the lowest layer can be empty due to its encountering a hard layer
                     //if they are already all in use, then the split will create one too many. We start by looking for the two most similar layers that would not create a too-thick product (do we need to do that last part?)
@@ -12749,9 +13089,12 @@ namespace LORICA4
                     for (laynum = 0; laynum < max_soil_layers - 1; laynum++)
                     {
                         current_difference = layer_difference(rowwer, coller, laynum, laynum + 1);
+                        /*
                         maximum_allowed_thickness = 9999;   // 9999 is a sentinel value and means infinitely thick 
                         if (currentdepth < 0.5) { maximum_allowed_thickness = 0.1; }
                         else { if (currentdepth < 2.5) { maximum_allowed_thickness = 0.5; } }
+                        */ //these are NOT BEING USED currently
+
                         maximum_allowed_thickness = dz_standard * (1 + tolerance);
                         if (layerthickness_m[rowwer, coller, laynum] + layerthickness_m[rowwer, coller, laynum + 1] < maximum_allowed_thickness)  //if it potentially is possible to combine them 
                         {
@@ -14299,7 +14642,7 @@ namespace LORICA4
                 {
                     //if (row == 40 & col == 31) { displaysoil(40, 31); Debugger.Break(); }
 
-                    row = row_index[runner]; col = col_index[runner];
+                    int row = row_index[runner]; int col = col_index[runner];
 
                     // local mass balance
                     local_mass_balance[row, col, 4] = OFy_m[row, col, 0];
@@ -14914,13 +15257,14 @@ namespace LORICA4
             all_grids = (nr) * (nc);
             memberdepressionnotconsidered = 0;
             int runner = 0;
+            
             if (NA_anywhere_in_soil() == true) { Debug.WriteLine("NA found before sorted row col loop in water erosed"); }
             for (runner = number_of_data_cells - 1; runner >= 0; runner--)
             {     // the index is sorted from low to high values, but flow goes from high to low
                 if (index[runner] != -9999)
                 {
 
-                    row = row_index[runner]; col = col_index[runner];
+                    int row = row_index[runner]; int col = col_index[runner];
                     if (t == 750000) { Debug.WriteLine(runner + " " + row + "  " + col + " nr " + nr + " nc " + nc + " nr*nc " + nr * nc + " data cells " + number_of_data_cells); }
                     //if (t == 262 && row == 203 && col == 27) { diagnostic_mode = 1; }
                     if (t == 750000) { diagnostic_mode = 1; }
@@ -14966,9 +15310,9 @@ namespace LORICA4
                                                 (drainingoutlet_row[depression[row, col], 4] == row && drainingoutlet_col[depression[row, col], 4] == col))
                     { //for all cells outside a depression and for outlets, we use the stream power equations based on a multiple flow (D8) template
                         //if (row == 24 && col == 81) { Debug.WriteLine(" looking around cell " + row + " " + col); minimaps(row, col); }
-                        for (i = (-1); i <= 1; i++)
+                        for (sbyte i = (-1); i <= 1; i++) //sbyte = (-128 to 127)
                         {
-                            for (j = (-1); j <= 1; j++)
+                            for (sbyte j = (-1); j <= 1; j++)
                             {
                                 dh = 0; dhtemp = -99999.99; d_x = dx;
                                 if (((row + i) >= 0) && ((row + i) < nr) && ((col + j) >= 0) && ((col + j) < nc) && !((i == 0) && (j == 0)))  //to stay within the grid and avoid the row col cell itself
@@ -15033,9 +15377,9 @@ namespace LORICA4
 
                         // we are now prepared to actually calculate erosion and deposition: we can calculate how much water and sediment is redistributed using slope_sum
                         if (NA_in_soil(row, col) == true) { Debug.WriteLine("NA found before eroding " + row + " " + col); }
-                        for (i = (-1); i <= 1; i++)
+                        for (sbyte i = (-1); i <= 1; i++)
                         {
-                            for (j = (-1); j <= 1; j++)
+                            for (sbyte j = (-1); j <= 1; j++)
                             {
                                 dh = 0; fraction = 0; transport_capacity_kg = 0;
                                 sediment_transported = 0; detachment_rate = 0;
@@ -15243,10 +15587,13 @@ namespace LORICA4
                                                             if (Double.IsNaN(clayerodedfraction_1)) { clayerodedfraction_1 = 0; }
                                                             //if (row == 62 && col == 78) { Debug.WriteLine(clayerodedfraction_0 + "  " + clayerodedfraction_1); displaysoil(row, col); }
                                                             
-                                                            old_SOM_in_transport_kg[row, col] += old_SOM_kg[row, col, 0] * clayerodedfraction_0 + old_SOM_kg[row, col, 1] * clayerodedfraction_1;
-                                                            young_SOM_in_transport_kg[row, col] += young_SOM_kg[row, col, 0] * clayerodedfraction_0 + young_SOM_kg[row, col, 1] * clayerodedfraction_1;
-                                                            total_mass_eroded[5] += old_SOM_kg[row, col, 0] * clayerodedfraction_0 + old_SOM_kg[row, col, 1] * clayerodedfraction_1;
-                                                            total_mass_eroded[6] += young_SOM_kg[row, col, 0] * clayerodedfraction_0 + young_SOM_kg[row, col, 1] * clayerodedfraction_1;
+                                                            double old_SOM_kg_calc = old_SOM_kg[row, col, 0] * clayerodedfraction_0 + old_SOM_kg[row, col, 1] * clayerodedfraction_1;
+                                                            double young_SOM_kg_calc = young_SOM_kg[row, col, 0] * clayerodedfraction_0 + young_SOM_kg[row, col, 1] * clayerodedfraction_1;
+
+                                                            old_SOM_in_transport_kg[row, col] += old_SOM_kg_calc;
+                                                            young_SOM_in_transport_kg[row, col] += young_SOM_kg_calc;
+                                                            total_mass_eroded[5] += old_SOM_kg_calc;
+                                                            total_mass_eroded[6] += young_SOM_kg_calc;
                                                             old_SOM_kg[row, col, 0] *= 1 - clayerodedfraction_0;
                                                             young_SOM_kg[row, col, 0] *= 1 - clayerodedfraction_0;
                                                             old_SOM_kg[row, col, 1] *= 1 - clayerodedfraction_1;
@@ -15337,9 +15684,9 @@ namespace LORICA4
             total_average_altitude = 0; total_altitude = 0;
             total_rain = 0; total_evap = 0; total_infil = 0; total_outflow = 0;
             wet_cells = 0; eroded_cells = 0; deposited_cells = 0;
-            for (row = 0; row < nr; row++)
+            for (int row = 0; row < nr; row++)
             {
-                for (col = 0; col < nc; col++)
+                for (int col = 0; col < nc; col++)
                 {
                     if (dtm[row, col] != -9999)
                     {
@@ -15348,7 +15695,7 @@ namespace LORICA4
                             //erosion and deposition affect only the top two layers of soil. All others: unaffected.
                             //So, we calculate the difference between the original and final thicknesses of these two layers to calculate dz_ero_m and dz_sed_m. 
                             //We already knew how much mass was involved in ero and sed, but we need the volumes to update the dtm.
-                            for (i = 0; i < 2; i++)
+                            for (int i = 0; i < 2; i++)
                             {
                                 double pastlayer = layerthickness_m[row, col, i];
                                 layerthickness_m[row, col, i] = thickness_calc(row, col, i);
@@ -15428,13 +15775,13 @@ namespace LORICA4
                     Debug.WriteLine(" on m-basis: sedimented into " + depressions_delta + " of " + totaldepressions + " depressions, " + sediment_delta + "  sediment used");
                 } */
             }
-
+            /*
             Task.Factory.StartNew(() =>
             {
                 this.InfoStatusPanel.Text = "calc movement has been finished";
                 this.out_sed_statuspanel.Text = string.Format("sed_exp {0:F0} * 1000 m3", total_sed_export * dx * dx / 1000);
             }, CancellationToken.None, TaskCreationOptions.None, guiThread);
-
+            */
             //save timeseries_outputs
             if (timeseries.timeseries_cell_waterflow_check.Checked)
             {
@@ -15545,18 +15892,19 @@ namespace LORICA4
         {
             // from steepest local slope, contributing area and stability parameters
             // start calculation number of contributing draining cells by multiple flow algorithm
+            /*
             Task.Factory.StartNew(() =>
             {
                 this.InfoStatusPanel.Text = "critical rainfall calculation";
             }, CancellationToken.None, TaskCreationOptions.None, guiThread);
-            
+            */
             double beta;
             //set all start q values effective precipitation at time t
             nb_ok = 0; nb_check = 0; all_grids = 0;
             maximum_allowed_deposition = -9999; dh_tol = 0.00025;
-            for (row = 0; row < nr; row++)
+            for (int row = 0; row < nr; row++)
             {
-                for (col = 0; col < nc; col++)
+                for (int col = 0; col < nc; col++)
                 {
                     camf[row, col] = 1;    // contributing area multiple flow matrix = 1
                     stslope[row, col] = 0;
