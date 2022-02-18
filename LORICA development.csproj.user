@@ -17,4 +17,24 @@
   <PropertyGroup>
     <EnableSecurityDebugging>false</EnableSecurityDebugging>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Update="About_LORICA.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Landuse_determinator.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="LORICA development.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Output_interfaces\Output_profile.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Output_interfaces\Output_timeseries.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Soil_specifier.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
 </Project>
