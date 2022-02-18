@@ -7057,7 +7057,7 @@ namespace LORICA4
                 sw.Close();
             }
         }
-
+        
         private void menuItemConfigFileOpen_Click(object sender, System.EventArgs e)
         {
             //opens a runfile
@@ -7375,14 +7375,14 @@ namespace LORICA4
                     catch { read_error = 1; }
                     try { evap_constant_value_box.Text = xreader.ReadElementString("evap_constant_value"); }
                     catch { read_error = 1; }
-                    /*
+                    
                     try { checkbox_layer_thickness.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("checkbox_layer_thickness")); }
                     catch { read_error = 1; }
                     try { textbox_max_soil_layers.Text = xreader.ReadElementString("max_soil_layers"); }
                     catch { read_error = 1; }
                     try { textbox_layer_thickness.Text = xreader.ReadElementString("layer_thickness"); }
                     catch { read_error = 1; }
-                    */
+                    
                     try { fill_sinks_before_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("check_fill_sinks_before")); }
                     catch { read_error = 1; Debug.WriteLine("xml9"); }
                     try { fill_sinks_during_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("check_fill_sinks_during")); }
@@ -7616,7 +7616,8 @@ namespace LORICA4
                 }
             }
         }
-
+        
+        
         private void menuItemConfigFileSave_Click(object sender, System.EventArgs e)
         {
             XmlTextWriter xwriter;
