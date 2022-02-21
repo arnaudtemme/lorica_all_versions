@@ -4537,8 +4537,8 @@ namespace LORICA4
             // 
             // tabControl1
             // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.Processes);
             this.tabControl1.Controls.Add(this.tabPage1);
@@ -7156,6 +7156,25 @@ namespace LORICA4
                     try { xreader.ReadEndElement(); }
                     catch { read_error = 1; }
 
+                    try { xreader.ReadStartElement("Blocks"); }
+                    catch { read_error = 1; }
+                    try { blocks_active_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("blocks_active")); }
+                    catch { read_error = 1; }
+                    try { hardlayerthickness_textbox.Text = xreader.ReadElementString("hardlayerthickness"); }
+                    catch { read_error = 1; }
+                    try { hardlayerelevation_textbox.Text = xreader.ReadElementString("hardlayerelevation"); }
+                    catch { read_error = 1; }
+                    try { hardlayerdensity_textbox.Text = xreader.ReadElementString("hardlayerdensity"); }
+                    catch { read_error = 1; }
+                    try { hardlayerweath_textbox.Text = xreader.ReadElementString("hardlayerweath"); }
+                    catch { read_error = 1; }
+                    try { blockweath_textbox.Text = xreader.ReadElementString("blockweath"); }
+                    catch { read_error = 1; }
+                    try { blocksize_textbox.Text = xreader.ReadElementString("blockminsize"); }
+                    catch { read_error = 1; }
+                    try { xreader.ReadEndElement(); }
+                    catch { read_error = 1; }
+
                     try { xreader.ReadEndElement(); }
                     catch { read_error = 1; }
 
@@ -7266,6 +7285,17 @@ namespace LORICA4
                     try { xreader.ReadEndElement(); }
                     catch { read_error = 1; }
 
+                    try { xreader.ReadEndElement(); }
+                    catch { read_error = 1; }
+
+                    try { xreader.ReadStartElement("Geochronological tracers"); }
+                    catch { read_error = 1; }
+                    try { OSL_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("geochron_active")); }
+                    catch { read_error = 1; }
+                    try { ngrains_textbox.Text = xreader.ReadElementString("ngrains"); }
+                    catch { read_error = 1; }
+                    try { bleachingdepth_textbox.Text = xreader.ReadElementString("bleachingdepth"); }
+                    catch { read_error = 1; }
                     try { xreader.ReadEndElement(); }
                     catch { read_error = 1; }
 
@@ -7679,6 +7709,17 @@ namespace LORICA4
                 xwriter.WriteElementString("tf_age", tf_age.Text);
                 xwriter.WriteElementString("tf_freq", tf_freq.Text);
                 xwriter.WriteEndElement();
+
+                xwriter.WriteStartElement("Blocks");
+                xwriter.WriteElementString("blocks_active", XmlConvert.ToString(treefall_checkbox.Checked));
+                xwriter.WriteElementString("hardlayerthickness", hardlayerthickness_textbox.Text);
+                xwriter.WriteElementString("hardlayerelevation", hardlayerelevation_textbox.Text);
+                xwriter.WriteElementString("hardlayerdensity", hardlayerdensity_textbox.Text);
+                xwriter.WriteElementString("hardlayerweath", hardlayerweath_textbox.Text);
+                xwriter.WriteElementString("blockweath", blockweath_textbox.Text);
+                xwriter.WriteElementString("blockminsize", blocksize_textbox.Text);
+                xwriter.WriteEndElement();
+
                 xwriter.WriteEndElement();
 
                 xwriter.WriteStartElement("Soil_forming_processes");
@@ -7737,6 +7778,12 @@ namespace LORICA4
                 xwriter.WriteElementString("carbon_o_twi_decay", carbon_o_twi_decay_textbox.Text);
                 xwriter.WriteEndElement();
 
+                xwriter.WriteEndElement();
+
+                xwriter.WriteStartElement("Geochronological tracers");
+                xwriter.WriteElementString("geochron_active", XmlConvert.ToString(OSL_checkbox.Checked));
+                xwriter.WriteElementString("carbon_o_depth_decay", carbon_o_depth_decay_textbox.Text);
+                xwriter.WriteElementString("carbon_o_twi_decay", carbon_o_twi_decay_textbox.Text)
                 xwriter.WriteEndElement();
 
                 xwriter.WriteStartElement("Inputs");
