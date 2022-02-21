@@ -1324,6 +1324,9 @@
   <metadata name="mainMenu1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>109, 17</value>
   </metadata>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
   <data name="fill_sinks_before_checkbox.ToolTip" xml:space="preserve">
     <value>Removes sinks from the input DEM.
 
@@ -4906,6 +4909,9 @@ hc = (ln(k2/k1)) / (k2-k1)</value>
         9b//09cY9lF7+HJn53f/H/3drPNUYzB6AAAAAElFTkSuQmCC
 </value>
   </data>
+  <metadata name="rockweath_method.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
   <metadata name="rockweath_method.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>

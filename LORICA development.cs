@@ -650,6 +650,8 @@ namespace LORICA4
         private Label uxNumberCoresLabel;
         private Label uxNumberLogicalProcessorsLabel;
         private Label uxThreadLabel;
+        private Button profiles_button;
+        private Button timeseries_button;
         double[] original_ratios;
 
         private void rain_input_filename_textbox_TextChanged_1(object sender, EventArgs e)
@@ -748,6 +750,16 @@ namespace LORICA4
                 total_sed_export_up, total_sed_export_mid, total_sed_export_low,
                 total_sed_prod_up, total_sed_prod_mid, total_sed_prod_low,
                 total_sed_dep_up, total_sed_dep_mid, total_sed_dep_low;  // counters for logging and reporting through time
+
+        private void timeseries_button_Click_1(object sender, EventArgs e)
+        {
+            timeseries.Visible = true;
+        }
+
+        private void profiles_button_Click_1(object sender, EventArgs e)
+        {
+            profile.Visible = true;
+        }
 
         private void checkBox1_CheckedChanged_3(object sender, EventArgs e)
         {
@@ -1481,6 +1493,8 @@ namespace LORICA4
             this.dailyD = new System.Windows.Forms.TextBox();
             this.dailyP = new System.Windows.Forms.TextBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.timeseries_button = new System.Windows.Forms.Button();
+            this.profiles_button = new System.Windows.Forms.Button();
             label6 = new System.Windows.Forms.Label();
             Landsliding = new System.Windows.Forms.TabPage();
             label41 = new System.Windows.Forms.Label();
@@ -2597,6 +2611,8 @@ namespace LORICA4
             // 
             // Output
             // 
+            this.Output.Controls.Add(this.profiles_button);
+            this.Output.Controls.Add(this.timeseries_button);
             this.Output.Controls.Add(this.groupBox6);
             this.Output.Location = new System.Drawing.Point(4, 22);
             this.Output.Name = "Output";
@@ -5581,6 +5597,26 @@ namespace LORICA4
             this.dailyP.Text = "D:\\PhD\\projects\\1g_basic LORICA development\\daily water\\Grunow\\Pday_grunow.csv";
             this.dailyP.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
+            // timeseries_button
+            // 
+            this.timeseries_button.Location = new System.Drawing.Point(322, 35);
+            this.timeseries_button.Name = "timeseries_button";
+            this.timeseries_button.Size = new System.Drawing.Size(149, 25);
+            this.timeseries_button.TabIndex = 223;
+            this.timeseries_button.Text = "timeseries outputs";
+            this.timeseries_button.UseVisualStyleBackColor = true;
+            this.timeseries_button.Click += new System.EventHandler(this.timeseries_button_Click_1);
+            // 
+            // profiles_button
+            // 
+            this.profiles_button.Location = new System.Drawing.Point(322, 69);
+            this.profiles_button.Name = "profiles_button";
+            this.profiles_button.Size = new System.Drawing.Size(149, 25);
+            this.profiles_button.TabIndex = 224;
+            this.profiles_button.Text = "profile outputs";
+            this.profiles_button.UseVisualStyleBackColor = true;
+            this.profiles_button.Click += new System.EventHandler(this.profiles_button_Click_1);
+            // 
             // Mother_form
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -7782,8 +7818,8 @@ namespace LORICA4
 
                 xwriter.WriteStartElement("Geochronological tracers");
                 xwriter.WriteElementString("geochron_active", XmlConvert.ToString(OSL_checkbox.Checked));
-                xwriter.WriteElementString("carbon_o_depth_decay", carbon_o_depth_decay_textbox.Text);
-                xwriter.WriteElementString("carbon_o_twi_decay", carbon_o_twi_decay_textbox.Text)
+                xwriter.WriteElementString("ngrains", ngrains_textbox.Text);
+                xwriter.WriteElementString("bleachingdepth", bleachingdepth_textbox.Text);
                 xwriter.WriteEndElement();
 
                 xwriter.WriteStartElement("Inputs");
