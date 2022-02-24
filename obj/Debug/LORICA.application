@@ -4,7 +4,11 @@
   <description asmv2:publisher="CAESAR" asmv2:product="CAESAR 5.9a" asmv2:supportUrl="http://www.coulthard.org.uk/" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <deployment install="true" mapFileExtensions="true" />
   <compatibleFrameworks xmlns="urn:schemas-microsoft-com:clickonce.v2">
+<<<<<<< HEAD
     <framework targetVersion="4.7.2" profile="Full" supportedRuntime="4.0.30319" />
+=======
+    <framework targetVersion="4.6" profile="Full" supportedRuntime="4.0.30319" />
+>>>>>>> arnaud_interface
   </compatibleFrameworks>
   <dependency>
     <dependentAssembly dependencyType="install" codebase="LORICA.exe.manifest" size="4584">
@@ -14,7 +18,11 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+<<<<<<< HEAD
         <dsig:DigestValue>yNsyV8y0cc48DH3rXDoTY0Sd9wUGrQPQPcHhlIh/NPk=</dsig:DigestValue>
+=======
+        <dsig:DigestValue>f3eTqM98Ju9lpxz0+fnLKHGhKUy/cEUjLmXD5pzlTI4=</dsig:DigestValue>
+>>>>>>> arnaud_interface
       </hash>
     </dependentAssembly>
   </dependency>

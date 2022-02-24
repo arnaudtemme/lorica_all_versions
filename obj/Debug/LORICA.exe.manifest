@@ -43,14 +43,23 @@
     </dependentAssembly>
   </dependency>
   <dependency>
+<<<<<<< HEAD
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="LORICA.exe" size="2597376">
       <assemblyIdentity name="LORICA" version="4.7.2.0" language="neutral" processorArchitecture="msil" />
+=======
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="LORICA.exe" size="2599936">
+      <assemblyIdentity name="LORICA" version="2.0.0.0" language="neutral" processorArchitecture="msil" />
+>>>>>>> arnaud_interface
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+<<<<<<< HEAD
         <dsig:DigestValue>MDApakKxeOF53rYXZLUS6QTja1YHfYTup452hXfbYf4=</dsig:DigestValue>
+=======
+        <dsig:DigestValue>gsDqdjIKuzrQjSsq6GK7lKWAQ9odaP8NiHtx6nATJ7A=</dsig:DigestValue>
+>>>>>>> arnaud_interface
       </hash>
     </dependentAssembly>
   </dependency>
@@ -62,17 +71,29 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+<<<<<<< HEAD
         <dsig:DigestValue>OVh0jOQKKC0w/tSwb4yPYsR29IITTjTZJ+y3tIsM2os=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <file name="LORICA.exe.config" size="163">
+=======
+        <dsig:DigestValue>+gse8aLzjUDF+WlJsZg+mLSXlFlhEthBG389IxEauNE=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <file name="LORICA.exe.config" size="161">
+>>>>>>> arnaud_interface
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+<<<<<<< HEAD
       <dsig:DigestValue>aGKyVzYln3v9NE5D7qEKcDiFvjge7ip0XOsSkWsBoVg=</dsig:DigestValue>
+=======
+      <dsig:DigestValue>1SR2HBfPDeqUEJ8/zazS7LZ1UBFf+eAwf3jAUFVBnv4=</dsig:DigestValue>
+>>>>>>> arnaud_interface
     </hash>
   </file>
   <file name="tex_tentdoek.ico" size="363680">
