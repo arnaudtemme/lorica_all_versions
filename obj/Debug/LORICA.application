@@ -4,17 +4,17 @@
   <description asmv2:publisher="CAESAR" asmv2:product="CAESAR 5.9a" asmv2:supportUrl="http://www.coulthard.org.uk/" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <deployment install="true" mapFileExtensions="true" />
   <compatibleFrameworks xmlns="urn:schemas-microsoft-com:clickonce.v2">
-    <framework targetVersion="4.0" profile="Full" supportedRuntime="4.0.30319" />
+    <framework targetVersion="4.7.2" profile="Full" supportedRuntime="4.0.30319" />
   </compatibleFrameworks>
   <dependency>
-    <dependentAssembly dependencyType="install" codebase="LORICA.exe.manifest" size="4136">
+    <dependentAssembly dependencyType="install" codebase="LORICA.exe.manifest" size="4584">
       <assemblyIdentity name="LORICA.exe" version="4.0.0.1" publicKeyToken="0000000000000000" language="en" processorArchitecture="msil" type="win32" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
-        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>Sd5PEjNtAg6umBx64TnA+H+VFWk=</dsig:DigestValue>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>yNsyV8y0cc48DH3rXDoTY0Sd9wUGrQPQPcHhlIh/NPk=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

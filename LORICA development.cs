@@ -4537,8 +4537,8 @@ namespace LORICA4
             // 
             // tabControl1
             // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.Processes);
             this.tabControl1.Controls.Add(this.tabPage1);
@@ -19612,7 +19612,7 @@ Example: rainfall.asc can look like:
                 }
                 //WVG initialise ntr, nr of timesteps, can be changed to nr of output timesteps
                 numfile = 1;
-                this.ProcessStatusPanel.Text = "";
+                //this.ProcessStatusPanel.Text = "";
                 if (Water_ero_checkbox.Checked)
                 {
                     water_ero_active = true;
