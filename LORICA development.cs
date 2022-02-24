@@ -20227,7 +20227,7 @@ Example: rainfall.asc can look like:
                         }
 
                         catch { Debug.WriteLine(" failed to initialise dtm "); }
-
+                         
                         if (input_data_error == false)
                         {
                             try { initialize_once_testing(); }  // Reset Memory values instead of Allocating new memory
