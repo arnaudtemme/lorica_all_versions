@@ -20482,6 +20482,14 @@ Example: rainfall.asc can look like:
                     // Debug.WriteLine("initialising non-general inputs");
                     try { initialise_once(); } // reading input files
                     catch { MessageBox.Show("there was a problem reading input files "); input_data_error = true; }
+
+                    try
+                    {
+                        filename = dtmfilename;             //for directory input
+                        dtm_file(filename);                 // from dtm_file(), almost all memory for the model is claimed
+                    }
+                    catch { Debug.WriteLine(" failed to initialise dtm "); }
+
                     for (run_number = 0; run_number < maxruns; run_number++) //Maxruns Loop()
                     {
 
@@ -20501,12 +20509,7 @@ Example: rainfall.asc can look like:
                             //CALIB_USER: multiply parameter values with current ratio
                             //Note the correspondence between the formulas. Change only 1 value for additional parameters!
 
-                            try
-                            {
-                                filename = dtmfilename;             //for directory input
-                                dtm_file(filename);                 // from dtm_file(), almost all memory for the model is claimed
-                            }
-                            catch { Debug.WriteLine(" failed to initialise dtm "); }
+                           
 
                             if (Calibration_button.Checked == true)
                             {

@@ -4,7 +4,7 @@
   <description asmv2:publisher="CAESAR" asmv2:product="CAESAR 5.9a" asmv2:supportUrl="http://www.coulthard.org.uk/" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <deployment install="true" mapFileExtensions="true" />
   <compatibleFrameworks xmlns="urn:schemas-microsoft-com:clickonce.v2">
-    <framework targetVersion="4.7.2" profile="Full" supportedRuntime="4.0.30319" />
+    <framework targetVersion="4.6" profile="Full" supportedRuntime="4.0.30319" />
   </compatibleFrameworks>
   <dependency>
     <dependentAssembly dependencyType="install" codebase="LORICA.exe.manifest" size="4584">
@@ -14,7 +14,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>QaESskm2KLOr9sxwH6a/mLJ9iJZfAA9wrVUOeuOA5SY=</dsig:DigestValue>
+        <dsig:DigestValue>92ZMjU7rcShikDJesR3pCVFHgzt/KFgI43gtvxJOUy0=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

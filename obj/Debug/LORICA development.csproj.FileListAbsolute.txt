@@ -7,7 +7,6 @@ C:\Users\19132\source\repos\lorica_all_versions\bin\Debug\LORICA.pdb
 C:\Users\19132\source\repos\lorica_all_versions\bin\Debug\MathNet.Numerics.dll
 C:\Users\19132\source\repos\lorica_all_versions\bin\Debug\MathNet.Numerics.xml
 C:\Users\19132\source\repos\lorica_all_versions\obj\Debug\LORICA development.csproj.AssemblyReference.cache
-C:\Users\19132\source\repos\lorica_all_versions\obj\Debug\LORICA development.csproj.SuggestedBindingRedirects.cache
 C:\Users\19132\source\repos\lorica_all_versions\obj\Debug\LORICA4.About_LORICA.resources
 C:\Users\19132\source\repos\lorica_all_versions\obj\Debug\LORICA4.Landuse_determinator.resources
 C:\Users\19132\source\repos\lorica_all_versions\obj\Debug\LORICA4.Mother_form.resources

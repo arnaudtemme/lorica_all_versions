@@ -43,36 +43,36 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="LORICA.exe" size="2607104">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="LORICA.exe" size="2597376">
       <assemblyIdentity name="LORICA" version="4.7.2.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>UG77tM+bToIXqaHU3bkbHeqnk47ByXESiDSxt70gZlU=</dsig:DigestValue>
+        <dsig:DigestValue>OnKBx6+wfDNQ3DkQ4Tvqba9K6n5eyjPO3CTV5volC7E=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="MathNet.Numerics.dll" size="1689600">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="MathNet.Numerics.dll" size="1682944">
       <assemblyIdentity name="MathNet.Numerics" version="4.15.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>OVh0jOQKKC0w/tSwb4yPYsR29IITTjTZJ+y3tIsM2os=</dsig:DigestValue>
+        <dsig:DigestValue>+gse8aLzjUDF+WlJsZg+mLSXlFlhEthBG389IxEauNE=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
-  <file name="LORICA.exe.config" size="163">
+  <file name="LORICA.exe.config" size="161">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>aGKyVzYln3v9NE5D7qEKcDiFvjge7ip0XOsSkWsBoVg=</dsig:DigestValue>
+      <dsig:DigestValue>1SR2HBfPDeqUEJ8/zazS7LZ1UBFf+eAwf3jAUFVBnv4=</dsig:DigestValue>
     </hash>
   </file>
   <file name="tex_tentdoek.ico" size="363680">
