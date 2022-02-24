@@ -21440,10 +21440,10 @@ Example: rainfall.asc can look like:
                 }
             }
             //displayonscreen(0, 0);
-            Task.Factory.StartNew(() =>
-            {
-                this.InfoStatusPanel.Text = "data cells: " + number_of_data_cells;
-            }, CancellationToken.None, TaskCreationOptions.None, guiThread);
+            //Task.Factory.StartNew(() =>
+            //{
+            //    this.InfoStatusPanel.Text = "data cells: " + number_of_data_cells;
+            //}, CancellationToken.None, TaskCreationOptions.None, guiThread);
             //Debug.WriteLine("\n--sorting overview--");
             //Debug.WriteLine("Sorting " + number_of_data_cells + " cells");
             long gap = number_of_data_cells;
