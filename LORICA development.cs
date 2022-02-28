@@ -469,7 +469,8 @@ namespace LORICA4
                     timeseries_matrix,
                     lessivage_errors, // for calibration of lessivage
                     tpi,            //topographic position index
-                    hornbeam_cover_fraction;   //hornbeam fraction 
+                    hornbeam_cover_fraction, //hornbeam fraction Lux
+                    observations;   
 
         int[,]  // integer matrices
                     status_map,         //geeft aan of een cel een sink, een zadel, een flat of een top is
@@ -650,6 +651,10 @@ namespace LORICA4
         private Label uxNumberCoresLabel;
         private Label uxNumberLogicalProcessorsLabel;
         private Label uxThreadLabel;
+        private Button profiles_button;
+        private Button timeseries_button;
+        private CheckBox Konza_checkbox;
+        private Label ux_number_Processors_label;
         double[] original_ratios;
 
         private void rain_input_filename_textbox_TextChanged_1(object sender, EventArgs e)
@@ -748,6 +753,16 @@ namespace LORICA4
                 total_sed_export_up, total_sed_export_mid, total_sed_export_low,
                 total_sed_prod_up, total_sed_prod_mid, total_sed_prod_low,
                 total_sed_dep_up, total_sed_dep_mid, total_sed_dep_low;  // counters for logging and reporting through time
+
+        private void timeseries_button_Click_1(object sender, EventArgs e)
+        {
+            timeseries.Visible = true;
+        }
+
+        private void profiles_button_Click_1(object sender, EventArgs e)
+        {
+            profile.Visible = true;
+        }
 
         private void checkBox1_CheckedChanged_3(object sender, EventArgs e)
         {
@@ -1057,7 +1072,7 @@ namespace LORICA4
             Debug.WriteLine("Number Of Cores: {0}", coreCount);
             Debug.WriteLine("The number of processors on this computer is {0}.", Environment.ProcessorCount);
             this.uxNumberCoresLabel.Text += coreCount.ToString();
-            this.uxNumberLogicalProcessorsLabel.Text += Environment.ProcessorCount;
+            this.ux_number_Processors_label.Text += Environment.ProcessorCount;
             this.uxNumberThreadsUpdown.Value = coreCount;
         }
         /// <summary>
@@ -1197,6 +1212,8 @@ namespace LORICA4
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.Output = new System.Windows.Forms.TabPage();
+            this.profiles_button = new System.Windows.Forms.Button();
+            this.timeseries_button = new System.Windows.Forms.Button();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.groupBox12 = new System.Windows.Forms.GroupBox();
             this.annual_output_checkbox = new System.Windows.Forms.RadioButton();
@@ -1219,6 +1236,8 @@ namespace LORICA4
             this.textBox6 = new System.Windows.Forms.TextBox();
             this.UTMsouthcheck = new System.Windows.Forms.CheckBox();
             this.Run = new System.Windows.Forms.TabPage();
+            this.ux_number_Processors_label = new System.Windows.Forms.Label();
+            this.Konza_checkbox = new System.Windows.Forms.CheckBox();
             this.uxThreadLabel = new System.Windows.Forms.Label();
             this.uxNumberCoresLabel = new System.Windows.Forms.Label();
             this.uxNumberLogicalProcessorsLabel = new System.Windows.Forms.Label();
@@ -2597,6 +2616,8 @@ namespace LORICA4
             // 
             // Output
             // 
+            this.Output.Controls.Add(this.profiles_button);
+            this.Output.Controls.Add(this.timeseries_button);
             this.Output.Controls.Add(this.groupBox6);
             this.Output.Location = new System.Drawing.Point(4, 22);
             this.Output.Name = "Output";
@@ -2604,6 +2625,26 @@ namespace LORICA4
             this.Output.TabIndex = 7;
             this.Output.Text = "Output";
             this.Output.UseVisualStyleBackColor = true;
+            // 
+            // profiles_button
+            // 
+            this.profiles_button.Location = new System.Drawing.Point(322, 69);
+            this.profiles_button.Name = "profiles_button";
+            this.profiles_button.Size = new System.Drawing.Size(149, 25);
+            this.profiles_button.TabIndex = 224;
+            this.profiles_button.Text = "profile outputs";
+            this.profiles_button.UseVisualStyleBackColor = true;
+            this.profiles_button.Click += new System.EventHandler(this.profiles_button_Click_1);
+            // 
+            // timeseries_button
+            // 
+            this.timeseries_button.Location = new System.Drawing.Point(322, 35);
+            this.timeseries_button.Name = "timeseries_button";
+            this.timeseries_button.Size = new System.Drawing.Size(149, 25);
+            this.timeseries_button.TabIndex = 223;
+            this.timeseries_button.Text = "timeseries outputs";
+            this.timeseries_button.UseVisualStyleBackColor = true;
+            this.timeseries_button.Click += new System.EventHandler(this.timeseries_button_Click_1);
             // 
             // groupBox6
             // 
@@ -2848,6 +2889,8 @@ namespace LORICA4
             // 
             // Run
             // 
+            this.Run.Controls.Add(this.ux_number_Processors_label);
+            this.Run.Controls.Add(this.Konza_checkbox);
             this.Run.Controls.Add(this.uxThreadLabel);
             this.Run.Controls.Add(this.uxNumberCoresLabel);
             this.Run.Controls.Add(this.uxNumberLogicalProcessorsLabel);
@@ -2865,10 +2908,29 @@ namespace LORICA4
             this.Run.Text = "Run";
             this.Run.UseVisualStyleBackColor = true;
             // 
+            // ux_number_Processors_label
+            // 
+            this.ux_number_Processors_label.AutoSize = true;
+            this.ux_number_Processors_label.Location = new System.Drawing.Point(135, 231);
+            this.ux_number_Processors_label.Name = "ux_number_Processors_label";
+            this.ux_number_Processors_label.Size = new System.Drawing.Size(60, 13);
+            this.ux_number_Processors_label.TabIndex = 13;
+            this.ux_number_Processors_label.Text = "cores, and ";
+            // 
+            // Konza_checkbox
+            // 
+            this.Konza_checkbox.AutoSize = true;
+            this.Konza_checkbox.Location = new System.Drawing.Point(174, 126);
+            this.Konza_checkbox.Name = "Konza_checkbox";
+            this.Konza_checkbox.Size = new System.Drawing.Size(93, 17);
+            this.Konza_checkbox.TabIndex = 12;
+            this.Konza_checkbox.Text = "Konza version";
+            this.Konza_checkbox.UseVisualStyleBackColor = true;
+            // 
             // uxThreadLabel
             // 
             this.uxThreadLabel.AutoSize = true;
-            this.uxThreadLabel.Location = new System.Drawing.Point(180, 131);
+            this.uxThreadLabel.Location = new System.Drawing.Point(263, 260);
             this.uxThreadLabel.Name = "uxThreadLabel";
             this.uxThreadLabel.Size = new System.Drawing.Size(46, 13);
             this.uxThreadLabel.TabIndex = 11;
@@ -2877,24 +2939,24 @@ namespace LORICA4
             // uxNumberCoresLabel
             // 
             this.uxNumberCoresLabel.AutoSize = true;
-            this.uxNumberCoresLabel.Location = new System.Drawing.Point(18, 152);
+            this.uxNumberCoresLabel.Location = new System.Drawing.Point(26, 231);
             this.uxNumberCoresLabel.Name = "uxNumberCoresLabel";
-            this.uxNumberCoresLabel.Size = new System.Drawing.Size(40, 13);
+            this.uxNumberCoresLabel.Size = new System.Drawing.Size(93, 13);
             this.uxNumberCoresLabel.TabIndex = 10;
-            this.uxNumberCoresLabel.Text = "Cores :";
+            this.uxNumberCoresLabel.Text = "This machine has ";
             // 
             // uxNumberLogicalProcessorsLabel
             // 
             this.uxNumberLogicalProcessorsLabel.AutoSize = true;
-            this.uxNumberLogicalProcessorsLabel.Location = new System.Drawing.Point(19, 129);
+            this.uxNumberLogicalProcessorsLabel.Location = new System.Drawing.Point(210, 231);
             this.uxNumberLogicalProcessorsLabel.Name = "uxNumberLogicalProcessorsLabel";
-            this.uxNumberLogicalProcessorsLabel.Size = new System.Drawing.Size(102, 13);
+            this.uxNumberLogicalProcessorsLabel.Size = new System.Drawing.Size(94, 13);
             this.uxNumberLogicalProcessorsLabel.TabIndex = 9;
-            this.uxNumberLogicalProcessorsLabel.Text = "Logical Processors :";
+            this.uxNumberLogicalProcessorsLabel.Text = "logical  processors";
             // 
             // uxNumberThreadsUpdown
             // 
-            this.uxNumberThreadsUpdown.Location = new System.Drawing.Point(124, 127);
+            this.uxNumberThreadsUpdown.Location = new System.Drawing.Point(202, 258);
             this.uxNumberThreadsUpdown.Maximum = new decimal(new int[] {
             32,
             0,
@@ -2916,7 +2978,7 @@ namespace LORICA4
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(173, 228);
+            this.button4.Location = new System.Drawing.Point(48, 170);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(163, 41);
             this.button4.TabIndex = 7;
@@ -2927,7 +2989,7 @@ namespace LORICA4
             // version_lux_checkbox
             // 
             this.version_lux_checkbox.AutoSize = true;
-            this.version_lux_checkbox.Location = new System.Drawing.Point(173, 180);
+            this.version_lux_checkbox.Location = new System.Drawing.Point(48, 147);
             this.version_lux_checkbox.Name = "version_lux_checkbox";
             this.version_lux_checkbox.Size = new System.Drawing.Size(115, 17);
             this.version_lux_checkbox.TabIndex = 6;
@@ -3076,7 +3138,7 @@ namespace LORICA4
             // calibration
             // 
             this.calibration.AutoSize = true;
-            this.calibration.Location = new System.Drawing.Point(173, 203);
+            this.calibration.Location = new System.Drawing.Point(174, 147);
             this.calibration.Name = "calibration";
             this.calibration.Size = new System.Drawing.Size(125, 17);
             this.calibration.TabIndex = 5;
@@ -3086,11 +3148,11 @@ namespace LORICA4
             // Spitsbergen_case_study
             // 
             this.Spitsbergen_case_study.AutoSize = true;
-            this.Spitsbergen_case_study.Location = new System.Drawing.Point(173, 159);
+            this.Spitsbergen_case_study.Location = new System.Drawing.Point(48, 126);
             this.Spitsbergen_case_study.Name = "Spitsbergen_case_study";
-            this.Spitsbergen_case_study.Size = new System.Drawing.Size(136, 17);
+            this.Spitsbergen_case_study.Size = new System.Drawing.Size(119, 17);
             this.Spitsbergen_case_study.TabIndex = 4;
-            this.Spitsbergen_case_study.Text = "Spitsbergen case study";
+            this.Spitsbergen_case_study.Text = "Spitsbergen version";
             this.Spitsbergen_case_study.UseVisualStyleBackColor = true;
             // 
             // groupBox7
@@ -6852,7 +6914,7 @@ namespace LORICA4
                             for (int ind = 0; ind < OSL_grainages[row, col, lay].Length; ind++)
                             {
                                 double laythick = layerthickness_m[row, col, lay];
-                                double laymass = total_layer_mass(row, col, lay);
+                                double laymass = total_layer_mass_kg(row, col, lay);
                                 sw.Write(row + "," + col + "," + lay + "," + OSL_grainages[row, col, lay][ind] + "," + OSL_depositionages[row, col, lay][ind] + "," + OSL_surfacedcount[row, col, lay][ind]);
                                 sw.Write("\r\n");
                             }
@@ -7156,6 +7218,25 @@ namespace LORICA4
                     try { xreader.ReadEndElement(); }
                     catch { read_error = 1; }
 
+                    try { xreader.ReadStartElement("Blocks"); }
+                    catch { read_error = 1; }
+                    try { blocks_active_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("blocks_active")); }
+                    catch { read_error = 1; }
+                    try { hardlayerthickness_textbox.Text = xreader.ReadElementString("hardlayerthickness"); }
+                    catch { read_error = 1; }
+                    try { hardlayerelevation_textbox.Text = xreader.ReadElementString("hardlayerelevation"); }
+                    catch { read_error = 1; }
+                    try { hardlayerdensity_textbox.Text = xreader.ReadElementString("hardlayerdensity"); }
+                    catch { read_error = 1; }
+                    try { hardlayerweath_textbox.Text = xreader.ReadElementString("hardlayerweath"); }
+                    catch { read_error = 1; }
+                    try { blockweath_textbox.Text = xreader.ReadElementString("blockweath"); }
+                    catch { read_error = 1; }
+                    try { blocksize_textbox.Text = xreader.ReadElementString("blockminsize"); }
+                    catch { read_error = 1; }
+                    try { xreader.ReadEndElement(); }
+                    catch { read_error = 1; }
+
                     try { xreader.ReadEndElement(); }
                     catch { read_error = 1; }
 
@@ -7269,6 +7350,17 @@ namespace LORICA4
                     try { xreader.ReadEndElement(); }
                     catch { read_error = 1; }
 
+                    try { xreader.ReadStartElement("Geochronological tracers"); }
+                    catch { read_error = 1; }
+                    try { OSL_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("geochron_active")); }
+                    catch { read_error = 1; }
+                    try { ngrains_textbox.Text = xreader.ReadElementString("ngrains"); }
+                    catch { read_error = 1; }
+                    try { bleachingdepth_textbox.Text = xreader.ReadElementString("bleachingdepth"); }
+                    catch { read_error = 1; }
+                    try { xreader.ReadEndElement(); }
+                    catch { read_error = 1; }
+
                     try { xreader.ReadStartElement("Inputs"); }
                     catch { read_error = 1; }
                     try { check_space_DTM.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("check_space_DTM")); }
@@ -7378,6 +7470,8 @@ namespace LORICA4
                     try { Spitsbergen_case_study.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("Spitsbergen")); }
                     catch { read_error = 1; Debug.WriteLine("xm25"); }
                     try { version_lux_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("Luxembourg")); }
+                    catch { read_error = 1; Debug.WriteLine("xm26"); }
+                    try { Konza_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("Konza")); }
                     catch { read_error = 1; Debug.WriteLine("xm26"); }
                     try { OSL_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("OSL_tracing")); }
                     catch { read_error = 1; Debug.WriteLine("xm27"); }
@@ -7679,6 +7773,17 @@ namespace LORICA4
                 xwriter.WriteElementString("tf_age", tf_age.Text);
                 xwriter.WriteElementString("tf_freq", tf_freq.Text);
                 xwriter.WriteEndElement();
+
+                xwriter.WriteStartElement("Blocks");
+                xwriter.WriteElementString("blocks_active", XmlConvert.ToString(treefall_checkbox.Checked));
+                xwriter.WriteElementString("hardlayerthickness", hardlayerthickness_textbox.Text);
+                xwriter.WriteElementString("hardlayerelevation", hardlayerelevation_textbox.Text);
+                xwriter.WriteElementString("hardlayerdensity", hardlayerdensity_textbox.Text);
+                xwriter.WriteElementString("hardlayerweath", hardlayerweath_textbox.Text);
+                xwriter.WriteElementString("blockweath", blockweath_textbox.Text);
+                xwriter.WriteElementString("blockminsize", blocksize_textbox.Text);
+                xwriter.WriteEndElement();
+
                 xwriter.WriteEndElement();
 
                 xwriter.WriteStartElement("Soil_forming_processes");
@@ -7739,6 +7844,12 @@ namespace LORICA4
 
                 xwriter.WriteEndElement();
 
+                xwriter.WriteStartElement("Geochronological tracers");
+                xwriter.WriteElementString("geochron_active", XmlConvert.ToString(OSL_checkbox.Checked));
+                xwriter.WriteElementString("ngrains", ngrains_textbox.Text);
+                xwriter.WriteElementString("bleachingdepth", bleachingdepth_textbox.Text);
+                xwriter.WriteEndElement();
+
                 xwriter.WriteStartElement("Inputs");
                 xwriter.WriteElementString("check_space_DTM", XmlConvert.ToString(check_space_DTM.Checked));
                 xwriter.WriteElementString("check_space_soil", XmlConvert.ToString(check_space_soildepth.Checked));
@@ -7796,7 +7907,7 @@ namespace LORICA4
                 xwriter.WriteStartElement("Specialsettings");
                 xwriter.WriteElementString("Spitsbergen", XmlConvert.ToString(Spitsbergen_case_study.Checked));
                 xwriter.WriteElementString("Luxembourg", XmlConvert.ToString(version_lux_checkbox.Checked));
-
+                xwriter.WriteElementString("Konza", XmlConvert.ToString(Konza_checkbox.Checked));
                 xwriter.WriteElementString("OSL_tracing", XmlConvert.ToString(OSL_checkbox.Checked));
                 xwriter.WriteElementString("CN_tracing", XmlConvert.ToString(CN_checkbox.Checked));
                 //xwriter.WriteElementString("other", XmlConvert.ToString(runs_checkbox.Checked));
@@ -11270,12 +11381,12 @@ namespace LORICA4
                     depth = 0;
                     tex_topsoil = new double[7];
                     lay = 0;
-                    if (total_soil_mass(row, col) > 0)
+                    if (total_soil_mass_kg(row, col) > 0)
                     {
                         while (depth <= 0.5 & lay < max_soil_layers)
                         {
                             // if (lay == max_soil_layers) { Debugger.Break(); }
-                            if (total_layer_mass(row, col, lay) > 0)
+                            if (total_layer_mass_kg(row, col, lay) > 0)
                             {
                                 depth += layerthickness_m[row, col, lay] / 2;
 
@@ -11893,12 +12004,12 @@ namespace LORICA4
                 bool shift_layers = false;
 
                 int n_shifts = 0;
-                double mass_before = total_soil_mass(row2, col2);
+                double mass_before = total_soil_mass_kg(row2, col2);
                 // Debug.WriteLine("rel2");
                 for (int lay2 = 0; lay2 < max_soil_layers; lay2++)
                 {
                     bool full_layer_shift = false;
-                    double layer_mass = total_layer_mass(row2, col2, lay2);
+                    double layer_mass = total_layer_mass_kg(row2, col2, lay2);
                     if (layer_mass < 0.000000000001) // empty layer
                                                      // mind for empty layers at the bottom
                     {
@@ -11910,7 +12021,7 @@ namespace LORICA4
                         for (int layert = lay2; layert < max_soil_layers - 1; layert++) // for all underlying layers, shift one up (since there is space anyway)
                         {
 
-                            if (total_layer_mass(row2, col2, layert + 1) > 0) { full_layer_shift = true; }
+                            if (total_layer_mass_kg(row2, col2, layert + 1) > 0) { full_layer_shift = true; }
                             // Debug.WriteLine(layert);
                             for (i = 0; i < 5; i++)
                             {
@@ -11974,7 +12085,7 @@ namespace LORICA4
                 // Debug.WriteLine("rel3");
                 if (shift_layers == true)
                 {
-                    double mass_after = total_soil_mass(row2, col2);
+                    double mass_after = total_soil_mass_kg(row2, col2);
                     if (Math.Round(mass_before - mass_after) > 0.0000001)
                     {
                         Debug.WriteLine("Loss of soil data during removal of empty layers");
@@ -12078,7 +12189,7 @@ namespace LORICA4
                     {
                         if (dtm[row, col] != -9999)
                         {
-                            double old_soil_mass = total_soil_mass(row, col), new_soil_mass;
+                            double old_soil_mass = total_soil_mass_kg(row, col), new_soil_mass;
                             // Debug.WriteLine("suscl0" + row + ", " + col + ", " + t + " " + total_soil_mass(row, col));
                             //Debug.WriteLine("soil before splitting");
                             // if (row == 0 & col == 0) { displaysoil(row, col); }
@@ -12104,7 +12215,7 @@ namespace LORICA4
                                             combine_layers(row, col, layer, layer + 1);
                                             update_all_soil_thicknesses(row, col);
                                             boolcombine = true;
-                                            if (Math.Round(old_soil_mass, 6) != Math.Round(total_soil_mass(row, col), 6)) { Debug.WriteLine("err_uscl2"); }
+                                            if (Math.Round(old_soil_mass, 6) != Math.Round(total_soil_mass_kg(row, col), 6)) { Debug.WriteLine("err_uscl2"); }
                                         }
 
                                         if (layerthickness_m[row, col, layer] < 0.025 && layer != 0)
@@ -12114,7 +12225,7 @@ namespace LORICA4
                                                 combine_layers(row, col, layer, layer + 1);
                                                 update_all_soil_thicknesses(row, col);
                                                 boolcombine = true;
-                                                if (Math.Round(old_soil_mass, 6) != Math.Round(total_soil_mass(row, col), 6))
+                                                if (Math.Round(old_soil_mass, 6) != Math.Round(total_soil_mass_kg(row, col), 6))
                                                 {
                                                     Debug.WriteLine("err_uscl3");
                                                 }
@@ -12159,7 +12270,7 @@ namespace LORICA4
                                                 combine_layers(row, col, layer, layer + 1);
                                                 update_all_soil_thicknesses(row, col);
                                                 boolcombine = true;
-                                                if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00000001)
+                                                if (Math.Abs(old_soil_mass - total_soil_mass_kg(row, col)) > 0.00000001)
                                                 {
                                                     Debug.WriteLine("err_uscl4");
                                                 }
@@ -12180,7 +12291,7 @@ namespace LORICA4
                                             split_layer(row, col, layer, depth_m);
                                             update_all_soil_thicknesses(row, col);
                                             boolsplit = true;
-                                            new_soil_mass = total_soil_mass(row, col);
+                                            new_soil_mass = total_soil_mass_kg(row, col);
                                             if (Math.Abs(old_soil_mass - new_soil_mass) > 0.00000001)
                                             {
                                                 Debug.WriteLine("err_uscl5");
@@ -12199,7 +12310,7 @@ namespace LORICA4
                                                 combine_layers(row, col, layer, layer + 1);
                                                 update_all_soil_thicknesses(row, col);
                                                 boolcombine = true;
-                                                if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00000001)
+                                                if (Math.Abs(old_soil_mass - total_soil_mass_kg(row, col)) > 0.00000001)
                                                 {
                                                     Debug.WriteLine("err_uscl6");
                                                 }
@@ -12237,7 +12348,7 @@ namespace LORICA4
                             //Debug.WriteLine("suscl4");
                             //displaysoil(0, 0);
 
-                            new_soil_mass = total_soil_mass(row, col);
+                            new_soil_mass = total_soil_mass_kg(row, col);
                             // if (numberoflayers > max_soil_layers)
                             if (Math.Abs(old_soil_mass - new_soil_mass) > 0.00000001)
                             {
@@ -12356,7 +12467,7 @@ namespace LORICA4
                             remove_empty_layers(row, col);
                             remove_empty_layers(row, col);
                             update_all_soil_thicknesses(row, col);
-                            double old_soil_mass = total_soil_mass(row, col), new_soil_mass;
+                            double old_soil_mass = total_soil_mass_kg(row, col), new_soil_mass;
                             // Debug.WriteLine("suscl0" + row + ", " + col + ", " + t + " " + total_soil_mass(row, col));
                             // Debug.WriteLine("soil before splitting");
                             // if (row == 0 & col == 0) { displaysoil(row, col); }
@@ -12368,21 +12479,21 @@ namespace LORICA4
                             {
                                 for (layer = 0; layer < (max_soil_layers - 1); layer++)
                                 {
-                                    if (total_layer_mass(row, col, layer) > 0)
+                                    if (total_layer_mass_kg(row, col, layer) > 0)
                                     {
                                         //Debug.WriteLine("depth is now " + depth + " for lyr " +  layer);
                                         // Debug.WriteLine("Start update split combine");
                                         numberoflayers++;
                                         if (layer == 0)
                                         {
-                                            if (layerthickness_m[row, col, layer] < 0.001 | total_soil_mass(row, col) < 0.001) // smaller than one mm, lighter than 1 gram -> merge with layer below, to avoid numerical problems when always a fraction leaves the profile (e.g. with creep)
+                                            if (layerthickness_m[row, col, layer] < 0.001 | total_soil_mass_kg(row, col) < 0.001) // smaller than one mm, lighter than 1 gram -> merge with layer below, to avoid numerical problems when always a fraction leaves the profile (e.g. with creep)
                                             {
                                                 combine_layers(row, col, layer, layer + 1);
                                                 // Debug.WriteLine("suscl2");
                                                 update_all_soil_thicknesses(row, col);
                                                 // Debug.WriteLine("suscl3");
                                                 boolcombine = true;
-                                                if (Math.Round(old_soil_mass, 6) != Math.Round(total_soil_mass(row, col), 6))
+                                                if (Math.Round(old_soil_mass, 6) != Math.Round(total_soil_mass_kg(row, col), 6))
                                                 {
                                                     Debug.WriteLine("err_uscl9");
                                                 }
@@ -12405,21 +12516,21 @@ namespace LORICA4
                                             {
                                                 if (layer_difference(row, col, layer, layer - 1) > layer_difference(row, col, layer, layer + 1))
                                                 {
-                                                    if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00001)
+                                                    if (Math.Abs(old_soil_mass - total_soil_mass_kg(row, col)) > 0.00001)
                                                     {
                                                         Debug.WriteLine("err_uscl10");
                                                     }
                                                     combine_layers(row, col, layer, layer + 1);
                                                     update_all_soil_thicknesses(row, col);
                                                     boolcombine = true;
-                                                    if (Math.Round(old_soil_mass, 6) != Math.Round(total_soil_mass(row, col), 6))
+                                                    if (Math.Round(old_soil_mass, 6) != Math.Round(total_soil_mass_kg(row, col), 6))
                                                     {
                                                         Debug.WriteLine("err_uscl11");
                                                     }
                                                 }
                                                 else
                                                 {
-                                                    if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00001)
+                                                    if (Math.Abs(old_soil_mass - total_soil_mass_kg(row, col)) > 0.00001)
                                                     {
                                                         Debug.WriteLine("err_uscl12");
                                                     }
@@ -12428,14 +12539,14 @@ namespace LORICA4
                                                     update_all_soil_thicknesses(row, col);
                                                     boolcombine = true;
                                                     // if (Math.Round(old_soil_mass, 6) != Math.Round(total_soil_mass(row, col), 6)) { Debugger.Break(); }
-                                                    if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00001)
+                                                    if (Math.Abs(old_soil_mass - total_soil_mass_kg(row, col)) > 0.00001)
                                                     {
                                                         Debug.WriteLine("err_uscl13");
                                                     }
 
                                                 }
                                             }
-                                            if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00001)
+                                            if (Math.Abs(old_soil_mass - total_soil_mass_kg(row, col)) > 0.00001)
                                             {
                                                 Debug.WriteLine("err_uscl14");
                                             }
@@ -12453,14 +12564,14 @@ namespace LORICA4
                                                 // if (Math.Abs(old_soil_mass-total_soil_mass(row, col))>0.00000001) { Debugger.Break(); }
                                             }
 
-                                            if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00001)
+                                            if (Math.Abs(old_soil_mass - total_soil_mass_kg(row, col)) > 0.00001)
                                             {
                                                 Debug.WriteLine("err_uscl16");
                                             }
 
                                             //Debug.WriteLine("depth is now " + depth + " and number of layers is  " + numberoflayers);
                                         }
-                                        if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00001)
+                                        if (Math.Abs(old_soil_mass - total_soil_mass_kg(row, col)) > 0.00001)
                                         {
                                             Debug.WriteLine("err_uscl17");
                                         }
@@ -12487,7 +12598,7 @@ namespace LORICA4
                                                 combine_layers(row, col, layer, layer + 1);
                                                 update_all_soil_thicknesses(row, col);
                                                 boolcombine = true;
-                                                if (Math.Round(old_soil_mass, 6) != Math.Round(total_soil_mass(row, col), 6)) { Debug.WriteLine("err_uscl2"); }
+                                                if (Math.Round(old_soil_mass, 6) != Math.Round(total_soil_mass_kg(row, col), 6)) { Debug.WriteLine("err_uscl2"); }
                                             }
 
                                             if (layerthickness_m[row, col, layer] < 0.025 && layer != 0)
@@ -12497,7 +12608,7 @@ namespace LORICA4
                                                     combine_layers(row, col, layer, layer + 1);
                                                     update_all_soil_thicknesses(row, col);
                                                     boolcombine = true;
-                                                    if (Math.Round(old_soil_mass, 6) != Math.Round(total_soil_mass(row, col), 6))
+                                                    if (Math.Round(old_soil_mass, 6) != Math.Round(total_soil_mass_kg(row, col), 6))
                                                     {
                                                         Debug.WriteLine("err_uscl3");
                                                     }
@@ -12509,7 +12620,7 @@ namespace LORICA4
                                                     layer--;  //because we combined with the previous one, the current one has been replaced with one that has not yet been considered
                                                     update_all_soil_thicknesses(row, col);
                                                     boolcombine = true;
-                                                    if (Math.Round(old_soil_mass, 6) != Math.Round(total_soil_mass(row, col), 6)) { Debugger.Break(); }
+                                                    if (Math.Round(old_soil_mass, 6) != Math.Round(total_soil_mass_kg(row, col), 6)) { Debugger.Break(); }
 
                                                 }
                                                 // we will now check whether layers have become too thick and if needed cut them in half
@@ -12521,7 +12632,7 @@ namespace LORICA4
                                                 split_layer(row, col, layer, depth_m);
                                                 update_all_soil_thicknesses(row, col);
                                                 boolsplit = true;
-                                                if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00000001) { Debugger.Break(); }
+                                                if (Math.Abs(old_soil_mass - total_soil_mass_kg(row, col)) > 0.00000001) { Debugger.Break(); }
 
                                             }
 
@@ -12542,7 +12653,7 @@ namespace LORICA4
                                                     combine_layers(row, col, layer, layer + 1);
                                                     update_all_soil_thicknesses(row, col);
                                                     boolcombine = true;
-                                                    if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00000001)
+                                                    if (Math.Abs(old_soil_mass - total_soil_mass_kg(row, col)) > 0.00000001)
                                                     {
                                                         Debug.WriteLine("err_uscl4");
                                                     }
@@ -12553,7 +12664,7 @@ namespace LORICA4
                                                     layer--;  //because we combined with the previous one, the current one has been replaced with one that has not yet been considered
                                                     update_all_soil_thicknesses(row, col);
                                                     boolcombine = true;
-                                                    if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00000001) { Debugger.Break(); }
+                                                    if (Math.Abs(old_soil_mass - total_soil_mass_kg(row, col)) > 0.00000001) { Debugger.Break(); }
 
                                                 }
                                             }
@@ -12563,7 +12674,7 @@ namespace LORICA4
                                                 split_layer(row, col, layer, depth_m);
                                                 update_all_soil_thicknesses(row, col);
                                                 boolsplit = true;
-                                                new_soil_mass = total_soil_mass(row, col);
+                                                new_soil_mass = total_soil_mass_kg(row, col);
                                                 if (Math.Abs(old_soil_mass - new_soil_mass) > 0.00000001)
                                                 {
                                                     Debug.WriteLine("err_uscl5");
@@ -12582,7 +12693,7 @@ namespace LORICA4
                                                     combine_layers(row, col, layer, layer + 1);
                                                     update_all_soil_thicknesses(row, col);
                                                     boolcombine = true;
-                                                    if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00000001)
+                                                    if (Math.Abs(old_soil_mass - total_soil_mass_kg(row, col)) > 0.00000001)
                                                     {
                                                         Debug.WriteLine("err_uscl6");
                                                     }
@@ -12595,7 +12706,7 @@ namespace LORICA4
                                                     numberoflayers--;
                                                     update_all_soil_thicknesses(row, col);
                                                     boolcombine = true;
-                                                    if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00000001) { Debugger.Break(); }
+                                                    if (Math.Abs(old_soil_mass - total_soil_mass_kg(row, col)) > 0.00000001) { Debugger.Break(); }
                                                 }
                                             }
                                             if (layerthickness_m[row, col, layer] > 0.5)
@@ -12605,7 +12716,7 @@ namespace LORICA4
                                         }
                                         //Debug.WriteLine("depth is now " + depth + " and number of layers is  " + numberoflayers);
                                     }
-                                    if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00001)
+                                    if (Math.Abs(old_soil_mass - total_soil_mass_kg(row, col)) > 0.00001)
                                     {
                                         Debug.WriteLine("err_uscl17");
                                     }
@@ -12627,11 +12738,11 @@ namespace LORICA4
 
                             // Debug.WriteLine("suscl4");
                             //displaysoil(0, 0);
-                            if (Math.Abs(old_soil_mass - total_soil_mass(row, col)) > 0.00001)
+                            if (Math.Abs(old_soil_mass - total_soil_mass_kg(row, col)) > 0.00001)
                             {
                                 Debug.WriteLine("err_uscl19");
                             }
-                            new_soil_mass = total_soil_mass(row, col);
+                            new_soil_mass = total_soil_mass_kg(row, col);
                             // if (numberoflayers > max_soil_layers)
                             if (Math.Abs(old_soil_mass - new_soil_mass) > 0.00000001)
                             {
@@ -12726,13 +12837,13 @@ namespace LORICA4
         {
             double CN_before = 0, CN_after = 0;
             //if (CN_checkbox.Checked) { CN_before = total_CNs(); }
-            double mass_before = total_layer_mass(rowwer, coller, lay1) + total_layer_mass(rowwer, coller, lay2);
+            double mass_before = total_layer_mass_kg(rowwer, coller, lay1) + total_layer_mass_kg(rowwer, coller, lay2);
             try
             {
                 int totalgrains_start = 0;
                 if (OSL_checkbox.Checked) { for (int lay_OSL = 0; lay_OSL < max_soil_layers; lay_OSL++) { totalgrains_start += OSL_grainages[rowwer, coller, lay_OSL].Length; } }
 
-                double old_soil_mass1 = total_soil_mass(rowwer, coller);
+                double old_soil_mass1 = total_soil_mass_kg(rowwer, coller);
                 // Debug.WriteLine("Total soil mass: {0}", old_soil_mass); displaysoil(rowwer, coller); 
                 //Debug.WriteLine("cl0");
                 //Debug.WriteLine("total soil mass = " + total_soil_mass(rowwer, coller));
@@ -12740,7 +12851,7 @@ namespace LORICA4
                 {
                     texture_kg[rowwer, coller, lay1, i] += texture_kg[rowwer, coller, lay2, i];
                     texture_kg[rowwer, coller, lay2, i] = 0;// set to zero. otherwise the shifting of the layers doesn't work
-                    double new_soil_mass = total_soil_mass(rowwer, coller);
+                    double new_soil_mass = total_soil_mass_kg(rowwer, coller);
 
                 }
 
@@ -12813,9 +12924,9 @@ namespace LORICA4
                 }
                 //Debug.WriteLine("cl4");
 
-                double new_soil_mass1 = total_soil_mass(rowwer, coller);
+                double new_soil_mass1 = total_soil_mass_kg(rowwer, coller);
                 //if (Math.Abs(old_soil_mass1 - new_soil_mass1) > 0.00000001) { displaysoil(rowwer, coller); Debugger.Break(); }
-                double mass_after = total_layer_mass(rowwer, coller, lay1);
+                double mass_after = total_layer_mass_kg(rowwer, coller, lay1);
                 if (Math.Abs(mass_before - mass_after) > 0.0001)
                 {
                     Debug.WriteLine("err_cl1");
@@ -12926,7 +13037,7 @@ namespace LORICA4
             return thickness_m;
         }
 
-        double total_soil_mass(int rowmass, int colmass)
+        double total_soil_mass_kg(int rowmass, int colmass)
         {
             double tot_mass = 0;
             for (int lay = 0; lay < max_soil_layers; lay++)
@@ -12941,7 +13052,7 @@ namespace LORICA4
             return (tot_mass);
         }
 
-        double total_layer_mass(int rowmass, int colmass, int laymass)
+        double total_layer_mass_kg(int rowmass, int colmass, int laymass)
         {
             double tot_mass = 0;
 
@@ -12955,7 +13066,35 @@ namespace LORICA4
             return (tot_mass);
         }
 
-        double total_layer_fine_earth_mass(int rowmass, int colmass, int laymass)
+        double total_layer_fine_earth_mass_kg(int rowmass, int colmass, int laymass)
+        {
+            double tot_mass = 0;
+
+            for (int ii = 1; ii < 5; ii++)
+            {
+                tot_mass += texture_kg[rowmass, colmass, laymass, ii];
+            }
+            tot_mass += old_SOM_kg[rowmass, colmass, laymass];
+            tot_mass += young_SOM_kg[rowmass, colmass, laymass];
+
+            return (tot_mass);
+        }
+
+        double total_layer_mineral_earth_mass_kg(int rowmass, int colmass, int laymass) //MMS
+        {
+            double tot_mass = 0;
+
+            for (int ii = 0; ii < 5; ii++)
+            {
+                tot_mass += texture_kg[rowmass, colmass, laymass, ii];
+            }
+            //tot_mass += old_SOM_kg[rowmass, colmass, laymass];
+            //tot_mass += young_SOM_kg[rowmass, colmass, laymass];
+
+            return (tot_mass);
+        }
+
+        double total_layer_fine_earth_om_mass_kg(int rowmass, int colmass, int laymass) //MMS
         {
             double tot_mass = 0;
 
@@ -13102,14 +13241,14 @@ namespace LORICA4
                 }
 
                 double max_layer_difference, current_difference, maximum_allowed_thickness, old_mass_soil, new_soil_mass;
-                old_mass_soil = total_soil_mass(rowwer, coller);
+                old_mass_soil = total_soil_mass_kg(rowwer, coller);
                 //splitting will increase the number of layers. If this splits beyond the max number of layers, then combine the two most similar ones 
                 int laynum, combininglayer = -1;
                 // Debug.WriteLine("sl0");
-                if (diagnostic_mode == 1) { Debug.WriteLine("total soil mass = " + total_soil_mass(rowwer, coller)); }
-                double mass_lowest_layer = total_layer_mass(rowwer, coller, max_soil_layers - 1);
+                if (diagnostic_mode == 1) { Debug.WriteLine("total soil mass = " + total_soil_mass_kg(rowwer, coller)); }
+                double mass_lowest_layer = total_layer_mass_kg(rowwer, coller, max_soil_layers - 1);
                 if (diagnostic_mode == 1) { Debug.WriteLine("total mass last layer = {0}", mass_lowest_layer); }
-                if ((total_layer_mass(rowwer, coller, max_soil_layers - 1) > 0))  // so, if we are using the lowest possible layer already:
+                if ((total_layer_mass_kg(rowwer, coller, max_soil_layers - 1) > 0))  // so, if we are using the lowest possible layer already:
                 {
                     //this breaks now because the lowest layer can be empty due to its encountering a hard layer
                     //if they are already all in use, then the split will create one too many. We start by looking for the two most similar layers that would not create a too-thick product (do we need to do that last part?)
@@ -13158,9 +13297,9 @@ namespace LORICA4
                                                            // Debug.WriteLine("sl1c");
                 }
 
-                if (Math.Abs(old_mass_soil - total_soil_mass(rowwer, coller)) > 0.000001)
+                if (Math.Abs(old_mass_soil - total_soil_mass_kg(rowwer, coller)) > 0.000001)
                 {
-                    Debug.WriteLine("err_spl_1 {0}", total_soil_mass(rowwer, coller));
+                    Debug.WriteLine("err_spl_1 {0}", total_soil_mass_kg(rowwer, coller));
                     Debugger.Break();
                 }
                 // Debug.WriteLine("sl2");
@@ -13191,9 +13330,9 @@ namespace LORICA4
                         transfer_OSL_grains(rowwer, coller, laynum - 1, rowwer, coller, laynum, 1, 0); // move all grains from laynum - 1 to laynum
                     }
                 }
-                if (Math.Abs(old_mass_soil - total_soil_mass(rowwer, coller)) > 0.000001)
+                if (Math.Abs(old_mass_soil - total_soil_mass_kg(rowwer, coller)) > 0.000001)
                 {
-                    Debug.WriteLine("err_spl_2 {0}", total_soil_mass(rowwer, coller));
+                    Debug.WriteLine("err_spl_2 {0}", total_soil_mass_kg(rowwer, coller));
                     // Debugger.Break();
                     // old_mass_soil = total_soil_mass(rowwer, coller);
                 }
@@ -13241,10 +13380,10 @@ namespace LORICA4
                     // jagged array
                     transfer_OSL_grains(rowwer, coller, lay1, rowwer, coller, lay1 + 1, (1 - div), 0);
                 }
-                new_soil_mass = total_soil_mass(rowwer, coller);
+                new_soil_mass = total_soil_mass_kg(rowwer, coller);
                 if (Math.Abs(old_mass_soil - new_soil_mass) > 0.000001)
                 {
-                    Debug.WriteLine("err_spl_3 {0}", total_soil_mass(rowwer, coller));
+                    Debug.WriteLine("err_spl_3 {0}", total_soil_mass_kg(rowwer, coller));
                     Debugger.Break();
                 }
 
@@ -13617,8 +13756,8 @@ namespace LORICA4
                             update_all_soil_thicknesses(row, col);
                             total_young_som_kg = 0; total_old_som_kg = 0;
 
-                            mass_soil_before = total_soil_mass(row, col);
-                            mass_top_before = total_layer_mass(row, col, 0);
+                            mass_soil_before = total_soil_mass_kg(row, col);
+                            mass_top_before = total_layer_mass_kg(row, col, 0);
                             total_soil_thickness_m = 0;
                             for (layer = 0; layer < max_soil_layers; layer++)
                             {
@@ -13656,11 +13795,11 @@ namespace LORICA4
                             for (layer = 0; layer < (max_soil_layers - 1); layer++)
                             {
 
-                                if (total_layer_fine_earth_mass(row, col, layer) > 0)  //this says: if the layer actually exists
+                                if (total_layer_fine_earth_mass_kg(row, col, layer) > 0)  //this says: if the layer actually exists
                                 {
                                     //integration over the exponential decay function in JGR 2006 for the entire profile, and for the current layer.
                                     //then calculate the fraction of bioturbation that will happen in this layer, and multiply with total bioturbation in this cell
-                                    fine_layer_mass = total_layer_fine_earth_mass(row, col, layer);
+                                    fine_layer_mass = total_layer_fine_earth_mass_kg(row, col, layer);
                                     layer_bio_activity_index = Math.Exp(-bioturbation_depth_decay_constant * depth) - (Math.Exp(-bioturbation_depth_decay_constant * (depth + layerthickness_m[row, col, layer])));
                                     total_bio_activity_index = 1 - (Math.Exp(-bioturbation_depth_decay_constant * total_soil_thickness_m));
                                     layer_bioturbation_kg = (layer_bio_activity_index / total_bio_activity_index) * local_bioturbation_kg;
@@ -13673,8 +13812,8 @@ namespace LORICA4
                                         double[] mixture_kg = new double[7];
 
                                         //here we calculate the amount of material bioturbated between the current layer and the current otherlayer
-                                        fine_layer_mass = total_layer_fine_earth_mass(row, col, layer);
-                                        fine_otherlayer_mass = total_layer_fine_earth_mass(row, col, layer + 1);
+                                        fine_layer_mass = total_layer_fine_earth_mass_kg(row, col, layer);
+                                        fine_otherlayer_mass = total_layer_fine_earth_mass_kg(row, col, layer + 1);
 
                                         //weathered_mass_kg may be more than present in the other layer, the current layer, or both - in that case one or both of the layers will become mixtures of the original two layers
                                         // We take the minimum of material present, or half of the bioturbation rate. Both layers together would result in the total layer bioturbation rate
@@ -13766,8 +13905,8 @@ namespace LORICA4
                                 }
                             } // end for layer
 
-                            mass_soil_after = total_soil_mass(row, col);
-                            mass_top_after = total_layer_mass(row, col, 0);
+                            mass_soil_after = total_soil_mass_kg(row, col);
+                            mass_top_after = total_layer_mass_kg(row, col, 0);
 
                             if (Math.Abs(mass_soil_before - mass_soil_after) > 1E-8 | Math.Abs(mass_top_before - mass_top_after) > 1E-8)
                             {
@@ -13836,8 +13975,8 @@ namespace LORICA4
                             update_all_soil_thicknesses(row, col);
                             total_young_som_kg = 0; total_old_som_kg = 0;
 
-                            mass_soil_before = total_soil_mass(row, col);
-                            mass_top_before = total_layer_mass(row, col, 0);
+                            mass_soil_before = total_soil_mass_kg(row, col);
+                            mass_top_before = total_layer_mass_kg(row, col, 0);
                             total_soil_thickness_m = 0;
                             for (layer = 0; layer < max_soil_layers; layer++)
                             {
@@ -13854,7 +13993,7 @@ namespace LORICA4
                                 //if (layer == 0 & !(layerthickness_m[row, col, layer] > 0)) { Debugger.Break(); }
                                 //remove_empty_layers(row, col);
                                 //if (layer == 0 & !(layerthickness_m[row, col, layer] > 0)) { Debugger.Break(); }
-                                if (total_layer_mass(row, col, layer) > 0)  //this says: if the layer actually exists
+                                if (total_layer_mass_kg(row, col, layer) > 0)  //this says: if the layer actually exists
                                 {
                                     for (int prop = 0; prop < 5; prop++) { temp_tex_som_kg[layer, prop] = texture_kg[row, col, layer, prop]; }
                                     temp_tex_som_kg[layer, 5] = young_SOM_kg[row, col, layer];
@@ -13907,12 +14046,12 @@ namespace LORICA4
                             for (layer = 0; layer < max_soil_layers; layer++)
                             {
 
-                                if (total_layer_fine_earth_mass(row, col, layer) > 0)  //this says: if the layer actually exists
+                                if (total_layer_fine_earth_mass_kg(row, col, layer) > 0)  //this says: if the layer actually exists
 
                                 {
                                     //integration over the exponential decay function in JGR 2006 for the entire profile, and for the current layer.
                                     //then calculate the fraction of bioturbation that will happen in this layer, and multiply with total bioturbation in this cell
-                                    fine_layer_mass = total_layer_fine_earth_mass(row, col, layer);
+                                    fine_layer_mass = total_layer_fine_earth_mass_kg(row, col, layer);
                                     layer_bio_activity_index = Math.Exp(-bioturbation_depth_decay_constant * depth) - (Math.Exp(-bioturbation_depth_decay_constant * (depth + layerthickness_m[row, col, layer])));
                                     total_bio_activity_index = 1 - (Math.Exp(-bioturbation_depth_decay_constant * total_soil_thickness_m));
                                     layer_bioturbation_kg = (layer_bio_activity_index / total_bio_activity_index) * local_bioturbation_kg;
@@ -13926,7 +14065,7 @@ namespace LORICA4
                                     //now look at other layers and decide which one of them exchanges how much of that good stuff.
                                     for (otherlayer = 0; otherlayer < max_soil_layers; otherlayer++)
                                     {
-                                        if (total_layer_fine_earth_mass(row, col, otherlayer) > 0)  //this says: if the other layer actually exists
+                                        if (total_layer_fine_earth_mass_kg(row, col, otherlayer) > 0)  //this says: if the other layer actually exists
                                                                                                     // That is necessary because we leave the stone fraction out of bioturbation
                                                                                                     // and therefore purely stony layers are not involved in bioturbation
                                         {
@@ -13967,7 +14106,7 @@ namespace LORICA4
                                     for (otherlayer = 0; otherlayer < max_soil_layers; otherlayer++)
                                     {
                                         otherdepth += layerthickness_m[row, col, otherlayer] / 2; // MM moved out of if-function, otherwise distance is not calculated correctly
-                                        if (total_layer_fine_earth_mass(row, col, otherlayer) > 0 && layer != otherlayer)  //this says: if the other layer actually exists and if it's not the current layer
+                                        if (total_layer_fine_earth_mass_kg(row, col, otherlayer) > 0 && layer != otherlayer)  //this says: if the other layer actually exists and if it's not the current layer
                                         {
 
                                             distance = Math.Abs(otherdepth - depth);
@@ -14173,7 +14312,7 @@ namespace LORICA4
                                             //all sorts of checks - we should never have values under zero, or NotANumber NaN
                                             if (temp_tex_som_kg[otherlayer, 1] < 0)
                                             {
-                                                Debug.WriteLine(" texture 1 null " + t + " rc " + row + "  " + col + " otherlayers " + layer + " (" + total_layer_mass(row, col, layer) + "kg) " + otherlayer + " (" + total_layer_mass(row, col, otherlayer) + "kg) ");
+                                                Debug.WriteLine(" texture 1 null " + t + " rc " + row + "  " + col + " otherlayers " + layer + " (" + total_layer_mass_kg(row, col, layer) + "kg) " + otherlayer + " (" + total_layer_mass_kg(row, col, otherlayer) + "kg) ");
                                             }
                                             if (temp_tex_som_kg[otherlayer, 2] < 0) { Debug.WriteLine(" texture 2 null " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
                                             if (temp_tex_som_kg[otherlayer, 3] < 0) { Debug.WriteLine(" texture 3 null " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
@@ -14240,8 +14379,8 @@ namespace LORICA4
                             } //end for layer
                               // if (findnegativetexture()) { Debugger.Break(); }
 
-                            mass_soil_after = total_soil_mass(row, col);
-                            mass_top_after = total_layer_mass(row, col, 0);
+                            mass_soil_after = total_soil_mass_kg(row, col);
+                            mass_top_after = total_layer_mass_kg(row, col, 0);
 
                             if (Math.Abs(mass_soil_before - mass_soil_after) > 1E-8 | Math.Abs(mass_top_before - mass_top_after) > 1E-8)
                             {
@@ -14487,7 +14626,7 @@ namespace LORICA4
                                             CN_atoms_cm2[row, col, layer, i_cn] -= CN_transport;
                                             if ((layer + 1) < max_soil_layers)
                                             {
-                                                if (total_layer_mass(row, col, layer + 1) > 0) // if there is soil material present in the lower layer
+                                                if (total_layer_mass_kg(row, col, layer + 1) > 0) // if there is soil material present in the lower layer
                                                 {
                                                     CN_atoms_cm2[row, col, layer + 1, i_cn] += CN_transport;
                                                 }
@@ -14593,7 +14732,7 @@ namespace LORICA4
                                         texture_kg[row, col, layer, 3] -= eluviated_kg;
                                         if ((layer + 1) < max_soil_layers) // in case there is a lower receiving layer
                                         {
-                                            if (total_layer_mass(row, col, layer + 1) > 0) // if there is soil material present in the lower layer
+                                            if (total_layer_mass_kg(row, col, layer + 1) > 0) // if there is soil material present in the lower layer
                                             {
                                                 texture_kg[row, col, layer + 1, 3] += eluviated_kg;
                                             }
@@ -14607,7 +14746,7 @@ namespace LORICA4
                                                 CN_atoms_cm2[row, col, layer, i_cn] -= CN_transport;
                                                 if ((layer + 1) < max_soil_layers)
                                                 {
-                                                    if (total_layer_mass(row, col, layer + 1) > 0) // if there is soil material present in the lower layer
+                                                    if (total_layer_mass_kg(row, col, layer + 1) > 0) // if there is soil material present in the lower layer
                                                     {
                                                         CN_atoms_cm2[row, col, layer + 1, i_cn] += CN_transport;
                                                     }
@@ -16472,7 +16611,7 @@ namespace LORICA4
                         double[] tilled_cosmo_nuclides = new double[n_cosmo]; // includes cosmogenic nuclides
 
                         // take material from layers to mix
-                        double mass_soil_before = total_soil_mass(row, col);
+                        double mass_soil_before = total_soil_mass_kg(row, col);
                         double fraction_mixed_layer;
                         for (int lay = 0; lay <= completelayers; lay++) // Includes partial layer, will be selective taken up
                         {
@@ -16617,7 +16756,7 @@ namespace LORICA4
                             if (totalgrains_start != totalgrains_end) { Debugger.Break(); }
                         }
 
-                        double mass_soil_after = total_soil_mass(row, col);
+                        double mass_soil_after = total_soil_mass_kg(row, col);
                         if (Math.Abs(mass_soil_before - mass_soil_after) > 0.0001)
                         {
                             Debug.WriteLine("err_ti2");
@@ -17045,10 +17184,10 @@ namespace LORICA4
                                                 double dsoil_source = total_soil_thickness(row, col);
                                                 double dsoil_sink = total_soil_thickness(row + i, col + j);
                                                 //displaysoil(row + i, col + j);
-                                                double oldmass = total_soil_mass(row, col) + total_soil_mass(row + i, col + j);
+                                                double oldmass = total_soil_mass_kg(row, col) + total_soil_mass_kg(row + i, col + j);
 
-                                                double oldmass_source = total_soil_mass(row, col);
-                                                double oldmass_sink = total_soil_mass(row + i, col + j);
+                                                double oldmass_source = total_soil_mass_kg(row, col);
+                                                double oldmass_sink = total_soil_mass_kg(row + i, col + j);
 
                                                 calc_creep_layers(row, col, i, j, tempcreep_kg);
 
@@ -17139,7 +17278,7 @@ namespace LORICA4
                                                     }
                                                 }
 
-                                                double newmass = total_soil_mass(row, col) + total_soil_mass(row + i, col + j);
+                                                double newmass = total_soil_mass_kg(row, col) + total_soil_mass_kg(row + i, col + j);
                                                 creep[row, col] += dz_source;
                                                 creep[row + i, col + j] += dz_sink;
 
@@ -17426,7 +17565,7 @@ namespace LORICA4
                 //displaysoil(fromrow, fromcol);
 
                 // double fraction_transport = fraction_dz * fraction_overlap;
-                double fraction_transport = mass_export / total_layer_mass(fromrow, fromcol, fromlay); // fraction of mass to be exported
+                double fraction_transport = mass_export / total_layer_mass_kg(fromrow, fromcol, fromlay); // fraction of mass to be exported
                 if (fraction_transport > 1) { fraction_transport = 1; }
                 if (fraction_transport < 0)
                 {
@@ -17855,7 +17994,7 @@ namespace LORICA4
                         {
                             remove_empty_layers(r_tf, c_tf);
                             remove_empty_layers(r_tf, c_tf);
-                            if (total_soil_mass(r_tf, c_tf) <= 0) { Debugger.Break(); }
+                            if (total_soil_mass_kg(r_tf, c_tf) <= 0) { Debugger.Break(); }
                             update_all_soil_thicknesses(r_tf, c_tf);
                         }
                     }
@@ -19473,14 +19612,17 @@ Example: rainfall.asc can look like:
             {
                 try
                 {
-                    sw.Write("run objective_function_value ");
+                    sw.Write("run pedon_errors spatial_ave_errors both_together totaldepth_error");
                     //USER INPUT NEEDED IN FOLLOWING LINE: ENTER THE CALIBRATION PARAMETER NAMES 
                     //THEY WILL BE HEADERS IN THE CALIBRATION REPORT
-                    sw.WriteLine(" erodibility_K conv_fac");
+                    //For Lux:
+                    //sw.WriteLine(" erodibility_K conv_fac");
+                    //For Konza:
+                    sw.WriteLine(" erodibility_K diffusivity_creep P0 k1 k2 Pa");
                 }
                 catch { Debug.WriteLine(" issue with writing the header of the calibration log file"); }
             }
-            Debug.WriteLine(" calib tst - calib_prepare_rep - added first line to file");
+            Debug.WriteLine(" calib tst - calib_prepare_rep - added first line to file" + FILENAME);
         }
 
         private void calib_update_report(double objective_fnct_result)
@@ -19493,11 +19635,18 @@ Example: rainfall.asc can look like:
                 try
                 {
                     //USER INPUT NEEDED IN FOLLOWING LINE: ENTER THE CALIBRATION PARAMETERS 
-                    sw.WriteLine(run_number + " " + objective_fnct_result + " " + advection_erodibility + " " + conv_fac);
+
+                    //Luxembourg:
+                    //sw.WriteLine(run_number + " " + objective_fnct_result + " " + advection_erodibility + " " + conv_fac);
+                    //Konza:
+                    //this is needed:
+                    //sw.Write("run pedon_errors spatial_ave_errors both_together totaldepth_error");
+                    //sw.WriteLine(" erodibility_K diffusivity_creep P0 k1 k2 Pa");
+                    sw.WriteLine(run_number + " " + objective_fnct_result + " " + advection_erodibility + " " + diffusivity_creep + " " + P0 + " " + k1 + " " + k2 + " " + Pa);
                 }
                 catch { Debug.WriteLine(" issue with writing a line in the calibration log file"); }
             }
-            Debug.WriteLine(" calib tst - calib_update_rep - added line to file");
+            Debug.WriteLine(" calib tst - calib_update_rep - added line to file" + FILENAME);
         }
 
         private void calib_finish_report()
@@ -19510,7 +19659,10 @@ Example: rainfall.asc can look like:
                 string FILENAME = workdir + "\\calibration.log";
                 using (StreamWriter sw = File.AppendText(FILENAME))
                 {
-                    sw.WriteLine(best_run + " " + best_error + " " + best_parameters[0] + " " + best_parameters[1]);
+                    //For Luxembourg:
+                    //sw.WriteLine(best_run + " " + best_error + " " + best_parameters[0] + " " + best_parameters[1] );
+                    // For Konza marte:
+                    sw.WriteLine(best_run + " " + best_error + " " + best_parameters[0] + " " + best_parameters[1] + " " + best_parameters[2] + " " + best_parameters[3] + " " + best_parameters[4]);
                     Debug.WriteLine(" best run was " + best_run + " with error " + best_error + "m3");
                 }
                 Debug.WriteLine(" calib tst - calib_finish_rep - wrote final line and closed file");
@@ -19521,7 +19673,7 @@ Example: rainfall.asc can look like:
             }
         }
 
-        private double calib_objective_function()
+        private double calib_objective_function_Lux()
         {
             //this code calculates the value of the objective function during calibration and is user-specified. 
             //calibration looks to minimize the value of the objective function by varying parameter values
@@ -19534,9 +19686,9 @@ Example: rainfall.asc can look like:
             double total_bulk_density = 0;
             double average_bulk_density = 0;
             int objective_function_cells = 0;
-            for (int row = 0; row < nr; row++)
+            for (row = 0; row < nr; row++)
             {
-                for (int col = 0; col < nc; col++)
+                for (col = 0; col < nc; col++)
                 {
                     if (dtm[row, col] != -9999)
                     {
@@ -19548,21 +19700,344 @@ Example: rainfall.asc can look like:
             }
             average_bulk_density = total_bulk_density / objective_function_cells;
             simulated_ero_kg_m2_y = average_bulk_density * simulated_ero_m3 / end_time / (objective_function_cells * dx * dx);
-
+            ;
             Debug.WriteLine(" calib tst - calib_objective_function - error is " + Math.Abs(known_ero_kg_m2_y - simulated_ero_kg_m2_y) + "kg per m2 per year");
             return Math.Abs(known_ero_kg_m2_y - simulated_ero_kg_m2_y);
-        }
 
+        }
+        
+        private double domain_sum(string properties)
+        {
+            //Debug.WriteLine(properties);
+            string[] lineArray = properties.Split(new char[] { ',' });
+            int lyr; int x;
+            double sum = 0;
+            for (row = 0; row < nr; row++)
+            {
+                for (col = 0; col < nc; col++)
+                {
+                    for (lyr = 0; lyr < max_soil_layers; lyr++)
+                    {
+                        if (layerthickness_m[row, col, lyr] > 0)
+                        {
+                            for (x = 0; x < (lineArray.Length); x++)
+                            {
+                                if (lineArray[x] == "0") sum += texture_kg[row, col, lyr, 0];
+                                if (lineArray[x] == "1") sum += texture_kg[row, col, lyr, 1];
+                                if (lineArray[x] == "2") sum += texture_kg[row, col, lyr, 2];
+                                if (lineArray[x] == "3") sum += texture_kg[row, col, lyr, 3];
+                                if (lineArray[x] == "4") sum += texture_kg[row, col, lyr, 4];
+                                if (lineArray[x] == "5") sum += young_SOM_kg[row, col, lyr];
+                                if (lineArray[x] == "6") sum += old_SOM_kg[row, col, lyr];
+                            }
+                        }
+                    }
+                }
+            }
+            return sum;
+        }
+        
+        private double calib_objective_function_Konza()
+        {
+            observations = new double[100, 100];         //may be used for other sets of observations as well
+            string input;
+            double tttt = 0.00;
+            int x, y, xcounter;
+            string localfile = "localcalresults.txt";
+            string globalfile = "globalcalresults.txt";
+            //string obsfile = "obst0b.txt";
+            string obsfile = "obst1b.txt";
+            obsfile = "D:\\Lorica-modelling\\Marte_KZ_paper\\LORICA\\original_observations" + "\\" + obsfile;
+            if (!File.Exists(obsfile))
+            {
+                MessageBox.Show("No such file: " + obsfile);
+                return (-1);
+            }
+            StreamReader sr = File.OpenText(obsfile);
+            //read header line (and do nothing with it)
+            try
+            {
+                input = sr.ReadLine();
+                //read the rest
+                y = 0;
+                while ((input = sr.ReadLine()) != null)
+                {
+                    //Debug.WriteLine(input);
+                    string[] lineArray;
+                    lineArray = input.Split(new char[] { ',' });
+                    xcounter = 0;
+                    for (x = 0; x < (lineArray.Length); x++)
+                    {
+                        //Debug.WriteLine(lineArray[x]);
+                        if (lineArray[x] != "")
+                        {
+                            try
+                            {
+                                tttt = double.Parse(lineArray[x]);
+                            }
+                            catch
+                            {
+                                MessageBox.Show("Incorrect content " + lineArray[x] + " in file " + obsfile);
+                                input_data_error = true;
+                                return (-1);
+                            }
+                            //Debug.WriteLine("obs " + y + " " + xcounter + " = " + tttt);
+                            observations[y, xcounter] = tttt;
+                            xcounter++;
+                        }
+                    }
+                    y++;
+
+                }
+                //Array.Resize(observations)
+                sr.Close();
+                //we now have the observations stored, and the output file prepared
+            }
+            catch { Debug.WriteLine(" failed to read all observations from file " + obsfile); input_data_error = true; }
+
+
+            //this function evaluates model performance after every model run
+            //we have observations[,] at our disposal, which contains values at all observed locations 
+
+            Debug.WriteLine(" starting to evaluate performance using " + localfile);
+            localfile = workdir + "\\" + localfile;
+            globalfile = workdir + "\\" + globalfile;
+            if (!File.Exists(localfile))
+            {
+                MessageBox.Show("No such observation file: " + localfile);
+                return (-1);
+            }
+            if (!File.Exists(globalfile))
+            {
+                MessageBox.Show("No such observation file: " + globalfile);
+                return (-1);
+            }
+            //run, soildepth_e, SOMfract_e, coarsefract_e, clayfract_e, siltfract_e, sandfract_e, average_e
+            int obsnumber = 0; int row = 0; int col = 0;
+            double localdepth_error, SOM_error, coarse_error, clay_error, silt_error, sand_error;
+            double totaldepth_error = 0;
+            double SOM_error_depthproduct, coarse_error_depthproduct, sand_error_depthproduct, silt_error_depthproduct, clay_error_depthproduct;
+            double all_locations_error = 0;
+            double coarsesum, sandsum, siltsum, claysum, OMsum, coarsefract = 0, sandfract = 0, siltfract = 0, clayfract = 0, OMfract = 0, fineearthsum, allmasssum;
+            double normal_OM_error, normal_coarse_error, normal_sand_error, normal_silt_error, normal_clay_error, location_error;
+            try
+            {
+                for (row = 0; row < nr; row++)
+                {
+                    for (col = 0; col < nc; col++)
+                    {
+                        //Debug.WriteLine("rc " + row + " " + col + " obsnumber " + obsnumber + " next obsrow= " + observations[obsnumber, 0] + " col " + observations[obsnumber, 1]);
+                        if (row == observations[obsnumber, 0] && col == observations[obsnumber, 1])
+                        {
+                            //in this case, we are in a cell where we also have an observation. Time to compare and calculate an error, first for the soil depth
+                            localdepth_error = Math.Pow(Math.Abs(soildepth_m[row, 0] - observations[obsnumber, 2]) / (observations[obsnumber, 2] + soildepth_m[row, 0]), 2);
+                            //and now for all other properties, where we need to take a complicated average over all layers:
+                            SOM_error_depthproduct = 0; coarse_error_depthproduct = 0; sand_error_depthproduct = 0; silt_error_depthproduct = 0; clay_error_depthproduct = 0;
+                            int obshorizon = 0;
+                            int lyr = 0;
+                            double lyr_end_depth_m = 0;
+                            double lyr_begin_depth_m = 0;
+                            double hor_end_depth_m = 0;
+                            double hor_begin_depth_m = 0;
+                            double overlap_m = 0;
+                            bool horizonchanged = false;
+                            //now calulate errors
+                            while (layerthickness_m[row, col, lyr] > 0) // as long as we still have layers left
+                            {
+
+                                lyr_end_depth_m += layerthickness_m[row, col, lyr];  //we update how deep this layer ends
+                                lyr_begin_depth_m = lyr_end_depth_m - layerthickness_m[row, col, lyr];
+                                horizonchanged = false;
+                                try
+                                {
+                                    while (observations[obsnumber, 3 + 6 * obshorizon] > 0 && !(lyr_begin_depth_m > observations[obsnumber, 3 + 6 * obshorizon]))
+                                    {
+                                        horizonchanged = false;
+                                        //Debug.WriteLine(" now depth " + lyr_end_depth_m + " obshorizon " + obshorizon + " compared to obs depth " + observations[obsnumber, (3 + 6 * obshorizon)]);
+                                        if (lyr_end_depth_m > observations[obsnumber, (3 + 6 * obshorizon)])
+                                        {
+                                            overlap_m = layerthickness_m[row, col, lyr] + (observations[obsnumber, (3 + 6 * obshorizon)] - lyr_end_depth_m);
+                                        }
+                                        else
+                                        {
+                                            overlap_m = layerthickness_m[row, col, lyr];
+                                        }
+                                        //Debug.WriteLine(" overlap depth = " + overlap_m);
+                                        SOM_error = Math.Abs(((young_SOM_kg[row, col, lyr] + old_SOM_kg[row, col, lyr]) / total_layer_fine_earth_om_mass_kg(row, col, lyr)) - observations[obsnumber, 4 + 6 * obshorizon]);
+                                        coarse_error = Math.Abs((texture_kg[row, col, lyr, 0] / total_layer_mineral_earth_mass_kg(row, col, lyr)) - observations[obsnumber, 5 + 6 * obshorizon]);
+                                        sand_error = Math.Abs((texture_kg[row, col, lyr, 1] / total_layer_fine_earth_mass_kg(row, col, lyr)) - observations[obsnumber, 6 + 6 * obshorizon]);
+                                        silt_error = Math.Abs((texture_kg[row, col, lyr, 2] / total_layer_fine_earth_mass_kg(row, col, lyr)) - observations[obsnumber, 7 + 6 * obshorizon]);
+                                        clay_error = Math.Abs(((texture_kg[row, col, lyr, 3] + texture_kg[row, col, lyr, 4]) / total_layer_fine_earth_mass_kg(row, col, lyr)) - observations[obsnumber, 8 + 6 * obshorizon]);
+                                        //now normalize and add the errors to the error depth products, but account for the fact that only a fraction of this layer was decsribed in this observed horizon
+                                        SOM_error_depthproduct += SOM_error * overlap_m;
+                                        coarse_error_depthproduct += coarse_error * overlap_m;
+                                        sand_error_depthproduct += sand_error * overlap_m;
+                                        silt_error_depthproduct += silt_error * overlap_m;
+                                        clay_error_depthproduct += clay_error * overlap_m;
+
+                                        if (lyr_end_depth_m > observations[obsnumber, (3 + 6 * obshorizon)])
+                                        {
+                                            obshorizon++; horizonchanged = true;
+                                            //Debug.WriteLine(" moved to next obshorizon : " + obshorizon);
+                                            //Debug.WriteLine(" now depth " + lyr_end_depth_m + " obshorizon " + obshorizon + " compared to obs depth " + observations[obsnumber, (3 + 6 * obshorizon)]);
+                                        }
+                                        else
+                                        {
+                                            //Debug.WriteLine(" breaking out, going for next layer "); 
+                                            break;
+                                        }
+                                        //alternative ways to calculate all these errors:
+                                        //clay_error_depthproduct += clay_error / observations[obsnumber, 8 + 6 * obshorizon] * overlap_m;  / has the disadvantage that if observations[,] = 0, the error is INF
+                                        //clay_error_depthproduct += clay_error / ((((texture_kg[row, col, lyr, 3] + texture_kg[row, col, lyr, 4]) / total_layer_fine_earth_mass_kg(row, col, lyr))/2) 
+                                        //the one above divides by the mean of obs and sim, which may still be zero, but then the error was also zero. Not sure what that results in, but possibly still unstable
+                                        //Debug.WriteLine(" obshorizon now " + obshorizon + " with depth " + observations[obsnumber, 3 + 6 * obshorizon] + " lyr " + lyr + " begin " + lyr_begin_depth_m + " end " + lyr_end_depth_m);
+                                    }
+                                }
+                                catch { Debug.WriteLine("error - failed during calculation of local errors "); }
+                                //Debug.WriteLine(" no more horizons eligible or available after hor " + obshorizon + " lyr now " + lyr + " end depth " + lyr_end_depth_m);
+                                if (horizonchanged == false)
+                                {
+                                    lyr++;
+                                    //Debug.WriteLine(" increased layer to " + lyr); 
+                                }
+                                if (lyr == max_soil_layers) { break; }
+
+                            }
+                            //Debug.WriteLine("rc" + row + col + " no more layers left after lyr " + lyr);
+                            //we now calculated, normalized and depth_summed all errors. Dividing by depth and adding up is the next step
+                            normal_OM_error = SOM_error_depthproduct / lyr_end_depth_m;
+                            normal_coarse_error = coarse_error_depthproduct / lyr_end_depth_m;
+                            normal_sand_error = sand_error_depthproduct / lyr_end_depth_m;
+                            normal_silt_error = silt_error_depthproduct / lyr_end_depth_m;
+                            normal_clay_error = clay_error_depthproduct / lyr_end_depth_m;
+                            //if there was no  simulated layer at all, we just divided by zero up here, and should replace the NaN with a large value
+                            int largereplacementerror = 100;
+                            if (Double.IsNaN(localdepth_error)) { localdepth_error = largereplacementerror; }
+                            if (Double.IsNaN(normal_OM_error)) { normal_OM_error = largereplacementerror; }
+                            if (Double.IsNaN(normal_coarse_error)) { normal_coarse_error = largereplacementerror; }
+                            if (Double.IsNaN(normal_sand_error)) { normal_sand_error = largereplacementerror; }
+                            if (Double.IsNaN(normal_silt_error)) { normal_silt_error = largereplacementerror; }
+                            if (Double.IsNaN(normal_clay_error)) { normal_clay_error = largereplacementerror; }
+                            location_error = (localdepth_error + normal_OM_error + normal_coarse_error + normal_sand_error + normal_silt_error + normal_clay_error) / 6;
+                            all_locations_error += location_error;
+                            Debug.WriteLine(row + " " + col + " " + location_error + "  " + all_locations_error + " " + localdepth_error);
+                            totaldepth_error += localdepth_error;
+
+                            double NBW;
+                            if (bedrock_weathering_m[row, col] < 0) //MMS to prevent negative bedrock weathering production
+                            {
+                                NBW = 1;
+                            }
+                            else
+                            {
+                                NBW = 0;
+                            }
+
+                            //write this to file for this location
+                            bool location_errors_requested = false;
+                            if (location_errors_requested)
+                            {
+                                using (StreamWriter sw = new StreamWriter(localfile, true))
+                                {
+                                    //sw.Write(run + "," + row + "," + col + "," + location_error + "," + totaldepth_error + "," + normal_OM_error + "," + normal_coarse_error + "," + normal_sand_error + "," + normal_silt_error + "," + normal_clay_error); //MMS_eva
+                                    sw.Write(run_number + "," + row + "," + col + "," + location_error + "," + localdepth_error + "," + normal_OM_error + "," + normal_coarse_error + "," + normal_sand_error + "," + normal_silt_error + "," + normal_clay_error + "," + advection_erodibility + "," + diffusivity_creep + "," + P0 + "," + k1 + "," + k2 + "," + NBW); //MMS_eva
+                                    sw.Write("\r\n");
+                                    sw.Close();
+                                }
+                            }
+                            obsnumber++;
+                            //Debug.WriteLine("increased obsnumber to " + obsnumber);
+                        }
+                        else
+                        { //do nothing , this is a cell where we have no observations so it gets ignored
+                        }
+                    }
+
+                }
+            }
+            catch { Debug.WriteLine("error - failed during calculation of initial errors "); }
+            //we now know the sum of normalized errors for all locations. Divide by number of observations (=locations) to compare with errors in the depth-averages for the entire area
+            all_locations_error /= obsnumber;
+            try
+            {
+                //the average values of the SOM and texture fractions across ALL rows and cols are calculated in a separate function domain_sum, which takes a peculiar input:
+                //a string of all properties separated by comma's. 
+                coarsesum = domain_sum($"{0}");
+                sandsum = domain_sum($"{1}");
+                siltsum = domain_sum($"{2}");
+                claysum = domain_sum("3,4");
+                OMsum = domain_sum("5,6");
+                fineearthsum = domain_sum("1,2,3,4,5,6");
+                allmasssum = domain_sum("0,1,2,3,4,5,6");
+                coarsefract = coarsesum / allmasssum;
+                sandfract = sandsum / fineearthsum;
+                siltfract = siltsum / fineearthsum;
+                clayfract = claysum / fineearthsum;
+                OMfract = OMsum / fineearthsum;
+            }
+            catch { Debug.WriteLine("  failed during calculation of simulated domain sums"); }
+            //the average values of the observations are calculated here
+            double OM_obs_depth_sum = 0, coarse_obs_depth_sum = 0, sand_obs_depth_sum = 0, silt_obs_depth_sum = 0, clay_obs_depth_sum = 0, depth_sum = 0;
+            double OM_obs_fract = 0, coarse_obs_fract = 0, sand_obs_fract = 0, silt_obs_fract = 0, clay_obs_fract = 0;
+            try
+            {
+                for (i = 0; i < observations.GetLength(0); i++)
+                {
+                    for (j = 1; j < (observations.GetLength(1) - 3) / 6; j++)
+                    {
+                        if (observations[i, (j - 1) * 6 + 3] > 0)
+                        {   // in other words, if this horizon exists.
+                            //Debug.WriteLine(" adding horizon " + j + " from location " + i);
+                            OM_obs_depth_sum += observations[i, (j - 1) * 6 + 4] * observations[i, (j - 1) * 6 + 3];
+                            coarse_obs_depth_sum += observations[i, (j - 1) * 6 + 5] * observations[i, (j - 1) * 6 + 3];
+                            sand_obs_depth_sum += observations[i, (j - 1) * 6 + 6] * observations[i, (j - 1) * 6 + 3];
+                            silt_obs_depth_sum += observations[i, (j - 1) * 6 + 7] * observations[i, (j - 1) * 6 + 3];
+                            clay_obs_depth_sum += observations[i, (j - 1) * 6 + 8] * observations[i, (j - 1) * 6 + 3];
+                            depth_sum += observations[i, (j - 1) * 6 + 3];
+                        }
+                    }
+                }
+                Debug.WriteLine(" finished adding observations ");
+            }
+            catch { Debug.WriteLine(" error - failed during calculation of observed domain sums"); }
+            OM_obs_fract = OM_obs_depth_sum / depth_sum;
+            coarse_obs_fract = coarse_obs_depth_sum / depth_sum;
+            sand_obs_fract = sand_obs_depth_sum / depth_sum;
+            silt_obs_fract = silt_obs_depth_sum / depth_sum;
+            clay_obs_fract = clay_obs_depth_sum / depth_sum;
+            normal_OM_error = Math.Abs(OMfract - OM_obs_fract) / OM_obs_fract;
+            normal_coarse_error = Math.Abs(coarsefract - coarse_obs_fract) / coarse_obs_fract;
+            normal_sand_error = Math.Abs(sandfract - sand_obs_fract) / sand_obs_fract;
+            normal_silt_error = Math.Abs(siltfract - silt_obs_fract) / silt_obs_fract;
+            normal_clay_error = Math.Abs(clayfract - clay_obs_fract) / clay_obs_fract;
+            double entire_domain_error = (normal_OM_error + normal_coarse_error + normal_sand_error + normal_silt_error + normal_clay_error) / 5;
+            using (StreamWriter sw = new StreamWriter(globalfile, true))
+            {
+                sw.Write(run_number + "," + all_locations_error + "," + entire_domain_error + "," + (all_locations_error + entire_domain_error) / 2 + "," + totaldepth_error / observations.GetLength(0) + "," + advection_erodibility + "," + diffusivity_creep + "," + P0 + "," + k1 + "," + k2);
+                sw.Write("\r\n");
+                sw.Close();
+            }
+            Debug.WriteLine("calculated and saved errors for run number" + run_number);
+            return ((all_locations_error + entire_domain_error) / 2);
+        }
+        
         private void calib_update_best_paras()
         {
             //this code updates the recorded set of parameter values that gives the best score for the objective function
             //USERS have to update code here to reflect the parameters they actually vary
             Debug.WriteLine(" updating parameter set for best scored run");
             // add/change lines below
+            //Luxembourg:
             best_parameters[0] = advection_erodibility;
-            // best_parameters[1] = conv_fac;
-            Debug.WriteLine(" best erodib " + best_parameters[0]);
-            // Debug.WriteLine(" best conv_fac " + best_parameters[1]);
+            //best_parameters[1] = conv_fac;
+
+            //Konza Marte:
+            best_parameters[0] = advection_erodibility;
+            best_parameters[1] = diffusivity_creep;
+            best_parameters[2] = P0;
+            best_parameters[3] = k1;
+            best_parameters[4] = k2;
+            Pa = P0 * 0.606060606;
         }
 
         #endregion
@@ -20095,8 +20570,18 @@ Example: rainfall.asc can look like:
 
                         if (Calibration_button.Checked == true)
                         {
-                            //calculate how good this run was:
-                            double current_error = calib_objective_function();
+                            //calculate how good this run was:                          
+                            double current_error = -1;                            
+                            if (version_lux_checkbox.Checked)
+                            {
+                                current_error = calib_objective_function_Lux();
+                            }
+                            if (Konza_checkbox.Checked) {
+                                current_error = calib_objective_function_Lux();
+                            }
+                            if (current_error == -1) { Debug.WriteLine(" no error calculated during calibration "); 
+                            }
+
                             //store that information along with the parameter values used to achieve it:
                             calib_update_report(current_error);
                             if (current_error < best_error) { best_error = current_error; calib_update_best_paras(); best_run = run_number; }

@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="LORICA.exe" size="2597376">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="LORICA.exe" size="2606592">
       <assemblyIdentity name="LORICA" version="4.7.2.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>qwewjAPmS5L5IN2TQFHngp2Bbyjr6IvK+zBuvnRy2Bg=</dsig:DigestValue>
+        <dsig:DigestValue>DVbJlG2bLa+TNTGoPcRUZOxLycBJaPWxCG6Gj3oWNM0=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
