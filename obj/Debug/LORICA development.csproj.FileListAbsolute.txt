@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 C:\Users\19132\source\repos\lorica_all_versions\bin\Debug\LORICA.exe.config
 C:\Users\19132\source\repos\lorica_all_versions\bin\Debug\LORICA.exe.manifest
 C:\Users\19132\source\repos\lorica_all_versions\bin\Debug\LORICA.application
@@ -21,70 +20,3 @@ C:\Users\19132\source\repos\lorica_all_versions\obj\Debug\LORICA.application
 C:\Users\19132\source\repos\lorica_all_versions\obj\Debug\LORICA development.csproj.CopyComplete
 C:\Users\19132\source\repos\lorica_all_versions\obj\Debug\LORICA.exe
 C:\Users\19132\source\repos\lorica_all_versions\obj\Debug\LORICA.pdb
-=======
-C:\Users\arete\Source\Repos\lorica_all_versions\obj\Debug\LORICA development.csproj.AssemblyReference.cache
-C:\Users\arete\source\repos\lorica_all_versions\obj\Debug\LORICA4.About_LORICA.resources
-C:\Users\arete\source\repos\lorica_all_versions\obj\Debug\LORICA4.Landuse_determinator.resources
-C:\Users\arete\source\repos\lorica_all_versions\obj\Debug\LORICA4.Mother_form.resources
-C:\Users\arete\source\repos\lorica_all_versions\obj\Debug\LORICA4.Output_profile.resources
-C:\Users\arete\source\repos\lorica_all_versions\obj\Debug\LORICA4.Output_timeseries.resources
-C:\Users\arete\source\repos\lorica_all_versions\obj\Debug\LORICA4.Properties.Resources.resources
-C:\Users\arete\source\repos\lorica_all_versions\obj\Debug\LORICA4.Soil_specifier.resources
-C:\Users\arete\source\repos\lorica_all_versions\obj\Debug\LORICA development.csproj.GenerateResource.cache
-C:\Users\arete\source\repos\lorica_all_versions\obj\Debug\LORICA development.csproj.CoreCompileInputs.cache
-C:\Users\arete\source\repos\lorica_all_versions\bin\Debug\LORICA.exe.manifest
-C:\Users\arete\source\repos\lorica_all_versions\bin\Debug\LORICA.application
-C:\Users\arete\source\repos\lorica_all_versions\bin\Debug\LORICA.exe
-C:\Users\arete\source\repos\lorica_all_versions\bin\Debug\LORICA.pdb
-C:\Users\arete\source\repos\lorica_all_versions\bin\Debug\MathNet.Numerics.dll
-C:\Users\arete\source\repos\lorica_all_versions\bin\Debug\MathNet.Numerics.xml
-C:\Users\arete\source\repos\lorica_all_versions\obj\Debug\LORICA.exe.manifest
-C:\Users\arete\source\repos\lorica_all_versions\obj\Debug\LORICA.application
-C:\Users\arete\source\repos\lorica_all_versions\obj\Debug\LORICA development.csproj.CopyComplete
-C:\Users\arete\source\repos\lorica_all_versions\obj\Debug\LORICA.exe
-C:\Users\arete\source\repos\lorica_all_versions\obj\Debug\LORICA.pdb
-C:\Users\Marijn\sciebo\Research\GIT\lorica_all_versions\bin\Debug\LORICA.exe.manifest
-C:\Users\Marijn\sciebo\Research\GIT\lorica_all_versions\bin\Debug\LORICA.application
-C:\Users\Marijn\sciebo\Research\GIT\lorica_all_versions\bin\Debug\LORICA.exe
-C:\Users\Marijn\sciebo\Research\GIT\lorica_all_versions\bin\Debug\LORICA.pdb
-C:\Users\Marijn\sciebo\Research\GIT\lorica_all_versions\bin\Debug\MathNet.Numerics.dll
-C:\Users\Marijn\sciebo\Research\GIT\lorica_all_versions\bin\Debug\MathNet.Numerics.xml
-C:\Users\Marijn\sciebo\Research\GIT\lorica_all_versions\obj\Debug\LORICA development.csproj.AssemblyReference.cache
-C:\Users\Marijn\sciebo\Research\GIT\lorica_all_versions\obj\Debug\LORICA4.About_LORICA.resources
-C:\Users\Marijn\sciebo\Research\GIT\lorica_all_versions\obj\Debug\LORICA4.Landuse_determinator.resources
-C:\Users\Marijn\sciebo\Research\GIT\lorica_all_versions\obj\Debug\LORICA4.Mother_form.resources
-C:\Users\Marijn\sciebo\Research\GIT\lorica_all_versions\obj\Debug\LORICA4.Output_profile.resources
-C:\Users\Marijn\sciebo\Research\GIT\lorica_all_versions\obj\Debug\LORICA4.Output_timeseries.resources
-C:\Users\Marijn\sciebo\Research\GIT\lorica_all_versions\obj\Debug\LORICA4.Properties.Resources.resources
-C:\Users\Marijn\sciebo\Research\GIT\lorica_all_versions\obj\Debug\LORICA4.Soil_specifier.resources
-C:\Users\Marijn\sciebo\Research\GIT\lorica_all_versions\obj\Debug\LORICA development.csproj.GenerateResource.cache
-C:\Users\Marijn\sciebo\Research\GIT\lorica_all_versions\obj\Debug\LORICA development.csproj.CoreCompileInputs.cache
-C:\Users\Marijn\sciebo\Research\GIT\lorica_all_versions\obj\Debug\LORICA.exe.manifest
-C:\Users\Marijn\sciebo\Research\GIT\lorica_all_versions\obj\Debug\LORICA.application
-C:\Users\Marijn\sciebo\Research\GIT\lorica_all_versions\obj\Debug\LORICA development.csproj.CopyComplete
-C:\Users\Marijn\sciebo\Research\GIT\lorica_all_versions\obj\Debug\LORICA.exe
-C:\Users\Marijn\sciebo\Research\GIT\lorica_all_versions\obj\Debug\LORICA.pdb
-C:\Users\arete\source\repos\lorica_all_versions\bin\Debug\LORICA.exe.config
->>>>>>> arnaud_interface
-C:\Users\berts\source\repos\lorica_all_versions\bin\Debug\LORICA.exe.config
-C:\Users\berts\source\repos\lorica_all_versions\bin\Debug\LORICA.exe.manifest
-C:\Users\berts\source\repos\lorica_all_versions\bin\Debug\LORICA.application
-C:\Users\berts\source\repos\lorica_all_versions\bin\Debug\LORICA.exe
-C:\Users\berts\source\repos\lorica_all_versions\bin\Debug\LORICA.pdb
-C:\Users\berts\source\repos\lorica_all_versions\bin\Debug\MathNet.Numerics.dll
-C:\Users\berts\source\repos\lorica_all_versions\bin\Debug\MathNet.Numerics.xml
-C:\Users\berts\source\repos\lorica_all_versions\obj\Debug\LORICA development.csproj.AssemblyReference.cache
-C:\Users\berts\source\repos\lorica_all_versions\obj\Debug\LORICA4.About_LORICA.resources
-C:\Users\berts\source\repos\lorica_all_versions\obj\Debug\LORICA4.Landuse_determinator.resources
-C:\Users\berts\source\repos\lorica_all_versions\obj\Debug\LORICA4.Mother_form.resources
-C:\Users\berts\source\repos\lorica_all_versions\obj\Debug\LORICA4.Output_profile.resources
-C:\Users\berts\source\repos\lorica_all_versions\obj\Debug\LORICA4.Output_timeseries.resources
-C:\Users\berts\source\repos\lorica_all_versions\obj\Debug\LORICA4.Properties.Resources.resources
-C:\Users\berts\source\repos\lorica_all_versions\obj\Debug\LORICA4.Soil_specifier.resources
-C:\Users\berts\source\repos\lorica_all_versions\obj\Debug\LORICA development.csproj.GenerateResource.cache
-C:\Users\berts\source\repos\lorica_all_versions\obj\Debug\LORICA development.csproj.CoreCompileInputs.cache
-C:\Users\berts\source\repos\lorica_all_versions\obj\Debug\LORICA.exe.manifest
-C:\Users\berts\source\repos\lorica_all_versions\obj\Debug\LORICA.application
-C:\Users\berts\source\repos\lorica_all_versions\obj\Debug\LORICA development.csproj.CopyComplete
-C:\Users\berts\source\repos\lorica_all_versions\obj\Debug\LORICA.exe
-C:\Users\berts\source\repos\lorica_all_versions\obj\Debug\LORICA.pdb
