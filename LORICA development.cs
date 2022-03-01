@@ -20054,7 +20054,7 @@ Example: rainfall.asc can look like:
                 main_loop_code(); //start simulation work on background thread
             }, CancellationToken.None, options, TaskScheduler.Default);
         }
-
+        //test commit 1
         private void main_loop_code()
         {
             //use this example for accessing the UI thread to update any GUI labels :
@@ -20087,7 +20087,7 @@ Example: rainfall.asc can look like:
                 }
                 //WVG initialise ntr, nr of timesteps, can be changed to nr of output timesteps
                 numfile = 1;
-                this.ProcessStatusPanel.Text = "";
+                //this.ProcessStatusPanel.Text = "";
                 if (Water_ero_checkbox.Checked)
                 {
                     water_ero_active = true;
@@ -20482,6 +20482,14 @@ Example: rainfall.asc can look like:
                     // Debug.WriteLine("initialising non-general inputs");
                     try { initialise_once(); } // reading input files
                     catch { MessageBox.Show("there was a problem reading input files "); input_data_error = true; }
+
+                    try
+                    {
+                        filename = dtmfilename;             //for directory input
+                        dtm_file(filename);                 // from dtm_file(), almost all memory for the model is claimed
+                    }
+                    catch { Debug.WriteLine(" failed to initialise dtm "); }
+
                     for (run_number = 0; run_number < maxruns; run_number++) //Maxruns Loop()
                     {
 
@@ -20501,12 +20509,7 @@ Example: rainfall.asc can look like:
                             //CALIB_USER: multiply parameter values with current ratio
                             //Note the correspondence between the formulas. Change only 1 value for additional parameters!
 
-                            try
-                            {
-                                filename = dtmfilename;             //for directory input
-                                dtm_file(filename);                 // from dtm_file(), almost all memory for the model is claimed
-                            }
-                            catch { Debug.WriteLine(" failed to initialise dtm "); }
+                           
 
                             if (Calibration_button.Checked == true)
                             {
@@ -21437,10 +21440,10 @@ Example: rainfall.asc can look like:
                 }
             }
             //displayonscreen(0, 0);
-            Task.Factory.StartNew(() =>
-            {
-                this.InfoStatusPanel.Text = "data cells: " + number_of_data_cells;
-            }, CancellationToken.None, TaskCreationOptions.None, guiThread);
+            //Task.Factory.StartNew(() =>
+            //{
+            //    this.InfoStatusPanel.Text = "data cells: " + number_of_data_cells;
+            //}, CancellationToken.None, TaskCreationOptions.None, guiThread);
             //Debug.WriteLine("\n--sorting overview--");
             //Debug.WriteLine("Sorting " + number_of_data_cells + " cells");
             long gap = number_of_data_cells;
