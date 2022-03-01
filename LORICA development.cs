@@ -998,7 +998,7 @@ namespace LORICA4
         int diagnostic_mode = 0;
 
         //HARDLAYER AND BLOCK GLOBALS
-        int blocks_active = 1;
+        int blocks_active = 0;
         int nhardlayers = 1;
         int hardlayerthickness_m = 1;
         int hardlayerelevation_m = 151;
@@ -15051,7 +15051,7 @@ namespace LORICA4
                     if (Double.IsNaN(clayerodedfraction_0))
                     {
                         clayerodedfraction_0 = 0;
-                        Debug.WriteLine(" this should not have happened - no OM erosion possible");
+                        //Debug.WriteLine(" this should not have happened - no OM erosion possible");
                     }
                     if (Double.IsNaN(clayerodedfraction_1)) { clayerodedfraction_1 = 0; }
                     if (Double.IsNaN(sanderodedfraction_0)) { sanderodedfraction_0 = 0; }
