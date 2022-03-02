@@ -8787,12 +8787,18 @@ namespace LORICA4
                     	Test whether the cell has now been raised above fillheight, in which case: 
                             it must be lowered to its fillheight, 
                             remaining amount of sed in trans must be increased again
-                            lakecell must be removed from the lake (potentially fragmenting the original lake) */
+                            lakecell must be removed from the lake (potentially fragmenting the original lake) 
+            
+            filling happens for the moment with perfectly mixed sediment for the entire lake. 
+            The alternative, where different sides of a lake provide differently textured sediment to differently-textured deltas, is a 
+            possible development
+             */
 
+            double fraction_of_depression_filled = depressionsum_sediment_m / needed_to_fill_depression_m;
             int active_depression = number, size;
             if (diagnostic_mode == 1 && number > 2300000) { Debug.WriteLine(" building deltas in depression " + number + " sed needed " + needed_to_fill_depression_m + " sed available " + depressionsum_sediment_m); }
             //else { diagnostic_mode = 0; }
-
+            
             //if (number == 30001 && t == 1) { diagnostic_mode = 1; } else { diagnostic_mode = 0; }
 
             for (startrow = iloedge[active_depression]; startrow <= iupedge[active_depression]; startrow++)
@@ -9049,7 +9055,12 @@ namespace LORICA4
                     { // boundaries, note that i==0 && j==0 is allowed  ;we can raise rowlowestobnb,colloewsobnb when it is part of the delta.
                         if (depression[rowlowestobnb + i, collowestobnb + j] == -this_depression) // i.e. if cell is part of present delta
                         {
-                            //here, add some of that s_i_t_kg to the top layer. 
+                            for(int text_class = 0;text_class < 5; text_class++)
+                            {
+                                texture_kg[rowlowestobnb + i, collowestobnb + j, 0, text_class] += depressionsum_texture_kg[text_class] * (dhobliquemax2 / depressionsum_sediment_m);
+                            }
+                            old_SOM_kg[rowlowestobnb + i, collowestobnb + j, 0] += depressionsum_OOM_kg * (dhobliquemax2 / depressionsum_sediment_m);
+                            young_SOM_kg[rowlowestobnb + i, collowestobnb + j, 0] += depressionsum_YOM_kg * (dhobliquemax2 / depressionsum_sediment_m);
                             dtm[rowlowestobnb + i, collowestobnb + j] += dhobliquemax2;
                             dtmchange_m[rowlowestobnb + i, collowestobnb + j] += dhobliquemax2;
                             lake_sed_m[rowlowestobnb + i, collowestobnb + j] += dhobliquemax2;
@@ -9061,19 +9072,21 @@ namespace LORICA4
                             //if (diagnostic_mode == 1) { MessageBox.Show("warning - extremely high coarse sed_in_trans:" + sediment_in_transport_kg[startrow, startcol,0]); }
                             if ((dtm[rowlowestobnb + i, collowestobnb + j] + dz_ero_m[rowlowestobnb + i, collowestobnb + j] + dz_sed_m[rowlowestobnb + i, collowestobnb + j]) > dtmfill_A[rowlowestobnb + i, collowestobnb + j])
                             {   // then we have raised this cell too high
+                                double take_back_m = (dtm[rowlowestobnb + i, collowestobnb + j] + dz_ero_m[rowlowestobnb + i, collowestobnb + j] + dz_sed_m[rowlowestobnb + i, collowestobnb + j]) - dtmfill_A[rowlowestobnb + i, collowestobnb + j];
                                 if (diagnostic_mode == 1) { Debug.WriteLine("1 we change the too-high altitude of " + (rowlowestobnb + i) + " " + (collowestobnb + j) + " (depressionlevel " + depressionlevel[this_depression] + ") from " + dtm[rowlowestobnb + i, collowestobnb + j] + " to " + dtmfill_A[rowlowestobnb + i, collowestobnb + j]); }
-                                available_for_delta_m += ((dtm[rowlowestobnb + i, collowestobnb + j] + dz_ero_m[rowlowestobnb + i, collowestobnb + j] + dz_sed_m[rowlowestobnb + i, collowestobnb + j]) - dtmfill_A[rowlowestobnb + i, collowestobnb + j]);
+                                available_for_delta_m += take_back_m;
                                 for (size = 0; size < n_texture_classes; size++)
                                 {
                                     //any sediment in transport that was possibly waiting for consideration later than the current startrow, startcol is taken into this startrow startcol to make a bigger delta here
-                                    local_s_i_t_kg[size] = sediment_in_transport_kg[rowlowestobnb + i, collowestobnb + j, size];
+                                    local_s_i_t_kg[size] += sediment_in_transport_kg[rowlowestobnb + i, collowestobnb + j, size];
                                     sediment_in_transport_kg[rowlowestobnb + i, collowestobnb + j, size] = 0;
+                                    texture_kg[rowlowestobnb + i, collowestobnb + j, 0, size] -= depressionsum_texture_kg[size] * (take_back_m / depressionsum_sediment_m);
                                 }
-                                if (diagnostic_mode == 1) { Debug.WriteLine(" adding " + calc_thickness_from_mass(local_s_i_t_kg, 0, 0) + " to delta-available " + available_for_delta_m); }
-                                available_for_delta_m += calc_thickness_from_mass(local_s_i_t_kg, 0, 0);
+                                old_SOM_kg[rowlowestobnb + i, collowestobnb + j, 0] -= depressionsum_OOM_kg * (take_back_m / depressionsum_sediment_m);
+                                young_SOM_kg[rowlowestobnb + i, collowestobnb + j, 0] -= depressionsum_YOM_kg * (take_back_m / depressionsum_sediment_m);
                                 if (available_for_delta_m < 0) { Debug.WriteLine("5 negative sediment for delta " + available_for_delta_m + " m"); }
-                                lake_sed_m[rowlowestobnb + i, collowestobnb + j] += ((dtm[rowlowestobnb + i, collowestobnb + j] + dz_ero_m[rowlowestobnb + i, collowestobnb + j] + dz_sed_m[rowlowestobnb + i, collowestobnb + j]) - dtmfill_A[rowlowestobnb + i, collowestobnb + j]);
-                                dtmchange_m[rowlowestobnb + i, collowestobnb + j] += ((dtm[rowlowestobnb + i, collowestobnb + j] + dz_ero_m[rowlowestobnb + i, collowestobnb + j] + dz_sed_m[rowlowestobnb + i, collowestobnb + j]) - dtmfill_A[rowlowestobnb + i, collowestobnb + j]);
+                                lake_sed_m[rowlowestobnb + i, collowestobnb + j] -= take_back_m;
+                                dtmchange_m[rowlowestobnb + i, collowestobnb + j] -= take_back_m;
                                 if (lake_sed_m[rowlowestobnb + i, collowestobnb + j] < -0.0000001) { Debug.WriteLine("1 Warning: negative lake deposition in " + (rowlowestobnb + i) + " " + (collowestobnb + j) + " of " + lake_sed_m[rowlowestobnb + i, collowestobnb + j] + " dtm " + dtm[rowlowestobnb + i, collowestobnb + j] + " fill " + dtmfill_A[rowlowestobnb + i, collowestobnb + j]); minimaps(rowlowestobnb + i, collowestobnb + j); }
                                 dtm[rowlowestobnb + i, collowestobnb + j] = dtmfill_A[rowlowestobnb + i, collowestobnb + j] - dz_ero_m[rowlowestobnb + i, collowestobnb + j] - dz_sed_m[rowlowestobnb + i, collowestobnb + j];
                                 if (dtm[rowlowestobnb + i, collowestobnb + j] == -1) { Debug.WriteLine("A2 cell " + (rowlowestobnb + i) + " " + (collowestobnb + j) + " has an altitude of -1 now"); minimaps((rowlowestobnb + i), (collowestobnb + j)); }
@@ -9119,27 +9132,36 @@ namespace LORICA4
                     { // boundaries
                         if (depression[tempx + i, tempy + j] == -this_depression)
                         {
+                            for (int text_class = 0; text_class < 5; text_class++)
+                            {
+                                texture_kg[tempx + i, tempy + j,0, text_class] += depressionsum_texture_kg[text_class] * (mem_m / depressionsum_sediment_m);
+                            }
+                            old_SOM_kg[tempx + i, tempy + j,0] += depressionsum_OOM_kg * (mem_m / depressionsum_sediment_m);
+                            young_SOM_kg[tempx + i, tempy + j,0] += depressionsum_YOM_kg * (mem_m / depressionsum_sediment_m);
                             dtm[tempx + i, tempy + j] += mem_m;
                             dtmchange_m[tempx + i, tempy + j] += mem_m;
                             lake_sed_m[tempx + i, tempy + j] += mem_m;
-                            if (dtm[rowlowestobnb + i, collowestobnb + j] == -1) { Debug.WriteLine("B cell " + (rowlowestobnb + i) + " " + (collowestobnb + j) + " has an altitude of -1 now"); minimaps((rowlowestobnb + i), (collowestobnb + j)); }
+                            if (dtm[tempx + i, tempy + j] == -1) { Debug.WriteLine("B cell " + (tempx + i) + " " + (tempy + j) + " has an altitude of -1 now"); minimaps((rowlowestobnb + i), (collowestobnb + j)); }
                             if (lake_sed_m[tempx + i, tempy + j] < -0.0000001) { Debug.WriteLine("4 Warning: negative lake deposition in " + (tempx + i) + " " + (tempy + j) + " of " + lake_sed_m[tempx + i, tempy + j]); minimaps(tempx + i, tempy + j); }
                             if (diagnostic_mode == 1) { Debug.WriteLine(" added " + mem_m + " to cell " + (tempx + i) + " " + (tempy + j)); }
                             if ((dtm[tempx + i, tempy + j] + dz_ero_m[tempx + i, tempy + j] + dz_sed_m[tempx + i, tempy + j]) > dtmfill_A[tempx + i, tempy + j])
                             {
+                                double take_back_m = (dtm[tempx + i, tempy + j] + dz_ero_m[tempx + i, tempy + j] + dz_sed_m[tempx + i, tempy + j]) - dtmfill_A[tempx + i, tempy + j];
                                 if (diagnostic_mode == 1) { Debug.WriteLine(" cell " + (tempx + i) + " " + (tempy + j) + " raised above filllevel " + dtmfill_A[tempx + i, tempy + j] + ", to " + (dtm[tempx + i, tempy + j] + dz_ero_m[tempx + i, tempy + j] + dz_sed_m[tempx + i, tempy + j])); }
-                                available_for_delta_m += ((dtm[tempx + i, tempy + j] + dz_ero_m[tempx + i, tempy + j] + dz_sed_m[tempx + i, tempy + j]) - dtmfill_A[tempx + i, tempy + j]);
+                                available_for_delta_m += take_back_m;
                                 for (size = 0; size < n_texture_classes; size++)
                                 {
-                                    local_s_i_t_kg[size] = sediment_in_transport_kg[tempx + i, tempy + j, size];
+                                    local_s_i_t_kg[size] += sediment_in_transport_kg[tempx + i, tempy + j, size];
                                     sediment_in_transport_kg[tempx + i, tempy + j, size] = 0;   //ART recently changed, should solve a bug (this line did not exist, violation mass balance
+                                    texture_kg[tempx + i, tempy + j, 0, size] -= depressionsum_texture_kg[size] * (take_back_m / depressionsum_sediment_m);
                                 }
-                                available_for_delta_m += calc_thickness_from_mass(local_s_i_t_kg, 0, 0);
+                                old_SOM_kg[tempx + i, tempy + j, 0] -= depressionsum_OOM_kg * (take_back_m / depressionsum_sediment_m);
+                                young_SOM_kg[tempx + i, tempy + j, 0] -= depressionsum_YOM_kg * (take_back_m / depressionsum_sediment_m);
                                 if (available_for_delta_m < 0) { Debug.WriteLine("9 negative sediment in transport (m) remaining for delta " + available_for_delta_m + "m"); }
                                 if (diagnostic_mode == 1) { Debug.WriteLine(" A we change the altitude of " + (tempx + i) + " " + (tempy + j) + " (depressionlevel " + depressionlevel[this_depression] + ") from " + (dtm[tempx + i, tempy + j] + dz_ero_m[tempx + i, tempy + j] + dz_sed_m[tempx + i, tempy + j]) + " to " + dtmfill_A[tempx + i, tempy + j]); }
                                 if (tempx + i == row && tempy + j == col) { Debug.WriteLine("we are changing outlet " + tempx + " " + tempy + " into 0"); }
-                                lake_sed_m[tempx + i, tempy + j] -= ((dtm[tempx + i, tempy + j] + dz_ero_m[tempx + i, tempy + j] + dz_sed_m[tempx + i, tempy + j]) - dtmfill_A[tempx + i, tempy + j]);
-                                dtmchange_m[tempx + i, tempy + j] -= ((dtm[tempx + i, tempy + j] + dz_ero_m[tempx + i, tempy + j] + dz_sed_m[tempx + i, tempy + j]) - dtmfill_A[tempx + i, tempy + j]);
+                                lake_sed_m[tempx + i, tempy + j] -= take_back_m;
+                                dtmchange_m[tempx + i, tempy + j] -= take_back_m; 
                                 if (lake_sed_m[tempx + i, tempy + j] < -0.0000001) { Debug.WriteLine("3 Warning: negative lake deposition in " + (tempx + i) + " " + (tempy + j) + " of " + lake_sed_m[tempx + i, tempy + j] + " alt " + (dtm[tempx + i, tempy + j] + dz_ero_m[tempx + i, tempy + j] + dz_sed_m[tempx + i, tempy + j]) + " fill " + dtmfill_A[tempx + i, tempy + j]); minimaps(tempx + i, tempy + j); }
                                 dtm[tempx + i, tempy + j] = (dtmfill_A[tempx + i, tempy + j] - dz_ero_m[tempx + i, tempy + j] - dz_sed_m[tempx + i, tempy + j]); //so that with ero and sed, it equals dtmfill
                                 if (dtm[tempx + i, tempy + j] == -1) { Debug.WriteLine("C cell " + (tempx + i) + " " + (tempy + j) + " has an altitude of -1 now"); minimaps(tempx + i, tempy + j); } //
