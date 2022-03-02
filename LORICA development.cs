@@ -9245,7 +9245,22 @@ namespace LORICA4
                         }
                         else
                         {
-                            Debug.WriteLine("did not find an alternative start for this delta  " + deltasize);
+                            Debug.WriteLine("did not find an alternative start for this delta  " + deltasize + "in lake " + this_depression);
+                            //this means that no lake cells are left, even though there is sediment left. We are wrong about the former or the latter
+                            //development needed
+                            //in meantime, let's try to simply end this lake and move on
+                            depressionsum_sediment_m = 0;
+                            for (size = 0; size < n_texture_classes; size++)
+                            {
+                                local_s_i_t_kg[size] = 0;
+                                depressionsum_texture_kg[size] = 0;
+                            }
+                            depressionsum_OOM_kg =0;
+                            depressionsum_YOM_kg = 0;
+                            available_for_delta_m = 0;
+                            dhobliquemax2 = 0;
+                            Debug.WriteLine("trying to break free and move on"
+                                );
                         }
 
                     }
@@ -19473,10 +19488,13 @@ Example: rainfall.asc can look like:
                     sw.Write("run pedon_errors spatial_ave_errors both_together totaldepth_error");
                     //USER INPUT NEEDED IN FOLLOWING LINE: ENTER THE CALIBRATION PARAMETER NAMES 
                     //THEY WILL BE HEADERS IN THE CALIBRATION REPORT
-                    //For Lux:
-                    //sw.WriteLine(" erodibility_K conv_fac");
-                    //For Konza:
-                    sw.WriteLine(" erodibility_K diffusivity_creep P0 k1 k2 Pa");
+                    if (version_lux_checkbox.Checked) { 
+                        sw.WriteLine(" erodibility_K conv_fac");
+                    }
+                    if (Konza_checkbox.Checked)
+                    {
+                        sw.WriteLine(" erodibility_K diffusivity_creep P0 k1 k2 Pa");
+                    }
                 }
                 catch { Debug.WriteLine(" issue with writing the header of the calibration log file"); }
             }
@@ -19494,13 +19512,14 @@ Example: rainfall.asc can look like:
                 {
                     //USER INPUT NEEDED IN FOLLOWING LINE: ENTER THE CALIBRATION PARAMETERS 
 
-                    //Luxembourg:
-                    //sw.WriteLine(run_number + " " + objective_fnct_result + " " + advection_erodibility + " " + conv_fac);
-                    //Konza:
-                    //this is needed:
-                    //sw.Write("run pedon_errors spatial_ave_errors both_together totaldepth_error");
-                    //sw.WriteLine(" erodibility_K diffusivity_creep P0 k1 k2 Pa");
-                    sw.WriteLine(run_number + " " + objective_fnct_result + " " + advection_erodibility + " " + diffusivity_creep + " " + P0 + " " + k1 + " " + k2 + " " + Pa);
+                    if (version_lux_checkbox.Checked)
+                    {
+                        sw.WriteLine(run_number + " " + objective_fnct_result + " " + advection_erodibility + " " + conv_fac);
+                    }
+                    if (Konza_checkbox.Checked)
+                    {
+                        sw.WriteLine(run_number + " " + objective_fnct_result + " " + advection_erodibility + " " + diffusivity_creep + " " + P0 + " " + k1 + " " + k2 + " " + Pa);
+                    }
                 }
                 catch { Debug.WriteLine(" issue with writing a line in the calibration log file"); }
             }
@@ -19512,15 +19531,21 @@ Example: rainfall.asc can look like:
             //this code closes a calibration report
             //it writes the parameters for the best run to disk
             //CALIB_USER : Change the number of parameters referenced (now two)
+            Debug.WriteLine(" writing final line and closed file");
             try
             {
                 string FILENAME = workdir + "\\calibration.log";
                 using (StreamWriter sw = File.AppendText(FILENAME))
                 {
-                    //For Luxembourg:
-                    //sw.WriteLine(best_run + " " + best_error + " " + best_parameters[0] + " " + best_parameters[1] );
-                    // For Konza marte:
-                    sw.WriteLine(best_run + " " + best_error + " " + best_parameters[0] + " " + best_parameters[1] + " " + best_parameters[2] + " " + best_parameters[3] + " " + best_parameters[4]);
+                    if (version_lux_checkbox.Checked)
+                    {
+                        //sw.WriteLine(best_run + " " + best_error + " " + best_parameters[0] + " " + best_parameters[1]);
+                        sw.WriteLine(best_run + " " + best_error + " " + best_parameters[0] );
+                    }
+                    if (Konza_checkbox.Checked)
+                    {
+                        sw.WriteLine(best_run + " " + best_error + " " + best_parameters[0] + " " + best_parameters[1] + " " + best_parameters[2] + " " + best_parameters[3] + " " + best_parameters[4]);
+                    }
                     Debug.WriteLine(" best run was " + best_run + " with error " + best_error + "m3");
                 }
                 Debug.WriteLine(" calib tst - calib_finish_rep - wrote final line and closed file");
@@ -19883,19 +19908,23 @@ Example: rainfall.asc can look like:
         {
             //this code updates the recorded set of parameter values that gives the best score for the objective function
             //USERS have to update code here to reflect the parameters they actually vary
-            Debug.WriteLine(" updating parameter set for best scored run");
+            
             // add/change lines below
-            //Luxembourg:
-            best_parameters[0] = advection_erodibility;
-            //best_parameters[1] = conv_fac;
-
-            //Konza Marte:
-            best_parameters[0] = advection_erodibility;
-            best_parameters[1] = diffusivity_creep;
-            best_parameters[2] = P0;
-            best_parameters[3] = k1;
-            best_parameters[4] = k2;
-            Pa = P0 * 0.606060606;
+            if (version_lux_checkbox.Checked)
+            {
+                best_parameters[0] = advection_erodibility;
+            }
+            if (Konza_checkbox.Checked)
+            {
+                //Konza Marte:
+                best_parameters[0] = advection_erodibility;
+                best_parameters[1] = diffusivity_creep;
+                best_parameters[2] = P0;
+                best_parameters[3] = k1;
+                best_parameters[4] = k2;
+                Pa = P0 * 0.606060606;
+            }
+            Debug.WriteLine(" updated parameter set for best scored run");
         }
 
         #endregion
@@ -20436,7 +20465,7 @@ Example: rainfall.asc can look like:
                             }
                             if (Konza_checkbox.Checked)
                             {
-                                current_error = calib_objective_function_Lux();
+                                current_error = calib_objective_function_Konza();
                             }
                             if (current_error == -1)
                             {
