@@ -1063,6 +1063,20 @@ namespace LORICA4
 
         List<Block> Blocklist = new List<Block>();
 
+        public class Lakecell 
+        {
+            public Int32 trow { get; set; }
+            public Int32 tcol { get; set; }
+            public double t_sed_needed_m { get; set; }
+            public double t_new_elev_m { get; set; }
+            public Lakecell(Int32 row, Int32 col, double sed_needed, double new_elev)
+            {
+                trow = row; tcol = col; t_sed_needed_m = sed_needed; t_new_elev_m = new_elev;
+            }
+
+        }
+        List<Lakecell> L_lakecells = new List<Lakecell>();
+
         #endregion
 
         public Mother_form()
@@ -8774,7 +8788,7 @@ namespace LORICA4
             //Debug.WriteLine(" leaving depression " + this_depression + " alone");
 
             for (leaverow = iloedge[this_depression];
- leaverow <= iupedge[this_depression]; leaverow++)
+            leaverow <= iupedge[this_depression]; leaverow++)
             {
                 for (leavecol = jloedge[this_depression]; leavecol <= jupedge[this_depression]; leavecol++)
                 {
@@ -8800,6 +8814,87 @@ namespace LORICA4
             //Debug.WriteLine(" Left depression " + this_depression + " alone"); */
         }
 
+        void bottom_depression(int depnumber)
+        /* this code is intended as an alternative for delta_depression, to save calculation time and increase model stability
+         * instead of building deltas from each of a lake's side cells, we simply take the depressionsum_sediment_kg and put it in the lowest parts of the lake,
+         * aiming to raise the lakebottom higher and higher until depressionsum_sed_kg runs  out. 
+         * Lake bottom will be raised parallel to fillheight, not lakelevel, to ensure that we will ultimately have a non-flat surface. 
+         * the code will 
+         * a) calculate the difference between dtm+ero+sed and fillheight for each cell
+         * b) sort that list in descending order to get the 'deepest' cell first.
+         * c) calculate how many of the available cells can be raised how high with the available sediment
+         * d) raise those cells
+         */
+        //a: calculate difference, populate list
+        {
+            int active_depression = depnumber;
+            for (int startrow = iloedge[active_depression]; startrow <= iupedge[active_depression]; startrow++)
+            {
+                for (int startcol = jloedge[active_depression]; startcol <= jupedge[active_depression]; startcol++)
+                {
+                    if (((startrow) >= 0) && ((startrow) < nr) && ((startcol) >= 0) && ((startcol) < nc) && dtm[startrow, startcol] != -9999)
+                    {  //bnd
+                        if (depression[startrow, startcol] == active_depression)
+                        {
+                            double sed_thickness_needed_m = dtmfill_A[startrow, startcol] - (dtm[startrow, startcol] + dtm[startrow, startcol] + dtm[startrow, startcol]);
+                            L_lakecells.Add(new Lakecell(startrow, startcol, sed_thickness_needed_m, 0));
+                        }
+                    }
+                }
+            }
+            //b: now sort the list on the difference:
+            L_lakecells.OrderBy(x => x.t_sed_needed_m).ToList();
+            Console.WriteLine(String.Join(Environment.NewLine, L_lakecells));
+            L_lakecells.Reverse();
+            //c: walk through the ordered list and use up the depressionsum_sediment_m.
+            // We know that there is less than we'd need to fill the entire lake.
+            double sum_to_be_filled_m = 0;
+            double depth_under_dtmfill_m = L_lakecells.ElementAt(0).t_sed_needed_m;
+            for (int i = 0; i < L_lakecells.Count - 1; i++)
+            {
+                double extra_fill_m = L_lakecells.ElementAt(i).t_sed_needed_m - L_lakecells.ElementAt(i + 1).t_sed_needed_m;
+                sum_to_be_filled_m += extra_fill_m * i; //this increases from 0 to beyond sum_to_be_filled. The outlet cell (which is part of the lake),
+                                                        //has a t_sed_needed_m === 0, so if we get that far, sum_to_be_filled_m now is equal to the volume of the
+                                                        //lake (to dtmfill), which is more than depression_sum_sediment_m
+                depth_under_dtmfill_m -= extra_fill_m; // this diminishes from the initially lowest depth of any cell of the lake to 0 (if we made it to the last cell pair)            
+                if (sum_to_be_filled_m > depressionsum_sediment_m)
+                {
+                    depth_under_dtmfill_m += (sum_to_be_filled_m - depressionsum_sediment_m) / i;
+                    break;
+                }
+            }
+            //d: we now know how far under dtmfill all lakecells can reach (although some may already be higher, those won't get filled);
+            // let's fill then!
+            for (int startrow = iloedge[active_depression]; startrow <= iupedge[active_depression]; startrow++)
+            {
+                for (int startcol = jloedge[active_depression]; startcol <= jupedge[active_depression]; startcol++)
+                {
+                    if (((startrow) >= 0) && ((startrow) < nr) && ((startcol) >= 0) && ((startcol) < nc) && dtm[startrow, startcol] != -9999)
+                    {  //bnd
+                        if (depression[startrow, startcol] == active_depression)
+                        {
+                            if (dtmfill_A[startrow, startcol] - depth_under_dtmfill_m > dtm[startrow, startcol])
+                            {
+                                dtm[startrow, startcol] = dtmfill_A[startrow, startcol] - depth_under_dtmfill_m;
+                                young_SOM_kg[startrow,startcol,0] = (dtmfill_A[startrow, startcol] - depth_under_dtmfill_m) / depressionsum_sediment_m * depressionsum_YOM_kg;
+                                old_SOM_kg[startrow, startcol, 0] = (dtmfill_A[startrow, startcol] - depth_under_dtmfill_m) / depressionsum_sediment_m * depressionsum_OOM_kg;
+                                for (int texxie = 0; texxie < 5; texxie++)
+                                {
+                                    texture_kg[startrow, startcol, 0, texxie] += (dtmfill_A[startrow, startcol] - depth_under_dtmfill_m) / depressionsum_sediment_m * depressionsum_texture_kg[texxie];
+                                }
+                            }
+                        }
+
+                    }
+
+                }
+            }
+            depressionsum_sediment_m = 0;
+            depressionsum_OOM_kg = 0;
+            depressionsum_YOM_kg = 0;
+            depressionsum_texture_kg[0] = 0; depressionsum_texture_kg[1] = 0; depressionsum_texture_kg[2] = 0; depressionsum_texture_kg[3] = 0; depressionsum_texture_kg[4] = 0;
+            L_lakecells.Clear();
+        }
         void delta_depression(int number)  // builds deltas in an updated depression (because not enough sed)
         {
             /*When there is not enough sediment to fill the lake, fill the lake from each of its initial side-cells that have a non-zero sediment in transport, excluding outlet cells (their sediment in transport gets moved outside  they will never have to be raised higher than lakelevel which they already have  - they will remain having the lakenumber even when the whole lake would have been filled). 
