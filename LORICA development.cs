@@ -651,7 +651,7 @@ namespace LORICA4
         private Label uxThreadLabel;
         private Button profiles_button;
         private Button timeseries_button;
-        private CheckBox Konza_checkbox;
+        private CheckBox version_Konza_checkbox;
         private Label ux_number_Processors_label;
         private Label label33;
         private TextBox obsfile_textbox;
@@ -1063,7 +1063,7 @@ namespace LORICA4
 
         List<Block> Blocklist = new List<Block>();
 
-        public class Lakecell 
+        public class Lakecell
         {
             public Int32 trow { get; set; }
             public Int32 tcol { get; set; }
@@ -1264,7 +1264,7 @@ namespace LORICA4
             this.UTMsouthcheck = new System.Windows.Forms.CheckBox();
             this.Run = new System.Windows.Forms.TabPage();
             this.ux_number_Processors_label = new System.Windows.Forms.Label();
-            this.Konza_checkbox = new System.Windows.Forms.CheckBox();
+            this.version_Konza_checkbox = new System.Windows.Forms.CheckBox();
             this.uxThreadLabel = new System.Windows.Forms.Label();
             this.uxNumberCoresLabel = new System.Windows.Forms.Label();
             this.uxNumberLogicalProcessorsLabel = new System.Windows.Forms.Label();
@@ -2904,7 +2904,7 @@ namespace LORICA4
             // Run
             // 
             this.Run.Controls.Add(this.ux_number_Processors_label);
-            this.Run.Controls.Add(this.Konza_checkbox);
+            this.Run.Controls.Add(this.version_Konza_checkbox);
             this.Run.Controls.Add(this.uxThreadLabel);
             this.Run.Controls.Add(this.uxNumberCoresLabel);
             this.Run.Controls.Add(this.uxNumberLogicalProcessorsLabel);
@@ -2931,15 +2931,15 @@ namespace LORICA4
             this.ux_number_Processors_label.TabIndex = 13;
             this.ux_number_Processors_label.Text = "cores, and ";
             // 
-            // Konza_checkbox
+            // version_Konza_checkbox
             // 
-            this.Konza_checkbox.AutoSize = true;
-            this.Konza_checkbox.Location = new System.Drawing.Point(174, 126);
-            this.Konza_checkbox.Name = "Konza_checkbox";
-            this.Konza_checkbox.Size = new System.Drawing.Size(93, 17);
-            this.Konza_checkbox.TabIndex = 12;
-            this.Konza_checkbox.Text = "Konza version";
-            this.Konza_checkbox.UseVisualStyleBackColor = true;
+            this.version_Konza_checkbox.AutoSize = true;
+            this.version_Konza_checkbox.Location = new System.Drawing.Point(174, 126);
+            this.version_Konza_checkbox.Name = "version_Konza_checkbox";
+            this.version_Konza_checkbox.Size = new System.Drawing.Size(93, 17);
+            this.version_Konza_checkbox.TabIndex = 12;
+            this.version_Konza_checkbox.Text = "Konza version";
+            this.version_Konza_checkbox.UseVisualStyleBackColor = true;
             // 
             // uxThreadLabel
             // 
@@ -4640,8 +4640,8 @@ namespace LORICA4
             // 
             // tabControl1
             // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.Processes);
             this.tabControl1.Controls.Add(this.tabPage1);
@@ -6429,7 +6429,7 @@ namespace LORICA4
             int z, dem_integer_error = 1;
             string[] lineArray2;
             int sp;
-            Debug.WriteLine("Opening DEM" + FILE_NAME);
+            Debug.WriteLine("Opening DEM " + FILE_NAME);
             //MessageBox.Show("Directory " + Directory.GetCurrentDirectory() );
 
             if (!File.Exists(FILE_NAME))
@@ -6441,13 +6441,12 @@ namespace LORICA4
 
             try
             {
-
                 //read headers
                 StreamReader sr = File.OpenText(FILE_NAME);
                 for (z = 1; z <= 6; z++)
                 {
                     inputheader[z - 1] = sr.ReadLine();
-                    Debug.WriteLine(inputheader[z - 1]);
+                    //Debug.WriteLine(inputheader[z - 1]);
                 }
                 sr.Close();
 
@@ -7423,7 +7422,7 @@ namespace LORICA4
                         xreader.ReadStartElement("Specialsettings");
                         Spitsbergen_case_study.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("Spitsbergen"));
                         version_lux_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("Luxembourg"));
-                        Konza_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("Konza"));
+                        version_Konza_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("Konza"));
                         OSL_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("OSL_tracing"));
                         CN_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("CN_tracing"));
                         xreader.ReadEndElement();
@@ -7720,7 +7719,7 @@ namespace LORICA4
                 xwriter.WriteElementString("Be_box1", Be_insitu_box1.Text);
                 xwriter.WriteElementString("Be_box2", Be_insitute_box2.Text);
                 xwriter.WriteElementString("Be_box3", Be_insitu_textbox3.Text);
-                
+
                 xwriter.WriteEndElement();
 
                 xwriter.WriteStartElement("Inputs");
@@ -7780,7 +7779,7 @@ namespace LORICA4
                 xwriter.WriteStartElement("Specialsettings");
                 xwriter.WriteElementString("Spitsbergen", XmlConvert.ToString(Spitsbergen_case_study.Checked));
                 xwriter.WriteElementString("Luxembourg", XmlConvert.ToString(version_lux_checkbox.Checked));
-                xwriter.WriteElementString("Konza", XmlConvert.ToString(Konza_checkbox.Checked));
+                xwriter.WriteElementString("Konza", XmlConvert.ToString(version_Konza_checkbox.Checked));
                 xwriter.WriteElementString("OSL_tracing", XmlConvert.ToString(OSL_checkbox.Checked));
                 xwriter.WriteElementString("CN_tracing", XmlConvert.ToString(CN_checkbox.Checked));
                 //xwriter.WriteElementString("other", XmlConvert.ToString(runs_checkbox.Checked));
@@ -7788,7 +7787,7 @@ namespace LORICA4
 
                 xwriter.WriteStartElement("CalibrationSensitivity");
                 xwriter.WriteElementString("calibration_active_button", XmlConvert.ToString(Calibration_button.Checked));
-                xwriter.WriteElementString("calibration_num_paras_string", num_cal_paras_textbox.Text); 
+                xwriter.WriteElementString("calibration_num_paras_string", num_cal_paras_textbox.Text);
                 xwriter.WriteElementString("calibration_ratios_string", calibration_ratios_textbox.Text);
                 xwriter.WriteElementString("calibration_levels", calibration_levels_textbox.Text);
                 xwriter.WriteElementString("calibration_ratio_reduction_per_level", calibration_ratio_reduction_parameter_textbox.Text);
@@ -8876,7 +8875,7 @@ namespace LORICA4
                             if (dtmfill_A[startrow, startcol] - depth_under_dtmfill_m > dtm[startrow, startcol])
                             {
                                 dtm[startrow, startcol] = dtmfill_A[startrow, startcol] - depth_under_dtmfill_m;
-                                young_SOM_kg[startrow,startcol,0] = (dtmfill_A[startrow, startcol] - depth_under_dtmfill_m) / depressionsum_sediment_m * depressionsum_YOM_kg;
+                                young_SOM_kg[startrow, startcol, 0] = (dtmfill_A[startrow, startcol] - depth_under_dtmfill_m) / depressionsum_sediment_m * depressionsum_YOM_kg;
                                 old_SOM_kg[startrow, startcol, 0] = (dtmfill_A[startrow, startcol] - depth_under_dtmfill_m) / depressionsum_sediment_m * depressionsum_OOM_kg;
                                 for (int texxie = 0; texxie < 5; texxie++)
                                 {
@@ -8918,7 +8917,7 @@ namespace LORICA4
             int active_depression = number, size;
             if (diagnostic_mode == 1 && number > 2300000) { Debug.WriteLine(" building deltas in depression " + number + " sed needed " + needed_to_fill_depression_m + " sed available " + depressionsum_sediment_m); }
             //else { diagnostic_mode = 0; }
-            
+
             //if (number == 30001 && t == 1) { diagnostic_mode = 1; } else { diagnostic_mode = 0; }
 
             for (startrow = iloedge[active_depression]; startrow <= iupedge[active_depression]; startrow++)
@@ -9175,7 +9174,7 @@ namespace LORICA4
                     { // boundaries, note that i==0 && j==0 is allowed  ;we can raise rowlowestobnb,colloewsobnb when it is part of the delta.
                         if (depression[rowlowestobnb + i, collowestobnb + j] == -this_depression) // i.e. if cell is part of present delta
                         {
-                            for(int text_class = 0;text_class < 5; text_class++)
+                            for (int text_class = 0; text_class < 5; text_class++)
                             {
                                 texture_kg[rowlowestobnb + i, collowestobnb + j, 0, text_class] += depressionsum_texture_kg[text_class] * (dhobliquemax2 / depressionsum_sediment_m);
                             }
@@ -9254,10 +9253,10 @@ namespace LORICA4
                         {
                             for (int text_class = 0; text_class < 5; text_class++)
                             {
-                                texture_kg[tempx + i, tempy + j,0, text_class] += depressionsum_texture_kg[text_class] * (mem_m / depressionsum_sediment_m);
+                                texture_kg[tempx + i, tempy + j, 0, text_class] += depressionsum_texture_kg[text_class] * (mem_m / depressionsum_sediment_m);
                             }
-                            old_SOM_kg[tempx + i, tempy + j,0] += depressionsum_OOM_kg * (mem_m / depressionsum_sediment_m);
-                            young_SOM_kg[tempx + i, tempy + j,0] += depressionsum_YOM_kg * (mem_m / depressionsum_sediment_m);
+                            old_SOM_kg[tempx + i, tempy + j, 0] += depressionsum_OOM_kg * (mem_m / depressionsum_sediment_m);
+                            young_SOM_kg[tempx + i, tempy + j, 0] += depressionsum_YOM_kg * (mem_m / depressionsum_sediment_m);
                             dtm[tempx + i, tempy + j] += mem_m;
                             dtmchange_m[tempx + i, tempy + j] += mem_m;
                             lake_sed_m[tempx + i, tempy + j] += mem_m;
@@ -9281,7 +9280,7 @@ namespace LORICA4
                                 if (diagnostic_mode == 1) { Debug.WriteLine(" A we change the altitude of " + (tempx + i) + " " + (tempy + j) + " (depressionlevel " + depressionlevel[this_depression] + ") from " + (dtm[tempx + i, tempy + j] + dz_ero_m[tempx + i, tempy + j] + dz_sed_m[tempx + i, tempy + j]) + " to " + dtmfill_A[tempx + i, tempy + j]); }
                                 if (tempx + i == row && tempy + j == col) { Debug.WriteLine("we are changing outlet " + tempx + " " + tempy + " into 0"); }
                                 lake_sed_m[tempx + i, tempy + j] -= take_back_m;
-                                dtmchange_m[tempx + i, tempy + j] -= take_back_m; 
+                                dtmchange_m[tempx + i, tempy + j] -= take_back_m;
                                 if (lake_sed_m[tempx + i, tempy + j] < -0.0000001) { Debug.WriteLine("3 Warning: negative lake deposition in " + (tempx + i) + " " + (tempy + j) + " of " + lake_sed_m[tempx + i, tempy + j] + " alt " + (dtm[tempx + i, tempy + j] + dz_ero_m[tempx + i, tempy + j] + dz_sed_m[tempx + i, tempy + j]) + " fill " + dtmfill_A[tempx + i, tempy + j]); minimaps(tempx + i, tempy + j); }
                                 dtm[tempx + i, tempy + j] = (dtmfill_A[tempx + i, tempy + j] - dz_ero_m[tempx + i, tempy + j] - dz_sed_m[tempx + i, tempy + j]); //so that with ero and sed, it equals dtmfill
                                 if (dtm[tempx + i, tempy + j] == -1) { Debug.WriteLine("C cell " + (tempx + i) + " " + (tempy + j) + " has an altitude of -1 now"); minimaps(tempx + i, tempy + j); } //
@@ -9375,7 +9374,7 @@ namespace LORICA4
                                 local_s_i_t_kg[size] = 0;
                                 depressionsum_texture_kg[size] = 0;
                             }
-                            depressionsum_OOM_kg =0;
+                            depressionsum_OOM_kg = 0;
                             depressionsum_YOM_kg = 0;
                             available_for_delta_m = 0;
                             dhobliquemax2 = 0;
@@ -10021,7 +10020,6 @@ namespace LORICA4
 
             try
             {
-                // Debug.WriteLine(" assigning starting values for geomorph  ");
                 for (int row = 0; row < nr; row++)
                 {
                     for (int col = 0; col < nc; col++)
@@ -19554,7 +19552,8 @@ Example: rainfall.asc can look like:
             try
             {
                 Debug.WriteLine(" para number " + para_number);
-                Debug.WriteLine(" best_parameter value " + best_parameters[para_number]);
+                Debug.WriteLine(" best parameter value " + best_parameters[para_number]);
+                Debug.WriteLine(" original parameter value " + orig_par_value);
                 double mid_ratio = 0;
                 if (calib_ratios.GetLength(1) % 2 == 0) { mid_ratio = (calib_ratios[para_number, Convert.ToInt32(calib_ratios.GetLength(1) / 2) - 1] + calib_ratios[para_number, Convert.ToInt32((calib_ratios.GetLength(1) / 2))]) / 2; }
                 else { mid_ratio = calib_ratios[para_number, Convert.ToInt32(calib_ratios.GetLength(1) / 2 - 0.5)]; }
@@ -19578,8 +19577,9 @@ Example: rainfall.asc can look like:
                     Debug.WriteLine(" currentpara value was NOT on edge of range");
                     for (int ratio = 0; ratio < calib_ratios.GetLength(1); ratio++)
                     {
-                        Debug.WriteLine(" setting ratio " + calib_ratios[para_number, ratio] + " to " + ((best_ratio - calib_ratios[para_number, ratio]) / zoom_factor));
-                        calib_ratios[para_number, ratio] += (best_ratio - calib_ratios[para_number, ratio]) / zoom_factor;
+                        Debug.Write(" setting ratio " + calib_ratios[para_number, ratio] + " to " );
+                        calib_ratios[para_number, ratio] = best_ratio + (((calib_ratios[para_number, ratio]/mid_ratio)*best_ratio)-best_ratio)/ zoom_factor;
+                        Debug.WriteLine(calib_ratios[para_number, ratio]);
                     }
                 }
             }
@@ -19595,13 +19595,14 @@ Example: rainfall.asc can look like:
             {
                 try
                 {
-                    sw.Write("run pedon_errors spatial_ave_errors both_together totaldepth_error");
+                    sw.Write("run error");
                     //USER INPUT NEEDED IN FOLLOWING LINE: ENTER THE CALIBRATION PARAMETER NAMES 
                     //THEY WILL BE HEADERS IN THE CALIBRATION REPORT
-                    if (version_lux_checkbox.Checked) { 
-                        sw.WriteLine(" erodibility_K conv_fac");
+                    if (version_lux_checkbox.Checked)
+                    {
+                        sw.WriteLine(" erodibility_K");
                     }
-                    if (Konza_checkbox.Checked)
+                    if (version_Konza_checkbox.Checked)
                     {
                         sw.WriteLine(" erodibility_K diffusivity_creep P0 k1 k2 Pa");
                     }
@@ -19624,9 +19625,9 @@ Example: rainfall.asc can look like:
 
                     if (version_lux_checkbox.Checked)
                     {
-                        sw.WriteLine(run_number + " " + objective_fnct_result + " " + advection_erodibility + " " + conv_fac);
+                        sw.WriteLine(run_number + " " + objective_fnct_result + " " + advection_erodibility);
                     }
-                    if (Konza_checkbox.Checked)
+                    if (version_Konza_checkbox.Checked)
                     {
                         sw.WriteLine(run_number + " " + objective_fnct_result + " " + advection_erodibility + " " + diffusivity_creep + " " + P0 + " " + k1 + " " + k2 + " " + Pa);
                     }
@@ -19650,9 +19651,9 @@ Example: rainfall.asc can look like:
                     if (version_lux_checkbox.Checked)
                     {
                         //sw.WriteLine(best_run + " " + best_error + " " + best_parameters[0] + " " + best_parameters[1]);
-                        sw.WriteLine(best_run + " " + best_error + " " + best_parameters[0] );
+                        sw.WriteLine(best_run + " " + best_error + " " + best_parameters[0]);
                     }
-                    if (Konza_checkbox.Checked)
+                    if (version_Konza_checkbox.Checked)
                     {
                         sw.WriteLine(best_run + " " + best_error + " " + best_parameters[0] + " " + best_parameters[1] + " " + best_parameters[2] + " " + best_parameters[3] + " " + best_parameters[4]);
                     }
@@ -19677,7 +19678,7 @@ Example: rainfall.asc can look like:
             double simulated_ero_kg_m2_y = 0;
             double known_ero_kg_m2_y = 0.0313;
             double total_bulk_density = 0;
-            double average_bulk_density = 0;
+            double average_bulk_density_kg_m3 = 0;
             int objective_function_cells = 0;
             for (row = 0; row < nr; row++)
             {
@@ -19691,8 +19692,8 @@ Example: rainfall.asc can look like:
                     }
                 }
             }
-            average_bulk_density = total_bulk_density / objective_function_cells;
-            simulated_ero_kg_m2_y = average_bulk_density * simulated_ero_m3 / end_time / (objective_function_cells * dx * dx);
+            average_bulk_density_kg_m3 = total_bulk_density / objective_function_cells;
+            simulated_ero_kg_m2_y = (average_bulk_density_kg_m3 * simulated_ero_m3) / (objective_function_cells * dx * dx) / end_time;
             ;
             Debug.WriteLine(" calib tst - calib_objective_function - error is " + Math.Abs(known_ero_kg_m2_y - simulated_ero_kg_m2_y) + "kg per m2 per year");
             return Math.Abs(known_ero_kg_m2_y - simulated_ero_kg_m2_y);
@@ -20017,13 +20018,13 @@ Example: rainfall.asc can look like:
         {
             //this code updates the recorded set of parameter values that gives the best score for the objective function
             //USERS have to update code here to reflect the parameters they actually vary
-            
+
             // add/change lines below
             if (version_lux_checkbox.Checked)
             {
                 best_parameters[0] = advection_erodibility;
             }
-            if (Konza_checkbox.Checked)
+            if (version_Konza_checkbox.Checked)
             {
                 //Konza Marte:
                 best_parameters[0] = advection_erodibility;
@@ -20031,7 +20032,6 @@ Example: rainfall.asc can look like:
                 best_parameters[2] = P0;
                 best_parameters[3] = k1;
                 best_parameters[4] = k2;
-                Pa = P0 * 0.606060606;
             }
             Debug.WriteLine(" updated parameter set for best scored run");
         }
@@ -20083,76 +20083,61 @@ Example: rainfall.asc can look like:
                 }
                 //WVG initialise ntr, nr of timesteps, can be changed to nr of output timesteps
                 numfile = 1;
-                //this.ProcessStatusPanel.Text = "";
                 if (Water_ero_checkbox.Checked)
                 {
                     water_ero_active = true;
-                    //this.ProcessStatusPanel.Text += "WE ";
                 }
                 if (Tillage_checkbox.Checked)
                 {
                     tillage_active = true;
-                    //this.ProcessStatusPanel.Text += "TI ";
                 }
                 if (blocks_active_checkbox.Checked)
                 {
                     blocks_active = 1;
-                    //this.ProcessStatusPanel.Text += "BL ";
                 }
                 if (Landslide_checkbox.Checked)
                 {
                     landslide_active = true;
-                    //this.ProcessStatusPanel.Text += "LS ";
                 }
                 if (creep_active_checkbox.Checked)
                 {
                     creep_active = true;
-                    //this.ProcessStatusPanel.Text += "CR ";
                 }
                 if (Biological_weathering_checkbox.Checked)
                 {
                     bedrock_weathering_active = true;
-                    //this.ProcessStatusPanel.Text += "BW ";
                 }
                 if (Frost_weathering_checkbox.Checked)
                 {
                     frost_weathering_active = true;
-                    //this.ProcessStatusPanel.Text += "FW ";
                 }
                 if (tilting_active_checkbox.Checked)
                 {
                     tilting_active = true;
-                    //this.ProcessStatusPanel.Text += "TL ";
                 }
                 if (uplift_active_checkbox.Checked)
                 {
                     uplift_active = true;
-                    //this.ProcessStatusPanel.Text += "UP ";
                 }
                 if (soil_phys_weath_checkbox.Checked)
                 {
                     soil_phys_weath_active = true;
-                    //this.ProcessStatusPanel.Text += "PW ";
                 }
                 if (soil_chem_weath_checkbox.Checked)
                 {
                     soil_chem_weath_active = true;
-                    //this.ProcessStatusPanel.Text += "CW ";
                 }
                 if (soil_bioturb_checkbox.Checked)
                 {
                     soil_bioturb_active = true;
-                    //this.ProcessStatusPanel.Text += "BT ";
                 }
                 if (soil_clay_transloc_checkbox.Checked)
                 {
                     soil_clay_transloc_active = true;
-                    //this.ProcessStatusPanel.Text += "CT ";
                 }
                 if (soil_carbon_cycle_checkbox.Checked) //:)
                 {
                     soil_carbon_active = true;
-                    //this.ProcessStatusPanel.Text += "CC ";
                 }
 
                 //INPUTS
@@ -20169,7 +20154,8 @@ Example: rainfall.asc can look like:
                     {
                         user_specified_number_of_calibration_parameters = Convert.ToInt32(num_cal_paras_textbox.Text);
                     }
-                    catch {
+                    catch
+                    {
                         Debug.WriteLine(" problem setting number of parameters for calibration ");
                     }
                     best_error = 99999999999; //or any other absurdly high number
@@ -20191,305 +20177,307 @@ Example: rainfall.asc can look like:
                         catch { Debug.WriteLine(" problem setting original parameter ratios for calibration "); }
                     }
                     calib_calculate_maxruns(user_specified_number_of_calibration_parameters);
-                    Debug.WriteLine(maxruns);
+                    Debug.WriteLine(" starting " + maxruns + " calibration runs");
                     calib_prepare_report();
-                    //CALIB_USER: set the number of parameters and their initial value
-
                 }
                 if (Sensitivity_button.Checked == true)
                 { //dev needed
                 }
                 //PARALLEL THREADS
                 NumParallelThreads = Convert.ToInt32(uxNumberThreadsUpdown.Value);  //update number of Parallel Threads chosen in GUI		
-                Debug.WriteLine(" maxruns is " + maxruns);
 
-                //WATER EROSION AND DEPOSITION PARAMETERS
-                if (water_ero_active)
+
+                for (run_number = 0; run_number < maxruns; run_number++) //Maxruns Loop()
                 {
-                    try { m = double.Parse(parameter_m_textbox.Text); }
-                    catch { input_data_error = true; MessageBox.Show("value for parameter m is not valid"); }                      // Kirkby's m and n factors for increasing
-                    try { n = double.Parse(parameter_n_textbox.Text); }
-                    catch { input_data_error = true; MessageBox.Show("value for parameter n is not valid"); }                   // sheet, wash, overland, gully to river flow
-                    try { conv_fac = double.Parse(parameter_conv_textbox.Text); }
-                    catch { input_data_error = true; MessageBox.Show("value for parameter p is not valid"); }
-                    try { advection_erodibility = double.Parse(parameter_K_textbox.Text); }
-                    catch { input_data_error = true; MessageBox.Show("value for parameter K is not valid"); }
-                    try { bio_protection_constant = double.Parse(bio_protection_constant_textbox.Text); }
-                    catch { input_data_error = true; MessageBox.Show("value for parameter P is not valid"); }
-                    try { rock_protection_constant = double.Parse(rock_protection_constant_textbox.Text); }
-                    catch { input_data_error = true; MessageBox.Show("value for parameter P is not valid"); }
-                    try { constant_selective_transcap = double.Parse(selectivity_constant_textbox.Text); }
-                    catch { input_data_error = true; MessageBox.Show("value for parameter P is not valid"); }
-                    try { erosion_threshold_kg = double.Parse(erosion_threshold_textbox.Text); }
-                    catch { input_data_error = true; MessageBox.Show("value for parameter P is not valid"); }
-                }
 
-                //TILLAGE PARAMETERS
-                if (tillage_active)
-                {
-                    try { plough_depth = double.Parse(parameter_ploughing_depth_textbox.Text); }
-                    catch { input_data_error = true; MessageBox.Show("value for parameter plough depth is not valid"); }
-                    try { tilc = double.Parse(parameter_tillage_constant_textbox.Text); }
-                    catch { input_data_error = true; MessageBox.Show("value for parameter tillage constant is not valid"); }
-                }
 
-                //BLOCK PARAMETERS
-                if (blocks_active == 1)
-                {
-                    try { hardlayerelevation_m = Int32.Parse(hardlayerelevation_textbox.Text); }
-                    catch { input_data_error = true; MessageBox.Show("value for parameter block size threshold is not valid"); }
-                    try { hardlayerthickness_m = Int32.Parse(hardlayerthickness_textbox.Text); }
-                    catch { input_data_error = true; MessageBox.Show("value for parameter block weathering fraction is not valid"); }
-                    try { hardlayer_weath_contrast = Double.Parse(hardlayerweath_textbox.Text); }
-                    catch { input_data_error = true; MessageBox.Show("value for parameter block size threshold is not valid"); }
-                    try { hardlayerdensity_kg_m3 = Int32.Parse(hardlayerdensity_textbox.Text); }
-                    catch { input_data_error = true; MessageBox.Show("value for parameter block weathering fraction is not valid"); }
 
-                    try { blocksizethreshold_m = Single.Parse(blocksize_textbox.Text); }
-                    catch { input_data_error = true; MessageBox.Show("value for parameter block size threshold is not valid"); }
-                    try { blockweatheringratio = Single.Parse(blockweath_textbox.Text); }
-                    catch { input_data_error = true; MessageBox.Show("value for parameter block weathering fraction is not valid"); }
-                }
-
-                //CREEP PARAMETER
-                if (creep_active)
-                {
-                    try { conv_fac = double.Parse(parameter_conv_textbox.Text); }
-                    catch { input_data_error = true; MessageBox.Show("value for parameter p is not valid"); }
-                    try { potential_creep_kg = double.Parse(parameter_diffusivity_textbox.Text); }
-                    catch { input_data_error = true; MessageBox.Show("value for parameter potential_creep_kg is not valid"); }
-                }
-
-                //LANDSLIDE PARAMETERS
-                if (landslide_active)
-                {
-                    conv_fac = 4;        // multiple flow conversion factor
-                }
-
-                //Bio Weathering PARAMETERS
-                if (bedrock_weathering_active)
-                {
-                    try { P0 = double.Parse(parameter_P0_textbox.Text); }
-                    catch { input_data_error = true; MessageBox.Show("value for parameter P0 is not valid"); }
-                    try { k1 = double.Parse(parameter_k1_textbox.Text); }
-                    catch { input_data_error = true; MessageBox.Show("value for parameter k1 is not valid"); }
-                    try { k2 = double.Parse(parameter_k2_textbox.Text); }
-                    catch { input_data_error = true; MessageBox.Show("value for parameter k2 is not valid"); }
-                    try { Pa = double.Parse(parameter_Pa_textbox.Text); }
-                    catch { input_data_error = true; MessageBox.Show("value for parameter Pa is not valid"); }
-                }
-
-                //Tilting parameters
-                if (tilting_active)
-                {
-                    if (radio_tilt_col_zero.Checked) { tilt_location = 0; }
-                    if (radio_tilt_row_zero.Checked) { tilt_location = 1; }
-                    if (radio_tilt_col_max.Checked) { tilt_location = 2; }
-                    if (radio_tilt_row_max.Checked) { tilt_location = 3; }
-                    try { tilt_intensity = double.Parse(Tilting_rate_textbox.Text); }
-                    catch { input_data_error = true; MessageBox.Show("value for parameter tilting rate is not valid"); }
-                }
-
-                //Uplift parameters
-                if (uplift_active)
-                {
-                    if (radio_lift_row_less_than.Checked) { lift_type = 0; }
-                    if (radio_lift_row_more_than.Checked) { lift_type = 1; }
-                    if (radio_lift_col_less_than.Checked) { lift_type = 2; }
-                    if (radio_lift_row_more_than.Checked) { lift_type = 3; }
-                    if (lift_type == 0)
+                    //WATER EROSION AND DEPOSITION PARAMETERS
+                    if (water_ero_active)
                     {
-                        try { lift_location = int.Parse(text_lift_row_less.Text); }
+                        try { m = double.Parse(parameter_m_textbox.Text); }
+                        catch { input_data_error = true; MessageBox.Show("value for parameter m is not valid"); }                      // Kirkby's m and n factors for increasing
+                        try { n = double.Parse(parameter_n_textbox.Text); }
+                        catch { input_data_error = true; MessageBox.Show("value for parameter n is not valid"); }                   // sheet, wash, overland, gully to river flow
+                        try { conv_fac = double.Parse(parameter_conv_textbox.Text); }
+                        catch { input_data_error = true; MessageBox.Show("value for parameter p is not valid"); }
+                        try { advection_erodibility = double.Parse(parameter_K_textbox.Text); }
+                        catch { input_data_error = true; MessageBox.Show("value for parameter K is not valid"); }
+                        try { bio_protection_constant = double.Parse(bio_protection_constant_textbox.Text); }
+                        catch { input_data_error = true; MessageBox.Show("value for parameter P is not valid"); }
+                        try { rock_protection_constant = double.Parse(rock_protection_constant_textbox.Text); }
+                        catch { input_data_error = true; MessageBox.Show("value for parameter P is not valid"); }
+                        try { constant_selective_transcap = double.Parse(selectivity_constant_textbox.Text); }
+                        catch { input_data_error = true; MessageBox.Show("value for parameter P is not valid"); }
+                        try { erosion_threshold_kg = double.Parse(erosion_threshold_textbox.Text); }
+                        catch { input_data_error = true; MessageBox.Show("value for parameter P is not valid"); }
+                    }
+
+                    //TILLAGE PARAMETERS
+                    if (tillage_active)
+                    {
+                        try { plough_depth = double.Parse(parameter_ploughing_depth_textbox.Text); }
+                        catch { input_data_error = true; MessageBox.Show("value for parameter plough depth is not valid"); }
+                        try { tilc = double.Parse(parameter_tillage_constant_textbox.Text); }
+                        catch { input_data_error = true; MessageBox.Show("value for parameter tillage constant is not valid"); }
+                    }
+
+                    //BLOCK PARAMETERS
+                    if (blocks_active == 1)
+                    {
+                        try { hardlayerelevation_m = Int32.Parse(hardlayerelevation_textbox.Text); }
+                        catch { input_data_error = true; MessageBox.Show("value for parameter block size threshold is not valid"); }
+                        try { hardlayerthickness_m = Int32.Parse(hardlayerthickness_textbox.Text); }
+                        catch { input_data_error = true; MessageBox.Show("value for parameter block weathering fraction is not valid"); }
+                        try { hardlayer_weath_contrast = Double.Parse(hardlayerweath_textbox.Text); }
+                        catch { input_data_error = true; MessageBox.Show("value for parameter block size threshold is not valid"); }
+                        try { hardlayerdensity_kg_m3 = Int32.Parse(hardlayerdensity_textbox.Text); }
+                        catch { input_data_error = true; MessageBox.Show("value for parameter block weathering fraction is not valid"); }
+
+                        try { blocksizethreshold_m = Single.Parse(blocksize_textbox.Text); }
+                        catch { input_data_error = true; MessageBox.Show("value for parameter block size threshold is not valid"); }
+                        try { blockweatheringratio = Single.Parse(blockweath_textbox.Text); }
+                        catch { input_data_error = true; MessageBox.Show("value for parameter block weathering fraction is not valid"); }
+                    }
+
+                    //CREEP PARAMETER
+                    if (creep_active)
+                    {
+                        try { conv_fac = double.Parse(parameter_conv_textbox.Text); }
+                        catch { input_data_error = true; MessageBox.Show("value for parameter p is not valid"); }
+                        try { potential_creep_kg = double.Parse(parameter_diffusivity_textbox.Text); }
+                        catch { input_data_error = true; MessageBox.Show("value for parameter potential_creep_kg is not valid"); }
+                    }
+
+                    //LANDSLIDE PARAMETERS
+                    if (landslide_active)
+                    {
+                        conv_fac = 4;        // multiple flow conversion factor
+                    }
+
+                    //Bio Weathering PARAMETERS
+                    if (bedrock_weathering_active)
+                    {
+                        try { P0 = double.Parse(parameter_P0_textbox.Text); }
+                        catch { input_data_error = true; MessageBox.Show("value for parameter P0 is not valid"); }
+                        try { k1 = double.Parse(parameter_k1_textbox.Text); }
+                        catch { input_data_error = true; MessageBox.Show("value for parameter k1 is not valid"); }
+                        try { k2 = double.Parse(parameter_k2_textbox.Text); }
+                        catch { input_data_error = true; MessageBox.Show("value for parameter k2 is not valid"); }
+                        try { Pa = double.Parse(parameter_Pa_textbox.Text); }
+                        catch { input_data_error = true; MessageBox.Show("value for parameter Pa is not valid"); }
+                    }
+
+                    //Tilting parameters
+                    if (tilting_active)
+                    {
+                        if (radio_tilt_col_zero.Checked) { tilt_location = 0; }
+                        if (radio_tilt_row_zero.Checked) { tilt_location = 1; }
+                        if (radio_tilt_col_max.Checked) { tilt_location = 2; }
+                        if (radio_tilt_row_max.Checked) { tilt_location = 3; }
+                        try { tilt_intensity = double.Parse(Tilting_rate_textbox.Text); }
                         catch { input_data_error = true; MessageBox.Show("value for parameter tilting rate is not valid"); }
                     }
-                    if (lift_type == 1)
+
+                    //Uplift parameters
+                    if (uplift_active)
                     {
-                        try { lift_location = int.Parse(text_lift_row_more.Text); }
+                        if (radio_lift_row_less_than.Checked) { lift_type = 0; }
+                        if (radio_lift_row_more_than.Checked) { lift_type = 1; }
+                        if (radio_lift_col_less_than.Checked) { lift_type = 2; }
+                        if (radio_lift_row_more_than.Checked) { lift_type = 3; }
+                        if (lift_type == 0)
+                        {
+                            try { lift_location = int.Parse(text_lift_row_less.Text); }
+                            catch { input_data_error = true; MessageBox.Show("value for parameter tilting rate is not valid"); }
+                        }
+                        if (lift_type == 1)
+                        {
+                            try { lift_location = int.Parse(text_lift_row_more.Text); }
+                            catch { input_data_error = true; MessageBox.Show("value for parameter tilting rate is not valid"); }
+                        }
+                        if (lift_type == 2)
+                        {
+                            try { lift_location = int.Parse(text_lift_col_less.Text); }
+                            catch { input_data_error = true; MessageBox.Show("value for parameter tilting rate is not valid"); }
+                        }
+                        if (lift_type == 3)
+                        {
+                            try { lift_location = int.Parse(text_lift_col_more.Text); }
+                            catch { input_data_error = true; MessageBox.Show("value for parameter tilting rate is not valid"); }
+                        }
+                        try { lift_intensity = double.Parse(Uplift_rate_textbox.Text); }
                         catch { input_data_error = true; MessageBox.Show("value for parameter tilting rate is not valid"); }
                     }
-                    if (lift_type == 2)
-                    {
-                        try { lift_location = int.Parse(text_lift_col_less.Text); }
-                        catch { input_data_error = true; MessageBox.Show("value for parameter tilting rate is not valid"); }
-                    }
-                    if (lift_type == 3)
-                    {
-                        try { lift_location = int.Parse(text_lift_col_more.Text); }
-                        catch { input_data_error = true; MessageBox.Show("value for parameter tilting rate is not valid"); }
-                    }
-                    try { lift_intensity = double.Parse(Uplift_rate_textbox.Text); }
-                    catch { input_data_error = true; MessageBox.Show("value for parameter tilting rate is not valid"); }
-                }
 
-                // TREE FALL PARAMETERS
-                if (treefall_checkbox.Checked)
-                {
-                    W_m_max = System.Convert.ToDouble(tf_W.Text);
-                    D_m_max = System.Convert.ToDouble(tf_D.Text);
-                    growth_a_max = System.Convert.ToInt32(tf_growth.Text);
-                    age_a_max = System.Convert.ToInt32(tf_age.Text);
-                    tf_frequency = System.Convert.ToDouble(tf_freq.Text);
-                }
+                    // TREE FALL PARAMETERS
+                    if (treefall_checkbox.Checked)
+                    {
+                        W_m_max = System.Convert.ToDouble(tf_W.Text);
+                        D_m_max = System.Convert.ToDouble(tf_D.Text);
+                        growth_a_max = System.Convert.ToInt32(tf_growth.Text);
+                        age_a_max = System.Convert.ToInt32(tf_age.Text);
+                        tf_frequency = System.Convert.ToDouble(tf_freq.Text);
+                    }
 
-                //SOIL PHYSICAL WEATHERING PARAMETERS
-                if (soil_phys_weath_active)
-                {
-                    try
-                    {
-                        physical_weathering_constant = Convert.ToDouble(Physical_weath_C1_textbox.Text);
-                        Cone = Convert.ToDouble(physical_weath_constant1.Text);
-                        Ctwo = Convert.ToDouble(physical_weath_constant2.Text);
-                        //the upper sizes of particle for the different fractions are declared in initialise_soil because they are always needed
-                        Debug.WriteLine("succesfully read parameters for pysical weathering");
-                    }
-                    catch
-                    {
-                        input_data_error = true; Debug.WriteLine("problem reading parameters for pysical weathering");
-                    }
-                }
-
-                //SOIL CHEMICAL WEATHERING PARAMETERS
-                if (soil_chem_weath_active)
-                {
-                    try
-                    {
-                        chemical_weathering_constant = Convert.ToDouble(chem_weath_rate_constant_textbox.Text);
-                        Cthree = Convert.ToDouble(chem_weath_depth_constant_textbox.Text);
-                        Cfour = Convert.ToDouble(chem_weath_specific_coefficient_textbox.Text);
-                        specific_area[0] = Convert.ToDouble(specific_area_coarse_textbox.Text);
-                        specific_area[1] = Convert.ToDouble(specific_area_sand_textbox.Text);
-                        specific_area[2] = Convert.ToDouble(specific_area_silt_textbox.Text);
-                        specific_area[3] = Convert.ToDouble(specific_area_clay_textbox.Text);
-                        specific_area[4] = Convert.ToDouble(specific_area_fine_clay_textbox.Text);
-                        neoform_constant = Convert.ToDouble(clay_neoform_constant_textbox.Text);
-                        Cfive = Convert.ToDouble(clay_neoform_C1_textbox.Text);
-                        Csix = Convert.ToDouble(clay_neoform_C2_textbox.Text);
-                        Debug.WriteLine("succesfully read parameters for chemical weathering");
-                    }
-                    catch
-                    {
-                        input_data_error = true; Debug.WriteLine("problem reading parameters for chemical weathering");
-                    }
-                }
-
-                //SOIL CLAY DYNAMICS PARAMETERS
-                if (soil_clay_transloc_active)
-                {
-                    try
-                    {
-                        max_eluviation = Convert.ToDouble(maximum_eluviation_textbox.Text);
-                        Cclay = Convert.ToDouble(eluviation_coefficient_textbox.Text);
-                        Debug.WriteLine("succesfully read parameters for  clay dynamics");
-                    }
-                    catch
-                    {
-                        input_data_error = true; Debug.WriteLine("problem reading parameters for clay dynamics");
-                    }
-                    if (CT_depth_decay_checkbox.Checked)
+                    //SOIL PHYSICAL WEATHERING PARAMETERS
+                    if (soil_phys_weath_active)
                     {
                         try
                         {
-                            ct_depthdec = Convert.ToDouble(ct_depth_decay.Text);
+                            physical_weathering_constant = Convert.ToDouble(Physical_weath_C1_textbox.Text);
+                            Cone = Convert.ToDouble(physical_weath_constant1.Text);
+                            Ctwo = Convert.ToDouble(physical_weath_constant2.Text);
+                            //the upper sizes of particle for the different fractions are declared in initialise_soil because they are always needed
+                            Debug.WriteLine("succesfully read parameters for pysical weathering");
                         }
                         catch
                         {
-                            input_data_error = true; Debug.WriteLine("problem reading depth decay parameter for clay dynamics");
+                            input_data_error = true; Debug.WriteLine("problem reading parameters for pysical weathering");
                         }
                     }
-                }
 
-                //BIOTURBATION PARAMETERS
-                if (soil_bioturb_active)
-                {
-                    try
+                    //SOIL CHEMICAL WEATHERING PARAMETERS
+                    if (soil_chem_weath_active)
                     {
-                        potential_bioturbation_kg_m2_y = Convert.ToDouble(potential_bioturbation_textbox.Text); // MvdM changed name to match parameter in BT process
-                        bioturbation_depth_decay_constant = Convert.ToDouble(bioturbation_depth_decay_textbox.Text);
-                    }
-                    catch
-                    {
-                        input_data_error = true; Debug.WriteLine("problem reading parameters for bioturbation");
-                    }
-                }
-
-                //CARBON CYCLE PARAMETERS
-                if (soil_carbon_active)
-                {
-                    try
-                    {
-                        potential_OM_input = Convert.ToDouble(carbon_input_textbox.Text);
-                        OM_input_depth_decay_constant = Convert.ToDouble(carbon_depth_decay_textbox.Text);
-                        humification_fraction = Convert.ToDouble(carbon_humification_fraction_textbox.Text);
-                        potential_young_decomp_rate = Convert.ToDouble(carbon_y_decomp_rate_textbox.Text);
-                        potential_old_decomp_rate = Convert.ToDouble(carbon_o_decomp_rate_textbox.Text);
-                        young_depth_decay_constant = Convert.ToDouble(carbon_y_depth_decay_textbox.Text);
-                        old_CTI_decay_constant = Convert.ToDouble(carbon_o_twi_decay_textbox.Text);
-                        old_depth_decay_constant = Convert.ToDouble(carbon_o_depth_decay_textbox.Text);
-                        young_CTI_decay_constant = Convert.ToDouble(carbon_y_twi_decay_textbox.Text);
-                    }
-                    catch
-                    {
-                        input_data_error = true; Debug.WriteLine("problem reading parameters for carbon cycle");
-                    }
-                }
-                try
-                {
-                    filename = dtmfilename;             //for directory input
-                    dtm_file(filename);                 // from dtm_file(), almost all memory for the model is claimed
-                }
-                catch { Debug.WriteLine(" failed to initialise dtm "); }
-
-                if (input_data_error == false)
-                {
-                    try
-                    {
-                        //Debug.WriteLine("reading general values");
-                        if (check_space_soildepth.Checked != true)
+                        try
                         {
-                            try { soildepth_value = double.Parse(soildepth_constant_value_box.Text); }
-                            catch { MessageBox.Show("value for parameter soildepth is not valid"); }
+                            chemical_weathering_constant = Convert.ToDouble(chem_weath_rate_constant_textbox.Text);
+                            Cthree = Convert.ToDouble(chem_weath_depth_constant_textbox.Text);
+                            Cfour = Convert.ToDouble(chem_weath_specific_coefficient_textbox.Text);
+                            specific_area[0] = Convert.ToDouble(specific_area_coarse_textbox.Text);
+                            specific_area[1] = Convert.ToDouble(specific_area_sand_textbox.Text);
+                            specific_area[2] = Convert.ToDouble(specific_area_silt_textbox.Text);
+                            specific_area[3] = Convert.ToDouble(specific_area_clay_textbox.Text);
+                            specific_area[4] = Convert.ToDouble(specific_area_fine_clay_textbox.Text);
+                            neoform_constant = Convert.ToDouble(clay_neoform_constant_textbox.Text);
+                            Cfive = Convert.ToDouble(clay_neoform_C1_textbox.Text);
+                            Csix = Convert.ToDouble(clay_neoform_C2_textbox.Text);
+                            Debug.WriteLine("succesfully read parameters for chemical weathering");
                         }
-                        if (check_space_landuse.Checked != true && check_time_landuse.Checked != true)
+                        catch
                         {
-                            try { landuse_value = int.Parse(landuse_constant_value_box.Text); }
-                            catch { MessageBox.Show("value for parameter landuse is not valid"); }
-                        }
-                        if (check_space_evap.Checked != true && check_time_evap.Checked != true)
-                        {
-                            try { evap_value_m = double.Parse(evap_constant_value_box.Text); }
-                            catch { MessageBox.Show("value for parameter evapotranspiration is not valid"); }
-                        }
-                        if (check_space_infil.Checked != true && check_time_infil.Checked != true)
-                        {
-
-                            try { infil_value_m = double.Parse(infil_constant_value_box.Text); }
-                            catch { MessageBox.Show("value for parameter infiltration is not valid"); }
-                        }
-                        if (check_space_rain.Checked != true && check_time_rain.Checked != true)
-                        {
-
-                            try { rain_value_m = double.Parse(rainfall_constant_value_box.Text); }
-
-                            catch { MessageBox.Show("value for parameter rainfall is not valid"); }
-                        }
-
-                        if (check_time_T.Checked != true)
-
-                        {
-                            try { temp_value_C = int.Parse(temp_constant_value_box.Text); }
-                            catch { MessageBox.Show("value for parameter temperature is not valid"); }
+                            input_data_error = true; Debug.WriteLine("problem reading parameters for chemical weathering");
                         }
                     }
-                    catch { MessageBox.Show("there was a problem reading input values"); input_data_error = true; }
-                    try { initialise_once(); } // reading input files
-                    catch { MessageBox.Show("there was a problem reading input files "); input_data_error = true; }
 
-                    for (run_number = 0; run_number < maxruns; run_number++) //Maxruns Loop()
+                    //SOIL CLAY DYNAMICS PARAMETERS
+                    if (soil_clay_transloc_active)
                     {
+                        try
+                        {
+                            max_eluviation = Convert.ToDouble(maximum_eluviation_textbox.Text);
+                            Cclay = Convert.ToDouble(eluviation_coefficient_textbox.Text);
+                            Debug.WriteLine("succesfully read parameters for  clay dynamics");
+                        }
+                        catch
+                        {
+                            input_data_error = true; Debug.WriteLine("problem reading parameters for clay dynamics");
+                        }
+                        if (CT_depth_decay_checkbox.Checked)
+                        {
+                            try
+                            {
+                                ct_depthdec = Convert.ToDouble(ct_depth_decay.Text);
+                            }
+                            catch
+                            {
+                                input_data_error = true; Debug.WriteLine("problem reading depth decay parameter for clay dynamics");
+                            }
+                        }
+                    }
+
+                    //BIOTURBATION PARAMETERS
+                    if (soil_bioturb_active)
+                    {
+                        try
+                        {
+                            potential_bioturbation_kg_m2_y = Convert.ToDouble(potential_bioturbation_textbox.Text); // MvdM changed name to match parameter in BT process
+                            bioturbation_depth_decay_constant = Convert.ToDouble(bioturbation_depth_decay_textbox.Text);
+                        }
+                        catch
+                        {
+                            input_data_error = true; Debug.WriteLine("problem reading parameters for bioturbation");
+                        }
+                    }
+
+                    //CARBON CYCLE PARAMETERS
+                    if (soil_carbon_active)
+                    {
+                        try
+                        {
+                            potential_OM_input = Convert.ToDouble(carbon_input_textbox.Text);
+                            OM_input_depth_decay_constant = Convert.ToDouble(carbon_depth_decay_textbox.Text);
+                            humification_fraction = Convert.ToDouble(carbon_humification_fraction_textbox.Text);
+                            potential_young_decomp_rate = Convert.ToDouble(carbon_y_decomp_rate_textbox.Text);
+                            potential_old_decomp_rate = Convert.ToDouble(carbon_o_decomp_rate_textbox.Text);
+                            young_depth_decay_constant = Convert.ToDouble(carbon_y_depth_decay_textbox.Text);
+                            old_CTI_decay_constant = Convert.ToDouble(carbon_o_twi_decay_textbox.Text);
+                            old_depth_decay_constant = Convert.ToDouble(carbon_o_depth_decay_textbox.Text);
+                            young_CTI_decay_constant = Convert.ToDouble(carbon_y_twi_decay_textbox.Text);
+                        }
+                        catch
+                        {
+                            input_data_error = true; Debug.WriteLine("problem reading parameters for carbon cycle");
+                        }
+                    }
+
+                    if (input_data_error == false)
+                    {
+                        try
+                        {
+                            //Debug.WriteLine("reading general values");
+                            if (check_space_soildepth.Checked != true)
+                            {
+                                try { soildepth_value = double.Parse(soildepth_constant_value_box.Text); }
+                                catch { MessageBox.Show("value for parameter soildepth is not valid"); }
+                            }
+                            if (check_space_landuse.Checked != true && check_time_landuse.Checked != true)
+                            {
+                                try { landuse_value = int.Parse(landuse_constant_value_box.Text); }
+                                catch { MessageBox.Show("value for parameter landuse is not valid"); }
+                            }
+                            if (check_space_evap.Checked != true && check_time_evap.Checked != true)
+                            {
+                                try { evap_value_m = double.Parse(evap_constant_value_box.Text); }
+                                catch { MessageBox.Show("value for parameter evapotranspiration is not valid"); }
+                            }
+                            if (check_space_infil.Checked != true && check_time_infil.Checked != true)
+                            {
+
+                                try { infil_value_m = double.Parse(infil_constant_value_box.Text); }
+                                catch { MessageBox.Show("value for parameter infiltration is not valid"); }
+                            }
+                            if (check_space_rain.Checked != true && check_time_rain.Checked != true)
+                            {
+
+                                try { rain_value_m = double.Parse(rainfall_constant_value_box.Text); }
+
+                                catch { MessageBox.Show("value for parameter rainfall is not valid"); }
+                            }
+
+                            if (check_time_T.Checked != true)
+
+                            {
+                                try { temp_value_C = int.Parse(temp_constant_value_box.Text); }
+                                catch { MessageBox.Show("value for parameter temperature is not valid"); }
+                            }
+                        }
+                        catch { MessageBox.Show("there was a problem reading input values"); input_data_error = true; }
+
+
+                        try
+                        {
+                            filename = dtmfilename;             //for directory input
+                            dtm_file(filename);                 // from dtm_file(), almost all memory for the model is claimed
+                        }
+                        catch { Debug.WriteLine(" failed to initialise dtm "); }
+                        try { initialise_once(); } // reading input files
+                        catch { MessageBox.Show("there was a problem reading input files "); input_data_error = true; }
 
                         Task.Factory.StartNew(() =>
                         {
-                            this.ScenarioStatusPanel.Text = "scen " + (run_number+1) + "/" + maxruns;
+                            this.ScenarioStatusPanel.Text = "scen " + (run_number + 1) + "/" + maxruns;
                         }, CancellationToken.None, TaskCreationOptions.None, guiThread);
 
                         if (input_data_error == false)
@@ -20504,14 +20492,25 @@ Example: rainfall.asc can look like:
 
                             if (Calibration_button.Checked == true)
                             {
-                                //Debug.WriteLine("erodib " + advection_erodibility + " conv fac " + conv_fac);
-                                int rat_number = Convert.ToInt32(Math.Floor(run_number / Math.Pow(user_specified_number_of_ratios, 0)) % user_specified_number_of_ratios);
-                                advection_erodibility *= calib_ratios[0, rat_number];
-                                Debug.WriteLine("First ratio number: " + rat_number);
-                                //rat_number = Convert.ToInt32(Math.Floor(run_number / Math.Pow(user_specified_number_of_ratios, 1)) % user_specified_number_of_ratios);
-                                //conv_fac *= calib_ratios[1, rat_number];
-                                //Debug.WriteLine("Second ratio number: " + rat_number);
-                                //Debug.WriteLine("erodib " + advection_erodibility + " conv fac " + conv_fac);
+                                if (version_lux_checkbox.Checked)
+                                {
+                                    int rat_number = Convert.ToInt32(Math.Floor(run_number / Math.Pow(user_specified_number_of_ratios, 0)) % user_specified_number_of_ratios);
+                                    advection_erodibility *= calib_ratios[0, rat_number];
+                                    Debug.WriteLine("First ratio number: " + rat_number + " adv_ero now " + advection_erodibility + " ratio " + calib_ratios[0, rat_number]);
+                                }
+                                if (version_Konza_checkbox.Checked)
+                                {
+                                    int rat_number = Convert.ToInt32(Math.Floor(run_number / Math.Pow(user_specified_number_of_ratios, 0)) % user_specified_number_of_ratios);
+                                    advection_erodibility *= calib_ratios[0, rat_number];
+                                    rat_number = Convert.ToInt32(Math.Floor(run_number / Math.Pow(user_specified_number_of_ratios, 1)) % user_specified_number_of_ratios);
+                                    diffusivity_creep *= calib_ratios[1, rat_number];
+                                    rat_number = Convert.ToInt32(Math.Floor(run_number / Math.Pow(user_specified_number_of_ratios, 2)) % user_specified_number_of_ratios);
+                                    P0 *= calib_ratios[2, rat_number];
+                                    rat_number = Convert.ToInt32(Math.Floor(run_number / Math.Pow(user_specified_number_of_ratios, 3)) % user_specified_number_of_ratios);
+                                    k1 *= calib_ratios[3, rat_number];
+                                    rat_number = Convert.ToInt32(Math.Floor(run_number / Math.Pow(user_specified_number_of_ratios, 4)) % user_specified_number_of_ratios);
+                                    k2 *= calib_ratios[4, rat_number];
+                                }
                             }
 
                             timeseries_matrix = new double[System.Convert.ToInt32(end_time), number_of_outputs];
@@ -20567,7 +20566,7 @@ Example: rainfall.asc can look like:
                             {
                                 current_error = calib_objective_function_Lux();
                             }
-                            if (Konza_checkbox.Checked)
+                            if (version_Konza_checkbox.Checked)
                             {
                                 current_error = calib_objective_function_Konza();
                             }
@@ -20597,8 +20596,18 @@ Example: rainfall.asc can look like:
                                     Debug.WriteLine(" setting new ratios ");
                                     //CALIB_USER INPUT NEEDED HERE IN CODE
                                     //check whether the best run was on the edge of parameter space or inside, shift to that place and zoom out or in
-                                    calib_shift_and_zoom(0, double.Parse(calibration_ratio_reduction_parameter_textbox.Text), double.Parse(parameter_K_textbox.Text));
-                                    //calib_shift_and_zoom(1, double.Parse(calibration_ratio_reduction_parameter_textbox.Text), double.Parse(parameter_conv_textbox.Text));
+                                    if (version_lux_checkbox.Checked)
+                                    {
+                                        calib_shift_and_zoom(0, double.Parse(calibration_ratio_reduction_parameter_textbox.Text), double.Parse(parameter_K_textbox.Text));
+                                    }
+                                    if (version_Konza_checkbox.Checked)
+                                    {
+                                        calib_shift_and_zoom(0, double.Parse(calibration_ratio_reduction_parameter_textbox.Text), double.Parse(parameter_K_textbox.Text));
+                                        calib_shift_and_zoom(1, double.Parse(calibration_ratio_reduction_parameter_textbox.Text), double.Parse(parameter_diffusivity_textbox.Text));
+                                        calib_shift_and_zoom(2, double.Parse(calibration_ratio_reduction_parameter_textbox.Text), double.Parse(parameter_P0_textbox.Text));
+                                        calib_shift_and_zoom(3, double.Parse(calibration_ratio_reduction_parameter_textbox.Text), double.Parse(parameter_k1_textbox.Text));
+                                        calib_shift_and_zoom(4, double.Parse(calibration_ratio_reduction_parameter_textbox.Text), double.Parse(parameter_k2_textbox.Text));
+                                    }
                                 }
                             }
                             else
@@ -21380,10 +21389,10 @@ Example: rainfall.asc can look like:
             {
                 Task.Factory.StartNew(() =>
                 {
-                    this.InfoStatusPanel.Text = " --finished--";
+                    this.InfoStatusPanel.Text = " --scenario finished--";
                 }, CancellationToken.None, TaskCreationOptions.None, guiThread);
                 stopwatch.Stop();
-                Debug.WriteLine("Elapsed time: " + stopwatch.Elapsed);
+                Debug.WriteLine("Most recent scenario: " + stopwatch.Elapsed);
                 //Timeseries output
                 if (number_of_outputs > 0) { timeseries_output(); }
             }
