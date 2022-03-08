@@ -5907,7 +5907,7 @@ namespace LORICA4
                 if (check_space_rain.Checked == true) { Array.Clear(rain, 0, rain.Length); }
 
                 Array.Clear(veg, 0, veg.Length);
-                Array.Clear(veg_correction_factor, 0, veg.Length);
+                //Array.Clear(veg_correction_factor, 0, veg.Length);
                 // categorical grids
                 if (check_space_landuse.Checked == true) { Array.Clear(landuse, 0, landuse.Length); }
             }
@@ -5930,7 +5930,48 @@ namespace LORICA4
                     Array.Clear(old_SOM_kg, 0, old_SOM_kg.Length);
                     Array.Clear(bulkdensity, 0, bulkdensity.Length);           // : bulkdensity in kg/m3 (over the voxel = layer * thickness)
                 }
+                if (CN_checkbox.Checked)
+                {
+                    CN_atoms_cm2 = new Int64[nr, nc, max_soil_layers, n_cosmo];
+                    //for (row = 0; row < nr; row++)
+                    //{
+                    //    for (col = 0; col < nc; col++)
+                    //    {
+                    //        for (int lay = 0; lay < max_soil_layers; lay++)
+                    //        {
+                    //            CN_atoms_cm2[row, col, lay, 0] = Convert.ToInt64(8E8);
+                    //        }
+                    //    }
+                    //}
+                    // dim[,,,0] = Meteoric 10-Be (dynamics linked to both clay fractions)
+                    // dim[,,,1] = In-situ 10-Be (dynamics linked to sand fraction)
+                    // dim[,,,2] = In-situ 14-C (dynamics linked to sand fraction)
+                    // dim[,,,3] = 137-Cs
+                    // Other nuclides can be included at a later stage (e.g., 14-C, 137-Cs, 210-Pb)
+                }
+                if (OSL_checkbox.Checked)
+                {
+                    int ngrains = System.Convert.ToInt32(ngrains_textbox.Text);
+                    int start_age = 1000000;
+                    // OSL_age = new int[nr * nc * max_soil_layers * ngrains, 5];
+                    OSL_grainages = new int[nr, nc, max_soil_layers][];
+                    OSL_depositionages = new int[nr, nc, max_soil_layers][];
+                    OSL_surfacedcount = new int[nr, nc, max_soil_layers][];
 
+                    int count = 0;
+                    for (int row = 0; row < nr; row++)
+                    {
+                        for (int col = 0; col < nc; col++)
+                        {
+                            for (int lay = 0; lay < max_soil_layers; lay++)
+                            {
+                                OSL_grainages[row, col, lay] = new int[ngrains];
+                                OSL_depositionages[row, col, lay] = new int[ngrains];
+                                OSL_surfacedcount[row, col, lay] = new int[ngrains];
+                            }
+                        }
+                    }
+                }
                 if (Water_ero_checkbox.Checked)
                 {
                     //doubles
@@ -5947,6 +5988,12 @@ namespace LORICA4
                         Array.Clear(dz_sed_m, 0, dz_sed_m.Length);
                         Array.Clear(lake_sed_m, 0, lake_sed_m.Length);
                         Array.Clear(depressionsum_texture_kg, 0, depressionsum_texture_kg.Length);
+                        if (CN_checkbox.Checked) { CN_in_transport = new Int64[nr, nc, n_cosmo]; }
+                        if (OSL_checkbox.Checked) { 
+                            OSL_grainages_in_transport = new int[nr, nc][]; 
+                            OSL_depositionages_in_transport = new int[nr, nc][]; 
+                            OSL_surfacedcount_in_transport = new int[nr, nc][]; 
+                        }
                     }
                 }
 
@@ -6303,61 +6350,7 @@ namespace LORICA4
             int sp;
             Debug.WriteLine("Opening DEM" + FILE_NAME);
 
-            if (!File.Exists(FILE_NAME))
-            {
-                MessageBox.Show("No such DEM data file..");
-                input_data_error = true;
-                return;
-            }
-
-            try
-            {
-
-                //read headers
-                StreamReader sr = File.OpenText(FILE_NAME);
-                for (z = 1; z <= 6; z++)
-                {
-                    inputheader[z - 1] = sr.ReadLine();
-                    Debug.WriteLine(inputheader[z - 1]);
-                }
-                sr.Close();
-
-                // get nc, nr and dx from input headers
-
-                lineArray2 = inputheader[0].Split(new char[] { ' ' });
-                sp = 1;
-                while (lineArray2[sp] == "") sp++;
-                nc = int.Parse(lineArray2[sp]);
-
-                lineArray2 = inputheader[1].Split(new char[] { ' ' });
-                sp = 1;
-                while (lineArray2[sp] == "") sp++;
-                nr = int.Parse(lineArray2[sp]);
-
-                lineArray2 = inputheader[2].Split(new char[] { ' ' });
-                sp = 1;
-                while (lineArray2[sp] == "") sp++;
-                xcoord = double.Parse(lineArray2[sp]);
-
-                lineArray2 = inputheader[3].Split(new char[] { ' ' });
-                sp = 1;
-                while (lineArray2[sp] == "") sp++;
-                ycoord = double.Parse(lineArray2[sp]);
-
-                lineArray2 = inputheader[4].Split(new char[] { ' ' });
-                sp = 1;
-                while (lineArray2[sp] == "") sp++;
-                dx = double.Parse(lineArray2[sp]);
-
-                Debug.WriteLine("read DEM: nr = " + nr + " nc = " + nc);
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("There is a problem with the header of the DEM file");
-                input_data_error = true;
-                return;
-
-            }
+            
 
             int ok = clearmatrices_test(); //reset values of existing memory instead of allocating new memory (saves RAM)
             if (ok == 1)
@@ -6496,7 +6489,7 @@ namespace LORICA4
                 MessageBox.Show("There is not enough memory for LORICA to run with these settings");
             }
             {
-
+                
                 int col, row, colcounter;
                 String input;
                 double tttt = 0.00;
@@ -6544,7 +6537,7 @@ namespace LORICA4
                 }
                 sr.Close();
                 if (dem_integer_error == 1) { MessageBox.Show("Warning: Digital Elevation Model may only contain integer values\n LORICA can proceed, but may experience problems"); }
-
+                
             }
         }
 
@@ -20470,8 +20463,9 @@ Example: rainfall.asc can look like:
                         {
                             filename = dtmfilename;             //for directory input
                             dtm_file(filename);                 // from dtm_file(), almost all memory for the model is claimed
+                            
                         }
-                        catch { Debug.WriteLine(" failed to initialise dtm "); }
+                        catch { Debug.WriteLine(" failed to initialise dtm matrices"); }
                         try { initialise_once(); } // reading input files
                         catch { MessageBox.Show("there was a problem reading input files "); input_data_error = true; }
 
@@ -20482,12 +20476,16 @@ Example: rainfall.asc can look like:
 
                         if (input_data_error == false)
                         {
+                            try { dtm_file_test(filename); }              // from dtm_file(), almost all memory for the model is claimed
+                          
+                            catch { Debug.WriteLine(" failed to reset dtm "); }
+
                             try { initialize_once_testing(); }  // Reset Memory values instead of Allocating new memory
-                            catch { MessageBox.Show("there was a problem reading input files "); input_data_error = true; }
+                            catch { MessageBox.Show("there was a problem reading input files and resetting values "); input_data_error = true; }
 
                             //CALIB_USER: multiply parameter values with current ratio
                             //Note the correspondence between the formulas. Change only 1 value for additional parameters!
-
+                            
 
 
                             if (Calibration_button.Checked == true)
