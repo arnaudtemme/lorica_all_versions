@@ -398,7 +398,7 @@ namespace LORICA4
 
         Int64[,,,] CN_atoms_cm2;        // Keeps track of cosmogenic nuclide stocks. For now 0: meteoric Be, 1: in situ Be, ...
         int n_cosmo = 4, met_Be_input, met10Be_inherited, is10Be_inherited, isC14_inherited;
-        double decay_Be10, P0_10Be_is, decay_C14, P0_14C_is, attenuation_length;
+        double decay_Be10, P0_10Be_is, decay_C14, P0_14C_is, attenuation_length, met10Be_adsorptioncoefficient;
 
         double[,,]     //3D matrices for properties of soil layers in different x y (x,y,z)
                     layerthickness_m,         // : thickness in m 
@@ -669,6 +669,8 @@ namespace LORICA4
         private TextBox metBe10_inherited_textbox;
         private Label label137;
         private TextBox OSL_inherited_textbox;
+        private Label label_met10Be_dd;
+        private TextBox met10Be_dd;
         double[] original_ratios;
 
         private void rain_input_filename_textbox_TextChanged_1(object sender, EventArgs e)
@@ -768,6 +770,7 @@ namespace LORICA4
                 total_sed_prod_up, total_sed_prod_mid, total_sed_prod_low,
                 total_sed_dep_up, total_sed_dep_mid, total_sed_dep_low;  // counters for logging and reporting through time
 
+ 
 
         private void checkBox1_CheckedChanged_3(object sender, EventArgs e)
         {
@@ -1459,12 +1462,16 @@ namespace LORICA4
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.tabControl3 = new System.Windows.Forms.TabControl();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.label137 = new System.Windows.Forms.Label();
+            this.OSL_inherited_textbox = new System.Windows.Forms.TextBox();
             this.label122 = new System.Windows.Forms.Label();
             this.bleachingdepth_textbox = new System.Windows.Forms.TextBox();
             this.label121 = new System.Windows.Forms.Label();
             this.ngrains_textbox = new System.Windows.Forms.TextBox();
             this.OSL_checkbox = new System.Windows.Forms.CheckBox();
             this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.label_met10Be_dd = new System.Windows.Forms.Label();
+            this.met10Be_dd = new System.Windows.Forms.TextBox();
             this.label136 = new System.Windows.Forms.Label();
             this.isC14_inherited_textbox = new System.Windows.Forms.TextBox();
             this.label135 = new System.Windows.Forms.Label();
@@ -1515,8 +1522,6 @@ namespace LORICA4
             this.dailyD = new System.Windows.Forms.TextBox();
             this.dailyP = new System.Windows.Forms.TextBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.label137 = new System.Windows.Forms.Label();
-            this.OSL_inherited_textbox = new System.Windows.Forms.TextBox();
             label6 = new System.Windows.Forms.Label();
             Landsliding = new System.Windows.Forms.TabPage();
             label41 = new System.Windows.Forms.Label();
@@ -5208,6 +5213,23 @@ namespace LORICA4
             this.tabPage4.Text = "Particle ages";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
+            // label137
+            // 
+            this.label137.AutoSize = true;
+            this.label137.Location = new System.Drawing.Point(64, 103);
+            this.label137.Name = "label137";
+            this.label137.Size = new System.Drawing.Size(104, 16);
+            this.label137.TabIndex = 16;
+            this.label137.Text = "Inherited age [a]";
+            // 
+            // OSL_inherited_textbox
+            // 
+            this.OSL_inherited_textbox.Location = new System.Drawing.Point(6, 97);
+            this.OSL_inherited_textbox.Name = "OSL_inherited_textbox";
+            this.OSL_inherited_textbox.Size = new System.Drawing.Size(45, 22);
+            this.OSL_inherited_textbox.TabIndex = 15;
+            this.OSL_inherited_textbox.Text = "0";
+            // 
             // label122
             // 
             this.label122.AutoSize = true;
@@ -5254,6 +5276,8 @@ namespace LORICA4
             // 
             // tabPage5
             // 
+            this.tabPage5.Controls.Add(this.label_met10Be_dd);
+            this.tabPage5.Controls.Add(this.met10Be_dd);
             this.tabPage5.Controls.Add(this.label136);
             this.tabPage5.Controls.Add(this.isC14_inherited_textbox);
             this.tabPage5.Controls.Add(this.label135);
@@ -5285,6 +5309,24 @@ namespace LORICA4
             this.tabPage5.TabIndex = 1;
             this.tabPage5.Text = "Cosmogenic nuclides";
             this.tabPage5.UseVisualStyleBackColor = true;
+            // 
+            // label_met10Be_dd
+            // 
+            this.label_met10Be_dd.AutoSize = true;
+            this.label_met10Be_dd.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.label_met10Be_dd.Location = new System.Drawing.Point(74, 108);
+            this.label_met10Be_dd.Name = "label_met10Be_dd";
+            this.label_met10Be_dd.Size = new System.Drawing.Size(135, 16);
+            this.label_met10Be_dd.TabIndex = 38;
+            this.label_met10Be_dd.Text = "Adsorption coefficient";
+            // 
+            // met10Be_dd
+            // 
+            this.met10Be_dd.Location = new System.Drawing.Point(11, 103);
+            this.met10Be_dd.Name = "met10Be_dd";
+            this.met10Be_dd.Size = new System.Drawing.Size(56, 22);
+            this.met10Be_dd.TabIndex = 37;
+            this.met10Be_dd.Text = "4";
             // 
             // label136
             // 
@@ -5323,7 +5365,7 @@ namespace LORICA4
             // label134
             // 
             this.label134.AutoSize = true;
-            this.label134.Location = new System.Drawing.Point(75, 137);
+            this.label134.Location = new System.Drawing.Point(74, 173);
             this.label134.Name = "label134";
             this.label134.Size = new System.Drawing.Size(130, 16);
             this.label134.TabIndex = 32;
@@ -5331,7 +5373,7 @@ namespace LORICA4
             // 
             // metBe10_inherited_textbox
             // 
-            this.metBe10_inherited_textbox.Location = new System.Drawing.Point(12, 132);
+            this.metBe10_inherited_textbox.Location = new System.Drawing.Point(11, 168);
             this.metBe10_inherited_textbox.Name = "metBe10_inherited_textbox";
             this.metBe10_inherited_textbox.Size = new System.Drawing.Size(56, 22);
             this.metBe10_inherited_textbox.TabIndex = 31;
@@ -5427,7 +5469,7 @@ namespace LORICA4
             // label126
             // 
             this.label126.AutoSize = true;
-            this.label126.Location = new System.Drawing.Point(75, 109);
+            this.label126.Location = new System.Drawing.Point(74, 145);
             this.label126.Name = "label126";
             this.label126.Size = new System.Drawing.Size(76, 16);
             this.label126.TabIndex = 19;
@@ -5452,7 +5494,7 @@ namespace LORICA4
             // 
             // Be10_decay_textbox
             // 
-            this.Be10_decay_textbox.Location = new System.Drawing.Point(12, 104);
+            this.Be10_decay_textbox.Location = new System.Drawing.Point(11, 140);
             this.Be10_decay_textbox.Name = "Be10_decay_textbox";
             this.Be10_decay_textbox.Size = new System.Drawing.Size(56, 22);
             this.Be10_decay_textbox.TabIndex = 14;
@@ -5757,23 +5799,6 @@ namespace LORICA4
             this.dailyP.TabIndex = 48;
             this.dailyP.Text = "D:\\PhD\\projects\\1g_basic LORICA development\\daily water\\Grunow\\Pday_grunow.csv";
             this.dailyP.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // label137
-            // 
-            this.label137.AutoSize = true;
-            this.label137.Location = new System.Drawing.Point(64, 103);
-            this.label137.Name = "label137";
-            this.label137.Size = new System.Drawing.Size(104, 16);
-            this.label137.TabIndex = 16;
-            this.label137.Text = "Inherited age [a]";
-            // 
-            // OSL_inherited_textbox
-            // 
-            this.OSL_inherited_textbox.Location = new System.Drawing.Point(6, 97);
-            this.OSL_inherited_textbox.Name = "OSL_inherited_textbox";
-            this.OSL_inherited_textbox.Size = new System.Drawing.Size(45, 22);
-            this.OSL_inherited_textbox.TabIndex = 15;
-            this.OSL_inherited_textbox.Text = "0";
             // 
             // Mother_form
             // 
@@ -6165,6 +6190,7 @@ namespace LORICA4
 
                     // Input parameters
                     met_Be_input = System.Convert.ToInt32(metBe10_input_textbox.Text);// atoms/cm2/y. MvdM should be determined as function of latitude. 
+                    met10Be_adsorptioncoefficient = Convert.ToDouble(met10Be_dd.Text); // adsorption coefficient of met 10 beadsorption, equivalent to a depth decay parameter
                     P0_10Be_is = System.Convert.ToDouble(isBe10_input_textbox.Text); // atoms / g quartz /y. 4.76; http://dx.doi.org/10.1029/2010GC003084
                     P0_14C_is = System.Convert.ToDouble(isC14_input_textbox.Text);// atoms / g quartz /y. 15.7; https://doi.org/10.1016/S0016-7037(01)00566-X
                     attenuation_length = System.Convert.ToDouble(attenuationlength_textbox.Text);// kg m-2
@@ -6466,15 +6492,15 @@ namespace LORICA4
 
             }
 
-            int ok = clearmatrices_test(); //reset values of existing memory instead of allocating new memory (saves RAM)
-            if (ok == 1)
-            { // we have now succesfully made memory reservations for all data layers in the model 
-
-            }
-            else
-            {
-                MessageBox.Show("There is not enough memory for LORICA to run with these settings");
-            }
+            // int ok = clearmatrices_test(); //reset values of existing memory instead of allocating new memory (saves RAM)
+            // if (ok == 1)
+            // { // we have now succesfully made memory reservations for all data layers in the model 
+            // 
+            // }
+            // else
+            // {
+            //     MessageBox.Show("There is not enough memory for LORICA to run with these settings");
+            // }
 
             {
 
@@ -16771,21 +16797,23 @@ namespace LORICA4
                                 var grains_staying_behind_da = new List<Int32>();
                                 var grains_staying_behind_su = new List<Int32>();
                                 int P_mixing = Convert.ToInt32(Math.Round(10000 * fraction_mixed[lay]));
-
-                                for (int ind = 0; ind < OSL_grainages[row, col, lay].Length; ind++)
+                                if(OSL_grainages[row, col, lay].Length>0)
                                 {
-                                    if ((randOslLayerMixing.Next(0, 10000) < P_mixing ? 1 : 0) == 1)
+                                    for (int ind = 0; ind < OSL_grainages[row, col, lay].Length; ind++)
                                     {
-                                        mixedgrains.Add(OSL_grainages[row, col, lay][ind]);
-                                        mixedgrains_da.Add(OSL_depositionages[row, col, lay][ind]);
-                                        mixedgrains_su.Add(OSL_surfacedcount[row, col, lay][ind]);
-                                        grains_from_layer[lay] += 1;
-                                    }
-                                    else
-                                    {
-                                        grains_staying_behind.Add(OSL_grainages[row, col, lay][ind]);
-                                        grains_staying_behind_da.Add(OSL_depositionages[row, col, lay][ind]);
-                                        grains_staying_behind_su.Add(OSL_surfacedcount[row, col, lay][ind]);
+                                        if ((randOslLayerMixing.Next(0, 10000) < P_mixing ? 1 : 0) == 1)
+                                        {
+                                            mixedgrains.Add(OSL_grainages[row, col, lay][ind]);
+                                            mixedgrains_da.Add(OSL_depositionages[row, col, lay][ind]);
+                                            mixedgrains_su.Add(OSL_surfacedcount[row, col, lay][ind]);
+                                            grains_from_layer[lay] += 1;
+                                        }
+                                        else
+                                        {
+                                            grains_staying_behind.Add(OSL_grainages[row, col, lay][ind]);
+                                            grains_staying_behind_da.Add(OSL_depositionages[row, col, lay][ind]);
+                                            grains_staying_behind_su.Add(OSL_surfacedcount[row, col, lay][ind]);
+                                        }
                                     }
                                 }
                                 OSL_grainages[row, col, lay] = grains_staying_behind.ToArray(); // Preserve the grains that stay behind
@@ -17210,7 +17238,7 @@ namespace LORICA4
                                                                    // standard potential creep of 4 kg. 0.3 or 1.3 is added, based on vegetation type. Rates are derived from Wilkinson 2009: breaking ground and Gabet
                         }
 
-                        //local_creep_kg = potential_creep_kg * Math.Sin(maxslope) * Math.Cos(maxslope) * dx * dx * dt; //Equation from gabet et al., 2003 https://doi.org/10.1146/annurev.earth.31.100901.141314 
+                        // local_creep_kg = potential_creep_kg * Math.Sin(maxslope) * Math.Cos(maxslope) * dx * dx * dt; //Equation from gabet et al., 2003 https://doi.org/10.1146/annurev.earth.31.100901.141314 
 
                         double total_soil_thickness_m = 0;
                         for (int layer = 0; layer < max_soil_layers; layer++)
@@ -18695,24 +18723,27 @@ namespace LORICA4
                         } // set to 1 if bleaching range is larger than layer thickness
                         P_bleaching_int = Convert.ToInt32(Math.Round(10000 * P_bleaching));
                         //Debug.WriteLine("uboa3");
-                        for (int ind = 0; ind < OSL_grainages[row, col, layer].Length; ind++)
-                        {
-                            // add a year to all grains
-                            OSL_grainages[row, col, layer][ind] += 1;
-                            OSL_depositionages[row, col, layer][ind] += 1;
-
-                            //Debug.WriteLine("uboa4");
-                            if (bleached_depth_m > 0)
+                        if(OSL_grainages[row, col, layer].Length>0)
+                        { 
+                            for (int ind = 0; ind < OSL_grainages[row, col, layer].Length; ind++)
                             {
-                                // Chance of bleaching                          
-                                if ((randOslLayerMixing.Next(0, 10000) < P_bleaching_int ? 1 : 0) == 1) // if grain is exposed to daylight
-                                {
-                                    OSL_grainages[row, col, layer][ind] = 0; // bleach grain
-                                    OSL_surfacedcount[row, col, layer][ind] += 1; // add 1 to the number of times the grain has surfaced and has been bleached
+                                // add a year to all grains
+                                OSL_grainages[row, col, layer][ind] += 1;
+                                OSL_depositionages[row, col, layer][ind] += 1;
 
+                                //Debug.WriteLine("uboa4");
+                                if (bleached_depth_m > 0)
+                                {
+                                    // Chance of bleaching                          
+                                    if ((randOslLayerMixing.Next(0, 10000) < P_bleaching_int ? 1 : 0) == 1) // if grain is exposed to daylight
+                                    {
+                                        OSL_grainages[row, col, layer][ind] = 0; // bleach grain
+                                        OSL_surfacedcount[row, col, layer][ind] += 1; // add 1 to the number of times the grain has surfaced and has been bleached
+
+                                    }
                                 }
+                                //Debug.WriteLine("uboa5");
                             }
-                            //Debug.WriteLine("uboa5");
                         }
                         bleached_depth_m -= laythick; // subtract layer thickness frmo bleached depth
                         depth = depth + layerthickness_m[row, col, layer];
@@ -18845,6 +18876,8 @@ namespace LORICA4
 
         void update_cosmogenic_nuclides()
         {
+            double local_met10Be_uptake, layer_met10Be_index, total_met10Be_index, total_soil_thickness_m, depth, cum_BD_kg_cm2, sandmass_g, layer_input_atoms;
+            ;
             try
             {
                 for (row = 0; row < nr; row++)
@@ -18852,17 +18885,25 @@ namespace LORICA4
                     for (col = 0; col < nc; col++)
                     {
                         // Meteoric Beryllium-10
-                        // Uptake
-                        // for now added to top layer, vertical distribution by other processes
-                        CN_atoms_cm2[row, col, 0, 0] += met_Be_input;
-                        // Decay, per layer
-                        for (int lay = 0; lay < max_soil_layers; lay++)
+                        total_soil_thickness_m = total_soil_thickness(row, col);
+
+                        local_met10Be_uptake = met_Be_input * (1 - Math.Exp(-met10Be_adsorptioncoefficient * total_soil_thickness_m)) * dx * dx * dt;
+                        total_met10Be_index = 1 - (Math.Exp(-met10Be_adsorptioncoefficient * total_soil_thickness_m));
+
+                        depth = 0;
+                        for(int lay = 0; lay<max_soil_layers;lay++)
                         {
+                            // Uptake
+
+                            layer_met10Be_index = Math.Exp(-met10Be_adsorptioncoefficient * depth) - (Math.Exp(-met10Be_adsorptioncoefficient * (depth + layerthickness_m[row, col, lay])));
+                            CN_atoms_cm2[row, col, lay, 0] += Convert.ToInt32(Math.Round(layer_met10Be_index/total_met10Be_index * local_met10Be_uptake));
+                            depth += layerthickness_m[row, col, lay];
+                       
+                            // decay
                             CN_atoms_cm2[row, col, lay, 0] = Convert.ToInt64(Math.Round(CN_atoms_cm2[row, col, lay, 0] * (1 - decay_Be10)));
                         }
 
-                        double cum_BD_kg_cm2 = 0;
-                        double sandmass_g, layer_input_atoms;
+                        cum_BD_kg_cm2 = 0;
                         for (int lay = 0; lay < max_soil_layers; lay++)
                         {
 
@@ -20219,7 +20260,7 @@ Example: rainfall.asc can look like:
                     catch { MessageBox.Show("there was a problem reading input files "); input_data_error = true; }
                     for (run_number = 0; run_number < maxruns; run_number++) //Maxruns Loop()
                     {
-
+                        /*
                         try
                         {
                             filename = dtmfilename;             //for directory input
@@ -20227,11 +20268,10 @@ Example: rainfall.asc can look like:
                         }
 
                         catch { Debug.WriteLine(" failed to initialise dtm "); }
-                         
+                         */
                         if (input_data_error == false)
                         {
-                            try { initialize_once_testing(); }  // Reset Memory values instead of Allocating new memory
-                            catch { MessageBox.Show("there was a problem reading input files "); input_data_error = true; }
+                            
 
                             //CALIB_USER: multiply parameter values with current ratio
                             //Note the correspondence between the formulas. Change only 1 value for additional parameters!
@@ -20242,6 +20282,9 @@ Example: rainfall.asc can look like:
                                 dtm_file(filename);                 // from dtm_file(), almost all memory for the model is claimed
                             }
                             catch { Debug.WriteLine(" failed to initialise dtm "); }
+
+                            try { initialise_once(); }  // Reset Memory values instead of Allocating new memory
+                            catch { MessageBox.Show("there was a problem reading input files "); input_data_error = true; }
 
                             if (Calibration_button.Checked == true)
                             {
