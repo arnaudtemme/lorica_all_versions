@@ -15613,6 +15613,8 @@ namespace LORICA4
             {
                 for (col = 0; col < nc; col++)
                 {
+                    if (texture_kg[row, col, 0, 0] > 0) { Debug.WriteLine("Shout A" + texture_kg[row, col, 0, 0]); }
+                    if (texture_kg[row, col, 1, 0] > 0) { Debug.WriteLine("Shout A1" + texture_kg[row, col, 0, 0]); }
                     // if(row==50 & col == 99) { Debugger.Break(); }
                     if (dtm[row, col] != -9999)
                     {
@@ -15691,10 +15693,11 @@ namespace LORICA4
             {     // the index is sorted from low to high values, but flow goes from high to low
                 if (index[runner] != -9999)
                 {
-
+                    
                     int row = row_index[runner]; int col = col_index[runner];
+                    if (texture_kg[row, col, 0, 0] > 0) { Debug.WriteLine("Shout B"); }
+                    if(texture_kg[row, col, 1, 0] > 0) { Debug.WriteLine("Shout B1"); }
                     // if(row==50 & col == 99) { Debugger.Break(); }
-                    //Debug.WriteLine(runner + " " + row + "  " + col + " nr " + nr + " nc " + nc + " nr*nc " + nr * nc + " data cells " + number_of_data_cells);
                     if (t == 1 && row == 24 && col == 81) { diagnostic_mode = 1; }
 
                     else { diagnostic_mode = 0; }
@@ -15738,6 +15741,8 @@ namespace LORICA4
                                                 (drainingoutlet_row[depression[row, col], 4] == row && drainingoutlet_col[depression[row, col], 4] == col))
                     { //for all cells outside a depression and for outlets, we use the stream power equations based on a multiple flow (D8) template
                       //if (row == 24 && col == 81) { Debug.WriteLine(" looking around cell " + row + " " + col); minimaps(row, col); }
+                        if (texture_kg[row, col, 0, 0] > 0) { Debug.WriteLine("Shout C1"); }
+                        if (texture_kg[row, col, 1, 0] > 0) { Debug.WriteLine("Shout l1 C1"); }
                         for (sbyte i = (-1); i <= 1; i++)
                         {
                             for (sbyte j = (-1); j <= 1; j++)
@@ -15806,6 +15811,8 @@ namespace LORICA4
                         // we are now prepared to actually calculate erosion and deposition: we can calculate how much water and sediment is redistributed using slope_sum
                         if (NA_in_soil(row, col) == true) { Debug.WriteLine("NA found before eroding " + row + " " + col); }
                         double sum_frac_OSL = 0;
+                        if (texture_kg[row, col, 0, 0] > 0) { Debug.WriteLine("Shout C2"); }
+                        if (texture_kg[row, col, 1, 0] > 0) { Debug.WriteLine("Shout l1 C2"); }
                         for (sbyte i = (-1); i <= 1; i++)
                         {
                             for (sbyte j = (-1); j <= 1; j++)
@@ -15886,6 +15893,13 @@ namespace LORICA4
                         }//end for i
                         if (NA_in_soil(row, col) == true) { Debug.WriteLine("NA found after eroding " + row + " " + col); }
                         //if (row == 24 && col == 81) { Debug.WriteLine("passed"); }
+                        if (texture_kg[row, col, 0, 0] > 0) { 
+                            Debug.WriteLine("Shout D"); 
+                        }
+                        if (texture_kg[row, col, 1, 0] > 0)
+                        {
+                            Debug.WriteLine("Shout D l1");
+                        }
                     } // end if not in a lake or a lake outlet (all other lake cells have been considered before
                 } //end if nodata
             }//end for index
@@ -15980,13 +15994,6 @@ namespace LORICA4
                     Debug.WriteLine(" on m-basis: sedimented into " + depressions_delta + " of " + totaldepressions + " depressions, " + sediment_delta + "  sediment used");
                 } */
             }
-            /*
-            Task.Factory.StartNew(() =>
-            {
-                this.InfoStatusPanel.Text = "calc movement has been finished";
-                this.out_sed_statuspanel.Text = string.Format("sed_exp {0:F0} * 1000 m3", total_sed_export * dx * dx / 1000);
-            }, CancellationToken.None, TaskCreationOptions.None, guiThread);
-            */
             //save timeseries_outputs
             if (timeseries.timeseries_cell_waterflow_check.Checked)
             {
@@ -17001,6 +17008,7 @@ namespace LORICA4
                 Debug.WriteLine("err_ti4");
             }
         }
+
         void display_grain_distribution(int row2, int col2)
         {
             Debug.Write("Grains row " + row2 + ", col " + col2 + ", t" + t + ": ");
