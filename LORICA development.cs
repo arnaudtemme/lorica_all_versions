@@ -13832,7 +13832,7 @@ namespace LORICA4
             }
 
         }
-
+        /*
         void soil_bioturbation() // SImplified process description. Only mixing between source layer and the layer below. This prevents unintended mixing of top layer with deep layers, that disturb depth profiles of soil properties
         {
             try
@@ -14038,8 +14038,9 @@ namespace LORICA4
             catch { Debug.WriteLine(" Error in bioturbation calculations in timestep {)}", t); }
 
         }
+        */
 
-        void soil_bioturbation_old()
+        void soil_bioturbation()
         {
             try
             {
@@ -15062,6 +15063,12 @@ namespace LORICA4
             return (NA_count);
         }
 
+        bool find_gravel(int row_g, int col_g, int lay_g)
+        {
+            bool bool_out = false;
+            if (texture_kg[row_g, col_g, lay_g, 0] > 0) { bool_out = true; }
+            return (bool_out);
+        }
         bool NA_in_soil(int rowNA, int colNA)
         {
             bool boolNA = false;
@@ -15141,7 +15148,7 @@ namespace LORICA4
             double[] total_mass_eroded, total_mass_deposited_kg;
             total_mass_eroded = new double[7] { 0, 0, 0, 0, 0, 0, 0 };
             total_mass_deposited_kg = new double[7] { 0, 0, 0, 0, 0, 0, 0 };
-
+            if(find_gravel(row_sd, col_sd, 0)) { Debugger.Break(); }
             transport_capacity_kg = advection_erodibility * (bulkdensity[row_sd, col_sd, 0] * dx * dx) * (Math.Pow(waterflow_m3_per_m, m) * Math.Pow(dh, n)); // in a departure from literature, the erosion threshold is only evaluated if erosion actually occurs
             if (transport_capacity_kg < 0)
             {
@@ -15180,6 +15187,7 @@ namespace LORICA4
                     transport_ero_sed_OSL_by_WE(row_sd, col_sd, i_sd, j_sd, sum_of_fractions, flowfraction, 0, 0, 0);
                 }
             }
+            if (find_gravel(row_sd, col_sd, 0)) { Debugger.Break(); }
 
             // Erosion
             if (transport_capacity_kg > total_sediment_in_transport_kg)
@@ -15385,6 +15393,7 @@ namespace LORICA4
                     }
                 }
             }
+            if (find_gravel(row_sd, col_sd, 0)) { Debugger.Break(); }
 
             // Deposition
             if (transport_capacity_kg < total_sediment_in_transport_kg)
@@ -15453,6 +15462,8 @@ namespace LORICA4
                     }
                 }
             } // end deposition
+            if (find_gravel(row_sd, col_sd, 0)) { Debugger.Break(); }
+
         }
 
         void calculate_water_ero_sed_daily()
@@ -18891,22 +18902,19 @@ namespace LORICA4
                         total_met10Be_index = 1 - (Math.Exp(-met10Be_adsorptioncoefficient * total_soil_thickness_m));
 
                         depth = 0;
+                        cum_BD_kg_cm2 = 0;
+
                         for(int lay = 0; lay<max_soil_layers;lay++)
                         {
+                            // Meteoric 10-Be
                             // Uptake
-
                             layer_met10Be_index = Math.Exp(-met10Be_adsorptioncoefficient * depth) - (Math.Exp(-met10Be_adsorptioncoefficient * (depth + layerthickness_m[row, col, lay])));
                             CN_atoms_cm2[row, col, lay, 0] += Convert.ToInt32(Math.Round(layer_met10Be_index/total_met10Be_index * local_met10Be_uptake));
                             depth += layerthickness_m[row, col, lay];
-                       
                             // decay
                             CN_atoms_cm2[row, col, lay, 0] = Convert.ToInt64(Math.Round(CN_atoms_cm2[row, col, lay, 0] * (1 - decay_Be10)));
-                        }
-
-                        cum_BD_kg_cm2 = 0;
-                        for (int lay = 0; lay < max_soil_layers; lay++)
-                        {
-
+                        
+                            // In-situ cosmogenic nuclides
                             // Assumed that all sand is quartz in the model
                             sandmass_g = texture_kg[row, col, lay, 1] * 1000;
 
@@ -20315,6 +20323,16 @@ Example: rainfall.asc can look like:
 
                                         try
                                         {
+                                            for(int row = 0; row<nr;row++)
+                                            {
+                                                for(int col = 0; col<nc;col++)
+                                                {
+                                                    for(int lay = 0; lay<max_soil_layers;lay++)
+                                                    {
+                                                        if (find_gravel(row, col, lay)) { Debugger.Break(); }
+                                                    }
+                                                }
+                                            }
                                             every_timestep();
                                         }
                                         catch
