@@ -11086,7 +11086,24 @@ namespace LORICA4
                 } // end col
             } // end row
               //Debug.WriteLine("initialised soil");
-
+            for (int row = 0; row < nr; row++)
+            {
+                for (int col = 0; col < nc; col++)
+                {
+                    for (int lay = 0; lay < max_soil_layers; lay++)
+                    {
+                        ngrains = Convert.ToInt32(Math.Round(texture_kg[row,col,lay,1])/(dx*dx))*2;
+                        OSL_grainages[row, col, lay] = new int[ngrains];
+                        OSL_depositionages[row, col, lay] = new int[ngrains];
+                        OSL_surfacedcount[row, col, lay] = new int[ngrains];
+                        for(int grain = 0; grain<ngrains;grain++)
+                        {
+                            OSL_grainages[row, col, lay][grain] = start_age;
+                            OSL_depositionages[row, col, lay][grain] = start_age;
+                        }
+                    }
+                }
+            }
         } // anngepast voor standaard diktes
 
         void initialise_every_till()
@@ -14410,7 +14427,7 @@ namespace LORICA4
                                                 }
                                                 if (OSL_checkbox.Checked)
                                                 {
-                                                    double prob_layer = massfromlayer / fine_layer_mass;
+                                                    double prob_layer = massfromlayer / fine_layer_mass; 
                                                     double prob_otherlayer = massfromotherlayer / fine_otherlayer_mass;
                                                     transfer_OSL_grains(row, col, layer, row, col, otherlayer, prob_layer, prob_otherlayer);
                                                 }
@@ -14462,11 +14479,11 @@ namespace LORICA4
                             // now we know the new, bioturbated amounts in every layer in this row col, let's store them in the main texture_kg variables
                             for (layer = 0; layer < max_soil_layers; layer++)
                             {
-                                if (layer == 0 & temp_tex_som_kg[0, 2] == 0)
-                                {
-                                    Debug.WriteLine("err_sbt_16a. empty top layer after BT 0: {0}, {1}, {2}, {3}, {4}, {5}, {6}. t {7}, row {8}, col {9}, dlayer {10}", layer_0[0], layer_0[1], layer_0[2], layer_0[3], layer_0[4], layer_0[5], layer_0[6], t, row, col, layerthickness_m[row, col, 0]);
-
-                                }
+                                // if (layer == 0 & temp_tex_som_kg[0, 2] == 0)
+                                // {
+                                //     Debug.WriteLine("err_sbt_16a. empty top layer after BT 0: {0}, {1}, {2}, {3}, {4}, {5}, {6}. t {7}, row {8}, col {9}, dlayer {10}", layer_0[0], layer_0[1], layer_0[2], layer_0[3], layer_0[4], layer_0[5], layer_0[6], t, row, col, layerthickness_m[row, col, 0]);
+                                // 
+                                // }
                                 for (int prop = 1; prop < 5; prop++)
                                 {
                                     if (temp_tex_som_kg[layer, prop] < 0)
@@ -18797,12 +18814,11 @@ namespace LORICA4
             P_transfer = 0;
             if (P_fromto > 0)
             {
-                // P_transfer = Convert.ToInt32(Math.Round(1 / P_fromto)); // werkt voor kleine nummers, niet voor grote nummers (> 0.5)
-                P_transfer = Convert.ToInt32(Math.Round(10000 * P_fromto)); // Op deze manier worden de meeste verplaatsingskansen meegenomen, tot aan een kans van 0.01%, wat toch verwaarloosbaar is op ~50 korrels
+                P_transfer = Convert.ToInt32(Math.Round(1000000000 * P_fromto)); // With a large number (1E9), there is a chance that even the smallest transports are modelled.
 
                 for (int osl_i = 0; osl_i < ages_from.Length; osl_i++) // check for every possibly outgoing grain if it moves
                 {
-                    if ((randOslLayerMixing.Next(0, 10000) < P_transfer ? 1 : 0) == 1) // if grain gets transported
+                    if ((randOslLayerMixing.Next(0, 1000000000) < P_transfer ? 1 : 0) == 1) // if grain gets transported
                     {
                         ages_from_transfer.Add(ages_from[osl_i]);
                         ages_from_transfer_su.Add(ages_from_su[osl_i]);
