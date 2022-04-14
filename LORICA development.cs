@@ -14187,6 +14187,8 @@ namespace LORICA4
 
                                     //now that we know how much bioturbation originates in this layer,
                                     //now look at other layers and decide which one of them exchanges how much of that good stuff.
+                                    var mass_distances = new List<double>();
+                                    var depths = new List<double>();
                                     for (otherlayer = 0; otherlayer < max_soil_layers; otherlayer++)
                                     {
                                         if (total_layer_fine_earth_mass(row, col, otherlayer) > 0)  //this says: if the other layer actually exists
@@ -14216,6 +14218,8 @@ namespace LORICA4
                                             if (otherlayer != layer)
                                             {
                                                 mass_distance_sum += (texture_kg[row, col, otherlayer, 1] + texture_kg[row, col, otherlayer, 2] + texture_kg[row, col, otherlayer, 3] + texture_kg[row, col, otherlayer, 4] + young_SOM_kg[row, col, otherlayer] + old_SOM_kg[row, col, otherlayer]) / distance;
+                                                mass_distances.Add((texture_kg[row, col, otherlayer, 1] + texture_kg[row, col, otherlayer, 2] + texture_kg[row, col, otherlayer, 3] + texture_kg[row, col, otherlayer, 4] + young_SOM_kg[row, col, otherlayer] + old_SOM_kg[row, col, otherlayer]) / distance);
+                                                depths.Add(otherdepth);
                                             }
 
                                             otherdepth += layerthickness_m[row, col, otherlayer] / 2;
