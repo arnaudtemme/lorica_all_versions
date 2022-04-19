@@ -658,50 +658,11 @@ namespace LORICA4
         private TextBox num_cal_paras_textbox;
         double[] original_ratios;
 
-        private void rain_input_filename_textbox_TextChanged_1(object sender, EventArgs e)
-        {
-
-        }
-
-        private void tillfields_input_filename_textbox_TextChanged_1(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label93_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
         // tectonics
         int lift_type, lift_location, tilt_location;
-        int[] timeseries_order = new int[26];
-        long scan_lon, scan_cnt, NRO, NCO;
+        int[] timeseries_order = new int[34];
+        //long scan_lon, scan_cnt, NRO, NCO;
 
-        private void soil_chem_weath_checkbox_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void decalcification_checkbox_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void checkBox1_CheckedChanged_2(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label95_Click(object sender, EventArgs e)
-        {
-
-        }
 
         double
                 diffusivity_creep,
@@ -747,13 +708,11 @@ namespace LORICA4
                 actual_t,      // Time counter for loop
                 end_time,      // Total end time of loop
                 out_t,
-                total_altitude,
-                total_average_altitude,
-                total_rain, total_evap, total_infil, total_outflow,
-                //WVG
-                total_sed_export_up, total_sed_export_mid, total_sed_export_low,
-                total_sed_prod_up, total_sed_prod_mid, total_sed_prod_low,
-                total_sed_dep_up, total_sed_dep_mid, total_sed_dep_low;  // counters for logging and reporting through time
+                total_altitude_m,
+                total_average_altitude_m,
+                total_rain_m, total_evap_m, total_infil_m, 
+                total_rain_m3, total_evap_m3, total_infil_m3, total_outflow_m3;
+
 
         private void obsfile_textbox_Click(object sender, EventArgs e)
         {
@@ -907,7 +866,7 @@ namespace LORICA4
         erobalto, sedbalto,
         erocnt,
         sedcnt,
-        sediment_exported,		        // sediment out of our system
+        sediment_exported_m,		        // sediment out of our system
         total_Bolsena_sed_influx,
 
         // Biological weathering parameters  see Minasny and McBratney 2006 Geoderma 133
@@ -961,7 +920,7 @@ namespace LORICA4
         altidiff, minaltidiff,
         totaldepressionvolume,
         infil_value_m, evap_value_m, rain_value_m, soildepth_value,
-        volume_eroded, volume_deposited,
+        volume_eroded_m, volume_deposited_m,
         sum_normalweathered, sum_frostweathered, sum_soildepth, sum_creep, sum_solif, avg_solif, avg_creep, avg_soildepth,
         sum_ls, total_sum_tillage, total_sum_uplift, total_sum_tilting, total_sed_export;  // counters for logging and reporting through time
 
@@ -1006,6 +965,10 @@ namespace LORICA4
         double[,] climate_data;
 
         int diagnostic_mode = 0;
+        int number_of_outflow_cells;
+        double[] domain_sed_export_kg = new double[5];
+        double domain_OOM_export_kg;
+        double domain_YOM_export_kg;
 
         //HARDLAYER AND BLOCK GLOBALS
         int blocks_active = 0;
@@ -1272,6 +1235,7 @@ namespace LORICA4
             this.button4 = new System.Windows.Forms.Button();
             this.version_lux_checkbox = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.num_cal_paras_textbox = new System.Windows.Forms.TextBox();
             this.label33 = new System.Windows.Forms.Label();
             this.obsfile_textbox = new System.Windows.Forms.TextBox();
             this.label120 = new System.Windows.Forms.Label();
@@ -1529,7 +1493,6 @@ namespace LORICA4
             this.dailyD = new System.Windows.Forms.TextBox();
             this.dailyP = new System.Windows.Forms.TextBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.num_cal_paras_textbox = new System.Windows.Forms.TextBox();
             label6 = new System.Windows.Forms.Label();
             Landsliding = new System.Windows.Forms.TabPage();
             label41 = new System.Windows.Forms.Label();
@@ -3035,6 +2998,14 @@ namespace LORICA4
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Calibration / sensitivity options";
             // 
+            // num_cal_paras_textbox
+            // 
+            this.num_cal_paras_textbox.Location = new System.Drawing.Point(338, 73);
+            this.num_cal_paras_textbox.Name = "num_cal_paras_textbox";
+            this.num_cal_paras_textbox.Size = new System.Drawing.Size(65, 20);
+            this.num_cal_paras_textbox.TabIndex = 16;
+            this.num_cal_paras_textbox.Text = "1";
+            // 
             // label33
             // 
             this.label33.AutoSize = true;
@@ -3477,7 +3448,6 @@ namespace LORICA4
             this.tillfields_input_filename_textbox.Text = "..";
             this.tillfields_input_filename_textbox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.tillfields_input_filename_textbox.Click += new System.EventHandler(this.tillfields_input_filename_textbox_TextChanged);
-            this.tillfields_input_filename_textbox.TextChanged += new System.EventHandler(this.tillfields_input_filename_textbox_TextChanged_1);
             // 
             // evap_constant_value_box
             // 
@@ -3571,7 +3541,6 @@ namespace LORICA4
             this.rain_input_filename_textbox.Text = "..";
             this.rain_input_filename_textbox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.rain_input_filename_textbox.Click += new System.EventHandler(this.rain_input_filename_textbox_TextChanged);
-            this.rain_input_filename_textbox.TextChanged += new System.EventHandler(this.rain_input_filename_textbox_TextChanged_1);
             // 
             // dtm_input_filename_textbox
             // 
@@ -4106,7 +4075,6 @@ namespace LORICA4
             this.rockweath_method.Size = new System.Drawing.Size(121, 21);
             this.rockweath_method.TabIndex = 15;
             this.rockweath_method.Text = "Humped";
-            this.rockweath_method.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
             // 
             // pictureBox6
             // 
@@ -4490,7 +4458,6 @@ namespace LORICA4
             this.treefall_checkbox.TabIndex = 0;
             this.treefall_checkbox.Text = "Activate this process";
             this.treefall_checkbox.UseVisualStyleBackColor = true;
-            this.treefall_checkbox.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged_2);
             // 
             // tabPage6
             // 
@@ -4640,8 +4607,8 @@ namespace LORICA4
             // 
             // tabControl1
             // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.Processes);
             this.tabControl1.Controls.Add(this.tabPage1);
@@ -4890,7 +4857,6 @@ namespace LORICA4
             this.soil_chem_weath_checkbox.TabIndex = 1;
             this.soil_chem_weath_checkbox.Text = "Activate this process";
             this.soil_chem_weath_checkbox.UseVisualStyleBackColor = true;
-            this.soil_chem_weath_checkbox.CheckedChanged += new System.EventHandler(this.soil_chem_weath_checkbox_CheckedChanged);
             // 
             // clay
             // 
@@ -5235,7 +5201,6 @@ namespace LORICA4
             this.decalcification_checkbox.TabIndex = 0;
             this.decalcification_checkbox.Text = "Activate this process";
             this.decalcification_checkbox.UseVisualStyleBackColor = true;
-            this.decalcification_checkbox.CheckedChanged += new System.EventHandler(this.decalcification_checkbox_CheckedChanged);
             // 
             // tabPage3
             // 
@@ -5687,14 +5652,6 @@ namespace LORICA4
             this.dailyP.Text = "D:\\PhD\\projects\\1g_basic LORICA development\\daily water\\Grunow\\Pday_grunow.csv";
             this.dailyP.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
-            // num_cal_paras_textbox
-            // 
-            this.num_cal_paras_textbox.Location = new System.Drawing.Point(338, 73);
-            this.num_cal_paras_textbox.Name = "num_cal_paras_textbox";
-            this.num_cal_paras_textbox.Size = new System.Drawing.Size(65, 20);
-            this.num_cal_paras_textbox.TabIndex = 16;
-            this.num_cal_paras_textbox.Text = "1";
-            // 
             // Mother_form
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -5840,18 +5797,26 @@ namespace LORICA4
                 if (timeseries.timeseries_total_infil_check.Checked) { sw.Write("total_infil "); }
                 if (timeseries.timeseries_total_outflow_check.Checked) { sw.Write("total_outflow "); }
                 if (timeseries.timeseries_total_rain_check.Checked) { sw.Write("total_rain "); }
+                if (timeseries.timeseries_outflow_cells_checkbox.Checked) { sw.Write("number_out_cells"); sw.Write(" "); }
+                if (timeseries.timeseries_sedexport_checkbox.Checked) { sw.Write("out_gravel_kg"); sw.Write(" "); }
+                if (timeseries.timeseries_sedexport_checkbox.Checked) { sw.Write("out_sand_kg"); sw.Write(" "); }
+                if (timeseries.timeseries_sedexport_checkbox.Checked) { sw.Write("out_silt_kg"); sw.Write(" "); }
+                if (timeseries.timeseries_sedexport_checkbox.Checked) { sw.Write("out_clay_kg"); sw.Write(" "); }
+                if (timeseries.timeseries_sedexport_checkbox.Checked) { sw.Write("out_fineclay_kg"); sw.Write(" "); }
+                if (timeseries.timeseries_sedexport_checkbox.Checked) { sw.Write("out_yom_kg"); sw.Write(" "); }
+                if (timeseries.timeseries_sedexport_checkbox.Checked) { sw.Write("out_oom_kg"); sw.Write(" "); }
                 //soil_centred
-                if (timeseries.total_phys_weath_checkbox.Checked) { sw.Write("phys_weath "); }
-                if (timeseries.total_chem_weath_checkbox.Checked) { sw.Write("chem_weath "); }
-                if (timeseries.total_fine_formed_checkbox.Checked) { sw.Write("fine_clay_formed "); }
-                if (timeseries.total_fine_eluviated_checkbox.Checked) { sw.Write("fine_clay_eluviated "); }
-                if (timeseries.total_mass_bioturbed_checkbox.Checked) { sw.Write("mass_bioturbed "); }
-                if (timeseries.total_OM_input_checkbox.Checked) { sw.Write("OM_input "); }
+                if (timeseries.total_phys_weath_checkbox.Checked) { sw.Write("phys_weath_kg "); }
+                if (timeseries.total_chem_weath_checkbox.Checked) { sw.Write("chem_weath_kg "); }
+                if (timeseries.total_fine_formed_checkbox.Checked) { sw.Write("fine_clay_formed_kg "); }
+                if (timeseries.total_fine_eluviated_checkbox.Checked) { sw.Write("fine_clay_eluviated_kg "); }
+                if (timeseries.total_mass_bioturbed_checkbox.Checked) { sw.Write("mass_bioturbed_kg "); }
+                if (timeseries.total_OM_input_checkbox.Checked) { sw.Write("OM_input_kg "); }
                 if (timeseries.total_average_soilthickness_checkbox.Checked) { sw.Write("average_soilthickness "); }
-                if (timeseries.timeseries_number_soil_thicker_checkbox.Checked) { sw.Write("soil_thicker "); }
-                if (timeseries.timeseries_number_soil_thicker_checkbox.Checked) { sw.Write("soil_coarser "); }
-                if (timeseries.timeseries_number_soil_thicker_checkbox.Checked) { sw.Write("soil_thickness "); }
-                if (timeseries.timeseries_number_soil_thicker_checkbox.Checked) { sw.Write("soil_mass "); }
+                if (timeseries.timeseries_number_soil_thicker_checkbox.Checked) { sw.Write("n_soil_thicker "); }
+                if (timeseries.timeseries_number_soil_thicker_checkbox.Checked) { sw.Write("n_soil_coarser "); }
+                if (timeseries.timeseries_number_soil_thicker_checkbox.Checked) { sw.Write("soil_thickness_m "); }
+                if (timeseries.timeseries_number_soil_thicker_checkbox.Checked) { sw.Write("soil_mass_kg "); }
                 sw.Write("\r\n");
                 for (step = 0; step <= end_time - 1; step++)
                 {
@@ -5869,18 +5834,26 @@ namespace LORICA4
                     if (timeseries.timeseries_total_infil_check.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[12]]); sw.Write(" "); }
                     if (timeseries.timeseries_total_outflow_check.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[13]]); sw.Write(" "); }
                     if (timeseries.timeseries_total_rain_check.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[14]]); sw.Write(" "); }
+                    if (timeseries.timeseries_outflow_cells_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[15]]); sw.Write(" "); }
+                    if (timeseries.timeseries_sedexport_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[16]]); sw.Write(" "); }
+                    if (timeseries.timeseries_sedexport_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[17]]); sw.Write(" "); }
+                    if (timeseries.timeseries_sedexport_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[18]]); sw.Write(" "); }
+                    if (timeseries.timeseries_sedexport_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[19]]); sw.Write(" "); }
+                    if (timeseries.timeseries_sedexport_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[20]]); sw.Write(" "); }
+                    if (timeseries.timeseries_sedexport_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[21]]); sw.Write(" "); }
+                    if (timeseries.timeseries_sedexport_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[22]]); sw.Write(" "); }
                     //soil_centred
-                    if (timeseries.total_phys_weath_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[15]]); sw.Write(" "); }
-                    if (timeseries.total_chem_weath_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[16]]); sw.Write(" "); }
-                    if (timeseries.total_fine_formed_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[17]]); sw.Write(" "); }
-                    if (timeseries.total_fine_eluviated_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[18]]); sw.Write(" "); }
-                    if (timeseries.total_mass_bioturbed_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[19]]); sw.Write(" "); }
-                    if (timeseries.total_OM_input_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[20]]); sw.Write(" "); }
-                    if (timeseries.total_average_soilthickness_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[21]]); sw.Write(" "); }
-                    if (timeseries.timeseries_number_soil_thicker_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[22]]); sw.Write(" "); }
-                    if (timeseries.timeseries_coarser_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[23]]); sw.Write(" "); }
-                    if (timeseries.timeseries_soil_depth_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[24]]); sw.Write(" "); }
-                    if (timeseries.timeseries_soil_mass_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[25]]); }
+                    if (timeseries.total_phys_weath_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[23]]); sw.Write(" "); }
+                    if (timeseries.total_chem_weath_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[24]]); sw.Write(" "); }
+                    if (timeseries.total_fine_formed_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[25]]); sw.Write(" "); }
+                    if (timeseries.total_fine_eluviated_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[26]]); sw.Write(" "); }
+                    if (timeseries.total_mass_bioturbed_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[27]]); sw.Write(" "); }
+                    if (timeseries.total_OM_input_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[28]]); sw.Write(" "); }
+                    if (timeseries.total_average_soilthickness_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[29]]); sw.Write(" "); }
+                    if (timeseries.timeseries_number_soil_thicker_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[30]]); sw.Write(" "); }
+                    if (timeseries.timeseries_coarser_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[31]]); sw.Write(" "); }
+                    if (timeseries.timeseries_soil_depth_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[32]]); sw.Write(" "); }
+                    if (timeseries.timeseries_soil_mass_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[33]]); }
                     sw.Write("\r\n");
                 }
             }
@@ -6547,6 +6520,9 @@ namespace LORICA4
             string input;
             double tttt = 0.00;
             int x, y, xcounter;
+
+            StackTrace stackTrace = new StackTrace();
+            Debug.WriteLine(stackTrace.GetFrame(1).GetMethod().Name);
             if (!File.Exists(FILE_NAME))
             {
                 MessageBox.Show("No such double data file " + FILE_NAME);
@@ -7466,6 +7442,7 @@ namespace LORICA4
                         timeseries.timeseries_total_ero_check.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("total_erosion"));
                         timeseries.timeseries_total_dep_check.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("total_deposition"));
                         timeseries.timeseries_net_ero_check.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("net_erosion"));
+                        timeseries.timeseries_sedexport_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("sed_export"));
                         timeseries.timeseries_SDR_check.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("SDR"));
                         timeseries.timeseries_total_average_alt_check.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("total_average_alt"));
                         timeseries.timeseries_total_rain_check.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("total_rain"));
@@ -7475,6 +7452,7 @@ namespace LORICA4
                         timeseries.timeseries_number_waterflow_check.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("wet_cells"));
                         timeseries.timeseries_number_erosion_check.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("eroded_cells"));
                         timeseries.timeseries_number_dep_check.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("deposited_cells"));
+                        timeseries.timeseries_outflow_cells_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("outflow_cells"));
                         timeseries.timeseries_cell_altitude_check.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("cell_altitude"));
                         timeseries.timeseries_cell_waterflow_check.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("cell_waterflow"));
                         timeseries.timeseries_textbox_waterflow_threshold.Text = xreader.ReadElementString("waterflow_threshold");
@@ -7822,6 +7800,7 @@ namespace LORICA4
                 xwriter.WriteElementString("total_erosion", XmlConvert.ToString(timeseries.timeseries_total_ero_check.Checked));
                 xwriter.WriteElementString("total_deposition", XmlConvert.ToString(timeseries.timeseries_total_dep_check.Checked));
                 xwriter.WriteElementString("net_erosion", XmlConvert.ToString(timeseries.timeseries_net_ero_check.Checked));
+                xwriter.WriteElementString("sed_export", XmlConvert.ToString(timeseries.timeseries_sedexport_checkbox.Checked));
                 xwriter.WriteElementString("SDR", XmlConvert.ToString(timeseries.timeseries_SDR_check.Checked));
                 xwriter.WriteElementString("total_average_alt", XmlConvert.ToString(timeseries.timeseries_total_average_alt_check.Checked));
                 xwriter.WriteElementString("total_rain", XmlConvert.ToString(timeseries.timeseries_total_rain_check.Checked));
@@ -7831,6 +7810,7 @@ namespace LORICA4
                 xwriter.WriteElementString("wet_cells", XmlConvert.ToString(timeseries.timeseries_number_waterflow_check.Checked));
                 xwriter.WriteElementString("eroded_cells", XmlConvert.ToString(timeseries.timeseries_number_erosion_check.Checked));
                 xwriter.WriteElementString("deposited_cells", XmlConvert.ToString(timeseries.timeseries_number_dep_check.Checked));
+                xwriter.WriteElementString("outflow_cells", XmlConvert.ToString(timeseries.timeseries_outflow_cells_checkbox.Checked));
                 xwriter.WriteElementString("cell_altitude", XmlConvert.ToString(timeseries.timeseries_cell_altitude_check.Checked));
                 xwriter.WriteElementString("cell_waterflow", XmlConvert.ToString(timeseries.timeseries_cell_waterflow_check.Checked));
                 xwriter.WriteElementString("waterflow_threshold", timeseries.timeseries_textbox_waterflow_threshold.Text);
@@ -10117,11 +10097,8 @@ namespace LORICA4
                         }
                     } //for
                 } //for
-                  // Debug.WriteLine(" assigned starting values for geomorph  ");
-                  // Debug.WriteLine("before initialise soil {0}", texture_kg[0, 0, 0, 2]);
 
                 initialise_soil();
-                //Debug.WriteLine("after initialise soil {0}", texture_kg[0, 0, 0, 2]);
                 if (findnegativetexture())
                 {
                     Debug.WriteLine("err_ini1");
@@ -10178,17 +10155,29 @@ namespace LORICA4
                 if (timeseries.timeseries_total_infil_check.Checked) { timeseries_order[12] = number_of_outputs; number_of_outputs++; }
                 if (timeseries.timeseries_total_outflow_check.Checked) { timeseries_order[13] = number_of_outputs; number_of_outputs++; }
                 if (timeseries.timeseries_total_rain_check.Checked) { timeseries_order[14] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.total_phys_weath_checkbox.Checked) { timeseries_order[15] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.total_chem_weath_checkbox.Checked) { timeseries_order[16] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.total_fine_formed_checkbox.Checked) { timeseries_order[17] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.total_fine_eluviated_checkbox.Checked) { timeseries_order[18] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.total_mass_bioturbed_checkbox.Checked) { timeseries_order[19] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.total_OM_input_checkbox.Checked) { timeseries_order[20] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.total_average_soilthickness_checkbox.Checked) { timeseries_order[21] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.timeseries_number_soil_thicker_checkbox.Checked) { timeseries_order[22] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.timeseries_coarser_checkbox.Checked) { timeseries_order[23] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.timeseries_soil_depth_checkbox.Checked) { timeseries_order[24] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.timeseries_soil_mass_checkbox.Checked) { timeseries_order[25] = number_of_outputs; number_of_outputs++; }
+
+                if (timeseries.timeseries_outflow_cells_checkbox.Checked) { timeseries_order[15] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_sedexport_checkbox.Checked) { timeseries_order[16] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_sedexport_checkbox.Checked) { timeseries_order[17] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_sedexport_checkbox.Checked) { timeseries_order[18] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_sedexport_checkbox.Checked) { timeseries_order[19] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_sedexport_checkbox.Checked) { timeseries_order[20] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_sedexport_checkbox.Checked) { timeseries_order[21] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_sedexport_checkbox.Checked) { timeseries_order[22] = number_of_outputs; number_of_outputs++; }
+
+                if (timeseries.total_phys_weath_checkbox.Checked) { timeseries_order[23] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.total_chem_weath_checkbox.Checked) { timeseries_order[24] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.total_fine_formed_checkbox.Checked) { timeseries_order[25] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.total_fine_eluviated_checkbox.Checked) { timeseries_order[26] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.total_mass_bioturbed_checkbox.Checked) { timeseries_order[27] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.total_OM_input_checkbox.Checked) { timeseries_order[28] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.total_average_soilthickness_checkbox.Checked) { timeseries_order[29] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_number_soil_thicker_checkbox.Checked) { timeseries_order[30] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_coarser_checkbox.Checked) { timeseries_order[31] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_soil_depth_checkbox.Checked) { timeseries_order[32] = number_of_outputs; number_of_outputs++; }
+
+                if (timeseries.timeseries_soil_mass_checkbox.Checked) { timeseries_order[33] = number_of_outputs; number_of_outputs++; }
+                Debug.WriteLine("timeseries preparation was succesful");
             }
             catch { Debug.WriteLine("timeseries preparation was unsuccesful"); }
 
@@ -10527,17 +10516,28 @@ namespace LORICA4
                 if (timeseries.timeseries_total_infil_check.Checked) { timeseries_order[12] = number_of_outputs; number_of_outputs++; }
                 if (timeseries.timeseries_total_outflow_check.Checked) { timeseries_order[13] = number_of_outputs; number_of_outputs++; }
                 if (timeseries.timeseries_total_rain_check.Checked) { timeseries_order[14] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.total_phys_weath_checkbox.Checked) { timeseries_order[15] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.total_chem_weath_checkbox.Checked) { timeseries_order[16] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.total_fine_formed_checkbox.Checked) { timeseries_order[17] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.total_fine_eluviated_checkbox.Checked) { timeseries_order[18] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.total_mass_bioturbed_checkbox.Checked) { timeseries_order[19] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.total_OM_input_checkbox.Checked) { timeseries_order[20] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.total_average_soilthickness_checkbox.Checked) { timeseries_order[21] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.timeseries_number_soil_thicker_checkbox.Checked) { timeseries_order[22] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.timeseries_coarser_checkbox.Checked) { timeseries_order[23] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.timeseries_soil_depth_checkbox.Checked) { timeseries_order[24] = number_of_outputs; number_of_outputs++; }
-                if (timeseries.timeseries_soil_mass_checkbox.Checked) { timeseries_order[25] = number_of_outputs; number_of_outputs++; }
+
+                if (timeseries.timeseries_outflow_cells_checkbox.Checked) { timeseries_order[15] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_sedexport_checkbox.Checked) { timeseries_order[16] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_sedexport_checkbox.Checked) { timeseries_order[17] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_sedexport_checkbox.Checked) { timeseries_order[18] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_sedexport_checkbox.Checked) { timeseries_order[19] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_sedexport_checkbox.Checked) { timeseries_order[20] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_sedexport_checkbox.Checked) { timeseries_order[21] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_sedexport_checkbox.Checked) { timeseries_order[22] = number_of_outputs; number_of_outputs++; }
+
+                if (timeseries.total_phys_weath_checkbox.Checked) { timeseries_order[23] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.total_chem_weath_checkbox.Checked) { timeseries_order[24] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.total_fine_formed_checkbox.Checked) { timeseries_order[25] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.total_fine_eluviated_checkbox.Checked) { timeseries_order[26] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.total_mass_bioturbed_checkbox.Checked) { timeseries_order[27] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.total_OM_input_checkbox.Checked) { timeseries_order[28] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.total_average_soilthickness_checkbox.Checked) { timeseries_order[29] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_number_soil_thicker_checkbox.Checked) { timeseries_order[30] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_coarser_checkbox.Checked) { timeseries_order[31] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_soil_depth_checkbox.Checked) { timeseries_order[32] = number_of_outputs; number_of_outputs++; }
+                if (timeseries.timeseries_soil_mass_checkbox.Checked) { timeseries_order[33] = number_of_outputs; number_of_outputs++; }
+                Debug.WriteLine("timeseries preparation was really succesful");
             }
             catch { Debug.WriteLine("timeseries preparation was unsuccesful"); }
 
@@ -11034,7 +11034,7 @@ namespace LORICA4
                     }
                 }
             }
-            //Debug.WriteLine("initialised every");
+            Debug.WriteLine("initialised every");
         }
 
         #endregion
@@ -13530,7 +13530,7 @@ namespace LORICA4
                   //timeseries
                 if (timeseries.timeseries_cell_waterflow_check.Checked)
                 {
-                    timeseries_matrix[t, timeseries_order[15]] = total_phys_weathered_mass_kg;
+                    timeseries_matrix[t, timeseries_order[23]] = total_phys_weathered_mass_kg;
                 }
             }
             catch { Debug.WriteLine(" Soil physical weathering calculation threw an exception"); }
@@ -13702,11 +13702,11 @@ namespace LORICA4
                //timeseries
             if (timeseries.total_chem_weath_checkbox.Checked)
             {
-                timeseries_matrix[t, timeseries_order[16]] = total_chem_weathered_mass_kg;
+                timeseries_matrix[t, timeseries_order[24]] = total_chem_weathered_mass_kg;
             }
             if (timeseries.total_fine_formed_checkbox.Checked)
             {
-                timeseries_matrix[t, timeseries_order[17]] = total_fine_neoformed_mass_kg;
+                timeseries_matrix[t, timeseries_order[25]] = total_fine_neoformed_mass_kg;
             }
 
         }
@@ -13905,7 +13905,7 @@ namespace LORICA4
 
                 if (timeseries.total_mass_bioturbed_checkbox.Checked)
                 {
-                    timeseries_matrix[t, timeseries_order[19]] = total_mass_bioturbed_kg;
+                    timeseries_matrix[t, timeseries_order[27]] = total_mass_bioturbed_kg;
                 }
                 if (NA_in_map(dtm) > 0 | NA_in_map(soildepth_m) > 0)
                 {
@@ -14379,7 +14379,7 @@ namespace LORICA4
 
                 if (timeseries.total_mass_bioturbed_checkbox.Checked)
                 {
-                    timeseries_matrix[t, timeseries_order[19]] = total_mass_bioturbed_kg;
+                    timeseries_matrix[t, timeseries_order[27]] = total_mass_bioturbed_kg;
                 }
                 if (NA_in_map(dtm) > 0 | NA_in_map(soildepth_m) > 0)
                 {
@@ -14531,7 +14531,7 @@ namespace LORICA4
                 }
                 if (timeseries.total_OM_input_checkbox.Checked)
                 {
-                    timeseries_matrix[t, timeseries_order[20]] = total_OM_input_kg;
+                    timeseries_matrix[t, timeseries_order[28]] = total_OM_input_kg;
                 }
                 if (NA_in_map(dtm) > 0 | NA_in_map(soildepth_m) > 0)
                 {
@@ -14629,7 +14629,7 @@ namespace LORICA4
                 }
                 if (timeseries.total_fine_eluviated_checkbox.Checked)
                 {
-                    timeseries_matrix[t, timeseries_order[18]] = total_fine_eluviated_mass_kg;
+                    timeseries_matrix[t, timeseries_order[25]] = total_fine_eluviated_mass_kg;
                 }
             }
             catch { Debug.WriteLine(" Problem occurred in translocation calculation"); }
@@ -14752,7 +14752,7 @@ namespace LORICA4
                     }
                     if (timeseries.total_fine_eluviated_checkbox.Checked)
                     {
-                        timeseries_matrix[t, timeseries_order[18]] = total_fine_eluviated_mass_kg;
+                        timeseries_matrix[t, timeseries_order[26]] = total_fine_eluviated_mass_kg;
                     }
                 }
                 if (NA_in_map(dtm) > 0 | NA_in_map(soildepth_m) > 0)
@@ -15340,6 +15340,13 @@ namespace LORICA4
                 Debug.WriteLine("we1");
             }
 
+            for (sbyte tcls = 0; tcls < 5; tcls++)
+            {
+                domain_sed_export_kg[tcls] = 0;
+            }
+            domain_OOM_export_kg = 0;
+            domain_YOM_export_kg = 0;
+
             double mass_before = total_catchment_mass(), mass_after, mass_export = 0;
             //Debug.WriteLine("WE1");
             int size, dir;
@@ -15524,9 +15531,10 @@ namespace LORICA4
                 }
                 // all cells have now been considered in order of (original) altitude. We must still recalculate their thicknesses and recalculate altitude. While doing that, we should count how much erosion and deposition there has been. 
                 double old_total_elevation = total_catchment_elevation();
-                volume_eroded = 0; sediment_exported = 0; volume_deposited = 0;
-                total_average_altitude = 0; total_altitude = 0;
-                total_rain = 0; total_evap = 0; total_infil = 0; total_outflow = 0;
+                volume_eroded_m = 0; sediment_exported_m = 0; volume_deposited_m = 0;
+                total_average_altitude_m = 0; total_altitude_m = 0;
+                total_rain_m = 0; total_evap_m = 0; total_infil_m = 0; 
+                total_rain_m3 = 0; total_evap_m3 = 0; total_infil_m3 = 0; total_outflow_m3 = 0;
                 wet_cells = 0; eroded_cells = 0; deposited_cells = 0;
                 for (int row = 0; row < nr; row++)
                 {
@@ -15550,22 +15558,22 @@ namespace LORICA4
                                 if (dz_sed_m[row, col] + lake_sed_m[row, col] > timeseries.timeseries_deposition_threshold) { deposited_cells++; }
                             }
                             // 7: Update timeseries
-                            if (check_space_rain.Checked == true) { total_rain += rain[row, col]; }
-                            total_rain += rain_value_m;
-                            if (check_space_evap.Checked == true) { total_evap += evapotranspiration[row, col]; }
-                            total_evap += evap_value_m;
-                            if (check_space_infil.Checked == true) { total_infil += infil[row, col]; }
-                            total_infil += infil_value_m;
+                            if (check_space_rain.Checked == true) { total_rain_m += rain[row, col]; }
+                            total_rain_m += rain_value_m;
+                            if (check_space_evap.Checked == true) { total_evap_m += evapotranspiration[row, col]; }
+                            total_evap_m += evap_value_m;
+                            if (check_space_infil.Checked == true) { total_infil_m += infil[row, col]; }
+                            total_infil_m += infil_value_m;
                             if (waterflow_m3[row, col] * dx * dx > timeseries.timeseries_waterflow_threshold) { wet_cells++; }
                         } // end for nodata
                     }   // end for col
                 } // end for row
 
                 // out_double(workdir + "\\" + run_number + "_" + t + "_mass_difference.asc", mass_difference_input_output);
-                total_rain *= dx * dx;   // m3
-                total_evap *= dx * dx;   // m3
-                total_infil *= dx * dx;  // m3
-                total_outflow = total_rain - total_evap - total_infil;
+                total_rain_m3 = total_rain_m * dx * dx;   // m3
+                total_evap_m3 = total_evap_m * dx * dx;   // m3
+                total_infil_m3 = total_infil_m * dx * dx;  // m3
+                total_outflow_m3 = total_rain_m3 - total_evap_m3 - total_infil_m3;
                 //Debug.WriteLine("\n--erosion and deposition overview--");
                 //Debug.WriteLine("rain " + total_rain + " evap " + total_evap + " total_infil " + total_infil);
                 /*Task.Factory.StartNew(() =>
@@ -15589,11 +15597,18 @@ namespace LORICA4
             //set all start q values effective precipitation at time t
             nb_ok = 0;  // nb_ok is 1 als er uberhaupt buren zijn, dus 0 als er alleen maar NODATA is
             nb_check = 0; all_grids = 0;
-            dz_bal = 0; sediment_exported = 0; erocnt = 0; sedcnt = 0;
+            dz_bal = 0; sediment_exported_m = 0; erocnt = 0; sedcnt = 0;
             sedbal = 0; erobal = 0; maximum_allowed_deposition = -9999.0; dh_tol = 0.00025;
             sedbal2 = 0; erobal2 = 0;
             tel1 = 0; tel2 = 0; tel3 = 0; tel4 = 0;
             depressions_filled = 0; depressions_delta = 0; depressions_alone = 0; sediment_delta_m = 0; sediment_filled_m = 0; depressionvolume_filled_m = 0; crashed = false;
+            for (sbyte tcls = 0; tcls < 5; tcls++)
+            {
+                domain_sed_export_kg[tcls] =  0;
+            }
+            domain_OOM_export_kg =0;
+            domain_YOM_export_kg =0;
+
 
             double powered_slope_sum, flow_between_cells_m3_per_m;
             int size;
@@ -15748,7 +15763,6 @@ namespace LORICA4
                                     // below, we calculate slope_sum for all cells either not in a depression, or being a outlet
                                     // slope_sum is needed to calculate flow in a multiple flow environment until someone thinks of something better
                                     // if (diagnostic_mode == 1) { Debug.WriteLine("checking " + (row + i) + " " + (col + j) + " from cell " + row + " " + col); }
-                                    if (depression[row, col] < 0) { Debug.WriteLine(" lakes error: cell has depression < 1"); } //out_integer("wrong_lakes.asc", depression); 
                                     if (depression[row, col] == 0)
                                     {    // if the cell is not in a depression (it could be in a depression as an outlet)
                                         if (dtm[row + i, col + j] != -9999)
@@ -15803,96 +15817,113 @@ namespace LORICA4
                         if (max_allowed_erosion < 0) { max_allowed_erosion = -dh_tol; } else { max_allowed_erosion = -max_allowed_erosion; }
                         //if (diagnostic_mode == 1) { Debug.WriteLine(" slopesum = " + slope_sum + " maximum deposition " + maximum_allowed_deposition + " maximum erosion " + max_allowed_erosion); }
 
-                        // we are now prepared to actually calculate erosion and deposition: we can calculate how much water and sediment is redistributed using slope_sum
-                        if (NA_in_soil(row, col) == true) { Debug.WriteLine("NA found before eroding " + row + " " + col); }
-                        double sum_frac_OSL = 0;
-                        for (sbyte i = (-1); i <= 1; i++)
+                        //if slope_sum is zero, then we are in a non-lake cell or a lake outlet that has no nbs in the dtm -> we have reached an outflow point.
+                        //no action is  needed, but we do count the number of outlets and the total amount of sed in trans that leaves the catchment from these places
+                        if (powered_slope_sum == 0)
                         {
-                            for (sbyte j = (-1); j <= 1; j++)
+                            number_of_outflow_cells++;
+                            for (sbyte tcls = 0; tcls < 5; tcls++)
                             {
-                                dh = 0; fraction = 0; transport_capacity_kg = 0;
-                                sediment_transported = 0; detachment_rate = 0;
-                                d_x = dx;
-                                if (((row + i) >= 0) && ((row + i) < nr) && ((col + j) >= 0) && ((col + j) < nc) && !((i == 0) && (j == 0)))
-                                {  //boundaries
-                                   //if (row == 24 && col == 81) { Debug.WriteLine("entered" + i + j); }
-                                    if (dtm[row + i, col + j] != -9999)
-                                    {
-                                        if (only_waterflow_checkbox.Checked)
+                                domain_sed_export_kg[tcls] += sediment_in_transport_kg[row, col, tcls];
+                            }
+                            domain_OOM_export_kg += old_SOM_in_transport_kg[row,col];
+                            domain_YOM_export_kg += young_SOM_in_transport_kg[row, col];
+                        }
+                        else  //apparently, there is at least 1 lower nb in the DEM. Let's do business with it
+                        {
+
+                            // we are now prepared to actually calculate erosion and deposition: we can calculate how much water and sediment is redistributed using slope_sum
+                            if (NA_in_soil(row, col) == true) { Debug.WriteLine("NA found before eroding " + row + " " + col); }
+                            double sum_frac_OSL = 0;
+                            for (sbyte i = (-1); i <= 1; i++)
+                            {
+                                for (sbyte j = (-1); j <= 1; j++)
+                                {
+                                    dh = 0; fraction = 0; transport_capacity_kg = 0;
+                                    sediment_transported = 0; detachment_rate = 0;
+                                    d_x = dx;
+                                    if (((row + i) >= 0) && ((row + i) < nr) && ((col + j) >= 0) && ((col + j) < nc) && !((i == 0) && (j == 0)))
+                                    {  //boundaries
+                                       //if (row == 24 && col == 81) { Debug.WriteLine("entered" + i + j); }
+                                        if (dtm[row + i, col + j] != -9999)
                                         {
-                                            dh = dtm[row, col] - dtm[row + i, col + j];
-                                        }
-                                        else
-                                        {
-                                            dh = (dtm[row, col] + dz_ero_m[row, col] + dz_sed_m[row, col]) - (dtm[row + i, col + j] + dz_ero_m[row + i, col + j] + dz_sed_m[row + i, col + j]);
-                                        }
-                                        if (dh > 0)
-
-                                        {
-                                            //we have found one of the lower nbs
-                                            //if (row == 24 && col == 81) { Debug.WriteLine("this is a lower nb " + i + j + "dh" + dh + " " + waterflow_m3[row, col]); }
-                                            if ((row != row + i) && (col != col + j)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }
-                                            if ((depression[row, col] != 0 && depression[row + i, col + j] != depression[row, col]) || (depression[row, col] == 0))
-                                            {   //if cell == outlet of current lake and nb not member of that lake OR if not a lake member
-
-                                                // Now, we first calculate the fraction of water and sediment that goes from row, col to row+i to col+j , always using current altitudes
-                                                // Then, we calculate the actual amounts of water and sediment, and with that, using the stream power equation, the transport capacity
-                                                // In future, the Hjülstrom diagram can be used to give texture-dependent erosion thresholds (or selectivity)
-
-                                                dh /= d_x;  //dh is now slope
-                                                fraction = Math.Pow(dh, conv_fac) / powered_slope_sum;
-                                                if (waterflow_m3[row, col] < 0) { waterflow_m3[row, col] = 0; }    // this can have happened if water enters a drier zone in the landscape
-                                                flow_between_cells_m3_per_m = fraction * waterflow_m3[row, col] / dx;
-                                                if (depression[row + i, col + j] == 0)
-                                                {  // if receiving cell is not in a depression, its waterflow is increased 
-                                                    waterflow_m3[row + i, col + j] += flow_between_cells_m3_per_m * dx;
-                                                }
-                                                if (depression[row + i, col + j] != 0)
-                                                {  // if receiving cell is in a depression, its outlets' waterflow is increased 
-                                                    currentdepression = Math.Abs(depression[row + i, col + j]); // this Abs stuff should not be necessary and is included for stability!
-                                                    int outletcounter = 0;
-                                                    while (drainingoutlet_col[currentdepression, outletcounter] != -1)
-                                                    {
-                                                        outletcounter++;
-                                                        if (outletcounter == 5) { break; }
-                                                    }
-                                                    for (int iter = 0; iter < outletcounter; iter++) // for all outlets of this depression, divide that amount of water over them
-                                                    {
-                                                        waterflow_m3[drainingoutlet_row[currentdepression, iter], drainingoutlet_col[currentdepression, iter]] += dx * flow_between_cells_m3_per_m / outletcounter;
-                                                    }
-                                                }
-
-                                                if (only_waterflow_checkbox.Checked == false)
-                                                {
-                                                    calculate_sediment_dynamics(row, col, i, j, flow_between_cells_m3_per_m, fraction, sum_frac_OSL);
-
-                                                } // end if else : also erosion and deposition considered
-                                                sum_frac_OSL += fraction;
+                                            if (only_waterflow_checkbox.Checked)
+                                            {
+                                                dh = dtm[row, col] - dtm[row + i, col + j];
                                             }
+                                            else
+                                            {
+                                                dh = (dtm[row, col] + dz_ero_m[row, col] + dz_sed_m[row, col]) - (dtm[row + i, col + j] + dz_ero_m[row + i, col + j] + dz_sed_m[row + i, col + j]);
+                                            }
+                                            if (dh > 0)
 
-                                            // 4. Indien oververzadigd: depositie. Berekenen van de doorgaande massa van iedere textuurklasse, op basis van 1/d0.5 (zie Excel). 
-                                            // 4b. Vergelijken van doorgaande massa met massa aanwezig in transport per textuurfractie. Indien teveel aanwezig, afwerpen. 
-                                            // 4c. Organische stof afwerpen propoertioneel met de afzettingsfractie van de beide kleifracties. (Dus als er 30% van de klei in transport blijft, dan ook 30% van de OM).
-                                            // Dit leidt bij de kleifractie slechts zelden tot afzetting. 
+                                            {
+                                                //we have found one of the lower nbs
+                                                //if (row == 24 && col == 81) { Debug.WriteLine("this is a lower nb " + i + j + "dh" + dh + " " + waterflow_m3[row, col]); }
+                                                if ((row != row + i) && (col != col + j)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }
+                                                if ((depression[row, col] != 0 && depression[row + i, col + j] != depression[row, col]) || (depression[row, col] == 0))
+                                                {   //if cell == outlet of current lake and nb not member of that lake OR if not a lake member
 
-                                            // Depressies: volledige afzetting van materiaal dat in transport is. 
-                                            // Instabiliteit: geen garantie dat dit niet gebeurt. Smearing kan er bij gezet worden. 
-                                            // Gravelafzettingen: volgens pdf een rho van 2.7. Afgeronde gravel afzettingen van rivieren kunnen die heel laag hebben. 
+                                                    // Now, we first calculate the fraction of water and sediment that goes from row, col to row+i to col+j , always using current altitudes
+                                                    // Then, we calculate the actual amounts of water and sediment, and with that, using the stream power equation, the transport capacity
+                                                    // In future, the Hjülstrom diagram can be used to give texture-dependent erosion thresholds (or selectivity)
 
-                                        } //end`dH > 000
-                                    }//end if novalues
-                                }//end if boundaries
-                            }//end for j
-                        }//end for i
+                                                    dh /= d_x;  //dh is now slope
+                                                    fraction = Math.Pow(dh, conv_fac) / powered_slope_sum;
+                                                    if (waterflow_m3[row, col] < 0) { waterflow_m3[row, col] = 0; }    // this can have happened if water enters a drier zone in the landscape
+                                                    flow_between_cells_m3_per_m = fraction * waterflow_m3[row, col] / dx;
+                                                    if (depression[row + i, col + j] == 0)
+                                                    {  // if receiving cell is not in a depression, its waterflow is increased 
+                                                        waterflow_m3[row + i, col + j] += flow_between_cells_m3_per_m * dx;
+                                                    }
+                                                    if (depression[row + i, col + j] != 0)
+                                                    {  // if receiving cell is in a depression, its outlets' waterflow is increased 
+                                                        currentdepression = Math.Abs(depression[row + i, col + j]); // this Abs stuff should not be necessary and is included for stability!
+                                                        int outletcounter = 0;
+                                                        while (drainingoutlet_col[currentdepression, outletcounter] != -1)
+                                                        {
+                                                            outletcounter++;
+                                                            if (outletcounter == 5) { break; }
+                                                        }
+                                                        for (int iter = 0; iter < outletcounter; iter++) // for all outlets of this depression, divide that amount of water over them
+                                                        {
+                                                            waterflow_m3[drainingoutlet_row[currentdepression, iter], drainingoutlet_col[currentdepression, iter]] += dx * flow_between_cells_m3_per_m / outletcounter;
+                                                        }
+                                                    }
+
+                                                    if (only_waterflow_checkbox.Checked == false)
+                                                    {
+                                                        calculate_sediment_dynamics(row, col, i, j, flow_between_cells_m3_per_m, fraction, sum_frac_OSL);
+
+                                                    } // end if else : also erosion and deposition considered
+                                                    sum_frac_OSL += fraction;
+                                                }
+
+                                                // 4. Indien oververzadigd: depositie. Berekenen van de doorgaande massa van iedere textuurklasse, op basis van 1/d0.5 (zie Excel). 
+                                                // 4b. Vergelijken van doorgaande massa met massa aanwezig in transport per textuurfractie. Indien teveel aanwezig, afwerpen. 
+                                                // 4c. Organische stof afwerpen propoertioneel met de afzettingsfractie van de beide kleifracties. (Dus als er 30% van de klei in transport blijft, dan ook 30% van de OM).
+                                                // Dit leidt bij de kleifractie slechts zelden tot afzetting. 
+
+                                                // Depressies: volledige afzetting van materiaal dat in transport is. 
+                                                // Instabiliteit: geen garantie dat dit niet gebeurt. Smearing kan er bij gezet worden. 
+                                                // Gravelafzettingen: volgens pdf een rho van 2.7. Afgeronde gravel afzettingen van rivieren kunnen die heel laag hebben. 
+
+                                            } //end`dH > 000
+                                        }//end if novalues
+                                    }//end if boundaries
+                                }//end for j
+                            }//end for i
+                        }  // end else slope_sum ==0                      
                         if (NA_in_soil(row, col) == true) { Debug.WriteLine("NA found after eroding " + row + " " + col); }
                         //if (row == 24 && col == 81) { Debug.WriteLine("passed"); }
                     } // end if not in a lake or a lake outlet (all other lake cells have been considered before
                 } //end if nodata
             }//end for index
              // all cells have now been considered in order of (original) altitude. We must still recalculate their thicknesses and recalculate altitude. While doing that, we should count how much erosion and deposition there has been. 
-            volume_eroded = 0; sediment_exported = 0; volume_deposited = 0;
-            total_average_altitude = 0; total_altitude = 0;
-            total_rain = 0; total_evap = 0; total_infil = 0; total_outflow = 0;
+            volume_eroded_m = 0; sediment_exported_m = 0; volume_deposited_m = 0;
+            total_average_altitude_m = 0; total_altitude_m = 0;
+            total_rain_m = 0; total_evap_m = 0; total_infil_m = 0; 
+            total_rain_m3 = 0; total_evap_m3 = 0; total_infil_m3 = 0; total_outflow_m3 = 0;
             wet_cells = 0; eroded_cells = 0; deposited_cells = 0;
             for (int row = 0; row < nr; row++)
             {
@@ -15921,8 +15952,8 @@ namespace LORICA4
                             }
                             //now dz_ero_m and dz_sed_m hold the changed altitudes. 
 
-                            volume_eroded += dz_ero_m[row, col];
-                            volume_deposited += dz_sed_m[row, col];
+                            volume_eroded_m += dz_ero_m[row, col];
+                            volume_deposited_m += dz_sed_m[row, col];
                             dtmchange_m[row, col] += dz_ero_m[row, col] + dz_sed_m[row, col];  //attention: LAKE_sed and dz_sed_m are treated differently. 
                             dtm[row, col] += dz_ero_m[row, col] + dz_sed_m[row, col];                           //No need to add lake_sed to dtm in the next line
                             soildepth_m[row, col] += dz_ero_m[row, col] + dz_sed_m[row, col]; // update soil depth
@@ -15931,20 +15962,20 @@ namespace LORICA4
                             if (-dz_ero_m[row, col] > timeseries.timeseries_erosion_threshold) { eroded_cells++; }
                             if (dz_sed_m[row, col] + lake_sed_m[row, col] > timeseries.timeseries_deposition_threshold) { deposited_cells++; }
                         }
-                        if (check_space_rain.Checked == true) { total_rain += rain[row, col]; }
-                        total_rain += rain_value_m;
-                        if (check_space_evap.Checked == true) { total_evap += evapotranspiration[row, col]; }
-                        total_evap += evap_value_m;
-                        if (check_space_infil.Checked == true) { total_infil += infil[row, col]; }
-                        total_infil += infil_value_m;
+                        if (check_space_rain.Checked == true) { total_rain_m += rain[row, col]; }
+                        total_rain_m += rain_value_m;
+                        if (check_space_evap.Checked == true) { total_evap_m += evapotranspiration[row, col]; }
+                        total_evap_m += evap_value_m;
+                        if (check_space_infil.Checked == true) { total_infil_m += infil[row, col]; }
+                        total_infil_m += infil_value_m;
                         if (waterflow_m3[row, col] * dx * dx > timeseries.timeseries_waterflow_threshold) { wet_cells++; }
                     } // end for nodata
                 }   // end for col
             } // end for row
-            total_rain *= dx * dx;   // m3
-            total_evap *= dx * dx;   // m3
-            total_infil *= dx * dx;  // m3
-            total_outflow = total_rain - total_evap - total_infil;
+            total_rain_m3 = total_rain_m * dx * dx;   // m3
+            total_evap_m3 = total_evap_m * dx * dx;   // m3
+            total_infil_m3 = total_infil_m * dx * dx;  // m3
+            total_outflow_m3 = total_rain_m3 - total_evap_m3 - total_infil_m3;
             //Debug.WriteLine("\n--erosion and deposition overview--");
             //Debug.WriteLine("rain " + total_rain + " evap " + total_evap + " total_infil " + total_infil);
             if (only_waterflow_checkbox.Checked == false)
@@ -15998,7 +16029,7 @@ namespace LORICA4
             }
             if (timeseries.timeseries_net_ero_check.Checked)
             {
-                timeseries_matrix[t, timeseries_order[3]] = volume_eroded + volume_deposited + sediment_delta_m + sediment_filled_m;
+                timeseries_matrix[t, timeseries_order[3]] = volume_eroded_m + volume_deposited_m + sediment_delta_m + sediment_filled_m;
             }
             if (timeseries.timeseries_number_dep_check.Checked)
             {
@@ -16014,35 +16045,67 @@ namespace LORICA4
             }
             if (timeseries.timeseries_SDR_check.Checked)
             {
-                timeseries_matrix[t, timeseries_order[7]] = (volume_eroded + volume_deposited + sediment_delta_m + sediment_filled_m) / volume_eroded;
+                timeseries_matrix[t, timeseries_order[7]] = (volume_eroded_m + volume_deposited_m + sediment_delta_m + sediment_filled_m) / volume_eroded_m;
             }
             if (timeseries.timeseries_total_average_alt_check.Checked)
             {
-                timeseries_matrix[t, timeseries_order[8]] = total_average_altitude;
+                timeseries_matrix[t, timeseries_order[8]] = total_average_altitude_m;
             }
             if (timeseries.timeseries_total_dep_check.Checked)
             {
-                timeseries_matrix[t, timeseries_order[9]] = volume_deposited + sediment_delta_m + sediment_filled_m;
+                timeseries_matrix[t, timeseries_order[9]] = volume_deposited_m + sediment_delta_m + sediment_filled_m;
             }
             if (timeseries.timeseries_total_ero_check.Checked)
             {
-                timeseries_matrix[t, timeseries_order[10]] = -volume_eroded;
+                timeseries_matrix[t, timeseries_order[10]] = -volume_eroded_m;
             }
             if (timeseries.timeseries_total_evap_check.Checked)
             {
-                timeseries_matrix[t, timeseries_order[11]] = total_evap;
+                timeseries_matrix[t, timeseries_order[11]] = total_evap_m3;
             }
             if (timeseries.timeseries_total_infil_check.Checked)
             {
-                timeseries_matrix[t, timeseries_order[12]] = total_infil;
+                timeseries_matrix[t, timeseries_order[12]] = total_infil_m3;
             }
             if (timeseries.timeseries_total_outflow_check.Checked)
             {
-                timeseries_matrix[t, timeseries_order[13]] = total_outflow;
+                timeseries_matrix[t, timeseries_order[13]] = total_outflow_m3;
             }
             if (timeseries.timeseries_total_rain_check.Checked)
             {
-                timeseries_matrix[t, timeseries_order[14]] = total_rain;
+                timeseries_matrix[t, timeseries_order[14]] = total_rain_m3;
+            }
+            if (timeseries.timeseries_outflow_cells_checkbox.Checked)
+            {
+                timeseries_matrix[t, timeseries_order[15]] = number_of_outflow_cells;
+            }
+            if (timeseries.timeseries_sedexport_checkbox.Checked)
+            {
+                timeseries_matrix[t, timeseries_order[16]] = domain_sed_export_kg[0];
+            }
+            if (timeseries.timeseries_sedexport_checkbox.Checked)
+            {
+                timeseries_matrix[t, timeseries_order[17]] = domain_sed_export_kg[1];
+            }
+            if (timeseries.timeseries_sedexport_checkbox.Checked)
+            {
+                timeseries_matrix[t, timeseries_order[18]] = domain_sed_export_kg[2];
+            }
+            if (timeseries.timeseries_sedexport_checkbox.Checked)
+            {
+                timeseries_matrix[t, timeseries_order[19]] = domain_sed_export_kg[3];
+            }
+            if (timeseries.timeseries_sedexport_checkbox.Checked)
+            {
+                timeseries_matrix[t, timeseries_order[20]] = domain_sed_export_kg[4];
+            }
+            if (timeseries.timeseries_sedexport_checkbox.Checked)
+            {
+                timeseries_matrix[t, timeseries_order[21]] = domain_YOM_export_kg;
+            }
+            if (timeseries.timeseries_sedexport_checkbox.Checked)
+            {
+                timeseries_matrix[t, timeseries_order[22]] = domain_OOM_export_kg;
             }
         }
 
@@ -19686,6 +19749,8 @@ Example: rainfall.asc can look like:
                 }
             }
             average_bulk_density_kg_m3 = total_bulk_density / objective_function_cells;
+            //temporary hard fix to test if bulkdensities of 0 are throwing off our calculations 
+            average_bulk_density_kg_m3 = 1560;
             simulated_ero_kg_m2_y = (average_bulk_density_kg_m3 * simulated_ero_m3) / (objective_function_cells * dx * dx) / end_time;
             ;
             Debug.WriteLine(" calib tst - calib_objective_function - error is " + Math.Abs(known_ero_kg_m2_y - simulated_ero_kg_m2_y) + "kg per m2 per year");
@@ -20512,6 +20577,7 @@ Example: rainfall.asc can look like:
                             }
 
                             timeseries_matrix = new double[System.Convert.ToInt32(end_time), number_of_outputs];
+                            Debug.WriteLine("Created timeseries matrix with " + System.Convert.ToInt32(end_time) + " rows and " + number_of_outputs + " columns");
                             if (input_data_error == false)
                             {
                                 if (input_data_error == false)
@@ -20684,7 +20750,7 @@ Example: rainfall.asc can look like:
             {
                 this.TimeStatusPanel.Text = "time " + (t + 1) + "/" + end_time;
             }, CancellationToken.None, TaskCreationOptions.None, guiThread);
-            // Debug.WriteLine("starting calculations - TIME " + t);
+            Debug.WriteLine("starting calculations - TIME " + t);
 
             if (Spitsbergen_case_study.Checked)
             { calculate_overwater_landscape_Spitsbergen(); }
@@ -20732,10 +20798,12 @@ Example: rainfall.asc can look like:
                 }
                 else
                 {
+                    //Debug.WriteLine("before annual WE2");
                     findsinks();
                     searchdepressions();
                     define_fillheight_new();
                     if (NA_anywhere_in_soil() == true) { Debug.WriteLine("NA found before erosed"); }
+                    //Debug.WriteLine("before annual calc WE2");
                     calculate_water_ero_sed();
                     soil_update_split_and_combine_layers();
 
@@ -20744,7 +20812,7 @@ Example: rainfall.asc can look like:
                 }
             }
 
-            // Debug.WriteLine("before TF");
+            //Debug.WriteLine("before TF");
             if (treefall_checkbox.Checked)
             {
                 if (t <= (end_time - 300)) // if there is no tillage
@@ -20762,7 +20830,7 @@ Example: rainfall.asc can look like:
             if (creep_active)
             {
                 try
-                {// Debug.WriteLine("calculating creep");
+                { Debug.WriteLine("calculating creep");
                     comb_sort();
 
                     calculate_creep();
@@ -20777,7 +20845,7 @@ Example: rainfall.asc can look like:
                 try
                 {
                     hardlayer_breaking();
-                    //Debug.WriteLine(" broke hard layer");
+                    Debug.WriteLine(" broke hard layer");
                     block_weathering();
                     //Debug.WriteLine(" weathered blocks");
                     block_movement();
@@ -20862,23 +20930,23 @@ Example: rainfall.asc can look like:
                 soil_update_split_and_combine_layers();
                 if (timeseries.total_average_soilthickness_checkbox.Checked)
                 {
-                    timeseries_matrix[t, timeseries_order[21]] = total_average_soilthickness_m;
+                    timeseries_matrix[t, timeseries_order[29]] = total_average_soilthickness_m;
                 }
                 if (timeseries.timeseries_number_soil_thicker_checkbox.Checked)
                 {
-                    timeseries_matrix[t, timeseries_order[22]] = number_soil_thicker_than;
+                    timeseries_matrix[t, timeseries_order[30]] = number_soil_thicker_than;
                 }
                 if (timeseries.timeseries_coarser_checkbox.Checked)
                 {
-                    timeseries_matrix[t, timeseries_order[23]] = number_soil_coarser_than;
+                    timeseries_matrix[t, timeseries_order[31]] = number_soil_coarser_than;
                 }
                 if (timeseries.timeseries_soil_depth_checkbox.Checked)
                 {
-                    timeseries_matrix[t, timeseries_order[24]] = local_soil_depth_m;
+                    timeseries_matrix[t, timeseries_order[32]] = local_soil_depth_m;
                 }
                 if (timeseries.timeseries_soil_mass_checkbox.Checked)
                 {
-                    timeseries_matrix[t, timeseries_order[25]] = local_soil_mass_kg;
+                    timeseries_matrix[t, timeseries_order[33]] = local_soil_mass_kg;
                 }
             }
 
