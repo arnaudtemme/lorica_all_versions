@@ -19853,16 +19853,20 @@ Example: rainfall.asc can look like:
             Debug.WriteLine(" starting to evaluate performance using " + localfile);
             localfile = workdir + "\\" + localfile;
             globalfile = workdir + "\\" + globalfile;
-            if (!File.Exists(localfile))
+            bool location_errors_requested = false;
+            if (location_errors_requested)
             {
-                MessageBox.Show("No such observation file: " + localfile);
-                return (-1);
+                if (!File.Exists(localfile))
+                {
+                    MessageBox.Show("No such observation file: " + localfile);
+                    return (-1);
+                }
             }
-            if (!File.Exists(globalfile))
+            /* if (!File.Exists(globalfile))
             {
                 MessageBox.Show("No such observation file: " + globalfile);
                 return (-1);
-            }
+            } */
             //run, soildepth_e, SOMfract_e, coarsefract_e, clayfract_e, siltfract_e, sandfract_e, average_e
             int obsnumber = 0; int row = 0; int col = 0;
             double localdepth_error, SOM_error, coarse_error, clay_error, silt_error, sand_error;
@@ -19974,18 +19978,21 @@ Example: rainfall.asc can look like:
                             Debug.WriteLine(row + " " + col + " " + location_error + "  " + all_locations_error + " " + localdepth_error);
                             totaldepth_error += localdepth_error;
 
-                            double NBW;
-                            if (bedrock_weathering_m[row, col] < 0) //MMS to prevent negative bedrock weathering production
+                            double NBW=0;
+                            if (bedrock_weathering_active)
                             {
-                                NBW = 1;
-                            }
-                            else
-                            {
-                                NBW = 0;
+                                if (bedrock_weathering_m[row, col] < 0) //MMS to prevent negative bedrock weathering production
+                                {
+                                    NBW = 1;
+                                }
+                                else
+                                {
+                                    NBW = 0;
+                                }
                             }
 
                             //write this to file for this location
-                            bool location_errors_requested = false;
+                            
                             if (location_errors_requested)
                             {
                                 using (StreamWriter sw = new StreamWriter(localfile, true))
@@ -20062,13 +20069,14 @@ Example: rainfall.asc can look like:
             normal_silt_error = Math.Abs(siltfract - silt_obs_fract) / silt_obs_fract;
             normal_clay_error = Math.Abs(clayfract - clay_obs_fract) / clay_obs_fract;
             double entire_domain_error = (normal_OM_error + normal_coarse_error + normal_sand_error + normal_silt_error + normal_clay_error) / 5;
-            using (StreamWriter sw = new StreamWriter(globalfile, true))
+            /*using (StreamWriter sw = new StreamWriter(globalfile, true))
             {
                 sw.Write(run_number + "," + all_locations_error + "," + entire_domain_error + "," + (all_locations_error + entire_domain_error) / 2 + "," + totaldepth_error / observations.GetLength(0) + "," + advection_erodibility + "," + diffusivity_creep + "," + P0 + "," + k1 + "," + k2);
                 sw.Write("\r\n");
                 sw.Close();
             }
             Debug.WriteLine("calculated and saved errors for run number" + run_number);
+            */
             return ((all_locations_error + entire_domain_error) / 2);
         }
 
