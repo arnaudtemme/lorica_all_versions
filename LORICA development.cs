@@ -665,8 +665,7 @@ namespace LORICA4
 
 
         double
-                diffusivity_creep,
-                potential_creep_kg,
+                potential_creep_kg_m2_y,
                 plough_depth,
                 annual_weathering,
                 dh, diff, dh1, dh_maxi,
@@ -17076,7 +17075,7 @@ namespace LORICA4
 
         private void calculate_creep()
         {
-            // Debug.WriteLine("start of creep");
+            Debug.WriteLine("start of creep with diffusivity at " + potential_creep_kg_m2_y);
             try
             {
                 if (NA_in_map(dtm) > 0 | NA_in_map(soildepth_m) > 0)
@@ -17084,10 +17083,10 @@ namespace LORICA4
                     Debug.WriteLine("err_cr1");
                     Debugger.Break();
                 }
-                /*Task.Factory.StartNew(() =>
+                Task.Factory.StartNew(() =>
                 {
                     this.InfoStatusPanel.Text = "creep calculation";
-                }, CancellationToken.None, TaskCreationOptions.None, guiThread); */
+                }, CancellationToken.None, TaskCreationOptions.None, guiThread); 
                 int row, col,
                             i, j,
                             nb_ok,
@@ -17168,8 +17167,8 @@ namespace LORICA4
 
                         if (daily_water.Checked)
                         {
-                            if (aridity_vegetation[row, col] < 1) { potential_creep_kg = 4 + 0.3; } // grassland
-                            else { potential_creep_kg = 4 + 1.3; } // forest
+                            if (aridity_vegetation[row, col] < 1) { potential_creep_kg_m2_y = 4 + 0.3; } // grassland
+                            else { potential_creep_kg_m2_y = 4 + 1.3; } // forest
                                                                    // standard potential creep of 4 kg. 0.3 or 1.3 is added, based on vegetation type. Rates are derived from Wilkinson 2009: breaking ground and Gabet
                         }
 
@@ -17180,7 +17179,7 @@ namespace LORICA4
                         {
                             total_soil_thickness_m += layerthickness_m[row, col, layer];
                         }
-                        local_creep_kg = potential_creep_kg * (1 - Math.Exp(-bioturbation_depth_decay_constant * total_soil_thickness_m)) * dx * dx * dt;
+                        local_creep_kg = potential_creep_kg_m2_y * (1 - Math.Exp(-bioturbation_depth_decay_constant * total_soil_thickness_m)) * dx * dx * dt;
                         //Debug.WriteLine("cr3");
 
                         if (local_creep_kg > 0)
@@ -17381,7 +17380,7 @@ namespace LORICA4
                 Debug.WriteLine("err_cr10");
 
             }
-            // Debug.WriteLine("end of creep");
+            Debug.WriteLine("end of creep");
         }
 
         private void calc_creep_layers(int row1, int col1, int iiii, int jjjj, double mass_export_soil_kg)
@@ -19660,7 +19659,7 @@ Example: rainfall.asc can look like:
                     }
                     if (version_Konza_checkbox.Checked)
                     {
-                        sw.WriteLine(" erodibility_K diffusivity_creep P0 k1 k2 Pa");
+                        sw.WriteLine(" erodibility_K potential_creep_kg P0 k1 k2 Pa");
                     }
                 }
                 catch { Debug.WriteLine(" issue with writing the header of the calibration log file"); }
@@ -19685,7 +19684,7 @@ Example: rainfall.asc can look like:
                     }
                     if (version_Konza_checkbox.Checked)
                     {
-                        sw.WriteLine(run_number + " " + objective_fnct_result + " " + advection_erodibility + " " + diffusivity_creep + " " + P0 + " " + k1 + " " + k2 + " " + Pa);
+                        sw.WriteLine(run_number + " " + objective_fnct_result + " " + advection_erodibility + " " + potential_creep_kg_m2_y + " " + P0 + " " + k1 + " " + k2 + " " + Pa);
                     }
                 }
                 catch { Debug.WriteLine(" issue with writing a line in the calibration log file"); }
@@ -19998,7 +19997,7 @@ Example: rainfall.asc can look like:
                                 using (StreamWriter sw = new StreamWriter(localfile, true))
                                 {
                                     //sw.Write(run + "," + row + "," + col + "," + location_error + "," + totaldepth_error + "," + normal_OM_error + "," + normal_coarse_error + "," + normal_sand_error + "," + normal_silt_error + "," + normal_clay_error); //MMS_eva
-                                    sw.Write(run_number + "," + row + "," + col + "," + location_error + "," + localdepth_error + "," + normal_OM_error + "," + normal_coarse_error + "," + normal_sand_error + "," + normal_silt_error + "," + normal_clay_error + "," + advection_erodibility + "," + diffusivity_creep + "," + P0 + "," + k1 + "," + k2 + "," + NBW); //MMS_eva
+                                    sw.Write(run_number + "," + row + "," + col + "," + location_error + "," + localdepth_error + "," + normal_OM_error + "," + normal_coarse_error + "," + normal_sand_error + "," + normal_silt_error + "," + normal_clay_error + "," + advection_erodibility + "," + potential_creep_kg_m2_y + "," + P0 + "," + k1 + "," + k2 + "," + NBW); //MMS_eva
                                     sw.Write("\r\n");
                                     sw.Close();
                                 }
@@ -20071,7 +20070,7 @@ Example: rainfall.asc can look like:
             double entire_domain_error = (normal_OM_error + normal_coarse_error + normal_sand_error + normal_silt_error + normal_clay_error) / 5;
             /*using (StreamWriter sw = new StreamWriter(globalfile, true))
             {
-                sw.Write(run_number + "," + all_locations_error + "," + entire_domain_error + "," + (all_locations_error + entire_domain_error) / 2 + "," + totaldepth_error / observations.GetLength(0) + "," + advection_erodibility + "," + diffusivity_creep + "," + P0 + "," + k1 + "," + k2);
+                sw.Write(run_number + "," + all_locations_error + "," + entire_domain_error + "," + (all_locations_error + entire_domain_error) / 2 + "," + totaldepth_error / observations.GetLength(0) + "," + advection_erodibility + "," + potential_creep_kg + "," + P0 + "," + k1 + "," + k2);
                 sw.Write("\r\n");
                 sw.Close();
             }
@@ -20094,7 +20093,7 @@ Example: rainfall.asc can look like:
             {
                 //Konza Marte:
                 best_parameters[0] = advection_erodibility;
-                best_parameters[1] = diffusivity_creep;
+                best_parameters[1] = potential_creep_kg_m2_y;
                 best_parameters[2] = P0;
                 best_parameters[3] = k1;
                 best_parameters[4] = k2;
@@ -20309,10 +20308,10 @@ Example: rainfall.asc can look like:
                     //CREEP PARAMETER
                     if (creep_active)
                     {
-                        try { conv_fac = double.Parse(parameter_conv_textbox.Text); }
-                        catch { input_data_error = true; MessageBox.Show("value for parameter p is not valid"); }
-                        try { potential_creep_kg = double.Parse(parameter_diffusivity_textbox.Text); }
-                        catch { input_data_error = true; MessageBox.Show("value for parameter potential_creep_kg is not valid"); }
+                        try { potential_creep_kg_m2_y = double.Parse(parameter_diffusivity_textbox.Text); }
+                        catch { input_data_error = true; MessageBox.Show("value for parameter potential_creep_kg_m2_y is not valid"); }
+                        try { bioturbation_depth_decay_constant = Convert.ToDouble(bioturbation_depth_decay_textbox.Text); }
+                        catch { input_data_error = true; MessageBox.Show("value for creep depth dependence (from BIOTURBATION) is not valid"); }
                     }
 
                     //LANDSLIDE PARAMETERS
@@ -20574,7 +20573,7 @@ Example: rainfall.asc can look like:
                                     int rat_number = Convert.ToInt32(Math.Floor(run_number / Math.Pow(user_specified_number_of_ratios, 0)) % user_specified_number_of_ratios);
                                     advection_erodibility *= calib_ratios[0, rat_number];
                                     rat_number = Convert.ToInt32(Math.Floor(run_number / Math.Pow(user_specified_number_of_ratios, 1)) % user_specified_number_of_ratios);
-                                    diffusivity_creep *= calib_ratios[1, rat_number];
+                                    potential_creep_kg_m2_y *= calib_ratios[1, rat_number];
                                     rat_number = Convert.ToInt32(Math.Floor(run_number / Math.Pow(user_specified_number_of_ratios, 2)) % user_specified_number_of_ratios);
                                     P0 *= calib_ratios[2, rat_number];
                                     rat_number = Convert.ToInt32(Math.Floor(run_number / Math.Pow(user_specified_number_of_ratios, 3)) % user_specified_number_of_ratios);
