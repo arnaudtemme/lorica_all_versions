@@ -483,7 +483,8 @@ namespace LORICA4
 
         int[,,][] OSL_grainages, OSL_depositionages, OSL_surfacedcount;
         int[,][] OSL_grainages_in_transport, OSL_depositionages_in_transport, OSL_surfacedcount_in_transport;
-        int ngrains, start_age;
+        int[] moves_per_t = new int[10000];
+        int ngrains_kgsand_m2, start_age;
         double bleaching_depth_m;
 
         int[,]
@@ -5252,9 +5253,9 @@ namespace LORICA4
             this.label121.AutoSize = true;
             this.label121.Location = new System.Drawing.Point(60, 39);
             this.label121.Name = "label121";
-            this.label121.Size = new System.Drawing.Size(155, 13);
+            this.label121.Size = new System.Drawing.Size(190, 13);
             this.label121.TabIndex = 12;
-            this.label121.Text = "Initial number of grains per layer";
+            this.label121.Text = "Initial number of grains per kg/m2 sand";
             // 
             // ngrains_textbox
             // 
@@ -5262,7 +5263,7 @@ namespace LORICA4
             this.ngrains_textbox.Name = "ngrains_textbox";
             this.ngrains_textbox.Size = new System.Drawing.Size(45, 20);
             this.ngrains_textbox.TabIndex = 10;
-            this.ngrains_textbox.Text = "50";
+            this.ngrains_textbox.Text = "2";
             // 
             // OSL_checkbox
             // 
@@ -6224,32 +6225,15 @@ namespace LORICA4
                 }
                 if (OSL_checkbox.Checked)
                 {
-                    ngrains = System.Convert.ToInt32(ngrains_textbox.Text);
+                    ngrains_kgsand_m2 = System.Convert.ToInt32(ngrains_textbox.Text);
                     bleaching_depth_m = System.Convert.ToDouble(bleachingdepth_textbox.Text);
                     start_age = System.Convert.ToInt32(OSL_inherited_textbox.Text);
 
-                    // OSL_age = new int[nr * nc * max_soil_layers * ngrains, 5];
                     OSL_grainages = new int[nr, nc, max_soil_layers][];
                     OSL_depositionages = new int[nr, nc, max_soil_layers][];
                     OSL_surfacedcount = new int[nr, nc, max_soil_layers][];
 
-                    for (int row = 0; row < nr; row++)
-                    {
-                        for (int col = 0; col < nc; col++)
-                        {
-                            for (int lay = 0; lay < max_soil_layers; lay++)
-                            {
-                                OSL_grainages[row, col, lay] = new int[ngrains];
-                                OSL_depositionages[row, col, lay] = new int[ngrains];
-                                OSL_surfacedcount[row, col, lay] = new int[ngrains];
-                                for(int grain = 0; grain<ngrains;grain++)
-                                {
-                                    OSL_grainages[row, col, lay][grain] = start_age;
-                                    OSL_depositionages[row, col, lay][grain] = start_age;
-                                }
-                            }
-                        }
-                    }
+                   
                 }
 
                 if (Water_ero_checkbox.Checked)
@@ -10972,6 +10956,16 @@ namespace LORICA4
                                 }
                                 if (creep_testing.Checked)
                                 {
+                                    //bool change_creep_testing = true;
+                                    //if(max_soil_layers>10 & soil_layer<10)
+                                    //{
+                                    //    change_creep_testing = false;
+                                    //}
+                                    //if (change_creep_testing) 
+                                    //{
+                                    //    sandfrac = 0;
+                                    //    clayfrac = 1;
+                                    //}
                                     sandfrac -= 1.0 / max_soil_layers;
                                     clayfrac += 1.0 / max_soil_layers;
                                     sandfrac = Math.Max(sandfrac, 0);
@@ -11086,24 +11080,30 @@ namespace LORICA4
                 } // end col
             } // end row
               //Debug.WriteLine("initialised soil");
-            for (int row = 0; row < nr; row++)
+            if(OSL_checkbox.Checked)
             {
-                for (int col = 0; col < nc; col++)
+                for (int row = 0; row < nr; row++)
                 {
-                    for (int lay = 0; lay < max_soil_layers; lay++)
+                    for (int col = 0; col < nc; col++)
                     {
-                        ngrains = Convert.ToInt32(Math.Round(texture_kg[row,col,lay,1])/(dx*dx))*2;
-                        OSL_grainages[row, col, lay] = new int[ngrains];
-                        OSL_depositionages[row, col, lay] = new int[ngrains];
-                        OSL_surfacedcount[row, col, lay] = new int[ngrains];
-                        for(int grain = 0; grain<ngrains;grain++)
+                        for (int lay = 0; lay < max_soil_layers; lay++)
                         {
-                            OSL_grainages[row, col, lay][grain] = start_age;
-                            OSL_depositionages[row, col, lay][grain] = start_age;
+                            int ngrains_layer = Convert.ToInt32(Math.Round(ngrains_kgsand_m2 * texture_kg[row, col, lay, 1])); // grains per kg/m2 of sand
+                            OSL_grainages[row, col, lay] = new int[ngrains_layer];
+                            OSL_depositionages[row, col, lay] = new int[ngrains_layer];
+                            OSL_surfacedcount[row, col, lay] = new int[ngrains_layer];
+
+                            start_age = lay;
+                            for (int grain = 0; grain < ngrains_layer; grain++)
+                            {
+                                OSL_grainages[row, col, lay][grain] = start_age;
+                                OSL_depositionages[row, col, lay][grain] = start_age;
+                            }
                         }
                     }
                 }
             }
+           
         } // anngepast voor standaard diktes
 
         void initialise_every_till()
@@ -14083,7 +14083,7 @@ namespace LORICA4
                 double mass_soil_before = 0, mass_soil_after = 0, mass_top_before = 0, mass_top_after = 0;
                 // if (findnegativetexture()) { Debugger.Break(); }
                 double lux_hornbeam_OM_litter_fraction = 0;
-
+                double total_BT_transport_kgm = 0;
                 double total_young_som_kg, total_old_som_kg;
 
                 double CN_before = 0, CN_after = 0;
@@ -14173,6 +14173,15 @@ namespace LORICA4
                                 if (total_layer_fine_earth_mass(row, col, layer) > 0)  //this says: if the layer actually exists
 
                                 {
+                                    double dd_bt = bioturbation_depth_decay_constant; // possible adjustments to second depth decay for bioturbation are possible here
+
+
+                                    //double total_BT_depth_decay_index = 
+                                    //    -1/dd_bt*(Math.Exp(-dd_bt*(z_toplayer - 0)) - Math.Exp(-dd_bt*(z_toplayer - z_toplayer))) +
+                                    //    -1/dd_bt*(Math.Exp(-dd_bt*(total_soil_thickness_m - z_bottomlayer)) - Math.Exp(-dd_bt*(z_bottomlayer - z_bottomlayer)));                                    
+
+
+                                    double check_BT_dd = 0;
                                     //integration over the exponential decay function in JGR 2006 for the entire profile, and for the current layer.
                                     //then calculate the fraction of bioturbation that will happen in this layer, and multiply with total bioturbation in this cell
                                     fine_layer_mass = total_layer_fine_earth_mass(row, col, layer);
@@ -14180,100 +14189,97 @@ namespace LORICA4
                                     total_bio_activity_index = 1 - (Math.Exp(-bioturbation_depth_decay_constant * total_soil_thickness_m));
                                     layer_bioturbation_kg = (layer_bio_activity_index / total_bio_activity_index) * local_bioturbation_kg;
                                     mass_distance_sum = 0;
+
                                     depth += layerthickness_m[row, col, layer] / 2;
+
+                                    double total_BT_depth_decay_index =
+                                        -1 / dd_bt * (Math.Exp(-dd_bt * (depth - 0)) - 1) + // upper part of the curve
+                                        -1 / dd_bt * (Math.Exp(-dd_bt * (total_soil_thickness_m - depth)) - 1); // lower part of the curve
+
+
                                     otherdepth = 0; distance = 0;
 
                                     if (layerthickness_m[row, col, layer] <= 0) { Debug.WriteLine(" error: layer thickness is 0 at t " + t + " r " + row + " c " + col); }
 
                                     //now that we know how much bioturbation originates in this layer,
-                                    //now look at other layers and decide which one of them exchanges how much of that good stuff.
+                                    //now look at all other layers and decide which one of them exchanges how much of that good stuff.
+                                    //Here we include the source layer as wel, to prevent errors and inconsistencies with different layer thicknesses
                                     var mass_distances = new List<double>();
                                     var depths = new List<double>();
-                                    for (otherlayer = 0; otherlayer < max_soil_layers; otherlayer++)
-                                    {
-                                        if (total_layer_fine_earth_mass(row, col, otherlayer) > 0)  //this says: if the other layer actually exists
-                                                                                                    // That is necessary because we leave the stone fraction out of bioturbation
-                                                                                                    // and therefore purely stony layers are not involved in bioturbation
-                                        {
+                                    var depthdecays = new List<double>();
+                                    var P_fromto_list = new List<double>();
+                                    var P_tofrom_list = new List<double>();
 
-                                            otherdepth += layerthickness_m[row, col, otherlayer] / 2;
-                                            distance = Math.Abs(otherdepth - depth);
-
-                                            if (distance < 0) { Debug.WriteLine(" distance between layers is 0 m at row " + row + " col " + col + " layerdepth " + depth + " otherlayerdepth " + otherdepth); }
-
-                                            if (double.IsNaN(texture_kg[row, col, otherlayer, 1])) { Debug.WriteLine(" texture 1 NaN " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-                                            if (double.IsNaN(texture_kg[row, col, otherlayer, 2])) { Debug.WriteLine(" texture 2 NaN " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-                                            if (double.IsNaN(texture_kg[row, col, otherlayer, 3])) { Debug.WriteLine(" texture 3 NaN " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-                                            if (double.IsNaN(texture_kg[row, col, otherlayer, 4])) { Debug.WriteLine(" texture 4 NaN " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-                                            if (double.IsNaN(young_SOM_kg[row, col, otherlayer])) { Debug.WriteLine(" young som NaN " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-                                            if (double.IsNaN(old_SOM_kg[row, col, otherlayer])) { Debug.WriteLine(" old som NaN " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-
-                                            if ((texture_kg[row, col, otherlayer, 1] < 0)) { Debug.WriteLine(" texture 1 null " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-                                            if ((texture_kg[row, col, otherlayer, 2] < 0)) { Debug.WriteLine(" texture 2 null " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-                                            if ((texture_kg[row, col, otherlayer, 3] < 0)) { Debug.WriteLine(" texture 3 null " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-                                            if ((texture_kg[row, col, otherlayer, 4] < 0)) { Debug.WriteLine(" texture 4 null " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-                                            if ((young_SOM_kg[row, col, otherlayer] < 0)) { Debug.WriteLine(" young som null " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-                                            if ((old_SOM_kg[row, col, otherlayer] < 0)) { Debug.WriteLine(" old som null " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-
-                                            if (otherlayer != layer)
-                                            {
-                                                mass_distance_sum += (texture_kg[row, col, otherlayer, 1] + texture_kg[row, col, otherlayer, 2] + texture_kg[row, col, otherlayer, 3] + texture_kg[row, col, otherlayer, 4] + young_SOM_kg[row, col, otherlayer] + old_SOM_kg[row, col, otherlayer]) / distance;
-                                                mass_distances.Add((texture_kg[row, col, otherlayer, 1] + texture_kg[row, col, otherlayer, 2] + texture_kg[row, col, otherlayer, 3] + texture_kg[row, col, otherlayer, 4] + young_SOM_kg[row, col, otherlayer] + old_SOM_kg[row, col, otherlayer]) / distance);
-                                                depths.Add(otherdepth);
-                                            }
-
-                                            otherdepth += layerthickness_m[row, col, otherlayer] / 2;
-                                            if (double.IsNaN(mass_distance_sum)) { Debug.WriteLine(" B NaN mass distance in bioturbation t " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-                                            if (double.IsNaN(distance)) { Debug.WriteLine(" NaN  distance in bioturbation t " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-                                            if (double.IsNaN((layerthickness_m[row, col, otherlayer] / 2))) { Debug.WriteLine(" NaN layerthick in bioturbation t " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); }
-                                        }
-                                    }
+                                    //for (otherlayer = 0; otherlayer < max_soil_layers; otherlayer++)
+                                    //{
+                                    //    if (total_layer_fine_earth_mass(row, col, otherlayer) > 0)  //this says: if the other layer actually exists
+                                    //                                                                // That is necessary because we leave the stone fraction out of bioturbation
+                                    //                                                                // and therefore purely stony layers are not involved in bioturbation
+                                    //    {
+                                    //        otherdepth += layerthickness_m[row, col, otherlayer] / 2;
+                                    //        distance = Math.Abs(otherdepth - depth);
+                                    //        if (otherlayer != layer)
+                                    //        {
+                                    //            mass_distance_sum += (texture_kg[row, col, otherlayer, 1] + texture_kg[row, col, otherlayer, 2] + texture_kg[row, col, otherlayer, 3] + texture_kg[row, col, otherlayer, 4] + young_SOM_kg[row, col, otherlayer] + old_SOM_kg[row, col, otherlayer]) / distance;
+                                    //            mass_distances.Add((texture_kg[row, col, otherlayer, 1] + texture_kg[row, col, otherlayer, 2] + texture_kg[row, col, otherlayer, 3] + texture_kg[row, col, otherlayer, 4] + young_SOM_kg[row, col, otherlayer] + old_SOM_kg[row, col, otherlayer]) / distance);
+                                    //            depths.Add(otherdepth);
+                                    //        }
+                                    //        otherdepth += layerthickness_m[row, col, otherlayer] / 2;
+                                    //    }
+                                    //}
                                     double check_mass_distance = 0;
+
                                     otherdepth = 0; distance = 0;
                                     double BT_fraction = 0;
+                                    double layer_BT_depth_decay_index =0;
                                     for (otherlayer = 0; otherlayer < max_soil_layers; otherlayer++)
                                     {
-                                        otherdepth += layerthickness_m[row, col, otherlayer] / 2; // MM moved out of if-function, otherwise distance is not calculated correctly
-                                        if (total_layer_fine_earth_mass(row, col, otherlayer) > 0 && layer != otherlayer)  //this says: if the other layer actually exists and if it's not the current layer
+                                        double z_topotherlayer = otherdepth;
+                                        double z_bottomotherlayer = otherdepth + layerthickness_m[row,col, otherlayer];
+                                        
+                                        if (otherlayer < layer) // above the bioturbated layer
                                         {
+                                            layer_BT_depth_decay_index = -1/dd_bt*(Math.Exp(-dd_bt*(depth-z_topotherlayer)) - Math.Exp(-dd_bt * (depth - z_bottomotherlayer)));
+                                        }
+                                        if (otherlayer == layer) // if layer is the same layer. Can it be excluded here and in the calculations? It should be included in calculating the depth profiles
+                                        {
+                                            layer_BT_depth_decay_index = -1 / dd_bt * (Math.Exp(-dd_bt * (depth - z_topotherlayer)) - 1) +
+                                                -1/dd_bt * (Math.Exp(-dd_bt * (z_bottomotherlayer - depth))-1);
+                                        }
+                                        if (otherlayer > layer) // below the bioturbated layer
+                                        {
+                                            layer_BT_depth_decay_index = -1/dd_bt*(Math.Exp(-dd_bt*(z_bottomotherlayer - depth)) - Math.Exp(-dd_bt * (z_topotherlayer - depth)));
+                                        }
 
+                                        otherdepth += layerthickness_m[row, col, otherlayer] / 2; // MM moved out of if-function, otherwise distance is not calculated correctly
+                                        if (total_layer_fine_earth_mass(row, col, otherlayer) > 0 & layer != otherlayer)  //this says: if the other layer actually exists
+                                        {
+                                            depthdecays.Add(layer_BT_depth_decay_index/total_BT_depth_decay_index);
+                                            depths.Add(otherdepth);
+                                            //if(otherlayer==(max_soil_layers-1))
+                                            //{
+                                            //    // Debugger.Break();
+                                            //}
+                                            check_BT_dd += layer_BT_depth_decay_index /total_BT_depth_decay_index;
                                             distance = Math.Abs(otherdepth - depth);
-                                            if (layer != otherlayer)
-                                            {
-                                                mass_distance_layer = (texture_kg[row, col, otherlayer, 1] + texture_kg[row, col, otherlayer, 2] + texture_kg[row, col, otherlayer, 3] + texture_kg[row, col, otherlayer, 4] + young_SOM_kg[row, col, otherlayer] + old_SOM_kg[row, col, otherlayer]) / distance;
-                                            }
-                                            else
-                                            {
-                                                mass_distance_layer = (texture_kg[row, col, otherlayer, 1] + texture_kg[row, col, otherlayer, 2] + texture_kg[row, col, otherlayer, 3] + texture_kg[row, col, otherlayer, 4] + young_SOM_kg[row, col, otherlayer] + old_SOM_kg[row, col, otherlayer]) / (layerthickness_m[row, col, otherlayer] / 2);
-                                            }
-                                            if (double.IsNaN(mass_distance_layer))
-                                            {
-                                                Debug.WriteLine(" NaN mass distance layer in bioturbation t " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer); Debug.WriteLine("err_sbt2");
-                                            }
-                                            if (mass_distance_sum == 0) { Debug.WriteLine(" zero mass distance sum"); }
+                                            //if (layer != otherlayer)
+                                            //{
+                                            //    mass_distance_layer = (texture_kg[row, col, otherlayer, 1] + texture_kg[row, col, otherlayer, 2] + texture_kg[row, col, otherlayer, 3] + texture_kg[row, col, otherlayer, 4] + young_SOM_kg[row, col, otherlayer] + old_SOM_kg[row, col, otherlayer]) / distance;
+                                            //}
+                                            //else
+                                            //{
+                                            //    mass_distance_layer = (texture_kg[row, col, otherlayer, 1] + texture_kg[row, col, otherlayer, 2] + texture_kg[row, col, otherlayer, 3] + texture_kg[row, col, otherlayer, 4] + young_SOM_kg[row, col, otherlayer] + old_SOM_kg[row, col, otherlayer]) / (layerthickness_m[row, col, otherlayer] / 2);
+                                            //}
 
                                             //here we calculate the amount of material bioturbated between the current layer and the current otherlayer
-                                            interlayer_bioturbation_kg = layer_bioturbation_kg * (mass_distance_layer / mass_distance_sum);
-                                            check_mass_distance += mass_distance_layer / mass_distance_sum;
-                                            BT_fraction += mass_distance_layer / mass_distance_sum;
-                                            if (interlayer_bioturbation_kg < 0)
-                                            {
-                                                Debug.WriteLine("err_sbt3");
-                                            }
-                                            if (double.IsNaN(interlayer_bioturbation_kg))
-                                            {
-                                                Debug.WriteLine(" NaN interlayer bioturbation kg in bioturbation t " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer);
-                                                Debug.WriteLine(" " + mass_distance_layer + " " + mass_distance_sum + " " + layer_bioturbation_kg);
-                                                Debug.WriteLine("err_sbt4");
 
-                                            }
+                                            // interlayer_bioturbation_kg = layer_bioturbation_kg * (mass_distance_layer / mass_distance_sum);
+                                            interlayer_bioturbation_kg = layer_bioturbation_kg * (layer_BT_depth_decay_index / total_BT_depth_decay_index);
+                                            // check_mass_distance += mass_distance_layer / mass_distance_sum;
+                                            // BT_fraction += mass_distance_layer / mass_distance_sum;
+                                            
                                             fine_otherlayer_mass = texture_kg[row, col, otherlayer, 1] + texture_kg[row, col, otherlayer, 2] + texture_kg[row, col, otherlayer, 3] + texture_kg[row, col, otherlayer, 4] + young_SOM_kg[row, col, otherlayer] + old_SOM_kg[row, col, otherlayer];
-                                            if (double.IsNaN(fine_otherlayer_mass)) { Debug.WriteLine(" NaN fine otherlayer mass in bioturbation "); }
-                                            if ((fine_otherlayer_mass <= 0))
-                                            {
-                                                Debug.WriteLine(" fineotherlayermass " + fine_otherlayer_mass + " t " + t + " rc " + row + "  " + col + " layers " + layer + " " + otherlayer);
-                                                Debug.WriteLine("err_sbt5");
-                                            }
+                                            
 
                                             //weathered_mass_kg may be more than present in the other layer, the current layer, or both - in that case one or both of the layers will become mixtures of the original two layers
                                             double fromlayertomixture_kg = 0, fromotherlayertomixture_kg = 0, totalmixturemass_kg = 0, massfromlayer = 0, massfromotherlayer = 0, dmass_l, dmass_ol, cn_bt_l, cn_bt_ol;
@@ -14286,19 +14292,10 @@ namespace LORICA4
                                             {
                                                 //now add to mixture, and take from donors
                                                 double massin_l = 0, massin_ol = 0;
+                                                double sandout_l = 0, sandtotal_l = 0, sandout_ol = 0, sandtotal_ol = 0, clayout_l = 0, claytotal_l = 0, clayout_ol = 0, claytotal_ol = 0;
                                                 // texture
                                                 for (int prop = 1; prop < 5; prop++)
                                                 {
-                                                    //checks
-                                                    if (temp_tex_som_kg[layer, prop] < 0)
-                                                    {
-                                                        Debug.WriteLine("err_sbt6");
-                                                    }
-                                                    if (temp_tex_som_kg[otherlayer, prop] < 0)
-                                                    {
-                                                        Debug.WriteLine("err_sbt7");
-                                                    }
-
                                                     //determine how much mass can be exchanged,. Do not take more than is present in the temporary layer to prevent negative textures in the end
                                                     //Should not happen, mass of top layer should stay constant, but happens anyway
                                                     dmass_l = (fromlayertomixture_kg / fine_layer_mass) * texture_kg[row, col, layer, prop];
@@ -14307,6 +14304,7 @@ namespace LORICA4
                                                     if (dmass_l > temp_tex_som_kg[layer, prop]) { dmass_l = temp_tex_som_kg[layer, prop]; }
                                                     if (dmass_ol > temp_tex_som_kg[otherlayer, prop]) { dmass_ol = temp_tex_som_kg[otherlayer, prop]; }
 
+                                                    total_BT_transport_kgm += (dmass_l * distance + dmass_ol * distance);
                                                     //take mass from donors to mix
                                                     mixture_kg[prop] += (dmass_l + dmass_ol);
                                                     massfromlayer += dmass_l;
@@ -14315,25 +14313,16 @@ namespace LORICA4
                                                     temp_tex_som_kg[layer, prop] -= dmass_l;
                                                     temp_tex_som_kg[otherlayer, prop] -= dmass_ol;
 
-                                                    //mixture_kg[prop] += (fromlayertomixture_kg / fine_layer_mass) * texture_kg[row, col, layer, prop];
-                                                    //if ((fromlayertomixture_kg / fine_layer_mass) * texture_kg[row, col, layer, prop] < 0) { Debugger.Break(); }
-                                                    //massfromlayer += (fromlayertomixture_kg / fine_layer_mass) * texture_kg[row, col, layer, prop];
-                                                    //mixture_kg[prop] += (fromotherlayertomixture_kg / fine_otherlayer_mass) * texture_kg[row, col, otherlayer, prop];
-                                                    //massfromotherlayer += (fromotherlayertomixture_kg / fine_otherlayer_mass) * texture_kg[row, col, otherlayer, prop];
-                                                    //if ((fromotherlayertomixture_kg / fine_otherlayer_mass) * texture_kg[row, col, otherlayer, prop] < 0) { Debugger.Break(); }
-
-                                                    //temp_tex_som_kg[otherlayer, prop] -= (fromotherlayertomixture_kg / fine_otherlayer_mass) * texture_kg[row, col, otherlayer, prop];
-                                                    //temp_tex_som_kg[layer, prop] -= (fromlayertomixture_kg / fine_layer_mass) * texture_kg[row, col, layer, prop];
-
-                                                    if (temp_tex_som_kg[layer, prop] < 0)
-                                                    {
-                                                        Debug.WriteLine("err_sbt8");
+                                                    if (prop == 1) 
+                                                    { 
+                                                        sandout_l = dmass_l; sandtotal_l = texture_kg[row,col,layer, prop];
+                                                        sandout_ol = dmass_ol; sandtotal_ol = texture_kg[row,col,otherlayer, prop];
                                                     }
-                                                    if (temp_tex_som_kg[otherlayer, prop] < 0)
-                                                    {
-                                                        Debug.WriteLine("err_sbt9");
-                                                    }
-
+                                                    if (prop >= 3) 
+                                                    { 
+                                                        clayout_l = dmass_l; claytotal_l = texture_kg[row,col,layer, prop];
+                                                        clayout_ol = dmass_ol; claytotal_ol = texture_kg[row,col,otherlayer, prop];
+                                                    }                                             
                                                 }
                                                 //young OM
                                                 dmass_l = (fromlayertomixture_kg / fine_layer_mass) * (young_SOM_kg[row, col, layer]);
@@ -14366,40 +14355,13 @@ namespace LORICA4
                                                 temp_tex_som_kg[layer, 6] -= dmass_l;
                                                 temp_tex_som_kg[otherlayer, 6] -= dmass_ol;
 
-                                                // checks
-                                                if (temp_tex_som_kg[layer, 5] < 0)
-                                                {
-                                                    Debug.WriteLine("err_sbt10");
-                                                }
-                                                if (temp_tex_som_kg[otherlayer, 5] < 0)
-                                                {
-                                                    Debug.WriteLine("err_sbt11");
-                                                }
-
                                                 //now give from mixture to receivers
                                                 totalmixturemass_kg = massfromlayer + massfromotherlayer;
-                                                if (totalmixturemass_kg == 0)
-                                                {
-                                                    Debug.WriteLine("err_sbt11");
-                                                }
 
                                                 // if (findnegativetexture()) { Debugger.Break(); }
 
                                                 for (int prop = 1; prop < 7; prop++)
                                                 {
-                                                    if (temp_tex_som_kg[layer, prop] < 0)
-                                                    {
-                                                        Debug.WriteLine("err_sbt12");
-                                                    }
-                                                    if (temp_tex_som_kg[otherlayer, prop] < 0)
-                                                    {
-                                                        Debug.WriteLine("err_sbt13");
-                                                    }
-
-                                                    if (mixture_kg[prop] < 0)
-                                                    {
-                                                        Debug.WriteLine("err_sbt14");
-                                                    }
                                                     temp_tex_som_kg[otherlayer, prop] += mixture_kg[prop] * (massfromotherlayer / totalmixturemass_kg);
                                                     massin_ol += mixture_kg[prop] * (massfromotherlayer / totalmixturemass_kg);
                                                     temp_tex_som_kg[layer, prop] += mixture_kg[prop] * (massfromlayer / totalmixturemass_kg);
@@ -14407,19 +14369,11 @@ namespace LORICA4
 
                                                     //mixture_kg[prop] = 0;  // that's not perse needed, but feels clean
 
-                                                    if (temp_tex_som_kg[layer, prop] < 0)
-                                                    {
-                                                        Debug.WriteLine("err_sbt15");
-                                                    }
-                                                    if (temp_tex_som_kg[otherlayer, prop] < 0)
-                                                    {
-                                                        Debug.WriteLine("err_sbt16");
-                                                    }
                                                 }
-                                                // if(temp_tex_som_kg[0,1]< temp_tex_som_kg[1, 1]) { Debugger.Break(); }
 
                                                 if (CN_checkbox.Checked)
                                                 {
+                                                    // MvdM develop: change probabilities for sand and clay fractions. SHould be the same as the current code, but will look nicer
                                                     for (int cn = 0; cn < n_cosmo; cn++) // For all CNs. Mixing is independent of grain size, so all fractions get mixed evenly
                                                     {
                                                         int d_CN_l = Convert.ToInt32(Math.Round((massfromlayer / fine_layer_mass) * CN_atoms_cm2[row, col, layer, cn]));
@@ -14432,8 +14386,17 @@ namespace LORICA4
                                                 if (OSL_checkbox.Checked)
                                                 {
                                                     double prob_layer = massfromlayer / fine_layer_mass; 
+                                                    prob_layer = sandout_l / sandtotal_l; 
                                                     double prob_otherlayer = massfromotherlayer / fine_otherlayer_mass;
+                                                    prob_otherlayer = sandout_ol / sandtotal_ol; 
                                                     transfer_OSL_grains(row, col, layer, row, col, otherlayer, prob_layer, prob_otherlayer);
+
+                                                    P_fromto_list.Add(prob_layer);
+                                                    P_tofrom_list.Add(prob_otherlayer);
+                                                    if(layer==0&otherlayer==(max_soil_layers-1))
+                                                    {
+                                                        // Debugger.Break();
+                                                    }
                                                 }
                                             }
 
@@ -14479,7 +14442,7 @@ namespace LORICA4
                                     depth += layerthickness_m[row, col, layer] / 2;
                                 }
                             } // end for layer
-
+                            total_BT_transport_kgm += 0; 
                             // now we know the new, bioturbated amounts in every layer in this row col, let's store them in the main texture_kg variables
                             for (layer = 0; layer < max_soil_layers; layer++)
                             {
@@ -15169,7 +15132,6 @@ namespace LORICA4
             double[] total_mass_eroded, total_mass_deposited_kg;
             total_mass_eroded = new double[7] { 0, 0, 0, 0, 0, 0, 0 };
             total_mass_deposited_kg = new double[7] { 0, 0, 0, 0, 0, 0, 0 };
-            if(find_gravel(row_sd, col_sd, 0)) { Debugger.Break(); }
             transport_capacity_kg = advection_erodibility * (bulkdensity[row_sd, col_sd, 0] * dx * dx) * (Math.Pow(waterflow_m3_per_m, m) * Math.Pow(dh, n)); // in a departure from literature, the erosion threshold is only evaluated if erosion actually occurs
             if (transport_capacity_kg < 0)
             {
@@ -15208,7 +15170,6 @@ namespace LORICA4
                     transport_ero_sed_OSL_by_WE(row_sd, col_sd, i_sd, j_sd, sum_of_fractions, flowfraction, 0, 0, 0);
                 }
             }
-            if (find_gravel(row_sd, col_sd, 0)) { Debugger.Break(); }
 
             // Erosion
             if (transport_capacity_kg > total_sediment_in_transport_kg)
@@ -15414,7 +15375,6 @@ namespace LORICA4
                     }
                 }
             }
-            if (find_gravel(row_sd, col_sd, 0)) { Debugger.Break(); }
 
             // Deposition
             if (transport_capacity_kg < total_sediment_in_transport_kg)
@@ -15483,7 +15443,6 @@ namespace LORICA4
                     }
                 }
             } // end deposition
-            if (find_gravel(row_sd, col_sd, 0)) { Debugger.Break(); }
 
         }
 
@@ -18706,14 +18665,8 @@ namespace LORICA4
         #endregion
 
         #region Geochronology code
-        Random randOslRowUpdate = new Random();
-        Random randOslColUpdate = new Random();
-        Random randOslLayUpdate = new Random();
-        Random randOslBleaching = new Random();
-        Random randOslSplitLayers = new Random();
-        Random randOslRandomLayer = new Random();
-        Random randOslLayerMixing = new Random();
-        Random randOslTillageTransport = new Random();
+        Random randOslRandomLayer = new Random(123);
+        Random randOslLayerMixing = new Random(123);
 
         int returnRandomLayer(double[] probabilities)
         {
@@ -18760,7 +18713,7 @@ namespace LORICA4
                             for (int ind = 0; ind < OSL_grainages[row, col, layer].Length; ind++)
                             {
                                 // add a year to all grains
-                                OSL_grainages[row, col, layer][ind] += 1;
+                                // OSL_grainages[row, col, layer][ind] += 1;
                                 OSL_depositionages[row, col, layer][ind] += 1;
 
                                 //Debug.WriteLine("uboa4");
@@ -18822,8 +18775,11 @@ namespace LORICA4
 
                 for (int osl_i = 0; osl_i < ages_from.Length; osl_i++) // check for every possibly outgoing grain if it moves
                 {
-                    if ((randOslLayerMixing.Next(0, 1000000000) < P_transfer ? 1 : 0) == 1) // if grain gets transported
+                    int chance_next = randOslLayerMixing.Next(0, 1000000000);
+                    if ((chance_next < P_transfer ? 1 : 0) == 1) // if grain gets transported
                     {
+                        moves_per_t[t] += 1;
+                        // if(moves_per_t[t]>10) {  Debugger.Break();}
                         ages_from_transfer.Add(ages_from[osl_i]);
                         ages_from_transfer_su.Add(ages_from_su[osl_i]);
                         if (bleaching_by_transport == true & (fromrow != torow | fromcol != tocol)) // if the grain is transported laterally and possibly bleached, reset the deposition age
@@ -19825,7 +19781,7 @@ Example: rainfall.asc can look like:
                     }
                 }
             }
-            average_bulk_density = total_bulk_density / objective_function_cells;
+            average_bulk_density = 1560; //  total_bulk_density / objective_function_cells;
             simulated_ero_kg_m2_y = average_bulk_density * simulated_ero_m3 / end_time / (objective_function_cells * dx * dx);
 
             Debug.WriteLine(" calib tst - calib_objective_function - error is " + Math.Abs(known_ero_kg_m2_y - simulated_ero_kg_m2_y) + "kg per m2 per year");
@@ -20343,16 +20299,7 @@ Example: rainfall.asc can look like:
 
                                         try
                                         {
-                                            for(int row = 0; row<nr;row++)
-                                            {
-                                                for(int col = 0; col<nc;col++)
-                                                {
-                                                    for(int lay = 0; lay<max_soil_layers;lay++)
-                                                    {
-                                                        if (find_gravel(row, col, lay)) { Debugger.Break(); }
-                                                    }
-                                                }
-                                            }
+
                                             every_timestep();
                                         }
                                         catch
