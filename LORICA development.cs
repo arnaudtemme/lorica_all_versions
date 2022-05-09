@@ -11093,7 +11093,6 @@ namespace LORICA4
                             OSL_depositionages[row, col, lay] = new int[ngrains_layer];
                             OSL_surfacedcount[row, col, lay] = new int[ngrains_layer];
 
-                            start_age = lay;
                             for (int grain = 0; grain < ngrains_layer; grain++)
                             {
                                 OSL_grainages[row, col, lay][grain] = start_age;
@@ -18713,7 +18712,7 @@ namespace LORICA4
                             for (int ind = 0; ind < OSL_grainages[row, col, layer].Length; ind++)
                             {
                                 // add a year to all grains
-                                // OSL_grainages[row, col, layer][ind] += 1;
+                                OSL_grainages[row, col, layer][ind] += 1;
                                 OSL_depositionages[row, col, layer][ind] += 1;
 
                                 //Debug.WriteLine("uboa4");
