@@ -11033,7 +11033,7 @@ namespace LORICA4
                     }
                 }
             }
-            Debug.WriteLine("initialised every");
+            //Debug.WriteLine("initialised every");
         }
 
         #endregion
@@ -17075,7 +17075,7 @@ namespace LORICA4
 
         private void calculate_creep()
         {
-            Debug.WriteLine("start of creep with diffusivity at " + potential_creep_kg_m2_y);
+            //Debug.WriteLine("start of creep with diffusivity at " + potential_creep_kg_m2_y);
             try
             {
                 if (NA_in_map(dtm) > 0 | NA_in_map(soildepth_m) > 0)
@@ -17380,7 +17380,7 @@ namespace LORICA4
                 Debug.WriteLine("err_cr10");
 
             }
-            Debug.WriteLine("end of creep");
+            //Debug.WriteLine("end of creep");
         }
 
         private void calc_creep_layers(int row1, int col1, int iiii, int jjjj, double mass_export_soil_kg)
@@ -17415,7 +17415,7 @@ namespace LORICA4
                 upperdepthreceiver = 0; // dtm[row1 + iiii, col1 + jjjj];
                 lowerdepthreceiver = upperdepthreceiver - layerthickness_m[row1 + iiii, col1 + jjjj, layerreceiver];
 
-                for (int lay = 0; lay < max_soil_layers; lay++) // test per layer where material moves to
+                for (int lay = 0; lay < max_soil_layers; lay++) // loop over receiving layers
                 {
 
                     double laythick_m = layerthickness_m[row1, col1, lay];
@@ -17452,7 +17452,7 @@ namespace LORICA4
                             Debug.Write(" YIKES" + mass_export_lay_kg + " will be exported ");
                             mass_export_lay_kg = 0;
                         }
-                        //frac_dz_lay = (tempcreep_kg * int_curve_lay / int_curve_total) / layerthickness_m[row1, col1, lay]; // fraction that has to be removed
+                        string exchangetype = "N"; //this is the sentinel value, meaning "None of the options below"
                         frac_overlap_lay = 0; // this fraction will be used to correct for partally overlapping layers 
 
                         //five options: 
@@ -17475,10 +17475,11 @@ namespace LORICA4
                         // Not possible with the curret setup, where upper depth of donor and receiver both are zero, as is the case in continuous landscapes
                         if (lowerdepthdonor >= upperdepthreceiver && layerreceiver == 0)
                         {
+                            exchangetype = "A";
                             frac_overlap_lay = 1;
-                            creep_transport(row1, col1, lay, row1 + iiii, col1 + jjjj, layerreceiver, mass_export_lay_kg, frac_overlap_lay);
+                            creep_transport(row1, col1, lay, row1 + iiii, col1 + jjjj, layerreceiver, mass_export_lay_kg, frac_overlap_lay, exchangetype);
                             // if(row1==0&&col1==0){ Debug.WriteLine("A, layer " +lay+": " + frac_dz_lay * frac_overlap_lay); }
-                            // no need to update rieceiving layer number
+                            // no need to update receiving layer number
                         }
 
                         // OPTION B. donor layer partly rises above surface source layer. exchange with air above receiving layer 0
@@ -17486,18 +17487,24 @@ namespace LORICA4
 
                         if (upperdepthdonor > upperdepthreceiver && lowerdepthdonor < upperdepthreceiver && layerreceiver == 0)
                         {
+                            exchangetype = "B";
                             frac_overlap_lay = (upperdepthdonor - upperdepthreceiver) / layerthickness_m[row1, col1, lay];
-                            creep_transport(row1, col1, lay, row1 + iiii, col1 + jjjj, layerreceiver, mass_export_lay_kg, frac_overlap_lay);
+                            creep_transport(row1, col1, lay, row1 + iiii, col1 + jjjj, layerreceiver, mass_export_lay_kg, frac_overlap_lay, exchangetype);
                             // no need to update receiving layer number, because we only look at air exchange. subsurface exchange will be treated later
                             // if (row1 == 0 && col1 == 0) { Debug.WriteLine("B, layer " + lay + ": " + frac_dz_lay * frac_overlap_lay); }
 
                         }
 
-                        // OPTION C: (partial) overlap with receiving layer located higher than donor layer
+                        // OPTION C: (partial or complete) overlap with receiving layer located (partially) higher than donor layer
                         if (upperdepthdonor <= upperdepthreceiver && lowerdepthdonor <= lowerdepthreceiver && upperdepthdonor > lowerdepthreceiver)
                         {
+                            exchangetype = "C";
                             frac_overlap_lay = (upperdepthdonor - lowerdepthreceiver) / layerthickness_m[row1, col1, lay];
-                            creep_transport(row1, col1, lay, row1 + iiii, col1 + jjjj, layerreceiver, mass_export_lay_kg, frac_overlap_lay);
+                            if (frac_overlap_lay > 1 && frac_overlap_lay < 1.00001) {
+                                //for some reason, the calculation results sometimes in frac_overlap_lay values that are extremely near 1, but just a bit higher
+                                frac_overlap_lay = 1;
+                            }
+                            creep_transport(row1, col1, lay, row1 + iiii, col1 + jjjj, layerreceiver, mass_export_lay_kg, frac_overlap_lay, exchangetype);
 
                             C_done = true;
 
@@ -17514,8 +17521,9 @@ namespace LORICA4
                         // OPTION D: receiving layer completely overlapped by (thicker) donor layer
                         while (upperdepthdonor > upperdepthreceiver && lowerdepthdonor < lowerdepthreceiver && lastlayer == false) // while loop, this can occur several times, when the donor layer completely overlaps receiving layers
                         {
+                            exchangetype = "D";
                             frac_overlap_lay = (upperdepthreceiver - lowerdepthreceiver) / layerthickness_m[row1, col1, lay];
-                            creep_transport(row1, col1, lay, row1 + iiii, col1 + jjjj, layerreceiver, mass_export_lay_kg, frac_overlap_lay);
+                            creep_transport(row1, col1, lay, row1 + iiii, col1 + jjjj, layerreceiver, mass_export_lay_kg, frac_overlap_lay, exchangetype);
                             // update receiving layer. the next layer can also be overlapped completely by donor layer
                             if (layerreceiver < (max_soil_layers - 1))
                             {
@@ -17533,8 +17541,9 @@ namespace LORICA4
                         //OPTION E: overlap with receiving layer lower than donor layer  (take care that this does not evaluate to TRUE when C is also TRUE)
                         if (upperdepthdonor >= upperdepthreceiver && lowerdepthdonor >= lowerdepthreceiver && lowerdepthdonor < upperdepthreceiver && C_done == false)
                         {
+                            exchangetype = "E";
                             frac_overlap_lay = (upperdepthreceiver - lowerdepthdonor) / layerthickness_m[row1, col1, lay];
-                            creep_transport(row1, col1, lay, row1 + iiii, col1 + jjjj, layerreceiver, mass_export_lay_kg, frac_overlap_lay);
+                            creep_transport(row1, col1, lay, row1 + iiii, col1 + jjjj, layerreceiver, mass_export_lay_kg, frac_overlap_lay, exchangetype);
 
                             if (lowerdepthdonor <= lowerdepthreceiver && layerreceiver < (max_soil_layers - 1)) // update receiving layer to a lower one
                             {
@@ -17552,15 +17561,17 @@ namespace LORICA4
                         //OPTION F, donor layer completely overlapped by (thicker) receiver layer
                         if (upperdepthdonor < upperdepthreceiver && lowerdepthdonor > lowerdepthreceiver)
                         {
+                            exchangetype = "F";
                             frac_overlap_lay = 1;
-                            creep_transport(row1, col1, lay, row1 + iiii, col1 + jjjj, layerreceiver, mass_export_lay_kg, frac_overlap_lay);
+                            creep_transport(row1, col1, lay, row1 + iiii, col1 + jjjj, layerreceiver, mass_export_lay_kg, frac_overlap_lay, exchangetype);
                             // no update of receiving layer required
                             // if (row1 == 0 && col1 == 0) { Debug.WriteLine("F, layer " + lay + ": " + frac_dz_lay * frac_overlap_lay); }
                         }
 
-                        //OPTION H, donor soil might be absent. Material moves to upper layer of receiving layer, if elevation allows
+                        //OPTION G, receiver soil might be absent. Material moves to upper layer of receiving layer, if elevation allows
                         if (total_soil_thickness(row1 + iiii, col1 + jjjj) == 0) // if receiving cell is bare rock 
                         {
+                            exchangetype = "G";
                             bool partial_overlap = true;
                             if ((dtm[row1, col1] + upperdepthdonor) < dtm[row1 + iiii, col1 + jjjj]) { frac_overlap_lay = 0; partial_overlap = false; } // donor layer lies completely below surface of receiving cell
                             if ((dtm[row1, col1] + lowerdepthdonor) > dtm[row1 + iiii, col1 + jjjj]) { frac_overlap_lay = 1; partial_overlap = false; } // donor layer lies completely above surface of receiving cell
@@ -17579,7 +17590,7 @@ namespace LORICA4
                             if (frac_overlap_lay > 0) // If the donor layer is (partially) above the bare bedrock of the receiving cell, everything can move to next cell:
                             {
                                 frac_overlap_lay = 1;
-                                creep_transport(row1, col1, lay, row1 + iiii, col1 + jjjj, 0, mass_export_lay_kg, frac_overlap_lay);
+                                creep_transport(row1, col1, lay, row1 + iiii, col1 + jjjj, 0, mass_export_lay_kg, frac_overlap_lay,exchangetype);
                             }
                         }
 
@@ -17596,7 +17607,7 @@ namespace LORICA4
             }
         } // end calc_creep_layers
 
-        private void creep_transport(int fromrow, int fromcol, int fromlay, int torow, int tocol, int tolay, double mass_export, double fraction_overlap)
+        private void creep_transport(int fromrow, int fromcol, int fromlay, int torow, int tocol, int tolay, double mass_export, double fraction_overlap, string exchangetype)
         {
             double CN_before = 0, CN_after = 0;
             //if (CN_checkbox.Checked) { CN_before = total_CNs(); }
@@ -17608,14 +17619,16 @@ namespace LORICA4
 
                 // double fraction_transport = fraction_dz * fraction_overlap;
                 double fraction_transport = mass_export / total_layer_mass_kg(fromrow, fromcol, fromlay); // fraction of mass to be exported
-                if (fraction_transport > 1) { fraction_transport = 1; }
+                if (fraction_transport > 1) { fraction_transport = 1; Debug.WriteLine("type " + exchangetype + " err_cr13a - tried to transport more material via creep than present in donor layer");  }
                 if (fraction_transport < 0)
                 {
-                    fraction_transport = 0; Debug.WriteLine("err_cr13");
+                    fraction_transport = 0; Debug.WriteLine("type " + exchangetype + " err_cr13b - tried to transport negative amount of material - transporting none now");
                 }
                 if (fraction_overlap > 1)
                 {
-                    fraction_overlap = 1; Debug.WriteLine("err_cr13b");
+                    Debug.WriteLine("fraction overlap = " + fraction_overlap.ToString("F40"));
+                    fraction_overlap = 1; 
+                    Debug.WriteLine("type " + exchangetype + " err_cr13c - tried to transport more material via creep than present in donor layer");
                 }
 
                 for (int tex = 0; tex < 5; tex++)
@@ -17672,7 +17685,7 @@ namespace LORICA4
             catch
             {
                 Debug.WriteLine("crashed during creep transport calculations");
-                Debug.WriteLine("err_cr14");
+                Debug.WriteLine("type " + exchangetype + " err_cr14");
 
             }
 
@@ -20837,7 +20850,7 @@ Example: rainfall.asc can look like:
             if (creep_active)
             {
                 try
-                { Debug.WriteLine("calculating creep");
+                { //Debug.WriteLine("calculating creep");
                     comb_sort();
 
                     calculate_creep();
