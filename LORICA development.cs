@@ -7599,15 +7599,30 @@ namespace LORICA4
                     try
                     {
                         xreader.ReadStartElement("Geochronological_tracers");
+
                         OSL_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("OSL_active"));
                         ngrains_textbox.Text = xreader.ReadElementString("ngrains");
                         bleachingdepth_textbox.Text = xreader.ReadElementString("bleachingdepth");
-                        CN_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("Be_active"));
-                        metBe10_input_textbox.Text = xreader.ReadElementString("Be_input_rate");
-                        Be10_decay_textbox.Text = xreader.ReadElementString("Be_decay");
-                        //Be_insitu_box1.Text = xreader.ReadElementString("Be_box1");
-                        //Be_insitute_box2.Text = xreader.ReadElementString("Be_box2");
-                        //Be_insitu_textbox3.Text = xreader.ReadElementString("Be_box3");
+                        OSL_inherited_textbox.Text = xreader.ReadElementString("inherited_age");
+                        CN_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("CN_active"));
+                        metBe10_input_textbox.Text = xreader.ReadElementString("metBe10_input_rate");
+                        met10Be_dd.Text = xreader.ReadElementString("metBe10_dd");
+                        Be10_decay_textbox.Text = xreader.ReadElementString("Be10_decay");
+                        met_10Be_clayfrac.Text = xreader.ReadElementString("metBe10_clay");
+                        metBe10_inherited_textbox.Text = xreader.ReadElementString("met10Be_inherited");
+
+                        isBe10_sp_input_textbox.Text = xreader.ReadElementString("isBe10_sp_input");
+                        isBe10_mu_input_textbox.Text = xreader.ReadElementString("isBe10_mu_input");
+                        isBe10_inherited_textbox.Text = xreader.ReadElementString("isBe10_inherited");
+
+                        attenuationlength_sp_textbox.Text = xreader.ReadElementString("attlength_sp");
+                        attenuationlength_mu_textbox.Text = xreader.ReadElementString("attlength_mu");
+
+                        isC14_sp_input_textbox.Text = xreader.ReadElementString("isC14_sp_input");
+                        isC14_mu_input_textbox.Text = xreader.ReadElementString("isC14_mu_input");
+                        C14_decay_textbox.Text = xreader.ReadElementString("C14_decay");
+                        isC14_inherited_textbox.Text = xreader.ReadElementString("isC14_inherited");
+
                         xreader.ReadEndElement();
                     }
                     catch { read_error = 1; Debug.WriteLine("failed reading geochron paras"); }
@@ -7973,12 +7988,22 @@ namespace LORICA4
                 xwriter.WriteElementString("OSL_active", XmlConvert.ToString(OSL_checkbox.Checked));
                 xwriter.WriteElementString("ngrains", ngrains_textbox.Text);
                 xwriter.WriteElementString("bleachingdepth", bleachingdepth_textbox.Text);
-                xwriter.WriteElementString("Be_active", XmlConvert.ToString(CN_checkbox.Checked));
-                xwriter.WriteElementString("Be_input_rate", metBe10_input_textbox.Text);
-                xwriter.WriteElementString("Be_decay", Be10_decay_textbox.Text);
-                //xwriter.WriteElementString("Be_box1", Be_insitu_box1.Text);
-                //xwriter.WriteElementString("Be_box2", Be_insitute_box2.Text);
-                //xwriter.WriteElementString("Be_box3", Be_insitu_textbox3.Text);
+                xwriter.WriteElementString("inherited_age", OSL_inherited_textbox.Text);
+                xwriter.WriteElementString("CN_active", XmlConvert.ToString(CN_checkbox.Checked));
+                xwriter.WriteElementString("metBe10_input_rate", metBe10_input_textbox.Text);
+                xwriter.WriteElementString("metBe10_dd", met10Be_dd.Text);
+                xwriter.WriteElementString("Be10_decay", Be10_decay_textbox.Text);
+                xwriter.WriteElementString("metBe10_clay", met_10Be_clayfrac.Text);
+                xwriter.WriteElementString("met10Be_inherited", metBe10_inherited_textbox.Text);
+                xwriter.WriteElementString("isBe10_sp_input", isBe10_sp_input_textbox.Text);
+                xwriter.WriteElementString("isBe10_mu_input", isBe10_mu_input_textbox.Text);
+                xwriter.WriteElementString("isBe10_inherited", isBe10_inherited_textbox.Text);
+                xwriter.WriteElementString("attlength_sp", attenuationlength_sp_textbox.Text);
+                xwriter.WriteElementString("attlength_mu", attenuationlength_mu_textbox.Text);
+                xwriter.WriteElementString("isC14_sp_input", isC14_sp_input_textbox.Text);
+                xwriter.WriteElementString("isC14_mu_input", isC14_mu_input_textbox.Text);
+                xwriter.WriteElementString("C14_decay", C14_decay_textbox.Text);
+                xwriter.WriteElementString("isC14_inherited", isC14_inherited_textbox.Text);
 
                 xwriter.WriteEndElement();
 
@@ -16887,7 +16912,7 @@ namespace LORICA4
                         double mixeddepth = 0, completelayerdepth = 0, newdepth = 0;
                         int completelayers = -1;
 
-                        while (mixeddepth <= plough_depth)
+                        while (mixeddepth <= plough_depth & completelayers <(max_soil_layers-1))
                         {
                             completelayers++;
                             mixeddepth += layerthickness_m[row, col, completelayers];
@@ -20815,15 +20840,15 @@ Example: rainfall.asc can look like:
 
                         if (input_data_error == false)
                         {
-                            /*
-                             * try { dtm_file_test(filename); }              // from dtm_file(), almost all memory for the model is claimed
+                            
+                             try { dtm_file_test(dtmfilename); }              // from dtm_file(), almost all memory for the model is claimed
 
                             catch { Debug.WriteLine(" failed to reset dtm "); }
 
 
                             try { initialize_once_testing(); }  // Reset Memory values instead of Allocating new memory
                             catch { MessageBox.Show("there was a problem reading input files and resetting values "); input_data_error = true; }
-                            */
+                            
 
 
                             //CALIB_USER: multiply parameter values with current ratio
