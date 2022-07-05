@@ -11268,7 +11268,7 @@ namespace LORICA4
                     {
                         for (int lay = 0; lay < max_soil_layers; lay++)
                         {
-                            int ngrains_layer = Convert.ToInt32(Math.Round(ngrains_kgsand_m2 * texture_kg[row, col, lay, 1])); // grains per kg/m2 of sand
+                            int ngrains_layer = Convert.ToInt32(Math.Round(ngrains_kgsand_m2 * texture_kg[row, col, lay, 1] / (dx*dx))); // grains per kg/m2 of sand
                             OSL_grainages[row, col, lay] = new int[ngrains_layer];
                             OSL_depositionages[row, col, lay] = new int[ngrains_layer];
                             OSL_surfacedcount[row, col, lay] = new int[ngrains_layer];
@@ -21174,8 +21174,23 @@ Example: rainfall.asc can look like:
                 if (check_time_till_fields.Checked) { tilltime = till_record[t]; }
                 else { tilltime = 1; }
 
-                //if (t > (end_time - 300)) { tilltime = 1; } //MvdM Code to simulate tillage only in the last 500 years of the run. Used in SOIL paper SOIl2: to 200 a 
-                //if (t > (end_time - 100)) { tilltime = 0; } //MvdM Code to simulate tillage only in the last 500 years of the run. Used in SOIL paper SOIl2: to 200 a 
+                // Update tillage depth based on year. MvdM develop for Monte Carlo analysis
+                plough_depth = 0.06;
+                if (end_time - t < 1470) { plough_depth = 11.5; }
+                if (end_time - t < 223) { plough_depth = 16; }
+                if (end_time - t < 61) { plough_depth = 27.5; }
+                if (end_time - t < 31) { plough_depth = 20; }
+                if (end_time - t == 214) // Shift to entire field ploughing
+                {
+                    Box_years_output.Text = Convert.ToString(10); // set output to every 10 years
+                    for (row = 0; row < nr; row++)
+                    {
+                        for (col = 0; col < nc; col++)
+                        {
+                            tillfields[row, col] = 1;
+                        }
+                    }
+                }
 
                 if (tilltime == 1)
                 {
