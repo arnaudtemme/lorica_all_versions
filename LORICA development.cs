@@ -7183,30 +7183,11 @@ namespace LORICA4
             }
         }// end writesoil
 
-        //void writeOSLages()
-        //{
-        //    int layer;
-        //    string FILENAME = string.Format("{0}\\t{1}_out_OSL_ages.csv", workdir, t + 1);
-        //    using (StreamWriter sw = new StreamWriter(FILENAME))
-        //    {
-        //        sw.Write("row, col, layer, stabilization_age, deposition_age, layerthickness_m, layermass_kg, z_surface_m");
-        //        sw.Write("\r\n");
-        //        int t_out = t + 1;
-        //        for (int osl_i = 0; osl_i < OSL_age.GetLength(0); osl_i++)
-        //        {
-        //            double laythick = layerthickness_m[OSL_age[osl_i, 0], OSL_age[osl_i, 1], OSL_age[osl_i, 2]];
-        //            double laymass = total_layer_mass(OSL_age[osl_i, 0], OSL_age[osl_i, 1], OSL_age[osl_i, 2]);
-        //            sw.Write(OSL_age[osl_i, 0] + "," + OSL_age[osl_i, 1] + "," + OSL_age[osl_i, 2] + "," + OSL_age[osl_i, 3] + "," + OSL_age[osl_i, 4] + "," + laythick + "," + laymass + "," + dtm[OSL_age[osl_i, 0], OSL_age[osl_i, 1]]);
-        //            sw.Write("\r\n");
-        //        }
-        //        sw.Close();
-        //    }
-        //}
 
-        void writeOSLages_jaggedArray()
+        void writeOSLages(string name4)
         {
             int layer;
-            string FILENAME = string.Format("{0}\\t{1}_out_OSL_ages_JA.csv", workdir, t + 1);
+            string FILENAME = name4;
             using (StreamWriter sw = new StreamWriter(FILENAME))
             {
                 sw.Write("row, col, layer, grain_age, deposition_age, count_surfaced");
@@ -7232,11 +7213,11 @@ namespace LORICA4
             }
         }
 
-        void writeallsoils()
+        void writeallsoils(string name4)
         {
             int layer;
             double cumthick, midthick, z_layer;
-            string FILENAME = string.Format("{0}\\t{1}_out_allsoils.csv", workdir, t + 1);
+            string FILENAME = name4;
             using (StreamWriter sw = new StreamWriter(FILENAME))
             {
                 sw.Write("row,col,t,nlayer,cumth_m,thick_m,midthick_m,z,coarse_kg,sand_kg,silt_kg,clay_kg,fine_kg,YOM_kg,OOM_kg,YOM/OOM,f_coarse,f_sand,f_silt,f_clay,f_fineclay,ftotal_clay,f_OM,BD");
@@ -20049,6 +20030,231 @@ Example: rainfall.asc can look like:
 
         }
 
+        public static double[,] KernelDensityEstimation(double[] data, double sigma, int nsteps)
+        {
+            // from: https://gist.github.com/ksandric/e91860143f1dd378645c01d518ddf013 
+
+            // probability density function (PDF) signal analysis
+            // Works like ksdensity in mathlab. 
+            // KDE performs kernel density estimation (KDE)on one - dimensional data
+            // http://en.wikipedia.org/wiki/Kernel_density_estimation
+
+            // Input:	-data: input data, one-dimensional
+            //          -sigma: bandwidth(sometimes called "h")
+            //          -nsteps: optional number of abscis points.If nsteps is an
+            //          array, the abscis points will be taken directly from it. (default 100)
+            // Output:	-x: equispaced abscis points
+            //          -y: estimates of p(x)
+
+            // This function is part of the Kernel Methods Toolbox(KMBOX) for MATLAB. 
+            // http://sourceforge.net/p/kmbox
+            // Converted to C# code by ksandric
+
+            double[,] result = new double[nsteps, 2];
+            double[] x = new double[nsteps], y = new double[nsteps];
+
+            double MAX = Double.MinValue, MIN = Double.MaxValue;
+            int N = data.Length; // number of data points
+
+            // Find MIN MAX values in data
+            for (int i = 0; i < N; i++)
+            {
+                if (MAX < data[i])
+                {
+                    MAX = data[i];
+                }
+                if (MIN > data[i])
+                {
+                    MIN = data[i];
+                }
+            }
+
+            // Like MATLAB linspace(MIN, MAX, nsteps);
+            x[0] = MIN;
+            for (int i = 1; i < nsteps; i++)
+            {
+                x[i] = x[i - 1] + ((MAX - MIN) / nsteps);
+            }
+
+            // kernel density estimation
+            double c = 1.0 / (Math.Sqrt(2 * Math.PI * sigma * sigma));
+            for (int i = 0; i < N; i++)
+            {
+                for (int j = 0; j < nsteps; j++)
+                {
+                    y[j] = y[j] + 1.0 / N * c * Math.Exp(-(data[i] - x[j]) * (data[i] - x[j]) / (2 * sigma * sigma));
+                }
+            }
+
+            // compilation of the X,Y to result. Good for creating plot(x, y)
+            for (int i = 0; i < nsteps; i++)
+            {
+                result[i, 0] = x[i];
+                result[i, 1] = y[i];
+            }
+            return result;
+        }
+
+        private double calib_function_CarboZALF_OSL(int row_cal, int col_cal, double sample_depth_from_fAh, double age_ref)
+        {
+            double depth_z, refdepth, penalty;
+            int lay_cal;
+
+            refdepth = dtm[row_cal, col_cal] - dtmchange_m[row_cal, col_cal] + sample_depth_from_fAh;
+            depth_z = dtm[row_cal, col_cal];
+            lay_cal = -1;
+            // Select the layer that corresponds to the measured sample depth. 
+            if (refdepth > depth_z)
+            { // if measured sample is not present in the simulated colluvium, simulated colluvium too thin
+                penalty = 1000;
+            }
+            else
+            {
+                lay_cal = 0;
+                while (!(refdepth < depth_z & (refdepth >= (z - layerthickness_m[row_cal, col_cal, lay_cal]))))
+                {
+                    lay_cal++;
+                    depth_z -= layerthickness_m[row_cal, col_cal, lay_cal];
+                }
+                // calculate age penalty
+                try
+                {
+                    int[] ages_cal = OSL_grainages[row_cal, col_cal, lay_cal];
+                    double[] ages_cal_d = ages_cal.Select(x => (double)x).ToArray();
+                    if (ages_cal_d.Length > 0)
+                    {
+                        double[,] density = KernelDensityEstimation(ages_cal_d, 1, Convert.ToInt32(Math.Round(ages_cal_d.Max() / 10)));
+
+                        double[] density_prob = new double[density.GetLength(0)];
+                        double[] density_value = new double[density.GetLength(0)]; ;
+
+                        for (int it = 0; it < density.GetLength(0); it++)
+                        {
+                            density_value[it] = density[it, 0];
+                            density_prob[it] = density[it, 1];
+                        }
+                        int[] indices_prob = new int[density_value.Length];
+                        for (int ii = 0; ii < density_value.Length; ii++) { indices_prob[ii] = ii; }
+                        Array.Sort(density_prob, indices_prob);
+
+                        double ages_mode = density_value[indices_prob[indices_prob.Length - 1]];
+
+                        penalty = Math.Abs(ages_mode - age_ref);
+                    }
+                    else
+                    {
+                        // no grains present for this sample. This means the sample is too close to the surface (layer = 0). So penalty = 1000
+                        penalty = 1000;
+                    }
+
+                }
+                catch
+                {
+                    Debug.WriteLine("Error in calculating age densities");
+                    penalty = 1000;
+                }
+
+            }
+            return (penalty);
+        }
+        private double calib_objective_function_CarboZALF()
+        {
+            //this code calculates the value of the objective function during calibration and is user-specified. 
+            //calibration looks to minimize the value of the objective function by varying parameter values
+            //CALIB_USER
+            //example for Luxembourg: we want to simulate the correct amount of erosion, over the entire slope
+            //Xia, number needs to be adapted
+            bool calib_erodep = false;
+            bool calib_OSL = true;
+            bool calib_CN = false;
+            double sim_ero_m = 0, obs_ero_m, sim_depo_m = 0, obs_depo_m, error_CZ = 0;
+            int obj_fun_cells_ero = 0, obj_fun_cells_depo = 0;
+
+            if (calib_erodep)
+            {
+                // calibration values derived from Van der Meij et al., 2017, approach 2c
+                obs_ero_m = -0.30; // average for all eroding positions
+                obs_depo_m = 0.51; // average  colluvium thickness
+                for (row = 0; row < nr; row++)
+                {
+                    for (col = 0; col < nc; col++)
+                    {
+                        if (dtm[row, col] != -9999 & dtmchange_m[row, col] < 0)
+                        {
+                            sim_ero_m += dtmchange_m[row, col];
+                            obj_fun_cells_ero++;
+                        }
+                        if (dtm[row, col] != -9999 & dtmchange_m[row, col] > 0)
+                        {
+                            sim_depo_m += dtmchange_m[row, col];
+                            obj_fun_cells_depo++;
+                        }
+                    }
+                }
+                sim_ero_m /= obj_fun_cells_ero; // average elevation change in eroding locations
+                sim_depo_m /= obj_fun_cells_depo; // average elevation change in deposition locations
+                error_CZ = Math.Abs(((obs_ero_m - sim_ero_m) + (obs_depo_m - sim_depo_m)) / 2); // average error of erosion and deposition
+            }
+            if (calib_OSL)
+            {
+                double cum_age_error = 0;
+
+                // Calculate reference depths from the former soil surface, not from the top of the colluvium, to prevent colluvial samples ending up in the former soil.
+                // The selected methoid can result in measured sample located above the simulated colluvium. These will get a large penalty in the calibration 
+                // This approach is better suited for deposition rates, because colluvium builds up from the bottom to the top
+
+
+                // calibration old colluvium ( > 300 a)
+                // Location P2
+                cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.025, 3700); // NCL7317038
+                cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.125, 3300); // NCL7317039
+                cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.225, 2227); // NCL7317039
+
+                // Location P3
+                cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.055, 1898); // NCL7317069
+                cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.155, 1731); // NCL7317069
+                cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.255, 1048); // NCL7317146
+
+                // calibration young colluvium (<= 300 a)
+                // Location P2
+                cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.325, 120); // NCL7317041
+                cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.425, 27); // NCL7317042
+                cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.605, 18); // NCL7317068
+
+                // Location P3
+                cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.355, 44); // NCL7317147
+                cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.455, 40); // NCL7317070
+
+                // Location BP5
+                cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.075, 159); // NCL7317062
+                cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.175, 135); // NCL7317063
+                cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.275, 99); // NCL7317064
+                cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.375, 87); // NCL7317065
+                cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.475, 73); // NCL7317066
+                cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.575, 37); // NCL7317067
+
+                // Location BP6
+                cum_age_error += calib_function_CarboZALF_OSL(17, 20, 0.045, 160); // NCL7317152
+                cum_age_error += calib_function_CarboZALF_OSL(17, 20, 0.175, 136); // NCL7317153
+                cum_age_error += calib_function_CarboZALF_OSL(17, 20, 0.305, 121); // NCL7317154
+                cum_age_error += calib_function_CarboZALF_OSL(17, 20, 0.425, 103); // NCL7317155
+                cum_age_error += calib_function_CarboZALF_OSL(17, 20, 0.545, 92); // NCL7317156
+
+                // Location BP8
+                cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.045, 258); // NCL7317142
+                cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.145, 227); // NCL7317148
+                cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.245, 197); // NCL7317143
+                cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.345, 139); // NCL7317149
+                cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.445, 117); // NCL7317150
+                cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.445, 117); // NCL7317150
+
+                error_CZ = cum_age_error;
+            }
+            Debug.WriteLine(" calib tst - calib_objective_function - error is " + error_CZ + "m in total");
+            return Math.Abs(error_CZ);
+        }
+
+
         private double domain_sum(string properties)
         {
             //Debug.WriteLine(properties);
@@ -20938,6 +21144,7 @@ Example: rainfall.asc can look like:
                             {
                                 current_error = calib_objective_function_Konza();
                             }
+                            current_error = calib_objective_function_CarboZALF();
                             if (current_error == -1)
                             {
                                 Debug.WriteLine(" no error calculated during calibration ");
@@ -21510,7 +21717,7 @@ Example: rainfall.asc can look like:
                 try
                 {
                     //Debug.WriteLine("writing all soils");
-                    writeallsoils();
+                    writeallsoils(workdir + "\\" + run_number + "_" + t_out + "_out_allsoils.csv");
                 }
                 catch
                 {
@@ -21625,8 +21832,7 @@ Example: rainfall.asc can look like:
                 {
                     try
                     {
-                        //writeOSLages();
-                        writeOSLages_jaggedArray();
+                        writeOSLages(workdir + "\\" + run_number + "_" + t_out + "_out_OSL_ages.csv");
                     }
                     catch
                     {
