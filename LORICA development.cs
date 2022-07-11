@@ -740,6 +740,8 @@ namespace LORICA4
                 total_rain_m, total_evap_m, total_infil_m, 
                 total_rain_m3, total_evap_m3, total_infil_m3, total_outflow_m3;
 
+        int output_time;
+
         private void obsfile_textbox_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
@@ -20245,7 +20247,6 @@ Example: rainfall.asc can look like:
                 // The selected methoid can result in measured sample located above the simulated colluvium. These will get a large penalty in the calibration 
                 // This approach is better suited for deposition rates, because colluvium builds up from the bottom to the top
 
-
                 // calibration old colluvium ( > 300 a)
                 // Location P2
                 cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.025, 3700); // NCL7317038
@@ -20288,11 +20289,10 @@ Example: rainfall.asc can look like:
                 cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.245, 197); // NCL7317143
                 cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.345, 139); // NCL7317149
                 cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.445, 117); // NCL7317150
-                cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.445, 117); // NCL7317150
 
                 error_CZ = cum_age_error;
             }
-            Debug.WriteLine(" calib tst - calib_objective_function - error is " + error_CZ + "m in total");
+            Debug.WriteLine(" calib tst - calib_objective_function - error is " + error_CZ + " a in total");
             return Math.Abs(error_CZ);
         }
 
@@ -20680,6 +20680,13 @@ Example: rainfall.asc can look like:
 
                 try { end_time = int.Parse(Number_runs_textbox.Text); }
                 catch { input_data_error = true; MessageBox.Show("Invalid number of years"); }
+                
+                if(Regular_output_checkbox.Checked)
+                {
+                    try { output_time = int.Parse(Box_years_output.Text); }
+                    catch { input_data_error = true; MessageBox.Show("Invalid number of output years"); }
+                }
+                                                
                 try { max_soil_layers = int.Parse(textbox_max_soil_layers.Text); }
                 catch { input_data_error = true; MessageBox.Show("Invalid number of soil layers"); }
                 try { dz_standard = double.Parse(textbox_layer_thickness.Text); }
@@ -21383,11 +21390,15 @@ Example: rainfall.asc can look like:
             //Debug.WriteLine("before TF");
             if (treefall_checkbox.Checked)
             {
-                if (t <= (end_time - 300)) // if there is no tillage
+                bool tf_bool = true;
+                if(daily_water.Checked)
                 {
-                    calculate_tree_fall();
+                    if (t <= (end_time - 300)) // if there is no tillage
+                    {
+                        tf_bool = false;
+                    }
                 }
-
+                if (tf_bool) { calculate_tree_fall(); }
             }
 
             if (bedrock_weathering_active)
@@ -21451,7 +21462,7 @@ Example: rainfall.asc can look like:
                 if (end_time - t < 31) { plough_depth = 20; }
                 if (end_time - t == 214) // Shift to entire field ploughing
                 {
-                    Box_years_output.Text = Convert.ToString(10); // set output to every 10 years
+                    output_time = 10; // set output to every 10 years
                     for (row = 0; row < nr; row++)
                     {
                         for (col = 0; col < nc; col++)
@@ -21612,7 +21623,7 @@ Example: rainfall.asc can look like:
             numfile++;
 
             int t_out = t + 1;
-            if ((Final_output_checkbox.Checked && t_out == end_time) || (Regular_output_checkbox.Checked && ((t_out) % (int.Parse(Box_years_output.Text)) == 0)))
+            if ((Final_output_checkbox.Checked && t_out == end_time) || (Regular_output_checkbox.Checked && ((t_out) % output_time == 0)))
             {
                 if (t == end_time - 1)
                 {
