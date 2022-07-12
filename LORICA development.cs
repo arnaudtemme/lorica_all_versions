@@ -7211,14 +7211,17 @@ namespace LORICA4
                 {
                     for (col = 0; col < nc; col++)
                     {
-                        for (int lay = 0; lay < max_soil_layers; lay++)
+                        if (dtm[row, col] != -9999)
                         {
-                            for (int ind = 0; ind < OSL_grainages[row, col, lay].Length; ind++)
+                            for (int lay = 0; lay < max_soil_layers; lay++)
                             {
-                                double laythick = layerthickness_m[row, col, lay];
-                                double laymass = total_layer_mass_kg(row, col, lay);
-                                sw.Write(row + "," + col + "," + lay + "," + OSL_grainages[row, col, lay][ind] + "," + OSL_depositionages[row, col, lay][ind] + "," + OSL_surfacedcount[row, col, lay][ind]);
-                                sw.Write("\r\n");
+                                for (int ind = 0; ind < OSL_grainages[row, col, lay].Length; ind++)
+                                {
+                                    double laythick = layerthickness_m[row, col, lay];
+                                    double laymass = total_layer_mass_kg(row, col, lay);
+                                    sw.Write(row + "," + col + "," + lay + "," + OSL_grainages[row, col, lay][ind] + "," + OSL_depositionages[row, col, lay][ind] + "," + OSL_surfacedcount[row, col, lay][ind]);
+                                    sw.Write("\r\n");
+                                }
                             }
                         }
                     }
@@ -8237,6 +8240,7 @@ namespace LORICA4
             filename = dir + "0_" + time + "_out_dz_soil.asc";
             read_double(filename, dz_soil);
             Debug.WriteLine("read sum_dz_soil");
+
             // SOIL INFORMATION
             // reset old info
             for (row = 0; row < nr; row++)
@@ -8254,11 +8258,25 @@ namespace LORICA4
                         old_SOM_kg[row, col, lay] = 0;
                         layerthickness_m[row, col, lay] = 0;
                         bulkdensity[row, col, lay] = 0;
+
+                        if (CN_checkbox.Checked)
+                        {
+                            for (int cn = 0; cn < n_cosmo; cn++)
+                            {
+                                CN_atoms_cm2[row, col, lay, cn] = 0;
+                            }
+                        }
+                        if (OSL_checkbox.Checked)
+                        {
+                            OSL_grainages[row, col, lay] = new int[0];
+                            OSL_depositionages[row, col, lay] = new int[0];
+                            OSL_surfacedcount[row, col, lay] = new int[0];
+                        }
                     }
                 }
             }
 
-            using (var reader = new StreamReader(dir + "t" + time + "_out_allsoils.csv"))
+            using (var reader = new StreamReader(dir + "\\" + run_number + "_" + time + "_out_allsoils.csv"))
             {
                 int row, col, lay;
                 // discard first line (header)    
@@ -8284,15 +8302,73 @@ namespace LORICA4
                     layerthickness_m[row, col, lay] = Convert.ToDouble(values[5]); // thickness
                     bulkdensity[row, col, lay] = Convert.ToDouble(values[23]); // bulk density
 
+                    if (CN_checkbox.Checked)
+                    {
+                        CN_atoms_cm2[row, col, lay, 0] = Convert.ToDouble(values[24]);
+                        CN_atoms_cm2[row, col, lay, 1] = Convert.ToDouble(values[25]);
+                        CN_atoms_cm2[row, col, lay, 2] = Convert.ToDouble(values[27]);
+                        CN_atoms_cm2[row, col, lay, 3] = Convert.ToDouble(values[28]);
+                    }
                 }
+            }
+
+            // OSL ages
+            using (var reader = new StreamReader(dir + "\\" + run_number + "_" + time + "_out_OSL_ages.csv"))
+            {
+                int row = -1, col = -1, lay = -1, row_ref = -1, col_ref = -1, lay_ref = -1;
+
+                var grainages_temp = new List<int>();
+                var depositionages_temp = new List<int>();
+                var countsurfaced_temp = new List<int>();
+
+                var line = reader.ReadLine();
+                var values = line.Split(',');
+
+                while (!reader.EndOfStream)
+                {
+                    // discard first line (header)    
+                    line = reader.ReadLine();
+                    values = line.Split(',');
+
+                    row = Convert.ToInt32(values[0]);
+                    col = Convert.ToInt32(values[1]);
+                    lay = Convert.ToInt32(values[2]);
+
+                    if(row != row_ref | col != col_ref | lay != lay_ref)
+                    { // write stored grain properties to the files, change to new row col and lay in the output, reset the strings
+                        if (row_ref >= 0)
+                        {
+                            OSL_grainages[row_ref, col_ref, lay_ref] = grainages_temp.ToArray();
+                            OSL_depositionages[row_ref, col_ref, lay_ref] = depositionages_temp.ToArray();
+                            OSL_surfacedcount[row_ref, col_ref, lay_ref] = countsurfaced_temp.ToArray();
+                        }
+
+                        grainages_temp = new List<int>();
+                        depositionages_temp = new List<int>();
+                        countsurfaced_temp = new List<int>();
+
+                        row_ref = row;
+                        col_ref = col;
+                        lay_ref = lay;
+                    }
+
+                    grainages_temp.Add(Convert.ToInt32(values[3]));
+                    depositionages_temp.Add(Convert.ToInt32(values[4]));
+                    countsurfaced_temp.Add(Convert.ToInt32(values[5]));
+                }
+                // write the last data into the OSL age arrays, that were not captured in the while loop
+                OSL_grainages[row, col, lay] = grainages_temp.ToArray();
+                OSL_depositionages[row, col, lay] = depositionages_temp.ToArray();
+                OSL_surfacedcount[row, col, lay] = countsurfaced_temp.ToArray();
+
             }
         }
 
-        #endregion
+            #endregion
 
-        #region depression code
+            #region depression code
 
-        void findsinks()
+            void findsinks()
         {
             /*Task.Factory.StartNew(() =>
             {
@@ -18842,25 +18918,7 @@ namespace LORICA4
         #endregion
 
         #region Geochronology code
-        Random randOslRandomLayer = new Random(123);
         Random randOslLayerMixing = new Random(123);
-
-        int returnRandomLayer(double[] probabilities)
-        {
-            for (int i = 1; i < probabilities.Length; i++) { probabilities[i] = probabilities[i] + probabilities[i - 1]; } // cumulate and
-            for (int i = 0; i < probabilities.Length; i++) { probabilities[i] /= probabilities[probabilities.Length - 1]; } // normalize probabilities
-
-            double prob = randOslRandomLayer.Next(0, 1000) / 1000.0; // determine probability
-
-            for (int i = 0; i < probabilities.Length; i++)
-            {
-                if (prob <= probabilities[i])
-                {
-                    return (i);
-                }
-            }
-            return (9999); // this cannot happen. Probability is always <= 1, which is the last value in [probabilities]
-        }
 
         void transfer_material_between_layers(int row1, int col1, int lay1, int row2, int col2, int lay2, double fraction_transport)
         {
@@ -18927,6 +18985,8 @@ namespace LORICA4
                             sep_fraction = (bleaching_depth_m - layerthickness_m[row, col, 0]) / layerthickness_m[row, col, 1];
                             transfer_material_between_layers(row, col, 1, row, col, 0, sep_fraction);
                         }
+
+                        update_all_layer_thicknesses(row, col);
 
                         for (int layer = 0; layer < max_soil_layers; layer++)
                         {
@@ -21174,7 +21234,7 @@ Example: rainfall.asc can look like:
                                             if (count_intervene < 5)
                                             {
                                                 count_intervene += 1;
-                                                t_intervene = t - (t % (int.Parse(Box_years_output.Text)));
+                                                t_intervene = t - (t % output_time);
                                                 Debug.WriteLine("intervening at t" + t_intervene);
                                                 read_soil_elevation_distance_from_output(t_intervene, workdir);
                                             }
@@ -21456,10 +21516,10 @@ Example: rainfall.asc can look like:
 
                 // Update tillage depth based on year. MvdM develop for Monte Carlo analysis
                 plough_depth = 0.06;
-                if (end_time - t < 1470) { plough_depth = 11.5; }
-                if (end_time - t < 223) { plough_depth = 16; }
-                if (end_time - t < 61) { plough_depth = 27.5; }
-                if (end_time - t < 31) { plough_depth = 20; }
+                if (end_time - t < 1470) { plough_depth = 0.115; }
+                if (end_time - t < 223) { plough_depth = 0.16; }
+                if (end_time - t < 61) { plough_depth = 0.275; }
+                if (end_time - t < 31) { plough_depth = 0.20; }
                 if (end_time - t == 214) // Shift to entire field ploughing
                 {
                     output_time = 10; // set output to every 10 years
