@@ -739,7 +739,7 @@ namespace LORICA4
                 total_average_altitude_m,
                 total_rain_m, total_evap_m, total_infil_m, 
                 total_rain_m3, total_evap_m3, total_infil_m3, total_outflow_m3;
-
+        private CheckBox CarboZALF_calib_stabilizationages_checkbox;
         int output_time;
 
         private void obsfile_textbox_Click(object sender, EventArgs e)
@@ -1254,6 +1254,7 @@ namespace LORICA4
             this.textBox6 = new System.Windows.Forms.TextBox();
             this.UTMsouthcheck = new System.Windows.Forms.CheckBox();
             this.Run = new System.Windows.Forms.TabPage();
+            this.CarboZALF_calib_stabilizationages_checkbox = new System.Windows.Forms.CheckBox();
             this.version_CarboZALF_checkbox = new System.Windows.Forms.CheckBox();
             this.ux_number_Processors_label = new System.Windows.Forms.Label();
             this.version_Konza_checkbox = new System.Windows.Forms.CheckBox();
@@ -2919,6 +2920,7 @@ namespace LORICA4
             // 
             // Run
             // 
+            this.Run.Controls.Add(this.CarboZALF_calib_stabilizationages_checkbox);
             this.Run.Controls.Add(this.version_CarboZALF_checkbox);
             this.Run.Controls.Add(this.ux_number_Processors_label);
             this.Run.Controls.Add(this.version_Konza_checkbox);
@@ -2938,6 +2940,16 @@ namespace LORICA4
             this.Run.TabIndex = 8;
             this.Run.Text = "Run";
             this.Run.UseVisualStyleBackColor = true;
+            // 
+            // CarboZALF_calib_stabilizationages_checkbox
+            // 
+            this.CarboZALF_calib_stabilizationages_checkbox.AutoSize = true;
+            this.CarboZALF_calib_stabilizationages_checkbox.Location = new System.Drawing.Point(174, 170);
+            this.CarboZALF_calib_stabilizationages_checkbox.Name = "CarboZALF_calib_stabilizationages_checkbox";
+            this.CarboZALF_calib_stabilizationages_checkbox.Size = new System.Drawing.Size(150, 17);
+            this.CarboZALF_calib_stabilizationages_checkbox.TabIndex = 15;
+            this.CarboZALF_calib_stabilizationages_checkbox.Text = "Calibrate stabilization ages";
+            this.CarboZALF_calib_stabilizationages_checkbox.UseVisualStyleBackColor = true;
             // 
             // version_CarboZALF_checkbox
             // 
@@ -20193,16 +20205,21 @@ Example: rainfall.asc can look like:
 
         private double calib_function_CarboZALF_OSL(int row_cal, int col_cal, double sample_depth_from_fAh, double age_ref)
         {
-            double depth_z, refdepth, penalty;
+            double depth_z, refdepth, penalty, dummy_penalty;
             int lay_cal;
 
             refdepth = dtm[row_cal, col_cal] - dtmchange_m[row_cal, col_cal] + sample_depth_from_fAh;
             depth_z = dtm[row_cal, col_cal];
             lay_cal = -1;
+            dummy_penalty = end_time / (end_time - age_ref + 1); // Penalty for samples where colluvium is simulated too thin
+                                                                 // Calculate penalty based on measured age relative to simulation time.
+                                                                 // The older, the higher the penalty. Penalties are generally higher than the ones calculated below.
+                                                                 // Penalty never below 1, made sure by adding 1 to the reference age
+            
             // Select the layer that corresponds to the measured sample depth. 
             if (refdepth > depth_z)
             { // if measured sample is not present in the simulated colluvium, simulated colluvium too thin
-                penalty = 1000;
+                penalty = dummy_penalty;
             }
             else
             {
@@ -20225,7 +20242,7 @@ Example: rainfall.asc can look like:
 
                         double[] density_prob = new double[density.GetLength(0)];
                         double[] density_value = new double[density.GetLength(0)]; ;
-
+                        
                         for (int it = 0; it < density.GetLength(0); it++)
                         {
                             density_value[it] = density[it, 0];
@@ -20237,25 +20254,25 @@ Example: rainfall.asc can look like:
 
                         double ages_mode = density_value[indices_prob[indices_prob.Length - 1]];
 
-                        penalty = Math.Abs(ages_mode - age_ref);
+                        penalty = Math.Abs(ages_mode - age_ref) / age_ref;
                     }
                     else
                     {
                         if(ages_cal_d.Length == 1)
                         { // only one rejuvenated grain. Use that age as reference
-                            penalty = Math.Abs(ages_cal_d[0] - age_ref);
+                            penalty = Math.Abs(ages_cal_d[0] - age_ref) / age_ref;
                         }
                         else
                         {
-                            // no grains present for this sample. This means the sample is too close to the surface (layer = 0), or there are no young grains (poor bleaching, non-eroded layer). So penalty = 1000
-                            penalty = 1000;
+                            // no grains present for this sample. This means the sample is too close to the surface (layer = 0), or there are no young grains (poor bleaching, non-eroded layer). So penalty is based on measured age
+                            penalty = dummy_penalty;
                         }
                     }
                 }
                 catch
                 {
                     Debug.WriteLine("Error in calculating age densities");
-                    penalty = 1000;
+                    penalty = dummy_penalty;
                 }
 
             }
@@ -20271,6 +20288,7 @@ Example: rainfall.asc can look like:
             bool calib_erodep = false;
             bool calib_OSL = true;
             bool calib_CN = false;
+            bool calib_stabages = Convert.ToBoolean(CarboZALF_calib_stabilizationages_checkbox);
             double sim_ero_m = 0, obs_ero_m, sim_depo_m = 0, obs_depo_m, error_CZ = 0;
             int obj_fun_cells_ero = 0, obj_fun_cells_depo = 0;
 
@@ -20307,49 +20325,96 @@ Example: rainfall.asc can look like:
                 // The selected methoid can result in measured sample located above the simulated colluvium. These will get a large penalty in the calibration 
                 // This approach is better suited for deposition rates, because colluvium builds up from the bottom to the top
 
-                // calibration old colluvium ( > 300 a)
-                // Location P2
-                cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.025, 3700); // NCL7317038
-                cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.125, 3300); // NCL7317039
-                cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.225, 2227); // NCL7317039
+                if( calib_stabages) // calibration with mode of stabilization ages
+                {
+                    // calibration old colluvium ( > 300 a)
+                    // Location P2
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.025, 3700); // NCL7317038
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.125, 3301); // NCL7317039
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.225, 2227); // NCL7317040
 
-                // Location P3
-                cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.055, 1898); // NCL7317069
-                cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.155, 1731); // NCL7317069
-                cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.255, 1048); // NCL7317146
+                    // Location P3
+                    cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.055, 1898); // NCL7317069
+                    cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.155, 1731); // NCL7317145
+                    cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.255, 1048); // NCL7317146
 
-                // calibration young colluvium (<= 300 a)
-                // Location P2
-                cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.325, 120); // NCL7317041
-                cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.425, 27); // NCL7317042
-                cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.605, 18); // NCL7317068
+                    // calibration young colluvium (<= 300 a)
+                    // Location P2
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.325, 120); // NCL7317041
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.425, 27); // NCL7317042
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.605, 18); // NCL7317068
 
-                // Location P3
-                cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.355, 44); // NCL7317147
-                cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.455, 40); // NCL7317070
+                    // Location P3
+                    cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.355, 44); // NCL7317147
+                    cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.455, 40); // NCL7317070
 
-                // Location BP5
-                cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.075, 159); // NCL7317062
-                cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.175, 135); // NCL7317063
-                cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.275, 99); // NCL7317064
-                cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.375, 87); // NCL7317065
-                cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.475, 73); // NCL7317066
-                cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.575, 37); // NCL7317067
+                    // Location BP5
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.075, 159); // NCL7317062
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.175, 135); // NCL7317063
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.275, 99); // NCL7317064
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.375, 87); // NCL7317065
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.475, 73); // NCL7317066
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.575, 37); // NCL7317067
 
-                // Location BP6
-                cum_age_error += calib_function_CarboZALF_OSL(17, 20, 0.045, 160); // NCL7317152
-                cum_age_error += calib_function_CarboZALF_OSL(17, 20, 0.175, 136); // NCL7317153
-                cum_age_error += calib_function_CarboZALF_OSL(17, 20, 0.305, 121); // NCL7317154
-                cum_age_error += calib_function_CarboZALF_OSL(17, 20, 0.425, 103); // NCL7317155
-                cum_age_error += calib_function_CarboZALF_OSL(17, 20, 0.545, 92); // NCL7317156
+                    // Location BP6
+                    cum_age_error += calib_function_CarboZALF_OSL(17, 20, 0.045, 160); // NCL7317152
+                    cum_age_error += calib_function_CarboZALF_OSL(17, 20, 0.175, 136); // NCL7317153
+                    cum_age_error += calib_function_CarboZALF_OSL(17, 20, 0.305, 121); // NCL7317154
+                    cum_age_error += calib_function_CarboZALF_OSL(17, 20, 0.425, 103); // NCL7317155
+                    cum_age_error += calib_function_CarboZALF_OSL(17, 20, 0.545, 92); // NCL7317156
 
-                // Location BP8
-                cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.045, 258); // NCL7317142
-                cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.145, 227); // NCL7317148
-                cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.245, 197); // NCL7317143
-                cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.345, 139); // NCL7317149
-                cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.445, 117); // NCL7317150
+                    // Location BP8
+                    cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.045, 258); // NCL7317142
+                    cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.145, 227); // NCL7317148
+                    cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.245, 197); // NCL7317143
+                    cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.345, 139); // NCL7317149
+                    cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.445, 117); // NCL7317150
+                }
+                else // calibration with mode of measured ages
+                {
+                    // calibration old colluvium ( > 300 a)
+                    // Location P2
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.025, 3832); // NCL7317038
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.125, 3606); // NCL7317039
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.225, 3895); // NCL7317040
 
+                    // Location P3
+                    cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.055, 3265); // NCL7317069
+                    cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.155, 2650); // NCL7317145
+                    cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.255, 1425); // NCL7317146
+
+                    // calibration young colluvium (<= 300 a)
+                    // Location P2
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.325, 2170); // NCL7317041
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.425, 66); // NCL7317042
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.605, 46); // NCL7317068
+
+                    // Location P3
+                    cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.355, 41); // NCL7317147
+                    cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.455, 44); // NCL7317070
+
+                    // Location BP5
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.075, 170); // NCL7317062
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.175, 127); // NCL7317063
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.275, 87); // NCL7317064
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.375, 89); // NCL7317065
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.475, 75); // NCL7317066
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.575, 58); // NCL7317067
+
+                    // Location BP6
+                    cum_age_error += calib_function_CarboZALF_OSL(17, 20, 0.045, 201); // NCL7317152
+                    cum_age_error += calib_function_CarboZALF_OSL(17, 20, 0.175, 137); // NCL7317153
+                    cum_age_error += calib_function_CarboZALF_OSL(17, 20, 0.305, 136); // NCL7317154
+                    cum_age_error += calib_function_CarboZALF_OSL(17, 20, 0.425, 107); // NCL7317155
+                    cum_age_error += calib_function_CarboZALF_OSL(17, 20, 0.545, 76); // NCL7317156
+
+                    // Location BP8
+                    cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.045, 458); // NCL7317142
+                    cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.145, 282); // NCL7317148
+                    cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.245, 232); // NCL7317143
+                    cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.345, 146); // NCL7317149
+                    cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.445, 126); // NCL7317150                   
+                }
                 error_CZ = cum_age_error;
             }
             Debug.WriteLine(" calib tst - calib_objective_function - error is " + error_CZ + " a in total");
