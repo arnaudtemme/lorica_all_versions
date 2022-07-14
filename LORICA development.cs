@@ -20288,7 +20288,8 @@ Example: rainfall.asc can look like:
             bool calib_erodep = false;
             bool calib_OSL = true;
             bool calib_CN = false;
-            bool calib_stabages = Convert.ToBoolean(CarboZALF_calib_stabilizationages_checkbox);
+            bool calib_stabages = false;
+            if (CarboZALF_calib_stabilizationages_checkbox.Checked) { calib_stabages = true; }
             double sim_ero_m = 0, obs_ero_m, sim_depo_m = 0, obs_depo_m, error_CZ = 0;
             int obj_fun_cells_ero = 0, obj_fun_cells_depo = 0;
 
