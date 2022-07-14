@@ -11083,21 +11083,25 @@ namespace LORICA4
                         {
                             while (available_soildepth > 0)
                             {
-                                if (available_soildepth > dz_standard)
-                                {
-                                    layerthickness_m[row, col, soil_layer] = dz_standard;
-                                    available_soildepth -= dz_standard;
-                                }
-                                else
-                                {
-                                    layerthickness_m[row, col, soil_layer] = available_soildepth;
-                                    available_soildepth = 0;
-                                }
                                 if (soil_layer == max_soil_layers - 1)
                                 {
                                     layerthickness_m[row, col, soil_layer] = available_soildepth;
                                     available_soildepth = 0;
                                 }
+                                else
+                                {
+                                    if (available_soildepth > dz_standard)
+                                    {
+                                        layerthickness_m[row, col, soil_layer] = dz_standard;
+                                        available_soildepth -= dz_standard;
+                                    }
+                                    else
+                                    {
+                                        layerthickness_m[row, col, soil_layer] = available_soildepth;
+                                        available_soildepth = 0;
+                                    }
+                                }
+                                
                                 //now limit layerthicknes to hardlayer limitations if needed
                                 if (blocks_active == 1)
                                 {
@@ -15326,7 +15330,7 @@ namespace LORICA4
 
                         // MvdM litter fraction is determined by the total amount of litter as fraction of the mineral soil in the top layer. This might be changed, because mineral content is variable and indepent of litter quantity
                         //XIA change this number to 0.25 as well. For creep and no creep
-                        double litter_characteristic_protection_mass_kg_m2 = 0.01; // based on average litter contents in Luxembourg
+                        double litter_characteristic_protection_mass_kg_m2 = 0.9; // based on the maximum litter content in the model results
                         double litter_characteristic_protection_mass_kg = litter_characteristic_protection_mass_kg_m2 * dx * dx;
                         double litter_protection_fraction = (litter_kg[row_sd, col_sd, 0] + litter_kg[row_sd, col_sd, 1]) / litter_characteristic_protection_mass_kg;
                         // double litter_fraction = (litter_kg[row, col, 0] + litter_kg[row, col, 0]) / (litter_kg[row, col, 0] + litter_kg[row, col, 0] + total_layer_mass(row, col, 0));
@@ -15408,47 +15412,50 @@ namespace LORICA4
                             texture_kg[row_sd, col_sd, 0, size] = 0;
 
                             // Layer 1
-                            if (texture_kg[row_sd, col_sd, 1, size] >= left)
-                            {   // typical
-                                if (size == 1)
-                                {
-                                    sanderoded_1_kg = left;
-                                    sandpresent_1_kg = texture_kg[row_sd, col_sd, 1, size];
-                                }
-                                if (size == 2)
-                                {
-                                    silteroded_1_kg = left;
-                                    siltpresent_1_kg = texture_kg[row_sd, col_sd, 1, size];
-                                }
-                                if (size > 2)
-                                {
-                                    clayeroded_1_kg += left;
-                                    claypresent_1_kg += texture_kg[row_sd, col_sd, 1, size];
-                                }
-                                total_mass_eroded[size] += left;
-                                sediment_in_transport_kg[row_sd + i_sd, col_sd + j_sd, size] += left;   // unit [kg]
-                                texture_kg[row_sd, col_sd, 1, size] -= left;  // unit [kg]
-                            }
-                            else
+                            if (max_soil_layers > 1)
                             {
-                                total_mass_eroded[size] += texture_kg[row_sd, col_sd, 1, size];
-                                if (size == 1)
-                                {
-                                    sanderoded_1_kg = texture_kg[row_sd, col_sd, 1, size];
-                                    sandpresent_1_kg = texture_kg[row_sd, col_sd, 1, size];
+                                if (texture_kg[row_sd, col_sd, 1, size] >= left)
+                                {   // typical
+                                    if (size == 1)
+                                    {
+                                        sanderoded_1_kg = left;
+                                        sandpresent_1_kg = texture_kg[row_sd, col_sd, 1, size];
+                                    }
+                                    if (size == 2)
+                                    {
+                                        silteroded_1_kg = left;
+                                        siltpresent_1_kg = texture_kg[row_sd, col_sd, 1, size];
+                                    }
+                                    if (size > 2)
+                                    {
+                                        clayeroded_1_kg += left;
+                                        claypresent_1_kg += texture_kg[row_sd, col_sd, 1, size];
+                                    }
+                                    total_mass_eroded[size] += left;
+                                    sediment_in_transport_kg[row_sd + i_sd, col_sd + j_sd, size] += left;   // unit [kg]
+                                    texture_kg[row_sd, col_sd, 1, size] -= left;  // unit [kg]
                                 }
-                                if (size == 2)
+                                else
                                 {
-                                    silteroded_1_kg = texture_kg[row_sd, col_sd, 1, size];
-                                    siltpresent_1_kg = texture_kg[row_sd, col_sd, 1, size];
+                                    total_mass_eroded[size] += texture_kg[row_sd, col_sd, 1, size];
+                                    if (size == 1)
+                                    {
+                                        sanderoded_1_kg = texture_kg[row_sd, col_sd, 1, size];
+                                        sandpresent_1_kg = texture_kg[row_sd, col_sd, 1, size];
+                                    }
+                                    if (size == 2)
+                                    {
+                                        silteroded_1_kg = texture_kg[row_sd, col_sd, 1, size];
+                                        siltpresent_1_kg = texture_kg[row_sd, col_sd, 1, size];
+                                    }
+                                    if (size > 2)
+                                    {
+                                        clayeroded_1_kg += texture_kg[row_sd, col_sd, 1, size];
+                                        claypresent_1_kg += texture_kg[row_sd, col_sd, 1, size];
+                                    }
+                                    sediment_in_transport_kg[row_sd + i_sd, col_sd + j_sd, size] += texture_kg[row_sd, col_sd, 1, size];// unit [kg]
+                                    texture_kg[row_sd, col_sd, 1, size] = 0;
                                 }
-                                if (size > 2)
-                                {
-                                    clayeroded_1_kg += texture_kg[row_sd, col_sd, 1, size];
-                                    claypresent_1_kg += texture_kg[row_sd, col_sd, 1, size];
-                                }
-                                sediment_in_transport_kg[row_sd + i_sd, col_sd + j_sd, size] += texture_kg[row_sd, col_sd, 1, size];// unit [kg]
-                                texture_kg[row_sd, col_sd, 1, size] = 0;
                             }
                         }
                     }
@@ -16207,7 +16214,7 @@ namespace LORICA4
                             //So, we calculate the difference between the original and final thicknesses of these two layers to calculate dz_ero and dz_sed. 
                             //We already knew how much mass was involved in ero and sed, but we need the volumes to update the dtm.
 
-                            for (sbyte i = 0; i < 2; i++)
+                            for (sbyte i = 0; i < 2 & i<max_soil_layers; i++)
                             {
                                 double pastlayer = layerthickness_m[row, col, i];
                                 layerthickness_m[row, col, i] = thickness_calc(row, col, i);
@@ -21076,7 +21083,10 @@ Example: rainfall.asc can look like:
                 determine_vegetation_type();
                 change_vegetation_parameters();
             }
-
+            if (version_lux_checkbox.Checked)
+            {
+                soil_litter_cycle();
+            }
             #endregion
 
             #region Geomorphic processes
@@ -21282,15 +21292,10 @@ Example: rainfall.asc can look like:
             if (soil_carbon_active)
             {
                 // Debug.WriteLine("calculating carbon dynamics ");
-                if (version_lux_checkbox.Checked)
-                {
-                    soil_litter_cycle();
-                }
-                else
-                {
-                    soil_carbon_cycle();
-                    soil_update_split_and_combine_layers();
-                }
+               
+                soil_carbon_cycle();
+                soil_update_split_and_combine_layers();
+                
             }
             if (NA_anywhere_in_soil() == true) { Debug.WriteLine("NA found after soil carbon"); }
             if (decalcification_checkbox.Checked)
