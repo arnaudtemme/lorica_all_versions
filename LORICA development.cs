@@ -17470,7 +17470,7 @@ namespace LORICA4
                                                 dh = dh / d_x;
                                                 dh = Math.Pow(dh, conv_fac);
                                                 fraction = (dh / slope_sum);
-                                                tempcreep_kg = fraction * local_creep_kg * slope; //MM develop. Original function was fraction*slope*diffusivity. Do I need to add slope in calculations?
+                                                tempcreep_kg = fraction * local_creep_kg * slope * 100; //MM develop. Original function was fraction*slope*diffusivity. Do I need to add slope in calculations?
 
                                                 //// oldsoildepths
                                                 double dsoil_source = total_soil_thickness(row, col);
@@ -19239,7 +19239,7 @@ namespace LORICA4
                         }
                     }
                     // Go through indices to be removed in descending order, to remove grains from source location
-                    for (int osl_i = (indices_to_be_removed.Count - 1); osl_i >= 0; osl_i--) // Does this work?
+                    for (int osl_i = (indices_to_be_removed.Count - 1); osl_i >= 0; osl_i--) // 
                     {
                         grains_at_source_location.RemoveAt(indices_to_be_removed[osl_i]);
                         grains_at_source_location_da.RemoveAt(indices_to_be_removed[osl_i]);
