@@ -13371,7 +13371,7 @@ namespace LORICA4
             {
                 combined_frac = sand_mass / m_finesoil + 0.76 * silt_mass / m_finesoil;
 
-                bd = 1000 * (1.35 + 0.00452 * 100 * combined_frac + Math.Pow(100 * combined_frac - 44.65, 2) * -0.0000614 + 0.06 * Math.Log10(depth));  // in kg/m3
+                bd = 1000 * (1.35 + 0.00452 * 100 * combined_frac + Math.Pow(44.65 - 100 * combined_frac, 2) * -0.0000614 + 0.06 * Math.Log10(depth));  // in kg/m3
 
                 //now coarse fragment and SOM correction
                 bd = (coarse_mass + m_finesoil + OMo_mass + OMy_mass) / ((m_finesoil / bd) + (coarse_mass / 2700) + (OMo_mass + OMy_mass) / 224); // ooit through interface    
