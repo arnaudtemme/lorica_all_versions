@@ -669,7 +669,7 @@ namespace LORICA4
         private Label label136_cn;
         private TextBox isC14_inherited_textbox;
         private TextBox isBe10_inherited_textbox;
-        private Label label134;
+        private Label label134_cn;
         private TextBox metBe10_inherited_textbox;
         private Label label137;
         private TextBox OSL_inherited_textbox;
@@ -1503,7 +1503,7 @@ namespace LORICA4
             this.label136_cn = new System.Windows.Forms.Label();
             this.isC14_inherited_textbox = new System.Windows.Forms.TextBox();
             this.isBe10_inherited_textbox = new System.Windows.Forms.TextBox();
-            this.label134 = new System.Windows.Forms.Label();
+            this.label134_cn = new System.Windows.Forms.Label();
             this.metBe10_inherited_textbox = new System.Windows.Forms.TextBox();
             this.label133_cn = new System.Windows.Forms.Label();
             this.attenuationlength_sp_textbox = new System.Windows.Forms.TextBox();
@@ -5393,7 +5393,7 @@ namespace LORICA4
             this.tabPage5.Controls.Add(this.label136_cn);
             this.tabPage5.Controls.Add(this.isC14_inherited_textbox);
             this.tabPage5.Controls.Add(this.isBe10_inherited_textbox);
-            this.tabPage5.Controls.Add(this.label134);
+            this.tabPage5.Controls.Add(this.label134_cn);
             this.tabPage5.Controls.Add(this.metBe10_inherited_textbox);
             this.tabPage5.Controls.Add(this.label133_cn);
             this.tabPage5.Controls.Add(this.attenuationlength_sp_textbox);
@@ -5520,9 +5520,9 @@ namespace LORICA4
             this.label136_cn.AutoSize = true;
             this.label136_cn.Location = new System.Drawing.Point(508, 173);
             this.label136_cn.Name = "label136_cn";
-            this.label136_cn.Size = new System.Drawing.Size(105, 13);
+            this.label136_cn.Size = new System.Drawing.Size(129, 13);
             this.label136_cn.TabIndex = 36;
-            this.label136_cn.Text = "Inherited atoms cm-2";
+            this.label136_cn.Text = "Inherited atoms g quartz-1";
             // 
             // isC14_inherited_textbox
             // 
@@ -5540,14 +5540,14 @@ namespace LORICA4
             this.isBe10_inherited_textbox.TabIndex = 33;
             this.isBe10_inherited_textbox.Text = "0";
             // 
-            // label134
+            // label134_cn
             // 
-            this.label134.AutoSize = true;
-            this.label134.Location = new System.Drawing.Point(74, 206);
-            this.label134.Name = "label134";
-            this.label134.Size = new System.Drawing.Size(105, 13);
-            this.label134.TabIndex = 32;
-            this.label134.Text = "Inherited atoms cm-2";
+            this.label134_cn.AutoSize = true;
+            this.label134_cn.Location = new System.Drawing.Point(74, 206);
+            this.label134_cn.Name = "label134_cn";
+            this.label134_cn.Size = new System.Drawing.Size(115, 13);
+            this.label134_cn.TabIndex = 32;
+            this.label134_cn.Text = "Inherited atoms g soil-1";
             // 
             // metBe10_inherited_textbox
             // 
@@ -6431,25 +6431,7 @@ namespace LORICA4
                     is10Be_inherited = System.Convert.ToDouble(isBe10_inherited_textbox.Text);
                     isC14_inherited = System.Convert.ToDouble(isC14_inherited_textbox.Text);
 
-                    for (row = 0; row < nr; row++)
-                    {
-                        for (col = 0; col < nc; col++)
-                        {
-                            for (int lay = 0; lay < max_soil_layers; lay++)
-                            {
-                                CN_atoms_cm2[row, col, lay, 0] = met10Be_inherited * met_10Be_clayfraction;
-                                CN_atoms_cm2[row, col, lay, 1] = met10Be_inherited * (1-met_10Be_clayfraction);
-                                CN_atoms_cm2[row, col, lay, 2] = is10Be_inherited;
-                                CN_atoms_cm2[row, col, lay, 3] = isC14_inherited;
-                            }
-                        }
-                    }
-                    // dim[,,,0] = Meteoric 10-Be (dynamics linked to both clay fractions)
-                    // dim[,,,1] = Meteoric 10-Be (dynamics linked to silt fraction)
-                    // dim[,,,2] = In-situ 10-Be (dynamics linked to sand fraction)
-                    // dim[,,,3] = In-situ 14-C (dynamics linked to sand fraction)
-                    // dim[,,,4] = ...
-                    // Other nuclides can be included at a later stage (e.g., 14-C, 137-Cs, 210-Pb)
+                    
                 }
                 if (OSL_checkbox.Checked)
                 {
@@ -11097,6 +11079,19 @@ namespace LORICA4
                                 clayfrac = Math.Min(clayfrac, 1);
                             }
 
+                            if(CN_checkbox.Checked)
+                            {  
+                                CN_atoms_cm2[row, col, soil_layer, 0] = met10Be_inherited * met_10Be_clayfraction * total_layer_fine_earth_mass_kg(row, col, soil_layer) / (dx * 100 * dx * 100);
+                                CN_atoms_cm2[row, col, soil_layer, 1] = met10Be_inherited * (1 - met_10Be_clayfraction) * total_layer_fine_earth_mass_kg(row, col, soil_layer) / (dx * 100 * dx * 100);
+                                CN_atoms_cm2[row, col, soil_layer, 2] = is10Be_inherited * texture_kg[row,col,soil_layer, 1] * 1000 / (dx * 100 * dx * 100);
+                                CN_atoms_cm2[row, col, soil_layer, 3] = isC14_inherited * texture_kg[row, col, soil_layer, 1] * 1000 / (dx * 100 * dx * 100);
+                                // dim[,,,0] = Meteoric 10-Be (dynamics linked to both clay fractions)
+                                // dim[,,,1] = Meteoric 10-Be (dynamics linked to silt fraction)
+                                // dim[,,,2] = In-situ 10-Be (dynamics linked to sand fraction)
+                                // dim[,,,3] = In-situ 14-C (dynamics linked to sand fraction)
+                                // dim[,,,4] = ...
+                                // Other nuclides can be included at a later stage (e.g., 14-C, 137-Cs, 210-Pb)
+                            }
                             soil_layer++;
 
                         } // end availabke soil depth > 0
@@ -11141,12 +11136,9 @@ namespace LORICA4
                         siltfrac = 0;
                         clayfrac = 0;
                         fclayfrac = 0;
-
                     }
-
                     if (soildepth_m[row, col] == 0)
                     {
-
                         for (soil_layer = 0; soil_layer < max_soil_layers; soil_layer++)
                         {
                             for (texture_class = 0; texture_class < n_texture_classes; texture_class++)
@@ -11240,6 +11232,19 @@ namespace LORICA4
                                     clayfrac += 1.0 / max_soil_layers;
                                     sandfrac = Math.Max(sandfrac, 0);
                                     clayfrac = Math.Min(clayfrac, 1);
+                                }
+                                if (CN_checkbox.Checked)
+                                {
+                                    CN_atoms_cm2[row, col, soil_layer, 0] = met10Be_inherited * met_10Be_clayfraction * total_layer_fine_earth_mass_kg(row, col, soil_layer) / (dx *100 * dx * 100);
+                                    CN_atoms_cm2[row, col, soil_layer, 1] = met10Be_inherited * (1 - met_10Be_clayfraction) * total_layer_fine_earth_mass_kg(row, col, soil_layer) / (dx * 100 * dx * 100);
+                                    CN_atoms_cm2[row, col, soil_layer, 2] = is10Be_inherited * texture_kg[row, col, soil_layer,1] * 1000 / (dx * 100 * dx * 100);
+                                    CN_atoms_cm2[row, col, soil_layer, 3] = isC14_inherited * texture_kg[row, col, soil_layer, 1] * 1000 / (dx * 100 * dx * 100);
+                                    // dim[,,,0] = Meteoric 10-Be (dynamics linked to both clay fractions)
+                                    // dim[,,,1] = Meteoric 10-Be (dynamics linked to silt fraction)
+                                    // dim[,,,2] = In-situ 10-Be (dynamics linked to sand fraction)
+                                    // dim[,,,3] = In-situ 14-C (dynamics linked to sand fraction)
+                                    // dim[,,,4] = ...
+                                    // Other nuclides can be included at a later stage (e.g., 14-C, 137-Cs, 210-Pb)
                                 }
                                 soil_layer++;
                             } // end available soil depth > 0
