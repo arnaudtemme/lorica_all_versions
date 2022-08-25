@@ -11081,8 +11081,8 @@ namespace LORICA4
 
                             if(CN_checkbox.Checked)
                             {  
-                                CN_atoms_cm2[row, col, soil_layer, 0] = met10Be_inherited * met_10Be_clayfraction * total_layer_fine_earth_mass_kg(row, col, soil_layer) / (dx * 100 * dx * 100);
-                                CN_atoms_cm2[row, col, soil_layer, 1] = met10Be_inherited * (1 - met_10Be_clayfraction) * total_layer_fine_earth_mass_kg(row, col, soil_layer) / (dx * 100 * dx * 100);
+                                CN_atoms_cm2[row, col, soil_layer, 0] = met10Be_inherited * met_10Be_clayfraction * total_layer_fine_earth_mass_kg(row, col, soil_layer) * 1000 / (dx * 100 * dx * 100);
+                                CN_atoms_cm2[row, col, soil_layer, 1] = met10Be_inherited * (1 - met_10Be_clayfraction) * total_layer_fine_earth_mass_kg(row, col, soil_layer) * 1000 / (dx * 100 * dx * 100);
                                 CN_atoms_cm2[row, col, soil_layer, 2] = is10Be_inherited * texture_kg[row,col,soil_layer, 1] * 1000 / (dx * 100 * dx * 100);
                                 CN_atoms_cm2[row, col, soil_layer, 3] = isC14_inherited * texture_kg[row, col, soil_layer, 1] * 1000 / (dx * 100 * dx * 100);
                                 // dim[,,,0] = Meteoric 10-Be (dynamics linked to both clay fractions)
@@ -11235,8 +11235,8 @@ namespace LORICA4
                                 }
                                 if (CN_checkbox.Checked)
                                 {
-                                    CN_atoms_cm2[row, col, soil_layer, 0] = met10Be_inherited * met_10Be_clayfraction * total_layer_fine_earth_mass_kg(row, col, soil_layer) / (dx *100 * dx * 100);
-                                    CN_atoms_cm2[row, col, soil_layer, 1] = met10Be_inherited * (1 - met_10Be_clayfraction) * total_layer_fine_earth_mass_kg(row, col, soil_layer) / (dx * 100 * dx * 100);
+                                    CN_atoms_cm2[row, col, soil_layer, 0] = met10Be_inherited * met_10Be_clayfraction * total_layer_fine_earth_mass_kg(row, col, soil_layer) * 1000 / (dx *100 * dx * 100);
+                                    CN_atoms_cm2[row, col, soil_layer, 1] = met10Be_inherited * (1 - met_10Be_clayfraction) * total_layer_fine_earth_mass_kg(row, col, soil_layer) * 1000 / (dx * 100 * dx * 100);
                                     CN_atoms_cm2[row, col, soil_layer, 2] = is10Be_inherited * texture_kg[row, col, soil_layer,1] * 1000 / (dx * 100 * dx * 100);
                                     CN_atoms_cm2[row, col, soil_layer, 3] = isC14_inherited * texture_kg[row, col, soil_layer, 1] * 1000 / (dx * 100 * dx * 100);
                                     // dim[,,,0] = Meteoric 10-Be (dynamics linked to both clay fractions)
@@ -17561,7 +17561,7 @@ namespace LORICA4
                                                 dh = dh / d_x;
                                                 dh = Math.Pow(dh, conv_fac);
                                                 fraction = (dh / slope_sum);
-                                                tempcreep_kg = fraction * local_creep_kg * slope * 100; //MM develop. Original function was fraction*slope*diffusivity. Do I need to add slope in calculations?
+                                                tempcreep_kg = fraction * local_creep_kg * slope; //MM develop. Original function was fraction*slope*diffusivity. Do I need to add slope in calculations?
 
                                                 //// oldsoildepths
                                                 double dsoil_source = total_soil_thickness(row, col);
@@ -20970,6 +20970,8 @@ Example: rainfall.asc can look like:
                     //TILLAGE PARAMETERS
                     if (tillage_active)
                     {
+                        try { conv_fac = double.Parse(parameter_conv_textbox.Text); }
+                        catch { input_data_error = true; MessageBox.Show("value for parameter p is not valid"); }
                         try { plough_depth = double.Parse(parameter_ploughing_depth_textbox.Text); }
                         catch { input_data_error = true; MessageBox.Show("value for parameter plough depth is not valid"); }
                         try { tilc = double.Parse(parameter_tillage_constant_textbox.Text); }
@@ -20997,6 +20999,8 @@ Example: rainfall.asc can look like:
                     //CREEP PARAMETER
                     if (creep_active)
                     {
+                        try { conv_fac = double.Parse(parameter_conv_textbox.Text); }
+                        catch { input_data_error = true; MessageBox.Show("value for parameter p is not valid"); }
                         try { potential_creep_kg_m2_y = double.Parse(parameter_diffusivity_textbox.Text); }
                         catch { input_data_error = true; MessageBox.Show("value for parameter potential_creep_kg_m2_y is not valid"); }
                         try { bioturbation_depth_decay_constant = Convert.ToDouble(bioturbation_depth_decay_textbox.Text); }
@@ -21595,20 +21599,23 @@ Example: rainfall.asc can look like:
                 if (check_time_till_fields.Checked) { tilltime = till_record[t]; }
                 else { tilltime = 1; }
 
-                // Update tillage depth based on year. MvdM develop for Monte Carlo analysis
-                plough_depth = 0.06;
-                if (end_time - t < 1470) { plough_depth = 0.115; }
-                if (end_time - t < 223) { plough_depth = 0.16; }
-                if (end_time - t < 61) { plough_depth = 0.275; }
-                if (end_time - t < 31) { plough_depth = 0.20; }
-                if (end_time - t == 214) // Shift to entire field ploughing
+                if (version_CarboZALF_checkbox.Checked)
                 {
-                    output_time = 10; // set output to every 10 years
-                    for (row = 0; row < nr; row++)
+                    // Update tillage depth based on year. MvdM develop for Monte Carlo analysis
+                    plough_depth = 0.06;
+                    if (end_time - t < 1470) { plough_depth = 0.115; }
+                    if (end_time - t < 223) { plough_depth = 0.16; }
+                    if (end_time - t < 61) { plough_depth = 0.275; }
+                    if (end_time - t < 31) { plough_depth = 0.20; }
+                    if (end_time - t == 214) // Shift to entire field ploughing
                     {
-                        for (col = 0; col < nc; col++)
+                        output_time = 10; // set output to every 10 years
+                        for (row = 0; row < nr; row++)
                         {
-                            tillfields[row, col] = 1;
+                            for (col = 0; col < nc; col++)
+                            {
+                                tillfields[row, col] = 1;
+                            }
                         }
                     }
                 }
@@ -21763,7 +21770,6 @@ Example: rainfall.asc can look like:
             {
                 if (t == end_time - 1)
                 {
-
                     Debug.WriteLine("Time balance. Geomorphic processes: {0} min, pedogenic processes: {1} min, hydrologic processes: {2} min, ponding {3} min", geo_t, pedo_t, hydro_t, ponding_t);
                     // Debug.WriteLine("Time balance OSL methods. Long matrix: {0} min. Jagged array: {1} min.", OSL_matrix_t, OSL_JA_t);
                 }
