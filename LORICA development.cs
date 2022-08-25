@@ -739,8 +739,15 @@ namespace LORICA4
                 total_average_altitude_m,
                 total_rain_m, total_evap_m, total_infil_m, 
                 total_rain_m3, total_evap_m3, total_infil_m3, total_outflow_m3;
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
         private CheckBox CarboZALF_calib_stabilizationages_checkbox;
-        int output_time;
+        int output_time, tillage_frequency;
+        private CheckBox version_bioturbation_Checkbox;
 
         private void obsfile_textbox_Click(object sender, EventArgs e)
         {
@@ -926,6 +933,7 @@ namespace LORICA4
 
         //Bioturbation parameters
         double potential_bioturbation_kg_m2_y;
+        double potential_bioturbation_kg_m2_y_ini = 0;
         double bioturbation_depth_decay_constant;
 
         //Carbon cycle parameters
@@ -1547,6 +1555,7 @@ namespace LORICA4
             this.dailyD = new System.Windows.Forms.TextBox();
             this.dailyP = new System.Windows.Forms.TextBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.version_bioturbation_Checkbox = new System.Windows.Forms.CheckBox();
             label6 = new System.Windows.Forms.Label();
             Landsliding = new System.Windows.Forms.TabPage();
             label41 = new System.Windows.Forms.Label();
@@ -2920,6 +2929,7 @@ namespace LORICA4
             // 
             // Run
             // 
+            this.Run.Controls.Add(this.version_bioturbation_Checkbox);
             this.Run.Controls.Add(this.CarboZALF_calib_stabilizationages_checkbox);
             this.Run.Controls.Add(this.version_CarboZALF_checkbox);
             this.Run.Controls.Add(this.ux_number_Processors_label);
@@ -5959,6 +5969,17 @@ namespace LORICA4
             this.dailyP.TabIndex = 48;
             this.dailyP.Text = "D:\\PhD\\projects\\1g_basic LORICA development\\daily water\\Grunow\\Pday_grunow.csv";
             this.dailyP.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // version_bioturbation_Checkbox
+            // 
+            this.version_bioturbation_Checkbox.AutoSize = true;
+            this.version_bioturbation_Checkbox.Location = new System.Drawing.Point(217, 193);
+            this.version_bioturbation_Checkbox.Name = "version_bioturbation_Checkbox";
+            this.version_bioturbation_Checkbox.Size = new System.Drawing.Size(119, 17);
+            this.version_bioturbation_Checkbox.TabIndex = 16;
+            this.version_bioturbation_Checkbox.Text = "Bioturbation version";
+            this.version_bioturbation_Checkbox.UseVisualStyleBackColor = true;
+            this.version_bioturbation_Checkbox.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // Mother_form
             // 
@@ -17674,6 +17695,7 @@ namespace LORICA4
                                                 dtm[row, col] += dz_source;
                                                 dtm[row + i, col + j] += dz_sink;
 
+                                               
                                                 dtmchange_m[row, col] += dz_source; //MMS
                                                 dtmchange_m[row + i, col + j] += dz_sink; //MMS
 
@@ -17738,7 +17760,7 @@ namespace LORICA4
                 bool C_done = false, lastlayer = false;
 
                 dsoil = total_soil_thickness(row1, col1);
-
+                 
                 //expanding soil thickness to if blocks are active to account of openness of (possibly) underlying hardlayer:
                 if (blocks_active == 1)
                 {
@@ -20043,6 +20065,10 @@ Example: rainfall.asc can look like:
                     {
                         sw.WriteLine(" tillage_C");
                     }
+                    if (version_bioturbation_Checkbox.Checked)
+                    {
+                        sw.WriteLine(" pot_BT_kgm2 ddBT");
+                    }
 
                 }
                 catch { Debug.WriteLine(" issue with writing the header of the calibration log file"); }
@@ -20072,6 +20098,10 @@ Example: rainfall.asc can look like:
                     if(version_CarboZALF_checkbox.Checked)
                     {
                         sw.WriteLine(run_number + " " + objective_fnct_result + " " + tilc);
+                    }
+                    if (version_bioturbation_Checkbox.Checked)
+                    {
+                        sw.WriteLine(run_number + " " + objective_fnct_result + " " + potential_bioturbation_kg_m2_y + " " + bioturbation_depth_decay_constant);
                     }
 
                 }
@@ -20104,6 +20134,12 @@ Example: rainfall.asc can look like:
                     {
                         sw.WriteLine(best_run + " " + best_error + " " + best_parameters[0]);
                     }
+                    if (version_bioturbation_Checkbox.Checked)
+                    {
+                        sw.WriteLine(best_run + " " + best_error + " " + best_parameters[0] + " " + best_parameters[1]);
+                    }
+
+
 
                     Debug.WriteLine(" best run was " + best_run + " with error " + best_error + "m3");
                 }
@@ -20149,8 +20185,40 @@ Example: rainfall.asc can look like:
             return Math.Abs(known_ero_kg_m2_y - simulated_ero_kg_m2_y);
 
         }
+        internal static double QUARTILE(double[] array, double quantile)
+        {
+            // from https://stackoverflow.com/questions/31451446/worksheetfunction-quartile-equivalent-in-c-sharp
+            Array.Sort(array);
 
-        public static double[,] KernelDensityEstimation(double[] data, double sigma, int nsteps)
+            
+            if (quantile >= 100.0d) return array[array.Length - 1];
+
+            double position = (double)(array.Length + 1) * quantile / 100.0;
+            double leftNumber = 0.0d, rightNumber = 0.0d;
+
+            double n = quantile / 100.0d * (array.Length - 1) + 1.0d;
+
+            if (position >= 1)
+            {
+                leftNumber = array[(int)System.Math.Floor(n) - 1];
+                rightNumber = array[(int)System.Math.Floor(n)];
+            }
+            else
+            {
+                leftNumber = array[0]; // first data
+                rightNumber = array[1]; // first data
+            }
+
+            if (leftNumber == rightNumber)
+                return leftNumber;
+            else
+            {
+                double part = n - System.Math.Floor(n);
+                return leftNumber + part * (rightNumber - leftNumber);
+            }
+        }
+
+        public static double[,] KernelDensityEstimation(double[] data)
         {
             // from: https://gist.github.com/ksandric/e91860143f1dd378645c01d518ddf013 
 
@@ -20170,12 +20238,16 @@ Example: rainfall.asc can look like:
             // http://sourceforge.net/p/kmbox
             // Converted to C# code by ksandric
 
-            double[,] result = new double[nsteps, 2];
-            double[] x = new double[nsteps], y = new double[nsteps];
+            // edit MvdM. Calculate bandwidth (sigma), based on Silverman's rule of thumb (R's standard setting), instead of a given parameter
+            double avg = data.Average();
+            double stdev = Math.Sqrt(data.Average(v => Math.Pow(v - avg, 2)));
+            double q1 = QUARTILE(data, 25);
+            double q3 = QUARTILE(data, 75);
+
+            double sigma = 0.9*Math.Min(stdev, ((q3-q1)/1.34)) * Math.Pow(data.Length,-0.2);
 
             double MAX = Double.MinValue, MIN = Double.MaxValue;
             int N = data.Length; // number of data points
-
             // Find MIN MAX values in data
             for (int i = 0; i < N; i++)
             {
@@ -20188,6 +20260,13 @@ Example: rainfall.asc can look like:
                     MIN = data[i];
                 }
             }
+            MIN = Math.Floor(MIN);
+            MAX = Math.Ceiling(MAX);
+            int nsteps = Convert.ToInt32(Math.Round(MAX)) - Convert.ToInt32(Math.Round(MIN)); // Calculate number of steps (yearly
+
+            double[,] result = new double[nsteps, 2];
+            double[] x = new double[nsteps], y = new double[nsteps];
+
 
             // Like MATLAB linspace(MIN, MAX, nsteps);
             x[0] = MIN;
@@ -20250,7 +20329,7 @@ Example: rainfall.asc can look like:
 
                     if (ages_cal_d.Length > 1)
                     {
-                        double[,] density = KernelDensityEstimation(ages_cal_d, 1, Convert.ToInt32(Math.Round(ages_cal_d.Max() / 10)));
+                        double[,] density = KernelDensityEstimation(ages_cal_d);
 
                         double[] density_prob = new double[density.GetLength(0)];
                         double[] density_value = new double[density.GetLength(0)]; ;
@@ -20434,7 +20513,108 @@ Example: rainfall.asc can look like:
             return Math.Abs(error_CZ);
         }
 
+        private double calib_objective_function_bioturbation()
+        {
+            double cum_age_error = 0;
 
+            // Termites
+            cum_age_error  += calib_function_bioturbation_OSL(0.02, 16);
+            cum_age_error  += calib_function_bioturbation_OSL(0.17, 85);
+            cum_age_error += calib_function_bioturbation_OSL(0.27, 546);
+            cum_age_error += calib_function_bioturbation_OSL(0.39, 1135);
+            cum_age_error += calib_function_bioturbation_OSL(0.49, 1218);
+            cum_age_error += calib_function_bioturbation_OSL(0.59, 1504);
+            cum_age_error += calib_function_bioturbation_OSL(0.73, 2055);
+            cum_age_error += calib_function_bioturbation_OSL(0.83, 2899);
+            cum_age_error += calib_function_bioturbation_OSL(0.92, 2525);
+            cum_age_error += calib_function_bioturbation_OSL(1.02, 3237);
+
+
+            // Develop for other processes and datasets
+
+            Debug.WriteLine(" calib tst - calib_objective_function - error is " + cum_age_error + " a in total");
+            return cum_age_error;
+        }
+
+        private double calib_function_bioturbation_OSL(double depth, double age_ref)
+        {
+            int row_cal = 0, col_cal = 0;
+            // Calculate rerpesentative depth for layer
+            int lay_cal = 0;
+            double depth_ref = 0;
+            double depth_dist = 999;
+            double penalty = -1;
+
+            bool stop_it = false;
+            while (!stop_it)
+            {
+                depth_ref += layerthickness_m[row_cal, col_cal, lay_cal] / 2;
+                if(Math.Abs(depth-depth_ref)<depth_dist) // if distance between layers is decreasing
+                {
+                    depth_dist = Math.Abs(depth - depth_ref);
+                    lay_cal++;
+                }
+                else // if distance between layers in increasing again
+                {
+                    stop_it = true;
+                }
+                depth_ref += layerthickness_m[row_cal, col_cal, lay_cal] / 2;
+            }
+            
+            // calculate age penalty
+            try
+            {
+                int iii = 0;
+                int[] ages_cal = OSL_grainages[row_cal, col_cal, lay_cal];
+                ages_cal = ages_cal.Where(e => e < end_time).ToArray(); // Remove grains that equal run time, focus on the younger ages
+                double[] ages_cal_d = ages_cal.Select(x => (double)x).ToArray();
+                //for (iii = 0; iii < ages_cal_d.Length; iii++)
+                //{
+                //    Debug.Write(ages_cal_d[iii] + ",");
+                //}
+                //Debug.WriteLine("");
+                if (ages_cal_d.Length > 1)
+                {
+                    double[,] density = KernelDensityEstimation(ages_cal_d);
+
+                    double[] density_prob = new double[density.GetLength(0)];
+                    double[] density_value = new double[density.GetLength(0)]; ;
+
+                    for (int it = 0; it < density.GetLength(0); it++)
+                    {
+                        density_value[it] = density[it, 0];
+                        density_prob[it] = density[it, 1];
+                    }
+                    int[] indices_prob = new int[density_value.Length];
+                    for (int ii = 0; ii < density_value.Length; ii++) { indices_prob[ii] = ii; }
+                    Array.Sort(density_prob, indices_prob);
+
+                    double ages_mode = density_value[indices_prob[indices_prob.Length - 1]];
+
+                    penalty = Math.Abs(ages_mode - age_ref) / age_ref;
+                }
+                else
+                {
+                    if (ages_cal_d.Length == 1)
+                    { // only one rejuvenated grain. Use that age as reference
+                        penalty = Math.Abs(ages_cal_d[0] - age_ref) / age_ref;
+                    }
+                    else
+                    {
+                        // no grains present for this sample. This means the sample is too close to the surface (layer = 0), or there are no young grains (poor bleaching, non-eroded layer). So penalty is based on measured age
+                        // Debugger.Break();
+                        penalty = end_time / (end_time - age_ref + 1);
+                    }
+                }
+            }
+            catch
+            {
+                Debug.WriteLine("Error in calculating age densities");
+                penalty = 999;
+            }
+            return (penalty);
+
+        }
         private double domain_sum(string properties)
         {
             //Debug.WriteLine(properties);
@@ -20780,6 +20960,12 @@ Example: rainfall.asc can look like:
             {
                 best_parameters[0] = tilc;
             }
+            if (version_bioturbation_Checkbox.Checked)
+            {
+                best_parameters[0] = potential_bioturbation_kg_m2_y;
+                best_parameters[1] = bioturbation_depth_decay_constant;
+            }
+
             Debug.WriteLine(" updated parameter set for best scored run");
         }
 
@@ -20943,8 +21129,8 @@ Example: rainfall.asc can look like:
 
                 for (run_number = 0; run_number < maxruns; run_number++) //Maxruns Loop()
                 {
-
-
+                    //// upheaval_scenarios
+                    //tillage_frequency = 1;
 
                     //WATER EROSION AND DEPOSITION PARAMETERS
                     if (water_ero_active)
@@ -21283,9 +21469,23 @@ Example: rainfall.asc can look like:
                                     int rat_number = Convert.ToInt32(Math.Floor(run_number / Math.Pow(user_specified_number_of_ratios, 0)) % user_specified_number_of_ratios);
                                     tilc *= calib_ratios[0, rat_number];
                                     Debug.WriteLine("First ratio number: " + rat_number + " tilc now " + tilc + " ratio " + calib_ratios[0, rat_number]);
-
                                 }
 
+                                //// upheaval_scenario
+                                //int rat_number2 = Convert.ToInt32(Math.Floor(run_number / Math.Pow(user_specified_number_of_ratios, 0)) % user_specified_number_of_ratios);
+                                //tillage_frequency *= Convert.ToInt32(Math.Round(calib_ratios[0, rat_number2],0));
+                                //Debug.WriteLine("First ratio number: " + rat_number2 + " frequency now " + tillage_frequency + " ratio " + calib_ratios[0, rat_number2]);
+
+                                if(version_bioturbation_Checkbox.Checked)
+                                {
+                                    int rat_number2 = Convert.ToInt32(Math.Floor(run_number / Math.Pow(user_specified_number_of_ratios, 0)) % user_specified_number_of_ratios);
+                                    potential_bioturbation_kg_m2_y *= calib_ratios[0, rat_number2];
+
+                                    rat_number2 = Convert.ToInt32(Math.Floor(run_number / Math.Pow(user_specified_number_of_ratios, 1)) % user_specified_number_of_ratios);
+                                    bioturbation_depth_decay_constant *= calib_ratios[1, rat_number2];
+
+                                    // Debug.WriteLine("First ratio number: " + rat_number2 + " frequency now " + potential_bioturbation_kg_m2_y + " ratio " + calib_ratios[0, rat_number2]);
+                                }
                             }
 
                             timeseries_matrix = new double[System.Convert.ToInt32(end_time), number_of_outputs];
@@ -21351,6 +21551,10 @@ Example: rainfall.asc can look like:
                             {
                                 current_error = calib_objective_function_CarboZALF();
                             }
+                            if (version_bioturbation_Checkbox.Checked)
+                            {
+                                current_error = calib_objective_function_bioturbation();
+                            }
                             if (current_error == -1)
                             {
                                 Debug.WriteLine(" no error calculated during calibration ");
@@ -21393,7 +21597,14 @@ Example: rainfall.asc can look like:
                                     {
                                         calib_shift_and_zoom(0, double.Parse(calibration_ratio_reduction_parameter_textbox.Text), double.Parse(parameter_tillage_constant_textbox.Text));
                                     }
+                                    //// upheaval_scenario
+                                    //calib_shift_and_zoom(0, double.Parse(calibration_ratio_reduction_parameter_textbox.Text), double.Parse("1"));
+                                    if(version_bioturbation_Checkbox.Checked)
+                                    {
+                                        calib_shift_and_zoom(0, double.Parse(calibration_ratio_reduction_parameter_textbox.Text), double.Parse(potential_bioturbation_textbox.Text));
+                                        calib_shift_and_zoom(1, double.Parse(calibration_ratio_reduction_parameter_textbox.Text), double.Parse(bioturbation_depth_decay_textbox.Text));
 
+                                    }
                                 }
                             }
                             else
@@ -21622,12 +21833,13 @@ Example: rainfall.asc can look like:
 
                 if (tilltime == 1)
                 {
-
-                    initialise_every_till();
-                    calculate_tillage();
-                    soil_update_split_and_combine_layers();
+                    if (t % tillage_frequency == 0)
+                    {
+                        initialise_every_till();
+                        calculate_tillage();
+                        soil_update_split_and_combine_layers();
+                    }                    
                 }
-
             }
 
             //Debug.WriteLine("after TI");
@@ -21747,7 +21959,20 @@ Example: rainfall.asc can look like:
                     }
                 }
                 // Debug.WriteLine("calculating bioturbation");
-                soil_bioturbation();
+                //if (t == 0) { potential_bioturbation_kg_m2_y_ini = potential_bioturbation_kg_m2_y; }
+                //if(run_number==0)
+                //{
+                //    potential_bioturbation_kg_m2_y = potential_bioturbation_kg_m2_y_ini * (t) / end_time; // increasing
+
+                //}
+                //if (run_number==1)
+                //{
+                //    potential_bioturbation_kg_m2_y = potential_bioturbation_kg_m2_y_ini * (end_time - t) / end_time; // decreasing
+                //}
+
+                //soil_bioturbation(); 
+                soil_bioturbation_upward();
+
                 // if (findnegativetexture()) { Debugger.Break(); }
 
                 soil_update_split_and_combine_layers();
