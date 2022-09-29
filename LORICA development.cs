@@ -40,6 +40,7 @@ using MathNet.Numerics.IntegralTransforms;
 using System.Management; //used to find Logical Processor and Core count
 using System.Text.RegularExpressions;
 using System.Xml.Schema;
+using System.Reflection;
 
 namespace LORICA4
 {
@@ -7693,6 +7694,8 @@ namespace LORICA4
                     try
                     {
                         dtm_input_filename_textbox.Text = xreader.ReadElementString("dtm_input_filename");
+                        try { dtm_iterate_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("check_iterate_DTM")); }
+                        catch { }
                         soildepth_input_filename_textbox.Text = xreader.ReadElementString("soildepth_input_filename");
                         landuse_input_filename_textbox.Text = xreader.ReadElementString("landuse_input_filename");
                         tillfields_input_filename_textbox.Text = xreader.ReadElementString("tillfields_input_filename");
@@ -8064,6 +8067,7 @@ namespace LORICA4
                 xwriter.WriteElementString("scaledailyweather", XmlConvert.ToString(check_scaling_daily_weather.Checked));
 
                 xwriter.WriteElementString("dtm_input_filename", dtm_input_filename_textbox.Text);
+                if (("input[name='dtm_iterate_checkbox']").Length > 0) { xwriter.WriteElementString("check_iterate_DTM", XmlConvert.ToString(dtm_iterate_checkbox.Checked)); }
                 xwriter.WriteElementString("soildepth_input_filename", soildepth_input_filename_textbox.Text);
                 xwriter.WriteElementString("landuse_input_filename", landuse_input_filename_textbox.Text);
                 xwriter.WriteElementString("tillfields_input_filename", tillfields_input_filename_textbox.Text);
@@ -17328,7 +17332,7 @@ namespace LORICA4
                 // Debug.WriteLine("\n--tillage overview--");
                 // Debug.WriteLine(" tilled a total of " + total_sum_tillage * dx * dx / 1000 + " * 1000 m3");
                 double mass_after = total_catchment_mass();
-                if (Math.Abs(mass_before - mass_after) > 0.0001)
+                if (Math.Abs(mass_before - mass_after) > 0.1)
                 {
                     Debug.WriteLine("err_ti3");
                 }
@@ -20452,23 +20456,23 @@ Example: rainfall.asc can look like:
             stopwatch = Stopwatch.StartNew();
             try
             {
-                //foreach (string dtmfilename in Directory.EnumerateFiles(this.dtm_input_filename_textbox.Text, "*.txt", SearchOption.TopDirectoryOnly)) //"*.asc"
-                //{
-
                 string dtmmotherfilename = dtm_input_filename_textbox.Text; int dtmrepeats = 1;
                 string dtmfilename = dtmmotherfilename; string[] listdtmfiles = { dtm_input_filename_textbox.Text };
                 if (dtm_iterate_checkbox.Checked == true)
                 {
                     //    user has selected 1 dtm but wants to run all similar dtms that exist in that directory.
                     //    We will remove any numbers from that filename and count all files that match the remainder
+                    Debug.WriteLine(" setting up multiple dtm runs " );
                     string[] separater = dtmmotherfilename.Split('\\');
                     string pattern = Regex.Replace(separater[separater.Length - 1], @"[\d-]", string.Empty);
+                    string pattern1 = pattern.Split('.')[0];
+                    string pattern2 = pattern.Split('.')[pattern.Split('.').Length - 1];
+                    pattern = "*" + pattern1 + "*." + pattern2;
                     Debug.WriteLine(" selecting all dem versions that contain " + pattern);
-                    dtmrepeats = Directory.GetFiles(System.IO.Path.GetDirectoryName(dtmmotherfilename)).Count(path => Regex.IsMatch(path, pattern));
+                    Debug.WriteLine(" path is " + System.IO.Path.GetDirectoryName(dtmmotherfilename));
                     listdtmfiles = Directory.GetFiles(System.IO.Path.GetDirectoryName(dtmmotherfilename), pattern);
-                    int maxruns2 = listdtmfiles.Length;
-                    Debug.WriteLine(" there are " + dtmrepeats + " " + maxruns2 + " dem versions available. We will run LORICA for all of them");
-
+                    dtmrepeats = listdtmfiles.Length;
+                    Debug.WriteLine(" there are " + dtmrepeats + " dem versions available. We will run LORICA for all of them");
                 }
                 for (int dtmrun = 0; dtmrun < dtmrepeats; dtmrun++)
                 {
