@@ -9665,7 +9665,7 @@ namespace LORICA4
                                 { // boundaries
                                     if (depression[tempx + i, tempy + j] == this_depression)
                                     {
-                                        Debug.WriteLine(" found a possible delta-starter in cell" + (tempx + i) + " " + (tempy + j) + " depression " + depression[tempx + i, tempy + j] + " for depression " + this_depression);
+                                        //Debug.WriteLine(" found a possible delta-starter in cell" + (tempx + i) + " " + (tempy + j) + " depression " + depression[tempx + i, tempy + j] + " for depression " + this_depression);
                                         found_a_delta_starter = true;
                                         tprowlowestobnb = tempx + i;
                                         tpcollowestobnb = tempy + j;
@@ -9684,7 +9684,7 @@ namespace LORICA4
                         }
                         else
                         {
-                            Debug.WriteLine("did not find an alternative start for this delta  " + deltasize + "in lake " + this_depression);
+                            Debug.WriteLine("did not find an alternative start for this delta  " + deltasize + "in lake " + this_depression + " at time " + t);
                             //this means that no lake cells are left, even though there is sediment left. We are wrong about the former or the latter
                             //development needed
                             //in meantime, let's try to simply end this lake and move on
@@ -9698,8 +9698,8 @@ namespace LORICA4
                             depressionsum_YOM_kg = 0;
                             available_for_delta_m = 0;
                             dhobliquemax2 = 0;
-                            Debug.WriteLine("trying to break free and move on"
-                                );
+                            //Debug.WriteLine("trying to break free and move on");
+
                         }
 
                     }
