@@ -17867,7 +17867,7 @@ namespace LORICA4
                 bool C_done = false, lastlayer = false;
 
                 dsoil = total_soil_thickness(row1, col1);
-                 
+
                 //expanding soil thickness to if blocks are active to account of openness of (possibly) underlying hardlayer:
                 if (blocks_active == 1)
                 {
