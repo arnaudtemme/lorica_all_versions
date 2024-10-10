@@ -65,7 +65,7 @@ namespace LORICA4
         private CheckBox Water_ero_checkbox;
         private TabPage Tillage;
         private PictureBox pictureBox2;
-        private Label label20;
+        private Label label_TI_2;
         private Label trte;
         private TextBox parameter_tillage_constant_textbox;
         private TextBox parameter_ploughing_depth_textbox;
@@ -739,6 +739,14 @@ namespace LORICA4
                 total_average_altitude_m,
                 total_rain_m, total_evap_m, total_infil_m, 
                 total_rain_m3, total_evap_m3, total_infil_m3, total_outflow_m3;
+        private Label label_TI_3;
+        private TextBox tilc_2_CarboZALF;
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
         private CheckBox CarboZALF_calib_stabilizationages_checkbox;
         int output_time;
 
@@ -907,7 +915,7 @@ namespace LORICA4
         tilt_intensity, lift_intensity,
 
         // Tillage parameter
-        tilc;
+        tilc, tilc_calib;
 
         // Tree fall parameters
         double W_m_max, D_m_max, W_m, D_m, tf_frequency;
@@ -1352,8 +1360,10 @@ namespace LORICA4
             this.label9 = new System.Windows.Forms.Label();
             this.Water_ero_checkbox = new System.Windows.Forms.CheckBox();
             this.Tillage = new System.Windows.Forms.TabPage();
+            this.label_TI_3 = new System.Windows.Forms.Label();
+            this.tilc_2_CarboZALF = new System.Windows.Forms.TextBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
-            this.label20 = new System.Windows.Forms.Label();
+            this.label_TI_2 = new System.Windows.Forms.Label();
             this.trte = new System.Windows.Forms.Label();
             this.parameter_tillage_constant_textbox = new System.Windows.Forms.TextBox();
             this.parameter_ploughing_depth_textbox = new System.Windows.Forms.TextBox();
@@ -3965,8 +3975,10 @@ namespace LORICA4
             // 
             // Tillage
             // 
+            this.Tillage.Controls.Add(this.label_TI_3);
+            this.Tillage.Controls.Add(this.tilc_2_CarboZALF);
             this.Tillage.Controls.Add(this.pictureBox2);
-            this.Tillage.Controls.Add(this.label20);
+            this.Tillage.Controls.Add(this.label_TI_2);
             this.Tillage.Controls.Add(this.trte);
             this.Tillage.Controls.Add(this.parameter_tillage_constant_textbox);
             this.Tillage.Controls.Add(this.parameter_ploughing_depth_textbox);
@@ -3979,6 +3991,23 @@ namespace LORICA4
             this.Tillage.Text = "Tillage";
             this.Tillage.UseVisualStyleBackColor = true;
             // 
+            // label_TI_3
+            // 
+            this.label_TI_3.AutoSize = true;
+            this.label_TI_3.Location = new System.Drawing.Point(128, 126);
+            this.label_TI_3.Name = "label_TI_3";
+            this.label_TI_3.Size = new System.Drawing.Size(187, 13);
+            this.label_TI_3.TabIndex = 22;
+            this.label_TI_3.Text = "tillage constant phase 2 CarboZALF-D";
+            // 
+            // tilc_2_CarboZALF
+            // 
+            this.tilc_2_CarboZALF.Location = new System.Drawing.Point(53, 123);
+            this.tilc_2_CarboZALF.Name = "tilc_2_CarboZALF";
+            this.tilc_2_CarboZALF.Size = new System.Drawing.Size(53, 20);
+            this.tilc_2_CarboZALF.TabIndex = 21;
+            this.tilc_2_CarboZALF.Text = "1";
+            // 
             // pictureBox2
             // 
             this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox2.Image")));
@@ -3988,14 +4017,14 @@ namespace LORICA4
             this.pictureBox2.TabIndex = 20;
             this.pictureBox2.TabStop = false;
             // 
-            // label20
+            // label_TI_2
             // 
-            this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(128, 87);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(78, 13);
-            this.label20.TabIndex = 19;
-            this.label20.Text = "tillage constant";
+            this.label_TI_2.AutoSize = true;
+            this.label_TI_2.Location = new System.Drawing.Point(128, 87);
+            this.label_TI_2.Name = "label_TI_2";
+            this.label_TI_2.Size = new System.Drawing.Size(78, 13);
+            this.label_TI_2.TabIndex = 19;
+            this.label_TI_2.Text = "tillage constant";
             // 
             // trte
             // 
@@ -7192,6 +7221,46 @@ namespace LORICA4
         }// end writesoil
 
 
+        void writeOSLages_CarboZALF_colluvium(string name4)
+        {
+            int layer;
+            string FILENAME = name4;
+            using (StreamWriter sw = new StreamWriter(FILENAME))
+            {
+                sw.Write("row, col, layer, grain_age, deposition_age, count_surfaced");
+                sw.Write("\r\n");
+                int t_out = t + 1;
+                for (row = 0; row < nr; row++)
+                {
+                    for (col = 0; col < nc; col++)
+                    {
+                        if (dtm[row, col] != -9999)
+                        {
+                            if((row == 14 & col == 17) |
+                                (row == 27 & col == 17) |
+                                (row == 14 & col == 23) |
+                                (row == 17 & col == 20) |
+                                (row == 18 & col == 22)
+                                )
+                            {
+                                for (int lay = 0; lay < max_soil_layers; lay++)
+                                {
+                                    for (int ind = 0; ind < OSL_grainages[row, col, lay].Length; ind++)
+                                    {
+                                        double laythick = layerthickness_m[row, col, lay];
+                                        double laymass = total_layer_mass_kg(row, col, lay);
+                                        sw.Write(row + "," + col + "," + lay + "," + OSL_grainages[row, col, lay][ind] + "," + OSL_depositionages[row, col, lay][ind] + "," + OSL_surfacedcount[row, col, lay][ind]);
+                                        sw.Write("\r\n");
+                                    }
+                                }
+                            }
+                            
+                        }
+                    }
+                }
+                sw.Close();
+            }
+        }
         void writeOSLages(string name4)
         {
             int layer;
@@ -7224,6 +7293,60 @@ namespace LORICA4
             }
         }
 
+        void writeallsoils_CarboZALF_colluvium(string name4)
+        {
+            int layer;
+            double cumthick, midthick, z_layer;
+            string FILENAME = name4;
+            using (StreamWriter sw = new StreamWriter(FILENAME))
+            {
+                sw.Write("row,col,t,nlayer,cumth_m,thick_m,midthick_m,z,coarse_kg,sand_kg,silt_kg,clay_kg,fine_kg,YOM_kg,OOM_kg,YOM/OOM,f_coarse,f_sand,f_silt,f_clay,f_fineclay,ftotal_clay,f_OM,BD");
+                if (CN_checkbox.Checked) { sw.Write(",Be-10_meteoric_clay,Be-10_meteoric_silt,Be-10_meteoric_total,Be-10_insitu,C-14_insitu"); }
+                sw.Write("\r\n");
+                int t_out = t + 1;
+                for (int row = 0; row < nr; row++)
+                {
+                    for (int col = 0; col < nc; col++)
+                    {
+                        if (dtm[row, col] != -9999)
+                        {
+                            if ((row == 14 & col == 17) |
+                                (row == 27 & col == 17) |
+                                (row == 14 & col == 23) |
+                                (row == 17 & col == 20) |
+                                (row == 18 & col == 22)
+                                )
+                            {
+                                cumthick = 0;
+                                midthick = 0;
+                                z_layer = dtm[row, col];
+                                for (layer = 0; layer < max_soil_layers; layer++) // only the top layer
+                                {
+                                    if (layerthickness_m[row, col, layer] > 0)
+                                    {
+                                        cumthick += layerthickness_m[row, col, layer];
+                                        midthick += layerthickness_m[row, col, layer] / 2;
+                                        double totalweight = texture_kg[row, col, layer, 0] + texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4] + young_SOM_kg[row, col, layer] + old_SOM_kg[row, col, layer];
+                                        double totalweight_tex = texture_kg[row, col, layer, 0] + texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4];
+                                        sw.Write(row + "," + col + "," + t_out + "," + layer + "," + cumthick + "," + layerthickness_m[row, col, layer] + "," + midthick + "," + z_layer + "," + texture_kg[row, col, layer, 0] + "," + texture_kg[row, col, layer, 1] + "," + texture_kg[row, col, layer, 2] + "," + texture_kg[row, col, layer, 3] + "," + texture_kg[row, col, layer, 4] + "," + young_SOM_kg[row, col, layer] + "," + old_SOM_kg[row, col, layer] + "," + young_SOM_kg[row, col, layer] / old_SOM_kg[row, col, layer] + "," + texture_kg[row, col, layer, 0] / totalweight_tex + "," + texture_kg[row, col, layer, 1] / totalweight_tex + "," + texture_kg[row, col, layer, 2] / totalweight_tex + "," + texture_kg[row, col, layer, 3] / totalweight_tex + "," + texture_kg[row, col, layer, 4] / totalweight_tex + "," + (texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4]) / totalweight_tex + "," + (young_SOM_kg[row, col, layer] + old_SOM_kg[row, col, layer]) / (young_SOM_kg[row, col, layer] + old_SOM_kg[row, col, layer] + totalweight_tex) + "," + bulkdensity[row, col, layer]);
+
+                                        if (CN_checkbox.Checked)
+                                        {
+                                            sw.Write("," + (CN_atoms_cm2[row, col, layer, 0] + "," + CN_atoms_cm2[row, col, layer, 1]) + "," + (CN_atoms_cm2[row, col, layer, 0] + CN_atoms_cm2[row, col, layer, 1]) + "," + CN_atoms_cm2[row, col, layer, 2] + "," + CN_atoms_cm2[row, col, layer, 3]);
+                                        }
+
+                                        sw.Write("\r\n");
+                                        midthick += layerthickness_m[row, col, layer] / 2;
+                                        z_layer -= layerthickness_m[row, col, layer];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                sw.Close();
+            }
+        }// end writeallsoils
         void writeallsoils(string name4)
         {
             int layer;
@@ -13386,6 +13509,7 @@ namespace LORICA4
                 bd = 2700;
             }
 
+            bd = 1720;
             return bd;
 
         }
@@ -17001,7 +17125,7 @@ namespace LORICA4
                 {           // the index is sorted from low to high values, but flow goes from high to low
                     row = row_index[runner]; col = col_index[runner];
                     //  Debug.WriteLine("till1");
-
+                    //if(row==0 & col == 26) { Debugger.Break(); }
                     if (tillfields[row, col] == 1)
                     {
                         if (check_negative_weight(row, col) == true) { MessageBox.Show("negative weight in t " + t + ", row " + row + ", col " + col + ", step 1"); }
@@ -17351,7 +17475,7 @@ namespace LORICA4
                                             }
 
                                             layerthickness_m[row, col, layero] = thickness_calc(row, col, layero);
-                                            layerthickness_m[row + i, col + j, 0] = thickness_calc(row, col, layero);
+                                                layerthickness_m[row + i, col + j, 0] = thickness_calc(row, col, layero);
 
                                             //if necessary, i.e. an entire layer removed, shift cells up
                                             if (layero > 0)
@@ -17374,6 +17498,7 @@ namespace LORICA4
                     {
                         if (dtm[row, col] != -9999)
                         {
+                            //if(row == 0 & col == 26) { Debugger.Break(); }
                             double old_soil_thickness = soildepth_m[row, col];
                             update_all_layer_thicknesses(row, col);
                             double new_soil_thickness = total_soil_thickness(row, col);
@@ -20217,35 +20342,32 @@ Example: rainfall.asc can look like:
 
         private double calib_function_CarboZALF_OSL(int row_cal, int col_cal, double sample_depth_from_fAh, double age_ref)
         {
-            double depth_z, refdepth, penalty, dummy_penalty;
+            double depth_z, refdepth, penalty, age_model;
             int lay_cal;
 
             refdepth = dtm[row_cal, col_cal] - dtmchange_m[row_cal, col_cal] + sample_depth_from_fAh;
             depth_z = dtm[row_cal, col_cal];
             lay_cal = -1;
-            dummy_penalty = end_time / (end_time - age_ref + 1); // Penalty for samples where colluvium is simulated too thin
-                                                                 // Calculate penalty based on measured age relative to simulation time.
-                                                                 // The older, the higher the penalty. Penalties are generally higher than the ones calculated below.
-                                                                 // Penalty never below 1, made sure by adding 1 to the reference age
-            
+            age_model = end_time * 2; // dummy age for when colluvium is simulated too thin. 1*end_time not suitable, because it can be closer to the older ages than younger modelled ages
+            //dummy_penalty = age_ref / (end_time - age_ref + 1); // Penalty for samples where colluvium is simulated too thin
+            //                                                     // Calculate penalty based on measured age relative to simulation time.
+            //                                                     // The older, the higher the penalty. Penalties are generally higher than the ones calculated below.
+            //                                                     // Penalty never below 1, made sure by adding 1 to the reference age
+
             // Select the layer that corresponds to the measured sample depth. 
-            if (refdepth > depth_z)
-            { // if measured sample is not present in the simulated colluvium, simulated colluvium too thin
-                penalty = dummy_penalty;
-            }
-            else
+            if (refdepth < depth_z) // if measured sample is  present in the simulated colluvium
             {
                 lay_cal = 0;
-                while (!(refdepth < depth_z & (refdepth >= (z - layerthickness_m[row_cal, col_cal, lay_cal]))))
+                //while (!(refdepth < depth_z & (refdepth >= (z - layerthickness_m[row_cal, col_cal, lay_cal])))) // determine the layer in which the sample should be located
+                while(refdepth < depth_z) // while the depth of the sample is located above the upper depth of the layer, move to the next layer
                 {
                     lay_cal++;
                     depth_z -= layerthickness_m[row_cal, col_cal, lay_cal];
                 }
-                // calculate age penalty
-                try
+                try                 // calculate simulated age mode
                 {
                     int[] ages_cal = OSL_grainages[row_cal, col_cal, lay_cal];
-                    ages_cal = ages_cal.Where(e => e < start_age).ToArray(); // remove old grains from the selection, Focus on the younger grains. younger age is never larger thans tart_age, so it's a good reference point
+                    ages_cal = ages_cal.Where(e => e < start_age).ToArray(); // remove old grains from the selection, Focus on the younger grains. younger age is never larger than start_age, so it's a good reference point
                     double[] ages_cal_d = ages_cal.Select(x => (double)x).ToArray();
 
                     if (ages_cal_d.Length > 1)
@@ -20264,32 +20386,36 @@ Example: rainfall.asc can look like:
                         for (int ii = 0; ii < density_value.Length; ii++) { indices_prob[ii] = ii; }
                         Array.Sort(density_prob, indices_prob);
 
-                        double ages_mode = density_value[indices_prob[indices_prob.Length - 1]];
-
-                        penalty = Math.Abs(ages_mode - age_ref) / age_ref;
+                        age_model = density_value[indices_prob[indices_prob.Length - 1]];
                     }
                     else
                     {
                         if(ages_cal_d.Length == 1)
                         { // only one rejuvenated grain. Use that age as reference
-                            penalty = Math.Abs(ages_cal_d[0] - age_ref) / age_ref;
+                            age_model = ages_cal_d[0];
                         }
                         else
                         {
-                            // no grains present for this sample. This means the sample is too close to the surface (layer = 0), or there are no young grains (poor bleaching, non-eroded layer). So penalty is based on measured age
-                            penalty = dummy_penalty;
+                            // no grains present for this sample. This means the sample is too close to the surface (layer = 0), or there are no young grains (poor bleaching, non-eroded layer). So penalty is based on the dummy age
                         }
                     }
                 }
+
                 catch
                 {
                     Debug.WriteLine("Error in calculating age densities");
-                    penalty = dummy_penalty;
                 }
+            }
+            else // sample is located outside of simulated colluvium, use runtime as age estimate for a high penalty
+            {
 
             }
+            // penalty = Math.Pow((age_model - age_ref),2); // calculate squared error
+            penalty = Math.Abs((age_model - age_ref)); // calculate absolute error
+
             return (penalty);
         }
+
         private double calib_objective_function_CarboZALF()
         {
             //this code calculates the value of the objective function during calibration and is user-specified. 
@@ -20351,6 +20477,7 @@ Example: rainfall.asc can look like:
                     cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.155, 1731); // NCL7317145
                     cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.255, 1048); // NCL7317146
 
+                    
                     // calibration young colluvium (<= 300 a)
                     // Location P2
                     cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.325, 120); // NCL7317041
@@ -20382,6 +20509,7 @@ Example: rainfall.asc can look like:
                     cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.245, 197); // NCL7317143
                     cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.345, 139); // NCL7317149
                     cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.445, 117); // NCL7317150
+                    
                 }
                 else // calibration with mode of measured ages
                 {
@@ -20390,15 +20518,16 @@ Example: rainfall.asc can look like:
                     cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.025, 3832); // NCL7317038
                     cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.125, 3606); // NCL7317039
                     cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.225, 3895); // NCL7317040
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.325, 2170); // NCL7317041
 
                     // Location P3
                     cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.055, 3265); // NCL7317069
                     cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.155, 2650); // NCL7317145
                     cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.255, 1425); // NCL7317146
 
+                    
                     // calibration young colluvium (<= 300 a)
                     // Location P2
-                    cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.325, 2170); // NCL7317041
                     cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.425, 66); // NCL7317042
                     cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.605, 46); // NCL7317068
 
@@ -20426,7 +20555,7 @@ Example: rainfall.asc can look like:
                     cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.145, 282); // NCL7317148
                     cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.245, 232); // NCL7317143
                     cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.345, 146); // NCL7317149
-                    cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.445, 126); // NCL7317150                   
+                    cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.445, 126); // NCL7317150 
                 }
                 error_CZ = cum_age_error;
             }
@@ -20943,8 +21072,8 @@ Example: rainfall.asc can look like:
 
                 for (run_number = 0; run_number < maxruns; run_number++) //Maxruns Loop()
                 {
-
-
+                    ////// upheaval_scenarios
+                    tillage_frequency = 1;
 
                     //WATER EROSION AND DEPOSITION PARAMETERS
                     if (water_ero_active)
@@ -21282,10 +21411,27 @@ Example: rainfall.asc can look like:
                                 {
                                     int rat_number = Convert.ToInt32(Math.Floor(run_number / Math.Pow(user_specified_number_of_ratios, 0)) % user_specified_number_of_ratios);
                                     tilc *= calib_ratios[0, rat_number];
+                                    tilc_calib = tilc;
                                     Debug.WriteLine("First ratio number: " + rat_number + " tilc now " + tilc + " ratio " + calib_ratios[0, rat_number]);
 
                                 }
 
+                                ////// upheaval_scenario
+                                int rat_number2;
+                                // rat_number2 = Convert.ToInt32(Math.Floor(run_number / Math.Pow(user_specified_number_of_ratios, 0)) % user_specified_number_of_ratios);
+                                //tillage_frequency *= Convert.ToInt32(Math.Round(calib_ratios[0, rat_number2], 0));
+                                //Debug.WriteLine("First ratio number: " + rat_number2 + " frequency now " + tillage_frequency + " ratio " + calib_ratios[0, rat_number2]);
+
+                                if (version_bioturbation_Checkbox.Checked)
+                                {
+                                    rat_number2 = Convert.ToInt32(Math.Floor(run_number / Math.Pow(user_specified_number_of_ratios, 0)) % user_specified_number_of_ratios);
+                                    potential_bioturbation_kg_m2_y *= calib_ratios[0, rat_number2];
+
+                                    rat_number2 = Convert.ToInt32(Math.Floor(run_number / Math.Pow(user_specified_number_of_ratios, 1)) % user_specified_number_of_ratios);
+                                    bioturbation_depth_decay_constant *= calib_ratios[1, rat_number2];
+
+                                    // Debug.WriteLine("First ratio number: " + rat_number2 + " frequency now " + potential_bioturbation_kg_m2_y + " ratio " + calib_ratios[0, rat_number2]);
+                                }
                             }
 
                             timeseries_matrix = new double[System.Convert.ToInt32(end_time), number_of_outputs];
@@ -21601,13 +21747,101 @@ Example: rainfall.asc can look like:
 
                 if (version_CarboZALF_checkbox.Checked)
                 {
+
                     // Update tillage depth based on year. MvdM develop for Monte Carlo analysis
+                    // Years with 2018 as reference. Periods calculated with reconstructed plough history of carboZALF-D (Van der Meij et al, 2019)
+
+                    // Final run with correct 10-Be output
+                    // run time is 19 ka. Tillage erosion in the last 5 ka. So correct times for the initial run (to build up cosmogenic nuclide stocks
+                    tilltime = 0;
+                    // tillage starts 5 ka before end run
+                    if (end_time - t < 5000)
+                    {
+                        tilltime = 1;
+
+                        // output every 100 years
+                        output_time = 100;
+
+                        if (end_time - t <= 212) // Shift to entire field ploughing
+                        {
+
+                            output_time = 10; // set output to every 10 years
+                        }
+                        if (end_time - t == 212) // Shift to entire field ploughing
+                        {
+                            
+                            output_time = 10; // set output to every 10 years
+                            for (row = 0; row < nr; row++)
+                            {
+                                for (col = 0; col < nc; col++)
+                                {
+                                    tillfields[row, col] = 1;
+                                }
+                            }
+                        }
+                    }
+                    // Calibration of tillage parameters
+                    /* calibrate tilc1
                     plough_depth = 0.06;
-                    if (end_time - t < 1470) { plough_depth = 0.115; }
-                    if (end_time - t < 223) { plough_depth = 0.16; }
-                    if (end_time - t < 61) { plough_depth = 0.275; }
-                    if (end_time - t < 31) { plough_depth = 0.20; }
-                    if (end_time - t == 214) // Shift to entire field ploughing
+                    if (end_time - t < 1468) { plough_depth = 0.115; }
+                    if (end_time - t < 221) { plough_depth = 0.16; }
+                    if (end_time - t < 59) { plough_depth = 0.275; }
+                    if (end_time - t < 29) { plough_depth = 0.20; }
+                    */
+
+                    // for phase 2 and 3. Also activate the other calibration ages
+                   /*
+                   plough_depth = 0.06;
+                   tilc = 0.15; // tillage constant phase 1. Calibrated separately
+                   if (end_time - t < 1468) { plough_depth = 0.115; tilc = double.Parse(tilc_2_CarboZALF.Text); } // tillage constant phase 2. Calibrated as given parameter in interface
+                   if (end_time - t < 221) { plough_depth = 0.16; tilc = tilc_calib; } // tillage constant phase 3. Calibrated as parameter inside Lorica
+                   if (end_time - t < 59) { plough_depth = 0.275; tilc = tilc_calib; } 
+                   if (end_time - t < 29) { plough_depth = 0.20; tilc = tilc_calib; }
+                   if (end_time - t == 212) // Shift to entire field ploughing
+                   {
+                       output_time = 10; // set output to every 10 years
+                       for (row = 0; row < nr; row++)
+                       {
+                           for (col = 0; col < nc; col++)
+                           {
+                               tillfields[row, col] = 1;
+                           }
+                       }
+                   }
+                   */
+
+                    // Run sensitivity analysis for boundary conditions. Define randomly drawn introduction years and plough depths
+                    // First number is the average value or the best calibrated value
+                    double[] PT4_t = new double[] { 1468, 1509, 1683, 1594, 1652, 1601, 1528, 1237, 1746, 1230};
+                    double[] PT3_t = new double[] { 221, 220, 222, 219, 217, 222, 217, 222, 220, 217}; 
+                    double[] PT2_t = new double[] { 59, 63, 57, 53, 57, 57, 54, 58, 57, 53}; 
+                    double[] PT1_t = new double[] { 28, 28, 28, 28, 28, 28, 28, 28, 28, 28}; 
+
+                    double[] PT5_d = new double[] { 0.06, 0.05, 0.05, 0.05, 0.07, 0.06, 0.07, 0.06, 0.05, 0.06};
+                    double[] PT4_d = new double[] { 0.115, 0.15, 0.11, 0.13, 0.13, 0.10, 0.15, 0.13, 0.13, 0.14}; 
+                    double[] PT3_d = new double[] { 0.16, 0.15, 0.15, 0.17, 0.16, 0.16, 0.16, 0.16, 0.16, 0.16}; 
+                    double[] PT2_d = new double[] { 0.275, 0.27, 0.25, 0.30, 0.26, 0.25, 0.26, 0.29, 0.27, 0.28}; 
+                    double[] PT1_d = new double[] { 0.20, 0.20, 0.20, 0.20, 0.20, 0.20, 0.20, 0.20, 0.20, 0.20}; 
+
+                    double[] drain = new double[] { 212, 222, 224, 224, 221, 207, 208, 205, 198, 202 };
+
+                    // Calibrated parameters
+                    double[] tilC_2_d = new double[] { 0.16, 0.14, 0.14, 0.14, 0.14, 0.14, 0.12, 0.12, 0.12, 0.16 };
+                    double[] tilC_3_d = new double[] { 0.46, 0.48, 0.50, 0.46, 0.52, 0.54, 0.52, 0.48, 0.46, 0.50 };
+
+                    int index_BC = run_number / 10; // integer division
+                    int index_pars = run_number % 10; // integer remainder
+
+                    // read parameters
+
+
+                    plough_depth = PT5_d[index_BC];
+                    tilc = 0.15; // tillage constant phase 1
+                    if (end_time - t < PT4_t[index_BC]) { plough_depth = PT4_d[index_BC]; tilc = tilC_2_d[index_pars]; } // tillage constant phase 2. 
+                    if (end_time - t < PT3_t[index_BC]) { plough_depth = PT3_d[index_BC]; tilc = tilC_3_d[index_pars]; } // tillage constant phase 3. 
+                    if (end_time - t < PT2_t[index_BC]) { plough_depth = PT2_d[index_BC]; tilc = tilC_3_d[index_pars]; }
+                    if (end_time - t < PT1_t[index_BC]) { plough_depth = PT1_d[index_BC]; tilc = tilC_3_d[index_pars]; }
+                    if (end_time - t == drain[index_BC]) // Shift to entire field ploughing
                     {
                         output_time = 10; // set output to every 10 years
                         for (row = 0; row < nr; row++)
@@ -21617,7 +21851,7 @@ Example: rainfall.asc can look like:
                                 tillfields[row, col] = 1;
                             }
                         }
-                    }
+                    } 
                 }
 
                 if (tilltime == 1)
@@ -21932,6 +22166,11 @@ Example: rainfall.asc can look like:
                 try
                 {
                     //Debug.WriteLine("writing all soils");
+                    if(version_CarboZALF_checkbox.Checked)
+                    {
+                        writeallsoils_CarboZALF_colluvium(workdir + "\\" + run_number + "_" + t_out + "_out_allsoils_samples.csv");
+                    } 
+                    
                     writeallsoils(workdir + "\\" + run_number + "_" + t_out + "_out_allsoils.csv");
                 }
                 catch
@@ -22047,6 +22286,10 @@ Example: rainfall.asc can look like:
                 {
                     try
                     {
+                        if(version_CarboZALF_checkbox.Checked)
+                        {
+                            writeOSLages_CarboZALF_colluvium(workdir + "\\" + run_number + "_" + t_out + "_out_OSL_ages_samples.csv");
+                        }
                         writeOSLages(workdir + "\\" + run_number + "_" + t_out + "_out_OSL_ages.csv");
                     }
                     catch
