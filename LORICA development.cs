@@ -38,6 +38,7 @@ using System.Numerics;
 using MathNet.Numerics;
 using MathNet.Numerics.IntegralTransforms;
 using System.Management; //used to find Logical Processor and Core count
+// using System.Reflection.Emit;
 
 namespace LORICA4
 {
@@ -540,6 +541,7 @@ namespace LORICA4
             soil_phys_weath_active,
             soil_chem_weath_active,
             soil_bioturb_active,
+            bioturb_upheaval_active,
             soil_clay_transloc_active,
             soil_carbon_active,
             input_data_error,
@@ -739,6 +741,11 @@ namespace LORICA4
                 total_average_altitude_m,
                 total_rain_m, total_evap_m, total_infil_m, 
                 total_rain_m3, total_evap_m3, total_infil_m3, total_outflow_m3;
+        private TextBox bioturbation_fraction_mixing_textbox;
+        private TextBox upheaval_depth_textbox;
+        private TextBox upheaval_frequency_textbox;
+        private CheckBox soil_bioturb_upheaval_checkbox;
+        private ComboBox bioturbation_depth_function_choiceList;
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
@@ -935,7 +942,10 @@ namespace LORICA4
         double potential_bioturbation_kg_m2_y;
         double potential_bioturbation_kg_m2_y_ini = 0;
         double bioturbation_depth_decay_constant;
-        double BT_frac;
+        string bioturbation_depth_function;
+        double fraction_subsurface_mixing;
+        double upheaval_frequency;
+        double upheaval_depth;
 
         //Carbon cycle parameters
         double potential_OM_input,
@@ -1173,6 +1183,10 @@ namespace LORICA4
             System.Windows.Forms.Label label85;
             System.Windows.Forms.Label label86;
             System.Windows.Forms.Label label13;
+            System.Windows.Forms.Label labelBT_depthfunction;
+            System.Windows.Forms.Label label_fractionBT;
+            System.Windows.Forms.Label upheaval_depth_label;
+            System.Windows.Forms.Label upheaval_freq_label;
             this.label36 = new System.Windows.Forms.Label();
             this.radio_ls_fraction = new System.Windows.Forms.RadioButton();
             this.radio_ls_absolute = new System.Windows.Forms.RadioButton();
@@ -1470,6 +1484,11 @@ namespace LORICA4
             this.clay_neoform_constant_textbox = new System.Windows.Forms.TextBox();
             this.soil_clay_transloc_checkbox = new System.Windows.Forms.CheckBox();
             this.bioturbation = new System.Windows.Forms.TabPage();
+            this.upheaval_depth_textbox = new System.Windows.Forms.TextBox();
+            this.upheaval_frequency_textbox = new System.Windows.Forms.TextBox();
+            this.soil_bioturb_upheaval_checkbox = new System.Windows.Forms.CheckBox();
+            this.bioturbation_fraction_mixing_textbox = new System.Windows.Forms.TextBox();
+            this.bioturbation_depth_function_choiceList = new System.Windows.Forms.ComboBox();
             this.bioturbation_depth_decay_textbox = new System.Windows.Forms.TextBox();
             this.potential_bioturbation_textbox = new System.Windows.Forms.TextBox();
             this.soil_bioturb_checkbox = new System.Windows.Forms.CheckBox();
@@ -1602,6 +1621,10 @@ namespace LORICA4
             label85 = new System.Windows.Forms.Label();
             label86 = new System.Windows.Forms.Label();
             label13 = new System.Windows.Forms.Label();
+            labelBT_depthfunction = new System.Windows.Forms.Label();
+            label_fractionBT = new System.Windows.Forms.Label();
+            upheaval_depth_label = new System.Windows.Forms.Label();
+            upheaval_freq_label = new System.Windows.Forms.Label();
             Landsliding.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.InfoStatusPanel)).BeginInit();
@@ -2235,6 +2258,42 @@ namespace LORICA4
             label13.Size = new System.Drawing.Size(112, 13);
             label13.TabIndex = 56;
             label13.Text = "Depth decay constant";
+            // 
+            // labelBT_depthfunction
+            // 
+            labelBT_depthfunction.AutoSize = true;
+            labelBT_depthfunction.Location = new System.Drawing.Point(133, 103);
+            labelBT_depthfunction.Name = "labelBT_depthfunction";
+            labelBT_depthfunction.Size = new System.Drawing.Size(75, 13);
+            labelBT_depthfunction.TabIndex = 61;
+            labelBT_depthfunction.Text = "depth function";
+            // 
+            // label_fractionBT
+            // 
+            label_fractionBT.AutoSize = true;
+            label_fractionBT.Location = new System.Drawing.Point(132, 132);
+            label_fractionBT.Name = "label_fractionBT";
+            label_fractionBT.Size = new System.Drawing.Size(236, 13);
+            label_fractionBT.TabIndex = 63;
+            label_fractionBT.Text = "Fraction subsurface mixing. The rest is mounding";
+            // 
+            // upheaval_depth_label
+            // 
+            upheaval_depth_label.AutoSize = true;
+            upheaval_depth_label.Location = new System.Drawing.Point(579, 70);
+            upheaval_depth_label.Name = "upheaval_depth_label";
+            upheaval_depth_label.Size = new System.Drawing.Size(84, 13);
+            upheaval_depth_label.TabIndex = 68;
+            upheaval_depth_label.Text = "Mixing depth [m]";
+            // 
+            // upheaval_freq_label
+            // 
+            upheaval_freq_label.AutoSize = true;
+            upheaval_freq_label.Location = new System.Drawing.Point(579, 41);
+            upheaval_freq_label.Name = "upheaval_freq_label";
+            upheaval_freq_label.Size = new System.Drawing.Size(81, 13);
+            upheaval_freq_label.TabIndex = 67;
+            upheaval_freq_label.Text = "Frequency [a-1]";
             // 
             // mainMenu1
             // 
@@ -5106,6 +5165,15 @@ namespace LORICA4
             // 
             // bioturbation
             // 
+            this.bioturbation.Controls.Add(upheaval_depth_label);
+            this.bioturbation.Controls.Add(upheaval_freq_label);
+            this.bioturbation.Controls.Add(this.upheaval_depth_textbox);
+            this.bioturbation.Controls.Add(this.upheaval_frequency_textbox);
+            this.bioturbation.Controls.Add(this.soil_bioturb_upheaval_checkbox);
+            this.bioturbation.Controls.Add(label_fractionBT);
+            this.bioturbation.Controls.Add(this.bioturbation_fraction_mixing_textbox);
+            this.bioturbation.Controls.Add(labelBT_depthfunction);
+            this.bioturbation.Controls.Add(this.bioturbation_depth_function_choiceList);
             this.bioturbation.Controls.Add(label68);
             this.bioturbation.Controls.Add(label71);
             this.bioturbation.Controls.Add(label73);
@@ -5118,6 +5186,53 @@ namespace LORICA4
             this.bioturbation.TabIndex = 3;
             this.bioturbation.Text = "Bioturbation";
             this.bioturbation.UseVisualStyleBackColor = true;
+            // 
+            // upheaval_depth_textbox
+            // 
+            this.upheaval_depth_textbox.Location = new System.Drawing.Point(472, 67);
+            this.upheaval_depth_textbox.Name = "upheaval_depth_textbox";
+            this.upheaval_depth_textbox.Size = new System.Drawing.Size(100, 20);
+            this.upheaval_depth_textbox.TabIndex = 66;
+            this.upheaval_depth_textbox.Text = "0.5";
+            // 
+            // upheaval_frequency_textbox
+            // 
+            this.upheaval_frequency_textbox.Location = new System.Drawing.Point(472, 41);
+            this.upheaval_frequency_textbox.Name = "upheaval_frequency_textbox";
+            this.upheaval_frequency_textbox.Size = new System.Drawing.Size(100, 20);
+            this.upheaval_frequency_textbox.TabIndex = 65;
+            this.upheaval_frequency_textbox.Text = "1000";
+            // 
+            // soil_bioturb_upheaval_checkbox
+            // 
+            this.soil_bioturb_upheaval_checkbox.AutoSize = true;
+            this.soil_bioturb_upheaval_checkbox.Location = new System.Drawing.Point(473, 9);
+            this.soil_bioturb_upheaval_checkbox.Name = "soil_bioturb_upheaval_checkbox";
+            this.soil_bioturb_upheaval_checkbox.Size = new System.Drawing.Size(143, 17);
+            this.soil_bioturb_upheaval_checkbox.TabIndex = 64;
+            this.soil_bioturb_upheaval_checkbox.Text = "Bioturbation by upheaval";
+            this.soil_bioturb_upheaval_checkbox.UseVisualStyleBackColor = true;
+            // 
+            // bioturbation_fraction_mixing_textbox
+            // 
+            this.bioturbation_fraction_mixing_textbox.Location = new System.Drawing.Point(25, 129);
+            this.bioturbation_fraction_mixing_textbox.Name = "bioturbation_fraction_mixing_textbox";
+            this.bioturbation_fraction_mixing_textbox.Size = new System.Drawing.Size(100, 20);
+            this.bioturbation_fraction_mixing_textbox.TabIndex = 62;
+            this.bioturbation_fraction_mixing_textbox.Text = "1";
+            // 
+            // bioturbation_depth_function_choiceList
+            // 
+            this.bioturbation_depth_function_choiceList.FormattingEnabled = true;
+            this.bioturbation_depth_function_choiceList.Items.AddRange(new object[] {
+            "Gradational",
+            "Exponential",
+            "Abrupt"});
+            this.bioturbation_depth_function_choiceList.Location = new System.Drawing.Point(25, 101);
+            this.bioturbation_depth_function_choiceList.Name = "bioturbation_depth_function_choiceList";
+            this.bioturbation_depth_function_choiceList.Size = new System.Drawing.Size(102, 21);
+            this.bioturbation_depth_function_choiceList.TabIndex = 60;
+            this.bioturbation_depth_function_choiceList.Text = "Exponential";
             // 
             // bioturbation_depth_decay_textbox
             // 
@@ -7588,9 +7703,14 @@ namespace LORICA4
                         soil_bioturb_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("bioturbation_active"));
                         potential_bioturbation_textbox.Text = xreader.ReadElementString("potential_bioturb");
                         bioturbation_depth_decay_textbox.Text = xreader.ReadElementString("bioturb_depth_decay");
+                        bioturbation_depth_function_choiceList.SelectedItem = xreader.ReadElementString("bioturb_depth_function");
+                        bioturbation_fraction_mixing_textbox.Text = xreader.ReadElementString("bioturb_fraction_mixing");
+                        soil_bioturb_upheaval_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("bioturb_upheaval_active"));
+                        upheaval_frequency_textbox.Text = xreader.ReadElementString("bioturb_upheaval_frequency");
+                        upheaval_depth_textbox.Text = xreader.ReadElementString("bioturb_upheaval_depth");
                         xreader.ReadEndElement();
                     }
-                    catch { read_error = 1; Debug.WriteLine("failed reading water ero paras"); }
+                    catch { read_error = 1; Debug.WriteLine("failed reading bioturbation paras"); }
 
                     try
                     {
@@ -7983,6 +8103,11 @@ namespace LORICA4
                 xwriter.WriteElementString("bioturbation_active", XmlConvert.ToString(soil_bioturb_checkbox.Checked));
                 xwriter.WriteElementString("potential_bioturb", potential_bioturbation_textbox.Text);
                 xwriter.WriteElementString("bioturb_depth_decay", bioturbation_depth_decay_textbox.Text);
+                xwriter.WriteElementString("bioturb_depth_function", bioturbation_depth_function_choiceList.SelectedItem.ToString());
+                xwriter.WriteElementString("bioturb_fraction_mixing", bioturbation_fraction_mixing_textbox.Text);
+                xwriter.WriteElementString("bioturb_upheaval_active", XmlConvert.ToString(soil_bioturb_upheaval_checkbox.Checked));
+                xwriter.WriteElementString("bioturb_upheaval_frequency", upheaval_frequency_textbox.Text);
+                xwriter.WriteElementString("bioturb_upheaval_depth", upheaval_depth_textbox.Text);
                 xwriter.WriteEndElement();
 
                 xwriter.WriteStartElement("Carboncycle");
@@ -14174,7 +14299,73 @@ namespace LORICA4
             }
 
         }
-       
+
+        double soil_bioturbation_layer_activity(int layer, double depth, double total_soil_thickness_m)
+        {
+            double depth_upp, depth_low, layer_bio_activity_index = 0, total_bio_activity_index = 1, bio_layer_index = 0;
+            try
+            {
+                if (bioturbation_depth_function == "Gradational")
+                {
+                    // Gradational
+                    // bioturbation_depth_decay_constant = 1;
+                    depth_upp = depth;
+                    depth_low = depth + layerthickness_m[row, col, layer];
+                    if (depth_upp < 1 / bioturbation_depth_decay_constant) // Is the upper part of the layer still under the mixing limit?
+                    {
+                        if (depth_low > (1 / bioturbation_depth_decay_constant))
+                        {
+                            depth_low = 1 / bioturbation_depth_decay_constant; // if the lower boundary is below the mixing limit, reset it to the mixing limit
+                        }
+                        layer_bio_activity_index = -bioturbation_depth_decay_constant / 2 * (Math.Pow(depth_low, 2) - Math.Pow(depth_upp, 2)) + ((depth_low) - depth_upp);
+                        total_bio_activity_index = -bioturbation_depth_decay_constant / 2 * Math.Pow(1 / bioturbation_depth_decay_constant, 2) + 1 / bioturbation_depth_decay_constant;
+                    }
+                    else
+                    { // if top of the layer is below the mixing limit, there is no BT
+                        layer_bio_activity_index = 0;
+                        total_bio_activity_index = 1;
+                    }
+                }
+                if (bioturbation_depth_function == "Exponential")
+                {
+                    // Exponential
+                    // bioturbation_depth_decay_constant = 6;
+                    layer_bio_activity_index = Math.Exp(-bioturbation_depth_decay_constant * depth) - (Math.Exp(-bioturbation_depth_decay_constant * (depth + layerthickness_m[row, col, layer])));
+                    total_bio_activity_index = 1 - (Math.Exp(-bioturbation_depth_decay_constant * total_soil_thickness_m));
+                }
+
+                if (bioturbation_depth_function == "Abrupt")
+                {
+                    // Abrupt
+                    //bioturbation_depth_decay_constant = 1;
+                    depth_upp = depth;
+                    depth_low = depth + layerthickness_m[row, col, layer];
+                    if (depth_upp < bioturbation_depth_decay_constant) // Is the upper part of the layer still under the mixing limit?
+                    {
+                        if (depth_low > bioturbation_depth_decay_constant)
+                        {
+                            depth_low = bioturbation_depth_decay_constant; // if the lower boundary is below the mixing limit, reset it to the mixing limit
+                        }
+                        layer_bio_activity_index = depth_low - depth_upp;
+                        total_bio_activity_index = bioturbation_depth_decay_constant;
+                    }
+                    else
+                    { // if top of the layer is below the mixing limit, there is no BT
+                        layer_bio_activity_index = 0;
+                        total_bio_activity_index = 1;
+                    }
+                }
+
+                bio_layer_index = (layer_bio_activity_index / total_bio_activity_index);
+            }
+            catch
+            {
+                Debug.WriteLine(" Error in  calculating bioturbation layer index in timestep {0}", t);
+                Debugger.Break();
+            }
+            return (bio_layer_index);
+        }
+
         void soil_bioturbation(double fraction_BT)
         {
             try
@@ -14304,59 +14495,7 @@ namespace LORICA4
                                     //then calculate the fraction of bioturbation that will happen in this layer, and multiply with total bioturbation in this cell
                                     fine_layer_mass = total_layer_fine_earth_mass_kg(row, col, layer);
 
-                                    layer_bio_activity_index = 0; total_bio_activity_index = 1;
-                                    //if (run_number == 0)
-                                    //{
-                                        bioturbation_depth_decay_constant = 1;
-                                        // Gradational
-                                        depth_upp = depth;
-                                        depth_low = depth + layerthickness_m[row, col, layer];
-                                        if (depth_upp < 1 / bioturbation_depth_decay_constant) // Is the upper part of the layer still under the mixing limit?
-                                        {
-                                            if (depth_low > (1 / bioturbation_depth_decay_constant))
-                                            {
-                                                depth_low = 1 / bioturbation_depth_decay_constant; // if the lower boundary is below the mixing limit, reset it to the mixing limit
-                                            }
-                                            layer_bio_activity_index = -bioturbation_depth_decay_constant / 2 * (Math.Pow(depth_low, 2) - Math.Pow(depth_upp, 2)) + ((depth_low) - depth_upp);
-                                            total_bio_activity_index = -bioturbation_depth_decay_constant / 2 * Math.Pow(1 / bioturbation_depth_decay_constant, 2) + 1 / bioturbation_depth_decay_constant;
-                                        }
-                                        else
-                                        { // if top of the layer is below the mixing limit, there is no BT
-                                            layer_bio_activity_index = 0;
-                                            total_bio_activity_index = 1;
-                                        }
-                                    //}
-                                    //if (run_number == 1)
-                                    //{
-                                    //    bioturbation_depth_decay_constant = 6;
-                                    //    // Exponential
-                                    //    layer_bio_activity_index = Math.Exp(-bioturbation_depth_decay_constant * depth) - (Math.Exp(-bioturbation_depth_decay_constant * (depth + layerthickness_m[row, col, layer])));
-                                    //    total_bio_activity_index = 1 - (Math.Exp(-bioturbation_depth_decay_constant * total_soil_thickness_m));
-                                    //}
-
-                                    //if (run_number == 2)
-                                    //{
-                                    //    bioturbation_depth_decay_constant = 1;
-                                    //    // Abrupt
-                                    //    depth_upp = depth;
-                                    //    depth_low = depth + layerthickness_m[row, col, layer];
-                                    //    if (depth_upp < bioturbation_depth_decay_constant) // Is the upper part of the layer still under the mixing limit?
-                                    //    {
-                                    //        if (depth_low > bioturbation_depth_decay_constant)
-                                    //        {
-                                    //            depth_low = bioturbation_depth_decay_constant; // if the lower boundary is below the mixing limit, reset it to the mixing limit
-                                    //        }
-                                    //        layer_bio_activity_index = depth_low - depth_upp;
-                                    //        total_bio_activity_index = bioturbation_depth_decay_constant;
-                                    //    }
-                                    //    else
-                                    //    { // if top of the layer is below the mixing limit, there is no BT
-                                    //        layer_bio_activity_index = 0;
-                                    //        total_bio_activity_index = 1;
-                                    //    }
-                                    //}
-
-                                    layer_bioturbation_kg = (layer_bio_activity_index / total_bio_activity_index) * local_bioturbation_kg * fraction_BT;
+                                    layer_bioturbation_kg = soil_bioturbation_layer_activity(layer, depth, total_soil_thickness_m) * local_bioturbation_kg * fraction_BT;
                                     mass_distance_sum = 0;
 
                                     depth += layerthickness_m[row, col, layer] / 2;
@@ -14639,7 +14778,7 @@ namespace LORICA4
         } // nieuwe code van Arnaud
 
 
-        void soil_bioturbation_upward(double fraction_BT)
+        void soil_bioturbation_mounding(double fraction_BT)
         {
             try
             {
@@ -14718,64 +14857,11 @@ namespace LORICA4
                                     //integration over the exponential decay function in JGR 2006 for the entire profile, and for the current layer.
                                     //then calculate the fraction of bioturbation that will happen in this layer, and multiply with total bioturbation in this cell
                                     fine_layer_mass = total_layer_fine_earth_mass_kg(row, col, layer);
-
-                                    layer_bio_activity_index = 0; total_bio_activity_index = 1;
                                     
-                                    //if(run_number == 0)
-                                    //{
-                                        bioturbation_depth_decay_constant = 1;
-                                        // Gradational
-                                        depth_upp = depth;
-                                        depth_low = depth + layerthickness_m[row, col, layer];
-                                        if (depth_upp < 1 / bioturbation_depth_decay_constant) // Is the upper part of the layer still under the mixing limit?
-                                        {
-                                            if (depth_low > (1 / bioturbation_depth_decay_constant))
-                                            {
-                                                depth_low = 1 / bioturbation_depth_decay_constant; // if the lower boundary is below the mixing limit, reset it to the mixing limit
-                                            }
-                                            layer_bio_activity_index = -bioturbation_depth_decay_constant / 2 * (Math.Pow(depth_low, 2) - Math.Pow(depth_upp, 2)) + ((depth_low) - depth_upp);
-                                            total_bio_activity_index = -bioturbation_depth_decay_constant / 2 * Math.Pow(1 / bioturbation_depth_decay_constant, 2) + 1 / bioturbation_depth_decay_constant;
-                                        }
-                                        else
-                                        { // if top of the layer is below the mixing limit, there is no BT
-                                            layer_bio_activity_index = 0;
-                                            total_bio_activity_index = 1;
-                                        }
-                                    //}
-                                    //if (run_number == 1)
-                                    //{
-                                    //    bioturbation_depth_decay_constant = 6;
-                                    //    // Exponential
-                                    //    layer_bio_activity_index = Math.Exp(-bioturbation_depth_decay_constant * depth) - (Math.Exp(-bioturbation_depth_decay_constant * (depth + layerthickness_m[row, col, layer])));
-                                    //    total_bio_activity_index = 1 - (Math.Exp(-bioturbation_depth_decay_constant * total_soil_thickness_m));
-                                    //}
-
-                                    //if(run_number == 2)
-                                    //{
-                                    //    bioturbation_depth_decay_constant = 1;
-                                    //    // Abrupt
-                                    //    depth_upp = depth;
-                                    //    depth_low = depth + layerthickness_m[row, col, layer];
-                                    //    if (depth_upp < bioturbation_depth_decay_constant) // Is the upper part of the layer still under the mixing limit?
-                                    //    {
-                                    //        if (depth_low > bioturbation_depth_decay_constant)
-                                    //        {
-                                    //            depth_low = bioturbation_depth_decay_constant; // if the lower boundary is below the mixing limit, reset it to the mixing limit
-                                    //        }
-                                    //        layer_bio_activity_index = depth_low - depth_upp;
-                                    //        total_bio_activity_index = bioturbation_depth_decay_constant;
-                                    //    }
-                                    //    else
-                                    //    { // if top of the layer is below the mixing limit, there is no BT
-                                    //        layer_bio_activity_index = 0;
-                                    //        total_bio_activity_index = 1;
-                                    //    }
-                                    //}
-
-                                    layer_bioturbation_kg = (layer_bio_activity_index / total_bio_activity_index) * local_bioturbation_kg * fraction_BT;
+                                    layer_bioturbation_kg = soil_bioturbation_layer_activity(layer,depth,total_soil_thickness_m) * local_bioturbation_kg * fraction_BT;
                                     mass_distance_sum = 0;
 
-                                    sum_fractions += layer_bio_activity_index / total_bio_activity_index;
+                                    // sum_fractions += layer_bio_activity_index / total_bio_activity_index;
                                     if(sum_fractions>1.000001) { Debugger.Break(); }
                                     depth += layerthickness_m[row, col, layer];
 
@@ -14861,6 +14947,198 @@ namespace LORICA4
 
         } // only upward movement of particles, like ants bringing up soil material
 
+        void soil_bioturbation_upheaval(double uph_freq, double uph_depth)
+        {
+            // Code from mixing by tillage. Homogenizes the soil over the mixing depth. Is used in tillage and bioturbation 
+            
+            if(t % uph_freq==0) // Does an upheaval event occur in this simulation year?
+            {
+                for (row = 0; row < nr; row++)
+                {
+                    for (col = 0; col < nc; col++)
+                    {
+
+                        if (dtm[row, col] != -9999 & soildepth_m[row, col] > 0)
+                        {
+                            remove_empty_layers(row, col);
+                            update_all_layer_thicknesses(row, col);
+
+                            double mixeddepth = 0, completelayerdepth = 0, newdepth = 0;
+                            int completelayers = -1;
+
+                            while (mixeddepth <= uph_depth & completelayers < (max_soil_layers - 1))
+                            {
+                                completelayers++;
+                                mixeddepth += layerthickness_m[row, col, completelayers];
+                                // OSL_age[row, col, completelayers] = 0;
+
+                            }// this will lead to incorporation of the (partial) layer below tillage horizon in completelayers parameter. So the highest number indicates the partial layer 
+                             // Debug.WriteLine("till2");
+                            double[] upheaved_text = new double[5]; // contains soil 
+                            double[] upheaved_om = new double[2]; // contains OM
+                            double[] alldepths = new double[completelayers + 1]; // contains thicknesses of all layers
+                            double[] upheaved_mass = new double[completelayers + 1];
+                            double[] fraction_mixed = new double[completelayers + 1];
+                            double[] upheaved_cosmo_nuclides = new double[n_cosmo]; // contains cosmogenic nuclides
+
+                            // take material from layers to mix
+                            double mass_soil_before = total_soil_mass_kg(row, col);
+                            double fraction_mixed_layer;
+                            for (int lay = 0; lay <= completelayers; lay++) // Includes partial layer, will be selective taken up
+                            {
+                                if ((completelayerdepth + layerthickness_m[row, col, lay]) < uph_depth)
+                                {
+                                    fraction_mixed_layer = 1;
+                                    fraction_mixed[lay] = 1;
+                                    alldepths[lay] = layerthickness_m[row, col, lay];
+                                }
+                                else
+                                {
+                                    fraction_mixed_layer = (uph_depth - completelayerdepth) / layerthickness_m[row, col, lay];
+                                    fraction_mixed[lay] = fraction_mixed_layer; // fraction of layer that is mixed
+                                    alldepths[lay] = layerthickness_m[row, col, lay] * fraction_mixed_layer; // part of layer [m] that is considered
+                                }
+                                completelayerdepth += layerthickness_m[row, col, lay];
+                                for (int tex = 0; tex < 5; tex++)
+                                {
+                                    upheaved_text[tex] += texture_kg[row, col, lay, tex] * fraction_mixed_layer;
+                                    upheaved_mass[lay] += texture_kg[row, col, lay, tex] * fraction_mixed_layer;
+                                    texture_kg[row, col, lay, tex] *= (1 - fraction_mixed_layer);
+
+                                }
+                                upheaved_om[0] += old_SOM_kg[row, col, lay] * fraction_mixed_layer;
+                                upheaved_om[1] += young_SOM_kg[row, col, lay] * fraction_mixed_layer;
+                                upheaved_mass[lay] += (old_SOM_kg[row, col, lay] * fraction_mixed_layer + young_SOM_kg[row, col, lay] * fraction_mixed_layer);
+                                old_SOM_kg[row, col, lay] *= (1 - fraction_mixed_layer);
+                                young_SOM_kg[row, col, lay] *= (1 - fraction_mixed_layer);
+                                if (CN_checkbox.Checked)
+                                {
+                                    for (int cosmo = 0; cosmo < n_cosmo; cosmo++)
+                                    {
+                                        double transport = CN_atoms_cm2[row, col, lay, cosmo] * fraction_mixed_layer;
+                                        upheaved_cosmo_nuclides[cosmo] += transport;
+                                        CN_atoms_cm2[row, col, lay, cosmo] -= transport;
+                                    }
+                                }
+                            }
+                            // Give material back to layers, based on their given mass to mixture and total mixed mass
+                            for (int lay = 0; lay <= completelayers; lay++)
+                            {
+
+                                for (int tex = 0; tex < 5; tex++)
+                                {
+                                    texture_kg[row, col, lay, tex] += upheaved_text[tex] * upheaved_mass[lay] / upheaved_mass.Sum();
+
+                                }
+                                old_SOM_kg[row, col, lay] += upheaved_om[0] * upheaved_mass[lay] / upheaved_mass.Sum();
+                                young_SOM_kg[row, col, lay] += upheaved_om[1] * upheaved_mass[lay] / upheaved_mass.Sum();
+
+                                if (CN_checkbox.Checked)
+                                {
+                                    for (int cosmo = 0; cosmo < n_cosmo; cosmo++)
+                                    {
+                                        CN_atoms_cm2[row, col, lay, cosmo] += upheaved_cosmo_nuclides[cosmo] * upheaved_mass[lay] / upheaved_mass.Sum();
+                                    }
+                                }
+
+                                layerthickness_m[row, col, lay] = thickness_calc(row, col, lay);
+                                layerthickness_m[row, col, lay] = thickness_calc(row, col, lay);
+                                newdepth += layerthickness_m[row, col, lay];
+                            }
+                            // MvdM Develop: link mixing of OSL grains to sand or silt fraction, or is that not necessary in this case of complete mixing?
+                            if (OSL_checkbox.Checked) // Mix grains from the top layers
+                            {
+                                int totalgrains_start = 0;
+                                for (int lay = 0; lay < max_soil_layers; lay++) { totalgrains_start += OSL_grainages[row, col, lay].Length; }
+                                int[] grains_from_layer = new int[alldepths.Length]; // number of donor grains from each layer
+                                var mixedgrains = new List<Int32>();
+                                var mixedgrains_da = new List<Int32>(); // for deposition ages
+                                var mixedgrains_su = new List<Int32>(); // for surfaced count
+
+                                // add grains from complete and partial layers
+                                for (int lay = 0; lay <= completelayers; lay++)
+                                {
+                                    var grains_staying_behind = new List<Int32>();
+                                    var grains_staying_behind_da = new List<Int32>();
+                                    var grains_staying_behind_su = new List<Int32>();
+                                    int P_mixing = Convert.ToInt32(Math.Round(10000 * fraction_mixed[lay]));
+                                    if (OSL_grainages[row, col, lay].Length > 0)
+                                    {
+                                        for (int ind = 0; ind < OSL_grainages[row, col, lay].Length; ind++)
+                                        {
+                                            if ((randOslLayerMixing.Next(0, 10000) < P_mixing ? 1 : 0) == 1)
+                                            {
+                                                mixedgrains.Add(OSL_grainages[row, col, lay][ind]);
+                                                mixedgrains_da.Add(OSL_depositionages[row, col, lay][ind]);
+                                                mixedgrains_su.Add(OSL_surfacedcount[row, col, lay][ind]);
+                                                grains_from_layer[lay] += 1;
+                                            }
+                                            else
+                                            {
+                                                grains_staying_behind.Add(OSL_grainages[row, col, lay][ind]);
+                                                grains_staying_behind_da.Add(OSL_depositionages[row, col, lay][ind]);
+                                                grains_staying_behind_su.Add(OSL_surfacedcount[row, col, lay][ind]);
+                                            }
+                                        }
+                                    }
+                                    OSL_grainages[row, col, lay] = grains_staying_behind.ToArray(); // Preserve the grains that stay behind
+                                    OSL_depositionages[row, col, lay] = grains_staying_behind_da.ToArray(); // 
+                                    OSL_surfacedcount[row, col, lay] = grains_staying_behind_su.ToArray(); // 
+                                }
+
+                                // Shuffle the array
+                                // make indices based on list lengths
+                                int[] indices = new int[mixedgrains.ToArray().Length];
+                                for (int ii = 0; ii < indices.Length; ii++) { indices[ii] = ii; }
+                                indices = indices.OrderBy(x => randOslLayerMixing.Next()).ToArray();
+                                int[] indices_da = new int[indices.Length];
+                                int[] indices_su = new int[indices.Length];
+                                for (int ii = 0; ii < indices.Length; ii++) { indices_da[ii] = indices[ii]; indices_su[ii] = indices[ii]; }
+
+                                int[] ages_array = mixedgrains.ToArray();
+                                Array.Sort(indices, ages_array);
+                                mixedgrains = ages_array.ToList();
+
+                                ages_array = mixedgrains_da.ToArray();
+                                Array.Sort(indices_da, ages_array);
+                                mixedgrains_da = ages_array.ToList();
+
+                                ages_array = mixedgrains_su.ToArray();
+                                Array.Sort(indices_su, ages_array);
+                                mixedgrains_su = ages_array.ToList();
+
+                                // add back random grains from grain pool
+                                int count = 0;
+                                for (int lay = 0; lay <= completelayers; lay++)// add grains to complete layers
+                                {
+                                    var newgrains = new List<Int32>();
+                                    newgrains = mixedgrains.GetRange(count, grains_from_layer[lay]);
+                                    newgrains.AddRange(OSL_grainages[row, col, lay]);
+                                    OSL_grainages[row, col, lay] = newgrains.ToArray();
+                                    newgrains = mixedgrains_da.GetRange(count, grains_from_layer[lay]);
+                                    newgrains.AddRange(OSL_depositionages[row, col, lay]);
+                                    OSL_depositionages[row, col, lay] = newgrains.ToArray();
+
+                                    newgrains = mixedgrains_su.GetRange(count, grains_from_layer[lay]);
+                                    newgrains.AddRange(OSL_surfacedcount[row, col, lay]);
+                                    OSL_surfacedcount[row, col, lay] = newgrains.ToArray();
+                                    count += grains_from_layer[lay];
+                                }
+                                int totalgrains_end = 0;
+                                for (int lay = 0; lay < max_soil_layers; lay++) { totalgrains_end += OSL_grainages[row, col, lay].Length; }
+                                if (totalgrains_start != totalgrains_end) { Debugger.Break(); }
+                            }
+
+                            double mass_soil_after = total_soil_mass_kg(row, col);
+                            if (Math.Abs(mass_soil_before - mass_soil_after) > 0.0001)
+                            {
+                                Debug.WriteLine("err_ti2");
+                            }
+                        }
+                    }
+                }
+            }
+        }
         void soil_litter_cycle()
         {
             // uses parameters from Carbon Cycle for now
@@ -17124,6 +17402,9 @@ namespace LORICA4
                     }
                 }
 
+                // 1. Mixing of the topsoil. We use the code for upheaval for this
+                soil_bioturbation_upheaval(1, plough_depth);
+
                 int runner = 0;
                 for (runner = number_of_data_cells - 1; runner >= 0; runner--)
                 {           // the index is sorted from low to high values, but flow goes from high to low
@@ -17134,178 +17415,9 @@ namespace LORICA4
                     {
                         if (check_negative_weight(row, col) == true) { MessageBox.Show("negative weight in t " + t + ", row " + row + ", col " + col + ", step 1"); }
 
-                        // 1. Mixing of the topsoil. 
-                        double mixeddepth = 0, completelayerdepth = 0, newdepth = 0;
-                        int completelayers = -1;
+                        
+                        
 
-                        while (mixeddepth <= plough_depth & completelayers <(max_soil_layers-1))
-                        {
-                            completelayers++;
-                            mixeddepth += layerthickness_m[row, col, completelayers];
-                            // OSL_age[row, col, completelayers] = 0;
-
-                        }// this will lead to incorporation of the (partial) layer below tillage horizon in completelayers parameter. So the highest number indicates the partial layer 
-                         // Debug.WriteLine("till2");
-                        double[] tilled_text = new double[5]; // includes soil 
-                        double[] tilled_om = new double[2]; // includes OM
-                        double[] alldepths = new double[completelayers + 1]; // contains thicknesses of all layers
-                        double[] tilled_mass = new double[completelayers + 1];
-                        double[] fraction_mixed = new double[completelayers + 1];
-                        double[] tilled_cosmo_nuclides = new double[n_cosmo]; // includes cosmogenic nuclides
-
-                        // take material from layers to mix
-                        double mass_soil_before = total_soil_mass_kg(row, col);
-                        double fraction_mixed_layer;
-                        for (int lay = 0; lay <= completelayers; lay++) // Includes partial layer, will be selective taken up
-                        {
-                            if ((completelayerdepth + layerthickness_m[row, col, lay]) < plough_depth)
-                            {
-                                fraction_mixed_layer = 1;
-                                fraction_mixed[lay] = 1;
-                                alldepths[lay] = layerthickness_m[row, col, lay];
-                            }
-                            else
-                            {
-                                fraction_mixed_layer = (plough_depth - completelayerdepth) / layerthickness_m[row, col, lay];
-                                fraction_mixed[lay] = fraction_mixed_layer; // fraction of layer that is mixed
-                                alldepths[lay] = layerthickness_m[row, col, lay] * fraction_mixed_layer; // part of layer [m] that is considered
-                            }
-                            completelayerdepth += layerthickness_m[row, col, lay];
-                            for (int tex = 0; tex < 5; tex++)
-                            {
-                                tilled_text[tex] += texture_kg[row, col, lay, tex] * fraction_mixed_layer;
-                                tilled_mass[lay] += texture_kg[row, col, lay, tex] * fraction_mixed_layer;
-                                texture_kg[row, col, lay, tex] *= (1 - fraction_mixed_layer);
-
-                            }
-                            tilled_om[0] += old_SOM_kg[row, col, lay] * fraction_mixed_layer;
-                            tilled_om[1] += young_SOM_kg[row, col, lay] * fraction_mixed_layer;
-                            tilled_mass[lay] += (old_SOM_kg[row, col, lay] * fraction_mixed_layer + young_SOM_kg[row, col, lay] * fraction_mixed_layer);
-                            old_SOM_kg[row, col, lay] *= (1 - fraction_mixed_layer);
-                            young_SOM_kg[row, col, lay] *= (1 - fraction_mixed_layer);
-                            if (CN_checkbox.Checked)
-                            {
-                                for (int cosmo = 0; cosmo < n_cosmo; cosmo++)
-                                {
-                                    double transport = CN_atoms_cm2[row, col, lay, cosmo] * fraction_mixed_layer;
-                                    tilled_cosmo_nuclides[cosmo] += transport;
-                                    CN_atoms_cm2[row, col, lay, cosmo] -= transport;
-                                }
-                            }
-                        }
-                        // Give material back to layers, based on their given mass to mixture and total mixed mass
-                        for (int lay = 0; lay <= completelayers; lay++)
-                        {
-
-                            for (int tex = 0; tex < 5; tex++)
-                            {
-                                texture_kg[row, col, lay, tex] += tilled_text[tex] * tilled_mass[lay] / tilled_mass.Sum();
-
-                            }
-                            old_SOM_kg[row, col, lay] += tilled_om[0] * tilled_mass[lay] / tilled_mass.Sum();
-                            young_SOM_kg[row, col, lay] += tilled_om[1] * tilled_mass[lay] / tilled_mass.Sum();
-
-                            if (CN_checkbox.Checked)
-                            {
-                                for (int cosmo = 0; cosmo < n_cosmo; cosmo++)
-                                {
-                                    CN_atoms_cm2[row, col, lay, cosmo] += tilled_cosmo_nuclides[cosmo] * tilled_mass[lay] / tilled_mass.Sum();
-                                }
-                            }
-
-                            layerthickness_m[row, col, lay] = thickness_calc(row, col, lay);
-                            layerthickness_m[row, col, lay] = thickness_calc(row, col, lay);
-                            newdepth += layerthickness_m[row, col, lay];
-                        }
-                        // MvdM Develop: link mixing of OSL grains to sand or silt fraction, or is that not necessary in this case of complete mixing?
-                        if (OSL_checkbox.Checked) // Mix grains from the top layers
-                        {
-                            int totalgrains_start = 0;
-                            for (int lay = 0; lay < max_soil_layers; lay++) { totalgrains_start += OSL_grainages[row, col, lay].Length; }
-                            int[] grains_from_layer = new int[alldepths.Length]; // number of donor grains from each layer
-                            var mixedgrains = new List<Int32>();
-                            var mixedgrains_da = new List<Int32>(); // for deposition ages
-                            var mixedgrains_su = new List<Int32>(); // for surfaced count
-
-                            // add grains from complete and partial layers
-                            for (int lay = 0; lay <= completelayers; lay++)
-                            {
-                                var grains_staying_behind = new List<Int32>();
-                                var grains_staying_behind_da = new List<Int32>();
-                                var grains_staying_behind_su = new List<Int32>();
-                                int P_mixing = Convert.ToInt32(Math.Round(10000 * fraction_mixed[lay]));
-                                if(OSL_grainages[row, col, lay].Length>0)
-                                {
-                                    for (int ind = 0; ind < OSL_grainages[row, col, lay].Length; ind++)
-                                    {
-                                        if ((randOslLayerMixing.Next(0, 10000) < P_mixing ? 1 : 0) == 1)
-                                        {
-                                            mixedgrains.Add(OSL_grainages[row, col, lay][ind]);
-                                            mixedgrains_da.Add(OSL_depositionages[row, col, lay][ind]);
-                                            mixedgrains_su.Add(OSL_surfacedcount[row, col, lay][ind]);
-                                            grains_from_layer[lay] += 1;
-                                        }
-                                        else
-                                        {
-                                            grains_staying_behind.Add(OSL_grainages[row, col, lay][ind]);
-                                            grains_staying_behind_da.Add(OSL_depositionages[row, col, lay][ind]);
-                                            grains_staying_behind_su.Add(OSL_surfacedcount[row, col, lay][ind]);
-                                        }
-                                    }
-                                }
-                                OSL_grainages[row, col, lay] = grains_staying_behind.ToArray(); // Preserve the grains that stay behind
-                                OSL_depositionages[row, col, lay] = grains_staying_behind_da.ToArray(); // 
-                                OSL_surfacedcount[row, col, lay] = grains_staying_behind_su.ToArray(); // 
-                            }
-
-                            // Shuffle the array
-                            // make indices based on list lengths
-                            int[] indices = new int[mixedgrains.ToArray().Length];
-                            for (int ii = 0; ii < indices.Length; ii++) { indices[ii] = ii; }
-                            indices = indices.OrderBy(x => randOslLayerMixing.Next()).ToArray();
-                            int[] indices_da = new int[indices.Length];
-                            int[] indices_su = new int[indices.Length];
-                            for (int ii = 0; ii < indices.Length; ii++) { indices_da[ii] = indices[ii]; indices_su[ii] = indices[ii]; }
-
-                            int[] ages_array = mixedgrains.ToArray();
-                            Array.Sort(indices, ages_array);
-                            mixedgrains = ages_array.ToList();
-
-                            ages_array = mixedgrains_da.ToArray();
-                            Array.Sort(indices_da, ages_array);
-                            mixedgrains_da = ages_array.ToList();
-
-                            ages_array = mixedgrains_su.ToArray();
-                            Array.Sort(indices_su, ages_array);
-                            mixedgrains_su = ages_array.ToList();
-
-                            // add back random grains from grain pool
-                            int count = 0;
-                            for (int lay = 0; lay <= completelayers; lay++)// add grains to complete layers
-                            {
-                                var newgrains = new List<Int32>();
-                                newgrains = mixedgrains.GetRange(count, grains_from_layer[lay]);
-                                newgrains.AddRange(OSL_grainages[row, col, lay]);
-                                OSL_grainages[row, col, lay] = newgrains.ToArray();
-                                newgrains = mixedgrains_da.GetRange(count, grains_from_layer[lay]);
-                                newgrains.AddRange(OSL_depositionages[row, col, lay]);
-                                OSL_depositionages[row, col, lay] = newgrains.ToArray();
-
-                                newgrains = mixedgrains_su.GetRange(count, grains_from_layer[lay]);
-                                newgrains.AddRange(OSL_surfacedcount[row, col, lay]);
-                                OSL_surfacedcount[row, col, lay] = newgrains.ToArray();
-                                count += grains_from_layer[lay];
-                            }
-                            int totalgrains_end = 0;
-                            for (int lay = 0; lay < max_soil_layers; lay++) { totalgrains_end += OSL_grainages[row, col, lay].Length; }
-                            if (totalgrains_start != totalgrains_end) { Debugger.Break(); }
-                        }
-
-                        double mass_soil_after = total_soil_mass_kg(row, col);
-                        if (Math.Abs(mass_soil_before - mass_soil_after) > 0.0001)
-                        {
-                            Debug.WriteLine("err_ti2");
-                        }
                         // Debug.WriteLine("till5");
                         // 2. Calculate redistribution of material
                         // 2.a First calculate slope_sum for multiple flow, and remember how much lower the !currently! lowest lower neighbour is
@@ -20243,7 +20355,7 @@ Example: rainfall.asc can look like:
                     }
                     if (version_bioturbation_Checkbox.Checked)
                     {
-                        sw.WriteLine(best_run + " " + best_error + " " + best_parameters[0] + " " + best_parameters[1]);
+                        sw.WriteLine(best_run + " " + best_error + " " + best_parameters[0]);
                     }
 
 
@@ -21070,7 +21182,7 @@ Example: rainfall.asc can look like:
             if (version_bioturbation_Checkbox.Checked)
             {
                 best_parameters[0] = potential_bioturbation_kg_m2_y;
-                best_parameters[1] = bioturbation_depth_decay_constant;
+                // best_parameters[1] = bioturbation_depth_decay_constant;
             }
 
             Debug.WriteLine(" updated parameter set for best scored run");
@@ -21177,6 +21289,10 @@ Example: rainfall.asc can look like:
                 if (soil_bioturb_checkbox.Checked)
                 {
                     soil_bioturb_active = true;
+                }
+                if(soil_bioturb_upheaval_checkbox.Checked)
+                {
+                    bioturb_upheaval_active = true;
                 }
                 if (soil_clay_transloc_checkbox.Checked)
                 {
@@ -21445,7 +21561,14 @@ Example: rainfall.asc can look like:
                         {
                             potential_bioturbation_kg_m2_y = Convert.ToDouble(potential_bioturbation_textbox.Text); // MvdM changed name to match parameter in BT process
                             bioturbation_depth_decay_constant = Convert.ToDouble(bioturbation_depth_decay_textbox.Text);
-                            BT_frac = calib_ratios[0, run_number];
+                            this.Invoke(new MethodInvoker(delegate () { bioturbation_depth_function = bioturbation_depth_function_choiceList.Text; }));
+                            fraction_subsurface_mixing = Convert.ToDouble(bioturbation_fraction_mixing_textbox.Text);
+
+                            if (bioturb_upheaval_active)
+                            {
+                                upheaval_frequency = Convert.ToDouble(upheaval_frequency_textbox.Text);
+                                upheaval_depth = Convert.ToDouble(upheaval_depth_textbox.Text);
+                            }
                         }
                         catch
                         {
@@ -21589,8 +21712,8 @@ Example: rainfall.asc can look like:
                                     rat_number2 = Convert.ToInt32(Math.Floor(run_number / Math.Pow(user_specified_number_of_ratios, 0)) % user_specified_number_of_ratios);
                                     potential_bioturbation_kg_m2_y *= calib_ratios[0, rat_number2];
 
-                                    rat_number2 = Convert.ToInt32(Math.Floor(run_number / Math.Pow(user_specified_number_of_ratios, 1)) % user_specified_number_of_ratios);
-                                    bioturbation_depth_decay_constant *= calib_ratios[1, rat_number2];
+                                    //rat_number2 = Convert.ToInt32(Math.Floor(run_number / Math.Pow(user_specified_number_of_ratios, 1)) % user_specified_number_of_ratios);
+                                    //bioturbation_depth_decay_constant *= calib_ratios[1, rat_number2];
 
                                     // Debug.WriteLine("First ratio number: " + rat_number2 + " frequency now " + potential_bioturbation_kg_m2_y + " ratio " + calib_ratios[0, rat_number2]);
                                 }
@@ -22067,20 +22190,13 @@ Example: rainfall.asc can look like:
                     }
                 }
                 // Debug.WriteLine("calculating bioturbation");
-                //if (t == 0) { potential_bioturbation_kg_m2_y_ini = potential_bioturbation_kg_m2_y; }
-                //if(run_number==0)
-                //{
-                //    potential_bioturbation_kg_m2_y = potential_bioturbation_kg_m2_y_ini * (t) / end_time; // increasing
-
-                //}
-                //if (run_number==1)
-                //{
-                //    potential_bioturbation_kg_m2_y = potential_bioturbation_kg_m2_y_ini * (end_time - t) / end_time; // decreasing
-                //}
-                // BT_frac = 0.99;
-                //soil_bioturbation(1);
-                soil_bioturbation_upward(BT_frac);
-
+               
+                if (fraction_subsurface_mixing * potential_bioturbation_kg_m2_y > 0) { soil_bioturbation(fraction_subsurface_mixing); }
+                if ((1 - fraction_subsurface_mixing) * potential_bioturbation_kg_m2_y > 0) { soil_bioturbation_mounding(1 - fraction_subsurface_mixing); }
+                if(bioturb_upheaval_active)
+                {
+                    soil_bioturbation_upheaval(upheaval_frequency, upheaval_depth);
+                }
 
                 // if (findnegativetexture()) { Debugger.Break(); }
 
