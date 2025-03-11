@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -1092,6 +1093,19 @@ namespace LORICA4
             this.ux_number_Processors_label.Text += Environment.ProcessorCount;
             this.uxNumberThreadsUpdown.Value = coreCount;
         }
+
+        static bool checkregionalformat()
+        {
+            // Get the current culture of the system
+            CultureInfo currentCulture = CultureInfo.CurrentCulture;
+
+            // Get the default decimal separator 
+            string decimalSeparator = currentCulture.NumberFormat.CurrencyDecimalSeparator;
+
+            // Return whether the decimal separator is a dot
+            return decimalSeparator == ".";
+
+
         /// <summary>
         /// Clean up any resources being used.
         /// </summary>
@@ -6735,6 +6749,13 @@ namespace LORICA4
                 }
                 sr.Close();
 
+                if (inputheader[4].Contains("XCELLSIZE"))
+                {
+                    MessageBox.Show("Error: DEM cell is not square. Restart LORICA and provide a better input");
+                    input_data_error = true;
+                    return;
+                }
+
                 // get nc, nr and dx from input headers
 
                 lineArray2 = inputheader[0].Split(new char[] { ' ' });
@@ -6761,6 +6782,11 @@ namespace LORICA4
                 sp = 1;
                 while (lineArray2[sp] == "") sp++;
                 dx = double.Parse(lineArray2[sp]);
+
+                if (dx <= 0.1)  //AleG
+                {
+                    MessageBox.Show("Make sure that the DEM cell resolution is in meters");
+                }
 
                 Debug.WriteLine("read DEM: nr = " + nr + " nc = " + nc);
             }
@@ -20905,6 +20931,14 @@ Example: rainfall.asc can look like:
             Task.Factory.StartNew(() => { this.InfoStatusPanel.Text = "Entered main program"; }, CancellationToken.None, TaskCreationOptions.None, guiThread);
 
             stopwatch = Stopwatch.StartNew();
+
+            if (!checkregionalformat())
+            {
+                MessageBox.Show("Unsupported regional format");
+                input_data_error = true;
+                return;
+            }
+
             try
             {
                 string dtmmotherfilename = dtm_input_filename_textbox.Text; int dtmrepeats = 1;
