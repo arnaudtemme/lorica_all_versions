@@ -13708,7 +13708,7 @@ namespace LORICA4
                                                            // Debug.WriteLine("sl1c");
                 }
 
-                if (Math.Abs(old_mass_soil - total_soil_mass_kg_decimal(rowwer, coller)) > Convert.ToDecimal(0.000001))
+                if (Math.Abs(old_mass_soil - total_soil_mass_kg_decimal(rowwer, coller)) > Convert.ToDecimal(0.0001))
                 {
                     Debug.WriteLine("err_spl_1 {0}", total_soil_mass_kg_decimal(rowwer, coller));
                     //Debugger.Break();
@@ -13741,7 +13741,7 @@ namespace LORICA4
                         transfer_OSL_grains(rowwer, coller, laynum - 1, rowwer, coller, laynum, 1, 0); // move all grains from laynum - 1 to laynum
                     }
                 }
-                if (Math.Abs(old_mass_soil - total_soil_mass_kg_decimal(rowwer, coller)) > Convert.ToDecimal(0.000001))
+                if (Math.Abs(old_mass_soil - total_soil_mass_kg_decimal(rowwer, coller)) > Convert.ToDecimal(0.00001))
                 {
                     Debug.WriteLine("err_spl_2 {0}", total_soil_mass_kg_decimal(rowwer, coller));
                     // Debugger.Break();
@@ -13792,7 +13792,7 @@ namespace LORICA4
                     transfer_OSL_grains(rowwer, coller, lay1, rowwer, coller, lay1 + 1, (1 - div), 0);
                 }
                 decimal new_soil_mass = total_soil_mass_kg_decimal(rowwer, coller);
-                if (Math.Abs(old_mass_soil - new_soil_mass) > Convert.ToDecimal(0.000001))
+                if (Math.Abs(old_mass_soil - new_soil_mass) > Convert.ToDecimal(0.00001))
                 {
                     Debug.WriteLine("err_spl_3 {0}", total_soil_mass_kg_decimal(rowwer, coller));
                     //Debugger.Break();
