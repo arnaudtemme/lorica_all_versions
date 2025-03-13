@@ -1,0 +1,53 @@
+- visualization : Marijn finishes, we add case study + data (runfile) --> towards publication
+
+For Alessia:
+- move things into experimental:
+-- remove solifluction tab
+-- tree fall to expe
+-- blocks to experimental
+-- rock weathering to soil as spoil production
+-- pohys weath particle size to soil specifier
+-- chem weath surface area to soil specifier
+-- check clay dynbamics versus chemical weathering
+-- change Jagercikova cm units
+-- bioturbation upheaval to treefaal
+-- split mounding and mxing in bioturbation
+-- carbon cyclke -> organic matter
+-- TWI decay constant remove
+-- Two OM models next to each other
+-- remove decalcification
+-- geochron tracers stays
+-- particle ages --> luminescence
+-- hydrological to experimental (and remove default values)
+=- clean up inputs
+-- allow to read in OM in soil specifier
+-- iterate DEMs to experiemental; 
+-- remove sinks and flats before, after ruinning cleaner
+-- all versions go to experiemental tab, also calib/sensit, also purely calculate terrain derivatives
+-- add explanmatipon of satrt at year
+-- remove parallel stuff
+-- output code : remove
+-- structure timeseries output
+-- when ready --> at final timestep, not a choice
+-- profile outputs: remove 
+-- remove diagnostic output
+-- add extra output maps to experimental tab (lakes)
+-- make entire model smaller
+-- runfile --> settings
+-- deactivate the start button once clicked
+-- fix the soil specifier open after clicking X
+-- check that the mnodel really does not run when wrong decimal separator
+-- update the xml reading and writing with removed and added parameters
+
+1. M - transport functions + apply everywhere, remove restart inside the code after crashing
+1. Ale - separate branch - improve temporally changing root cohesion, OM input, tillage, bioturbation rate, as a function of landuse
+2. A - landslide inside
+3. A - splitting into different files, setting NA value as a variable
+4a. MvdM : 
+	-- layer thickness: 1. top layer thickness, 2. traingular or a fixed factor, 3. max number of layers, 4. calculate layers. 
+	-- default numer soil layers = 20
+	-- split only the top layer when it gets too thick, and then immediately and always merge the bottom two layers if we need it.  
+4b. Ale - all interface changes
+5. ArT + MvdM : model testing, checking functions, good error messaging (also xml reading writing), factor 100. Arnaud: geom, sinks, Marijn: soil mostly
+6. ArT - check Lorica for loose, unitless, parameters and warnings 
+7 separate branch Alessia; - proglacial code merge Alessia
