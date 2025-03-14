@@ -83,49 +83,79 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="About_LORICA.cs">
+    <Compile Include="Functions\cailbrate.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="About_LORICA.Designer.cs">
+    <Compile Include="Functions\debugging.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\depression.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\initialize.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\readwrite.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\vegetation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Subforms\About_LORICA.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Subforms\About_LORICA.Designer.cs">
       <DependentUpon>About_LORICA.cs</DependentUpon>
     </Compile>
-    <Compile Include="Landuse_determinator.cs">
+    <Compile Include="Functions\blocks.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Landuse_determinator.Designer.cs">
+    <Compile Include="Functions\geochron.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\geomfunctions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\hydro.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Subforms\Landuse_determinator.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Subforms\Landuse_determinator.Designer.cs">
       <DependentUpon>Landuse_determinator.cs</DependentUpon>
     </Compile>
-    <Compile Include="LORICA development.cs">
+    <Compile Include="LORICA main.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Output_interfaces\Output_profile.cs">
+    <Compile Include="Subforms\Output_profile.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Output_interfaces\Output_profile.Designer.cs">
+    <Compile Include="Subforms\Output_profile.Designer.cs">
       <DependentUpon>Output_profile.cs</DependentUpon>
     </Compile>
-    <Compile Include="Output_interfaces\Output_timeseries.cs">
+    <Compile Include="Subforms\Output_timeseries.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Output_interfaces\Output_timeseries.Designer.cs">
+    <Compile Include="Subforms\Output_timeseries.Designer.cs">
       <DependentUpon>Output_timeseries.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="About_LORICA.resx">
+    <EmbeddedResource Include="Subforms\About_LORICA.resx">
       <DependentUpon>About_LORICA.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Landuse_determinator.resx">
+    <EmbeddedResource Include="Subforms\Landuse_determinator.resx">
       <DependentUpon>Landuse_determinator.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="LORICA development.resx">
-      <DependentUpon>LORICA development.cs</DependentUpon>
+    <EmbeddedResource Include="LORICA main.resx">
+      <DependentUpon>LORICA main.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Output_interfaces\Output_profile.resx">
+    <EmbeddedResource Include="Subforms\Output_profile.resx">
       <DependentUpon>Output_profile.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Output_interfaces\Output_timeseries.resx">
+    <EmbeddedResource Include="Subforms\Output_timeseries.resx">
       <DependentUpon>Output_timeseries.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -134,7 +164,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Soil_specifier.resx">
+    <EmbeddedResource Include="Subforms\Soil_specifier.resx">
       <DependentUpon>Soil_specifier.cs</DependentUpon>
     </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
@@ -153,10 +183,13 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Soil_specifier.cs">
+    <Compile Include="Functions\soilfunctions.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Soil_specifier.Designer.cs">
+    <Compile Include="Subforms\Soil_specifier.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Subforms\Soil_specifier.Designer.cs">
       <DependentUpon>Soil_specifier.cs</DependentUpon>
     </Compile>
   </ItemGroup>
@@ -190,6 +223,7 @@
   <ItemGroup>
     <Content Include="tex_tentdoek.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
