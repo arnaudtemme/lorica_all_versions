@@ -460,7 +460,8 @@ namespace LORICA4
                     lessivage_errors, // for calibration of lessivage
                     tpi,            //topographic position index
                     hornbeam_cover_fraction, //hornbeam fraction Lux
-                    observations;
+                    observations,
+                    remaining_vertical_size_m;  //for landslides
 
         int[,]  // integer matrices
                     status_map,         //geeft aan of een cel een sink, een zadel, een flat of een top is
@@ -473,6 +474,7 @@ namespace LORICA4
                     treefall_count,     // count number of tree falls
                     vegetation_type,
                     slidenr;
+        short[,]    slidestatus;
 
         int[,,][] OSL_grainages, OSL_depositionages, OSL_surfacedcount;
         int[,][] OSL_grainages_in_transport, OSL_depositionages_in_transport, OSL_surfacedcount_in_transport;
@@ -619,6 +621,9 @@ namespace LORICA4
                 number_of_outputs = 0,
                 wet_cells, eroded_cells, deposited_cells,
                 P_scen,
+                landslide_initiation_cells = 0,
+                landslide_continuation_cells = 0,
+                landslide_deposition_cells = 0,
                 NumParallelThreads;
 
         //calibration globals
@@ -884,7 +889,7 @@ namespace LORICA4
         rock_protection_constant,
         bio_protection_constant,
         constant_selective_transcap,
-        slope,			            // Gradient
+        slope_tan,			            // Gradient
         conv_fac,		            // convergence/divergence factor
         dS, desired_change, dztot,	// Difference in sediment/deposition/erosion
         sedtr_loc,                  // Local sediment transport rate
@@ -6298,6 +6303,13 @@ namespace LORICA4
                 if (timeseries.timeseries_number_soil_thicker_checkbox.Checked) { sw.Write("n_soil_coarser "); }
                 if (timeseries.timeseries_number_soil_thicker_checkbox.Checked) { sw.Write("soil_thickness_m "); }
                 if (timeseries.timeseries_number_soil_thicker_checkbox.Checked) { sw.Write("soil_mass_kg "); }
+                
+                //slide centred
+                if (timeseries.timeseries_slide_checkbox.Checked) { sw.Write("out_slideero_kg"); sw.Write(" "); }
+                if (timeseries.timeseries_slide_checkbox.Checked) { sw.Write("out_slidecont_kg"); sw.Write(" "); }
+                if (timeseries.timeseries_slide_checkbox.Checked) { sw.Write("out_slidedepo_kg"); sw.Write(" "); }
+                if (timeseries.timeseries_slide_checkbox.Checked) { sw.Write("out_slidelost_kg"); sw.Write(" "); }
+                if (timeseries.timeseries_slide_checkbox.Checked) { sw.Write("out_slidemeanintensity_m_d"); sw.Write(" "); }
                 sw.Write("\r\n");
                 for (step = 0; step <= end_time - 1; step++)
                 {
@@ -6335,6 +6347,12 @@ namespace LORICA4
                     if (timeseries.timeseries_coarser_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[31]]); sw.Write(" "); }
                     if (timeseries.timeseries_soil_depth_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[32]]); sw.Write(" "); }
                     if (timeseries.timeseries_soil_mass_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[33]]); }
+                    //slide centered
+                    if (timeseries.timeseries_slide_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[34]]); sw.Write(" "); }
+                    if (timeseries.timeseries_slide_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[35]]); ; sw.Write(" "); }
+                    if (timeseries.timeseries_slide_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[36]]); sw.Write(" "); }
+                    if (timeseries.timeseries_slide_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[37]]); sw.Write(" "); }
+                    if (timeseries.timeseries_slide_checkbox.Checked) { sw.Write(timeseries_matrix[step, timeseries_order[38]]); ; sw.Write(" "); }
                     sw.Write("\r\n");
                 }
             }
@@ -6678,6 +6696,7 @@ namespace LORICA4
                 }
                 if (Landslide_checkbox.Checked)
                 {
+                    //Mopstafa update with new variables and remove old variables
                     //doubles
                     stslope_radians = new double[nr, nc];
                     crrain_m_d = new double[nr, nc];
@@ -6690,16 +6709,13 @@ namespace LORICA4
                     resid_friction_angle_radians = new double[nr, nc];
                     reserv = new double[nr, nc];
                     ero_slid_m = new double[nr, nc];
-                    cel_dist = new double[nr, nc];
+                    remaining_vertical_size_m = new double[nr, nc];
                     sed_slid_m = new double[nr, nc];
-                    sed_bud_m = new double[nr, nc];
-                    dh_slid = new double[nr, nc];
-                    sum_landsliding = new double[nr, nc];
-                    landslidesum_texture_kg = new double[100000, n_texture_classes];  //1000 is the maximum number of landslides
-                    landslidesum_OM_kg = new double[100000, 2];  //2 is the number of OM classes (young and old, i.e. labile and recalcitrant)
-                    landslidesum_thickness_m = new double[100000];
-                    //integers
-                    slidenr = new int[nr, nc];
+                    if (sediment_in_transport_kg == null) { sediment_in_transport_kg = new double[nr, nc, n_texture_classes]; }
+                    if (young_SOM_in_transport_kg == null) { young_SOM_in_transport_kg = new double[nr, nc]; }
+                    if (old_SOM_in_transport_kg == null) { old_SOM_in_transport_kg = new double[nr, nc]; }
+                    //shorts
+                    slidestatus = new short[nr, nc];
                 }
                 if (Biological_weathering_checkbox.Checked)
                 {
@@ -7317,6 +7333,31 @@ namespace LORICA4
                 sw.Close();
             }
         } //end out_integer
+
+        void out_short(string name4, short[,] output)
+        {
+            int nn;
+            string FILENAME = name4;
+            using (StreamWriter sw = new StreamWriter(FILENAME))
+            {
+                for (nn = 0; nn <= 5; nn++)
+                {
+                    sw.Write(inputheader[nn]); sw.Write("\n");
+                }
+                for (int row = 0; row < nr; row++)
+                {
+                    for (int col = 0; col < nc; col++)
+                    {
+
+                        sw.Write(output[row, col]);
+                        sw.Write(" ");
+                    }
+
+                    sw.Write("\n");
+                }
+                sw.Close();
+            }
+        } //end out_short
 
         void out_profile(string name5, double[,] output, bool row_is_fixed, int row_or_col)
         {
@@ -7942,6 +7983,7 @@ namespace LORICA4
                         timeseries.timeseries_total_dep_check.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("total_deposition"));
                         timeseries.timeseries_net_ero_check.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("net_erosion"));
                         timeseries.timeseries_sedexport_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("sed_export"));
+                        timeseries.timeseries_slide_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("slide"));
                         timeseries.timeseries_SDR_check.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("SDR"));
                         timeseries.timeseries_total_average_alt_check.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("total_average_alt"));
                         timeseries.timeseries_total_rain_check.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("total_rain"));
@@ -8318,6 +8360,7 @@ namespace LORICA4
                 xwriter.WriteElementString("total_deposition", XmlConvert.ToString(timeseries.timeseries_total_dep_check.Checked));
                 xwriter.WriteElementString("net_erosion", XmlConvert.ToString(timeseries.timeseries_net_ero_check.Checked));
                 xwriter.WriteElementString("sed_export", XmlConvert.ToString(timeseries.timeseries_sedexport_checkbox.Checked));
+                xwriter.WriteElementString("slide", XmlConvert.ToString(timeseries.timeseries_slide_checkbox.Checked));
                 xwriter.WriteElementString("SDR", XmlConvert.ToString(timeseries.timeseries_SDR_check.Checked));
                 xwriter.WriteElementString("total_average_alt", XmlConvert.ToString(timeseries.timeseries_total_average_alt_check.Checked));
                 xwriter.WriteElementString("total_rain", XmlConvert.ToString(timeseries.timeseries_total_rain_check.Checked));
@@ -17182,24 +17225,25 @@ namespace LORICA4
             }
         }
 
-        void store_slid_mass(int landslidenumber, double extra_slid_thickness_m, int donorrow, int donorcol) {
-            //knowing the depth eroded from a certain donor cell, takes that amount in kg, stores it in the landslidesum_texture_kg array and restores soildata at the donor cell
+        double store_slid_mass_new(double extra_slid_thickness_m, int donorrow, int donorcol)
+        {
+            //knowing the depth eroded from a certain donor cell, takes that amount in kg, stores it in the sediment in transport matrix and restores soildata at the donor cell
 
             //three tasks:
-            //walk through layers from top to bottom until ero_slid_m is reached
-            //at each layer take all or part of the mass present and store it in landslidesum_texture_kg
-            //fix soil data when done
-            //Debug.WriteLine(" entered store_slid_mass for slide " + landslidenumber + " row " + donorrow + " col" + donorcol);
-
+            //A walk through layers from top to bottom until ero_slid_m is reached
+            //B at each layer take all or part of the mass present and store it in sediment_in_transport_kg
+            //C fix soil data when done
+            //Debug.WriteLine(" entered store_slid_mass for row " + donorrow + " col" + donorcol);
+            double eroded_mass_kg = 0;
 
             if (Double.IsInfinity(extra_slid_thickness_m))
             {
-                Debug.WriteLine("stopA");
+                Debug.WriteLine("stop");
             }
             try
             {
                 double remaining_depth_m = extra_slid_thickness_m;
-                double new_ls_mass_kg = 0;
+                //double new_ls_mass_kg = 0;
                 int layer_slide = 0;
                 double slidfraction = 0;
                 while (remaining_depth_m > 0.00001)
@@ -17212,80 +17256,102 @@ namespace LORICA4
                     {
                         slidfraction = remaining_depth_m / layerthickness_m[donorrow, donorcol, layer_slide];
                     }
-                    //Debug.WriteLine(" remaining depth " + remaining_depth_m + " to be subtracted " + layerthickness_m[donorrow, donorcol, layer_slide] + "x" + slidfraction);
-                    for (i = 0; i < n_texture_classes; i++)
+                    //Debug.WriteLine(" remaining depth " + remaining_depth_m + " to be subtracted " + layerthickness_m[donorrow, donorcol, layer_slide] + " x " + slidfraction);
+                    if (slidfraction < 0 || slidfraction > 1)
                     {
-                        landslidesum_texture_kg[landslidenumber, i] += texture_kg[donorrow, donorcol, layer_slide, i] * slidfraction;
-                        new_ls_mass_kg += texture_kg[donorrow, donorcol, layer_slide, i] * slidfraction;
-                        texture_kg[donorrow, donorcol, layer_slide, i] -= texture_kg[donorrow, donorcol, layer_slide, i] * slidfraction;
-
-                        //Debug.WriteLine(i + " newlsmasskg " + new_ls_mass_kg + " " + slidfraction + " " + remaining_depth_m + " " + layerthickness_m[donorrow, donorcol, layer_slide]);
+                        Debug.WriteLine("impossible value for slidfraction");
                     }
-                    landslidesum_OM_kg[landslidenumber, 0] += young_SOM_kg[donorrow, donorcol, layer_slide] * slidfraction;
-                    landslidesum_OM_kg[landslidenumber, 1] += old_SOM_kg[donorrow, donorcol, layer_slide] * slidfraction;
-                    new_ls_mass_kg += young_SOM_kg[donorrow, donorcol, layer_slide] * slidfraction;
-                    new_ls_mass_kg += old_SOM_kg[donorrow, donorcol, layer_slide] * slidfraction;
-                    old_SOM_kg[donorrow, donorcol, layer_slide] = old_SOM_kg[donorrow, donorcol, layer_slide] * (1 - slidfraction);
-                    young_SOM_kg[donorrow, donorcol, layer_slide] = young_SOM_kg[donorrow, donorcol, layer_slide] * (1 - slidfraction);
+                    for (int ti = 0; ti < n_texture_classes; ti++)
+                    {
+                        sediment_in_transport_kg[donorrow, donorcol, ti] += texture_kg[donorrow, donorcol, layer_slide, ti] * slidfraction;
+                        eroded_mass_kg += texture_kg[donorrow, donorcol, layer_slide, ti] * slidfraction;
+                        //Debug.WriteLine("adding " + texture_kg[donorrow, donorcol, layer_slide, ti] * slidfraction + " to sed in trans, now " + sediment_in_transport_kg[donorrow, donorcol, ti]);
+                        texture_kg[donorrow, donorcol, layer_slide, ti] -= texture_kg[donorrow, donorcol, layer_slide, ti] * slidfraction;
+
+                    }
+                    young_SOM_in_transport_kg[donorrow, donorcol] += young_SOM_kg[donorrow, donorcol, layer_slide] * slidfraction;
+                    old_SOM_in_transport_kg[donorrow, donorcol] += old_SOM_kg[donorrow, donorcol, layer_slide] * slidfraction;
+                    eroded_mass_kg += young_SOM_kg[donorrow, donorcol, layer_slide] * slidfraction;
+                    eroded_mass_kg += old_SOM_kg[donorrow, donorcol, layer_slide] * slidfraction;
+                    old_SOM_kg[donorrow, donorcol, layer_slide] -= old_SOM_kg[donorrow, donorcol, layer_slide] * slidfraction;
+                    young_SOM_kg[donorrow, donorcol, layer_slide] -= young_SOM_kg[donorrow, donorcol, layer_slide] * slidfraction;
                     remaining_depth_m -= layerthickness_m[donorrow, donorcol, layer_slide] * slidfraction;
                     //Debug.WriteLine(" remaining depth " + remaining_depth_m + " subtracted " + layerthickness_m[donorrow, donorcol, layer_slide] * slidfraction);
                     layer_slide++;
                 }
-
-                double slidemass = landslidesum_texture_kg[landslidenumber, 0] + landslidesum_texture_kg[landslidenumber, 1] + landslidesum_texture_kg[landslidenumber, 2] +
-                            landslidesum_texture_kg[landslidenumber, 3] + landslidesum_texture_kg[landslidenumber, 4] + landslidesum_OM_kg[landslidenumber, 0] + landslidesum_OM_kg[landslidenumber, 1];
-                //Debug.WriteLine(" added " + new_ls_mass_kg + "kg to mass of landslide " + landslidenumber + " total now " + slidemass);
-
-                //now reset layerthickness and the entire soil profile, and the elevation rasters
-                remove_empty_layers(donorrow, donorcol);
-                update_all_layer_thicknesses(donorrow, donorcol);
+                //C now reset layerthickness and the entire soil profile, and the elevation rasters
+                try { remove_empty_layers(donorrow, donorcol); } catch { Debug.WriteLine("failure in update all layer thicknesses"); }
+                try { update_all_layer_thicknesses(donorrow, donorcol); } catch { Debug.WriteLine("failure in update all layer thicknesses"); }
                 double old_thickness = soildepth_m[donorrow, donorcol];
                 double new_thickness = total_soil_thickness(donorrow, donorcol);
-                /*if (new_thickness == 0) {
-                    Debug.WriteLine(" soil completely removed at " + donorrow + " " + donorcol + " by " + landslidenumber);
-                }*/
-                dtm[donorrow, donorcol] += new_thickness - old_thickness;
-                soildepth_m[donorrow, donorcol] = new_thickness;
-                dtmchange_m[donorrow, donorcol] += new_thickness - old_thickness;
+                if (new_thickness == 0)
+                {
+                    //Debug.WriteLine(" soil completely removed at " + donorrow + " " + donorcol);
+                }
+                else if (new_thickness < 0)
+                {
+                    Debug.WriteLine(" negative soil thickness at " + donorrow + " " + donorcol);
+                }
                 if (Double.IsInfinity(extra_slid_thickness_m))
                 {
                     Debug.WriteLine("stop");
                 }
-                //Debug.WriteLine(" soil thickness now " + soildepth_m[donorrow, donorcol]);
+                //Debug.WriteLine(" finished for cell " + donorrow + " " + donorcol);
             }
             catch
             {
-                Debug.WriteLine("failure in store_slid_mass"); }
+                Debug.WriteLine("failure in store_slid_mass");
+            }
+            soildepth_m[donorrow, donorcol] = total_soil_thickness(donorrow, donorcol);
+            return eroded_mass_kg;
         }
 
-        void deposit_slid_mass(double fraction_of_mass, int slidenumber, int deprow, int depcol)
+        double deposit_slid_mass_new(double depofraction, int deprow, int depcol)
         {
+            double locally_deposited_mass_kg = 0;
             try
             {
-                //we know how much of the seven materials is available here, and how much of it we deposit.
-                //now let's do add that mass to the first layer of the soil here:
+                //we know how much of the seven materials is available here (via ediment in transport),
+                //and how much of it we deposit (via depofraction)
+                //now let's add that mass to the first layer of the soil here:
                 //Debug.WriteLine("depositing landslide material on " + deprow + " " + depcol + " slide " + slidenumber);
                 //Debug.WriteLine("fraction " + fraction_of_mass);
-                for (i = 0; i < n_texture_classes; i++)
+                if (depofraction > 1) { Debug.WriteLine(" ERROR: fraction of mass above 1 "); }
+                if (depofraction < 0) { Debug.WriteLine(" ERROR: fraction of mass below 0 "); }
+                else
                 {
-                    texture_kg[deprow, depcol, 0, i] += landslidesum_texture_kg[slidenumber, i] * fraction_of_mass;
+                    for (int ti = 0; ti < n_texture_classes; ti++)
+                    {
+                        texture_kg[deprow, depcol, 0, ti] += sediment_in_transport_kg[deprow, depcol, ti] * depofraction;
+                        locally_deposited_mass_kg += sediment_in_transport_kg[deprow, depcol, ti] * depofraction;
+                        sediment_in_transport_kg[deprow, depcol, ti] -= sediment_in_transport_kg[deprow, depcol, ti] * depofraction;
+                        //Debug.WriteLine("taking " + sediment_in_transport_kg[deprow, depcol, ti] * depofraction + " from sed in trans, now " + sediment_in_transport_kg[deprow, depcol, ti]);
+                    }
+                    young_SOM_kg[deprow, depcol, 0] += young_SOM_in_transport_kg[deprow, depcol] * depofraction;
+                    old_SOM_kg[deprow, depcol, 0] += old_SOM_in_transport_kg[deprow, depcol] * depofraction;
+                    locally_deposited_mass_kg += young_SOM_in_transport_kg[deprow, depcol] * depofraction;
+                    locally_deposited_mass_kg += old_SOM_in_transport_kg[deprow, depcol] * depofraction;
+                    young_SOM_in_transport_kg[deprow, depcol] -= young_SOM_in_transport_kg[deprow, depcol] * depofraction;
+                    old_SOM_in_transport_kg[deprow, depcol] -= old_SOM_in_transport_kg[deprow, depcol] * depofraction;
+                    //so, that's done. Now reestablish soil layers and accounting at this location
+                    update_all_layer_thicknesses(deprow, depcol);
+                    double old_thickness = soildepth_m[deprow, depcol];
+                    double new_thickness_m = total_soil_thickness(deprow, depcol);
+                    if (new_thickness_m > 10)
+                    {
+                        Debug.WriteLine("soil changed from " + old_thickness + "m thick to " + new_thickness_m + "m thick");
+                    }
                 }
-                young_SOM_kg[deprow, depcol, 0] += landslidesum_OM_kg[slidenumber, 0] * fraction_of_mass;
-                old_SOM_kg[deprow, depcol, 0] += landslidesum_OM_kg[slidenumber, 1] * fraction_of_mass;
-                //so, that's done. Now reestablish soil layers and accounting at this location
-                update_all_layer_thicknesses(deprow, depcol);
-                double old_thickness = soildepth_m[deprow, depcol];
-                double new_thickness = total_soil_thickness(deprow, depcol);
-                //Debug.WriteLine("soil changed from " + old_thickness + "m thick to " + new_thickness + "m thick");
-                //and storing the impact on the dtm and soildepth arrays
-                dtm[deprow, depcol] += new_thickness - old_thickness;
-                soildepth_m[deprow, depcol] = new_thickness;
-                dtmchange_m[deprow, depcol] += new_thickness - old_thickness;
             }
             catch
             {
                 Debug.WriteLine("failure in deposit_slid_mass");
             }
+            if (locally_deposited_mass_kg == 0)
+            {
+                Debug.WriteLine(" error: almost no mass used ");
+            }
+            return locally_deposited_mass_kg;
         }
 
         void calculate_critical_rain()    //Calculates Critical Steady State Rainfall for Landsliding    
@@ -17371,7 +17437,7 @@ namespace LORICA4
                             { // multiple flow
                               // fraction of discharge into a neighbour grid
                                 if ((row != row + i) && (col != col + j)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }
-                                slope = dh / d_x;
+                                slope_tan = dh / d_x;
                                 dh = dh / d_x;
                                 dh = Math.Pow(dh, conv_fac);
                                 fraction = (dh / powered_slope_sum); // multiple flow
@@ -17523,367 +17589,438 @@ namespace LORICA4
             }
             catch { Debug.WriteLine("failed during search for steepest descent neighbour"); }
         }
-
-        void calculate_slide()
+        void calculate_slide_new()
         {
-            Debug.WriteLine("started land sliding");
-            double minimum_slope_for_movement = 0.17;
+
+            Debug.WriteLine("started new land sliding at time " + t);
+            //Mostafa, these values should be set in the interface by the user:
+            double minimum_slope_for_movement_tan = 0.7;
+            double runout_ratio = 0.35; //in horizontal meters covered by the deposit PER vertical meters of the eroding part of a landslide. Ratio is static, hordist can grow and shrink repeatedly with topography
+            double LS_conv_fac = 1.75; // determines how much eroding material is distributed sideways
+
+            double initiation_volume_m3 = 0, continuation_volume_m3 = 0, deposition_volume_m3 = 0, requested_deposition_volume_m3 = 0;
+            double average_rainfall_intensity_m_d = 0, sum_rainfall_intensity_m_d = 0;
+            decimal initiation_mass_kg = 0, continuation_mass_kg = 0, deposition_mass_kg = 0;
             try
             {
                 Task.Factory.StartNew(() =>
                 {
-                    this.InfoStatusPanel.Text = "landslide calculation";
+                    this.InfoStatusPanel.Text = "new landslide calculation";
                 }, CancellationToken.None, TaskCreationOptions.None, guiThread);
-                int tell;
-                //set all start q values effective precipitation at time t
                 nb_ok = 0; nb_check = 0; all_grids = 0.0;
                 maximum_allowed_deposition = -9999.0; dh_tol = 0.00025; erotot_m = 0.0;
                 for (row = 0; row < nr; row++)
                 {
                     for (col = 0; col < nc; col++)
                     {
-                        //Debug.WriteLine("hello, I am at " + row + " " + col);
-                        //slidemap should be an emergent property, not imposed clock. THerefore turned it off, to see where it makes trouble
-                        //slidemap[row, col] -= 1;  // terug opbouwen van 'landslide potential' bij meerdere tijdstappen
-                        //if (slidemap[row, col] < 0) { slidemap[row, col] = 0; }
-                        ero_slid_m[row, col] = 0.0;
-                        sed_slid_m[row, col] = 0.0;
-                        cel_dist[row, col] = 0.0;
-                        dh_slid[row, col] = 0.0;
-                        sed_bud_m[row, col] = 0.0;
-                        slidenr[row, col] = 0;
-                    }
-                }
-                int landslidenumber = 1;
-                double[] this_slidesum_texture_kg = new double[5];
-                for (i = 0; i < n_texture_classes; i++)
-                {
-                    for (j = 0; j < 1000; j++)
-                    {
-                        //landslidesum_texture_kg[j, i] = 0.0;
-                        //if(i<2)landslidesum_OM_kg[j, i] = 0.0;
+                        if (dtm[row, col] != -9999)
+                        {
+                            ero_slid_m[row, col] = 0;
+                            sed_slid_m[row, col] = 0;
+                            slidestatus[row, col] = 0;
+                            remaining_vertical_size_m[row, col] = 0;
+                            for (int material = 0; material < 5; material++)
+                            {
+                                sediment_in_transport_kg[row, col, material] = 0;
+                            }
+                            young_SOM_in_transport_kg[row, col] = 0;
+                            old_SOM_in_transport_kg[row, col] = 0;
+                        }
                     }
                 }
                 //Debug.WriteLine("prepared");
-                // we will now go past all cells, and where landsliding is initiated, we 
-                // calculate how many neighbouring cells are also sliding, 
+                // we will now go past all cells, and first decide whether one of three things is true:
+                // A: a landslide can initiate here (if crrain_mm_d < actual rainfall)
+                // B: a landslide can continue (if there are already landslide deposits here, and the slope is steep enough )
+                // C: a landslide can deposit here ( if there are already ls deposits here, but the slope is not steep enough )
                 int runner;
                 for (runner = number_of_data_cells - 1; runner >= 0; runner--)
-                {           // the index is sorted from low to high values, but flow goes from high to low
+                {           // the list of cells (index) is sorted from low to high values, but flow goes from high to low
+                            //so, we will now walk from highest cell to next lower cell, etc, not necessarily to a direct neighbour.
                     row = row_index[runner]; col = col_index[runner];
-
-                    // into loop for surrounding grids of certain grid
-                    // Start first the slope_sum loop for all lower neighbour grids
                     powered_slope_sum = 0.0; max_allowed_erosion = 0.0; dz_min = -9999.99; d_x = dx;
-                    direction = 20; dz_max = -1.0; dhtemp = -99999.99; maximum_allowed_deposition = (-9999.99);
-                    // Repeat the loop to determine if all neigbours are processed
-                    nb_ok = 1;
+                    dz_max = -1.0; dhtemp = -99999.99; maximum_allowed_deposition = -9999.99;
+                    bool situation_A = false, situation_B = false, situation_C = false, situation_D = false;
 
-                     // First loop to process slide erosion with a slope limit and steepest descent.
-                     //this means we are not picking up material sideways, but only directly down
-                     //perhaps that can be improved at some point.
+                    //first, calculating steepest local slope:
+                    steepdesc(row, col); // this changes the value of global variables xrow,xcol so that those reference the steepest lower neighbour
+                    if (xrow == row | xcol == col) { d_x = dx; } else { d_x = dx * Math.Sqrt(2); }
+                    double steepestslope_tan = (dtm[row, col] - dtm[xrow, xcol]) / d_x;
+                    //calculating current local rain intensity:
+                    if (check_space_rain.Checked == true) { rain_value_m = rain_m[row, col]; }
+                    rain_intensity_m_d = Convert.ToDouble(text_ls_rel_rain_intens.Text) * rain_value_m;
+                    //make sure we don't always hit that rain intensity in the same way:
+                    Random random = new Random();
+                    double n = random.NextDouble() / 2 + 0.6;
+                    rain_intensity_m_d = rain_intensity_m_d * n;
+                    sum_rainfall_intensity_m_d += rain_intensity_m_d;
+                    //Debug.WriteLine("this year's rain factor is " + n);
 
-                    i = 0;j = 0;
-                    dh_tot_m = 0.0;
-                    steepdesc(row, col);  // this should set the values of global variables xrow and xcol which are the nb cells that are steepest downslope from here
-                    dh = (dtm[row, col] - dtm[xrow, xcol]);
-                    if ((row != xrow) && (col != xcol)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }
-                    slope = dh / d_x;
-                    //here we impose an additional constraint on landsliding: a minimum slope steepness. So even if rain > crrain, still no slide - that feels wrong!
-                    if (slope > minimum_slope_for_movement && slidenr[row, col] == 0)
-                    //if (slidenr[row, col] == 0)
-                    { // FACTOR 1 and not slided yet
 
-                        if (check_space_rain.Checked == true) { rain_value_m = rain_m[row, col]; }
+                    //now let's calculate which situation applies to this cell:
 
-                        //we now test whether this cell has a crrain value that is low enough to fail under durrentl rainfall intensity:
-                        // we also could/should check whether this cell is unconditionally stable (currently that's a ccrain of 10 mm/d, could in theory still happen)
-                        //we also SKIP cells that unconditionally UNstable - those are presumed to be rock in the original LAPSUS (otherwise they would have failed way 
-                        //before the simulation, is the thinking. 
-                        //for us, we might want to simply include those cells and have them fail immediately in the first timestep (insofar as there is soil)
-                        //in that case, the test below should not be >0, but >= 0
-                        //added check that the cell hadnt before been involved in landsliding by requiring slidenr=0
-                        if ((crrain_m_d[row, col] > 0.0) && (crrain_m_d[row, col] < rain_intensity_m_d) && slidenr[row,col]==0)
-                        {
-                            //Debug.WriteLine("about to slide from cell " + row + " " + col + "( rain intensity in m per d was " + rain_intensity_m_d + ")");
-                            double extra_ero_m = 0;
-                            if (ero_slid_m[row, col] > -((sat_bd_kg_m3[row, col]/1000 * 9.81 * Math.Cos(slope) * (Math.Tan(slope) - Math.Tan(minimum_slope_for_movement))) / Cohesion_factor[row, col]))
-                            { // FACTOR 1 maximal erosion applied if more than one slide
-                                //so we want to slide more than we had before 
-                                //then we should add the extra amount to landslidesum_kg, and take the extra amount from soil
-                                //but keep the total amount of erosioun (from possibly multiple slides) inside ero_slid_m 
-                                extra_ero_m = (((sat_bd_kg_m3[row, col] / 1000 * 9.81 * Math.Cos(slope) * (Math.Tan(slope) - Math.Tan(minimum_slope_for_movement))) / Cohesion_factor[row, col]) + ero_slid_m[row, col]);
-                                ero_slid_m[row, col] -= extra_ero_m;
-                                if (Double.IsNaN(ero_slid_m[row, col]))
-                                {
-                                    Debug.WriteLine("talk");
-                                }
-                                //maximize to soildepth:
-                                if (-ero_slid_m[row, col] > soildepth_m[row, col]) {
-                                    extra_ero_m = soildepth_m[row, col] + ero_slid_m[row, col];
-                                    ero_slid_m[row, col] = -soildepth_m[row, col];
-                                    if (Double.IsNaN(ero_slid_m[row, col]))
-                                    {
-                                        Debug.WriteLine("talk2");
-                                    }
-                                }
-                                if(Double.IsInfinity(ero_slid_m[row, col])){ 
-                                    Debug.WriteLine("stop"); }
-                                store_slid_mass(landslidenumber, extra_ero_m, row, col);
-                                if (Double.IsInfinity(ero_slid_m[row, col]))
-                                {
-                                    Debug.WriteLine("stop2");
-                                }
-                                slidenr[row, col] = landslidenumber;
-                                dh_tot_m += dh; 
-                                //getch();
-                            }
-                            //Debug.WriteLine("adding sliding area to slide from cell " + row + " " + col);
-                            while (slope > minimum_slope_for_movement)
-                            {   // FACTOR 1
-                                //Debug.WriteLine("moving to " + xrow + " " + xcol);
-                                prev_row = xrow; prev_col = xcol;
-                                steepdesc(prev_row, prev_col);
-                                //Debug.WriteLine("steepest nb is " + xrow + " " + xcol);
-                                dh = (dtm[prev_row, prev_col] - dtm[xrow, xcol]);
-                                if ((prev_row != xrow) && (prev_col != xcol)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }
-                                slope = dh / d_x;
-                                if (slope > minimum_slope_for_movement )
-                                {// FACTOR 1 slide keeps eroding if slope is steep enough
-                                    //Debug.WriteLine("accepted " + prev_row + " " + prev_col + " slidenr " + slidenr[prev_row, prev_col]);
-                                    if ((ero_slid_m[prev_row, prev_col] == 0.0) && (slidenr[prev_row, prev_col] == 0) && soildepth_m[prev_row, prev_col] != 0)
-                                    { // has not been processed (eroded) earlier
-                                        //Debug.WriteLine("eroding " + prev_row + " " + prev_col);
-                                        ero_slid_m[prev_row, prev_col] = -((sat_bd_kg_m3[prev_row, prev_col] / 1000 * 9.81 * Math.Cos(slope) * (Math.Tan(slope) - Math.Tan(minimum_slope_for_movement))) / Cohesion_factor[prev_row, prev_col]); //FACTOR 1
-                                        if (Double.IsNaN(ero_slid_m[prev_row, prev_col]))
-                                        {
-                                            Debug.WriteLine("talk3");
-                                        }
-                                        if (-ero_slid_m[prev_row, prev_col] > soildepth_m[prev_row, prev_col]) { ero_slid_m[prev_row, prev_col] = -soildepth_m[prev_row, prev_col]; NA_in_map(ero_slid_m); }
-                                        if (Double.IsInfinity(ero_slid_m[prev_row, prev_col]))
-                                        {
-                                            Debug.WriteLine("stop");
-                                        }
-                                        store_slid_mass(landslidenumber, -ero_slid_m[prev_row, prev_col], prev_row, prev_col);
-                                        slidenr[prev_row, prev_col] = landslidenumber;
-                                        dh_tot_m += dh;
-                                    }
-                                    else { 
-                                        //nothing needed : we didn't landslide a zero-=depth cell, but we are moving down further
-                                    }
-                                }
-                                else {  // the stlope to the steepest next cell (xrow,cxcol) was too flat, deposition will start. We now dump all sediment from all eroding cells of this landslide on that cell,
-                                        // while accounting for bulkdensity of the mixed ls deposit
-                                    for (i = 0; i < n_texture_classes; i++)
-                                    {
-                                        this_slidesum_texture_kg[i] = landslidesum_texture_kg[landslidenumber, i];
-                                    }
-                                    sed_bud_m[prev_row, prev_col] += calc_thickness_from_mass(this_slidesum_texture_kg, landslidesum_OM_kg[landslidenumber, 0], landslidesum_OM_kg[landslidenumber, 1]);
-                                    //at this point only, we can be a little bit sure that sed_bud_m stores the total thickness of this landslide. We save it so that we can calculate fractions of it when deppsiting mass from landslidesum_texture_kg
-                                    //if multiple slides ended up at this point, we're screwed.
-                                    if (landslidesum_thickness_m[landslidenumber] != 0) { 
-                                        Debug.WriteLine("that's unexpected!"); 
-                                    }
-                                    landslidesum_thickness_m[landslidenumber] = sed_bud_m[prev_row, prev_col];
-                                    dh_slid[prev_row, prev_col] += (dh_tot_m); //this stores the vertical size of the landslide and
-                                                                         ////will be used to calculate the size of its deposit. 
-                                    slidenr[prev_row, prev_col] = landslidenumber;
-                                    erotot_m += calc_thickness_from_mass(this_slidesum_texture_kg, landslidesum_OM_kg[landslidenumber, 0], landslidesum_OM_kg[landslidenumber, 1]);
-                                }
-                            }//end while
-                            //Debug.WriteLine("we now know eroded cells, volume and mass for landslide starting at " + row + " " + col + " with " + sed_bud_m[xxrow, xxcol] + "m sediment");
-                            landslidenumber++;
-                        }//end if
-                    }
-                }       // end for all sorted cells
-                Debug.WriteLine("total erosion by landslides: " + erotot_m + "m. This corresponds to " + (erotot_m*dx*dx) + "m3.");
-                //we have now done all eroding for all landslides
-                //and we have reached the places where deposition starts.
-                //and we have available the amount of sediment in kg and in m on the highest cell of each LS deposit (called xxrow,xxcol above)
-
-                //2 Second while loop to process slide deposition with a 'cell distance' and 'double' multiple flow
-                nb_ok = 0; nb_check = 0; all_grids = 0.0; tell = 0;
-                maximum_allowed_deposition = -9999.0; dh_tol = 0.00025; sedtot = 0.0; strsed = 0.0; startsed = 0.0;
-                for (row = 0; row < nr; row++)
-                {
-                    for (col = 0; col < nc; col++)
+                    if (crrain_m_d[row, col] > 0.0 && rain_intensity_m_d > crrain_m_d[row, col])
                     {
-                        if (dtm[row, col] != -9999)
-                        {
-                            cel_dist[row, col] = ((0.4 * dh_slid[row, col]) / dx); // FACTOR 2 calculate 'celdistance', empirical runout fraction set at 0.4 
-                            //https://link.springer.com/article/10.1007/s002540050296
-                            startsed += sed_bud_m[row, col]; // 'startsed'-counter =  to display initial sediment budget for all landslides together in ero-sed balance in model run
-                        }
+                        situation_A = true;// A: a landslide will initiate here (because crrain_m_d < actual rainfall) -
+                                           // even if there was already a landslide above us, moving down to here
                     }
-                }
-                //2 into while loop for all grids if not all neighbours are processed
-                for (runner = number_of_data_cells - 1; runner >= 0; runner--)
-                {           // the index is sorted from low to high values, but flow goes from high to low
-                    row = row_index[runner]; col = col_index[runner];
-
-                    powered_slope_sum = 0.0; max_allowed_erosion = 0.0; dz_min = -9999.99; d_x = dx;
-                    direction = 20; dz_max = -1.0; dhtemp = -99999.99; maximum_allowed_deposition = (-9999.99);
-                    nb_ok = 1;
-
-                    //let's start deposition at all cells that have sed_bud_m waiting, and cel_dist to spend
-                    //Arn, Lieven's cel_dist trick will not work if multiple landslides drop material in the same cell, overwriting cel_dist
-                    if (slidenr[row, col] != 0) {
-
-                        if ((sed_bud_m[row, col] > 0.0) && (cel_dist[row, col] > 0.0))
+                    else
+                    {
+                        //so, we don't initiate a landslide here. Do we continue one? Do we deposit?
+                        if (remaining_vertical_size_m[row, col] > 0)
                         {
-                            landslidenumber = slidenr[row, col];
-                            double slidemass = landslidesum_texture_kg[landslidenumber, 0] + landslidesum_texture_kg[landslidenumber, 1] + landslidesum_texture_kg[landslidenumber, 2] +
-                            landslidesum_texture_kg[landslidenumber, 3] + landslidesum_texture_kg[landslidenumber, 4] + landslidesum_OM_kg[landslidenumber, 0] + landslidesum_OM_kg[landslidenumber, 1];
-                            //Debug.WriteLine(" encountered landslide " + landslidenumber + " with total mass " + slidemass + " and local thickness (m) " + sed_bud_m[row, col]);
-                            //Debug.WriteLine(" density kg/m3: " + (slidemass/(sed_bud_m[row, col]*dx*dx)));
-                            if (sed_bud_m[row, col] < 0.00001) { tell++; }
+                            //ok, we have a landslide here, and there should be sediment from it. Do we continue by eroding, or depositing?
+                            if (steepestslope_tan > minimum_slope_for_movement_tan)
+                            {
+                                situation_B = true; //B: an existing landslide will MAYBE continue here (we have stuff AND slope)
+                            }
                             else
                             {
-                                for (i = (-1); i <= 1; i++)
+                                situation_C = true; //C: an existing landslide will deposit here (we have stuff WITHOUT slope}
+                            }
+                        }
+                        else
+                        {
+                            situation_D = true; //do nothing: there is no landslide to continue or deposit from
+                        }
+                    }
+
+                    //at this point, we know what should happen at this cell. Now let's do it. It's mostly similar for situations A and B:
+                    if (situation_A == true || situation_B == true)
+                    {
+                        //initiation and continuation:
+                        //erode, route downhill, and administer:
+                        //per https://doi.org/10.1016/j.geomorph.2006.06.039 and previous pubs:
+                        double desired_erosion_m = (sat_bd_kg_m3[row, col] / 1000) * Math.Cos(Math.Atan(steepestslope_tan)) * (steepestslope_tan - minimum_slope_for_movement_tan) / Cohesion_factor[row, col];
+                        double actual_erosion_m = Math.Min(desired_erosion_m, soildepth_m[row, col]);
+                        //actual_erosion_m must be a zer or  a positive number. We are either eroding the entire soil, or however much we wanted to erode
+                        //record this erosion in ero_slid_m, but don't change the dtm until we have considered all cells:
+                        //if actual_erosion_m is zero: we don't do anything, but we do transport any possible sed_in_trans further down to the next cells
+                        if (actual_erosion_m > 0)
+                        {
+                            ero_slid_m[row, col] = -actual_erosion_m;
+                            if (situation_A == true)
+                            {
+                                initiation_volume_m3 += actual_erosion_m * dx * dx;
+                                initiation_mass_kg += Convert.ToDecimal(store_slid_mass_new(actual_erosion_m, row, col));
+                            }
+                            else
+                            {
+                                continuation_volume_m3 += actual_erosion_m * dx * dx;
+                                continuation_mass_kg += Convert.ToDecimal(store_slid_mass_new(actual_erosion_m, row, col));
+                            }
+                        }
+                        else
+                        { //so we didn't erode anything, usually because there was no soil. That's OK.
+
+                        }
+                        //now, take away from the existing soil and add to material in transport
+                        //then route material in transport to downhill cells, so first calculate powered slope sum for this cell:
+                        powered_slope_sum = 0;
+                        double DANGER_extra_factor_ArT_GSA2024 = 0.09;
+                        for (int i = -1; i <= 1; i++)
+                        {
+                            for (int j = -1; j <= 1; j++)
+                            {
+                                if (((row + i) >= 0) && ((row + i) < nr) && ((col + j) >= 0) && ((col + j) < nc) && !((i == 0) && (j == 0)))
                                 {
-                                    for (j = (-1); j <= 1; j++)
+                                    dh = 0;
+                                    if (dtm[row + i, col + j] != -9999)
                                     {
-                                        dh = 0.000000; dh1 = 0.000; dhtemp = -99999.99; d_x = dx;
-                                        if (((row + i) >= 0) && ((row + i) < nr) && ((col + j) >= 0) && ((col + j) < nc) && !((i == 0) && (j == 0)))
-                                        {
-                                            if (dtm[row + i, col + j] != -9999)
+                                        dh = dtm[row, col] - dtm[row + i, col + j];
+                                        if (dh > 0)
+                                        {// i j is a lower neighbour
+                                            if ((row != row + i) && (col != col + j)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }
+                                            slope_tan = dh / d_x;
+                                            if (slope_tan > minimum_slope_for_movement_tan + DANGER_extra_factor_ArT_GSA2024) // only cells that are steeply enough under this cell, can be recipients
                                             {
-                                                dh = (dtm[row, col] - dtm[row + i, col + j]);
-                                                if ((row != row + i) && (col != col + j)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }
-                                                if (dh < 0.000000)
-                                                {// i j is a higher neighbour
-                                                    if (dh > dz_min) { dz_min = dh; }
-                                                    if ((dh < 0.000000))
-                                                    {// i j is a higher neighbour
-                                                        if (dh1 > maximum_allowed_deposition) { maximum_allowed_deposition = (dh1); }
-                                                    }
-                                                }
-                                                if (dh > 0.000000)
-                                                {// i j is a lower neighbour
-                                                    if ((dh > 0.000000))
-                                                    {
-                                                        if (dh1 > max_allowed_erosion - dh_tol) { max_allowed_erosion = (dh1 - dh_tol); }
-                                                    }
-                                                    dh = dh / d_x;
-                                                    if (dh > dz_max) { dz_max = dh; direction = (i * 3 + 5 + j); }
-                                                    dh = Math.Pow(dh, conv_fac);
-                                                    powered_slope_sum = powered_slope_sum + dh;
-                                                }//end if
+                                                double powered_slope = Math.Pow(slope_tan, LS_conv_fac);
+                                                powered_slope_sum += powered_slope;
                                             }
                                         }//end if
-                                    }//end for
-                                }//end for
-                                 //we now have what we need (powered_Slope_sum) to calculate which lower cell gets what
-                                if (maximum_allowed_deposition == -9999.99) { maximum_allowed_deposition = 0.0; } else { maximum_allowed_deposition = (maximum_allowed_deposition * (-1.0)); }
-                                if (max_allowed_erosion == 0.0) { max_allowed_erosion = dh_tol * -1.0; } else { max_allowed_erosion = (max_allowed_erosion * (-1.0)); }
-                                for (i = (-1); i <= 1; i++)
+                                    }
+                                }//end if
+                            }//end for j
+                        }//end for i
+                         //we now know powered slope sum 
+                         //now clculate the fraction for this cell:
+                        for (int i = -1; i <= 1; i++)
+                        {
+                            for (int j = -1; j <= 1; j++)
+                            {
+                                dh = 0;
+                                if (((row + i) >= 0) && ((row + i) < nr) && ((col + j) >= 0) && ((col + j) < nc) && !((i == 0) && (j == 0)))
                                 {
-                                    for (j = (-1); j <= 1; j++)
+                                    if (dtm[row + i, col + j] != -9999)
                                     {
-                                        dh = 0.000000; fraction = 0.0;
-                                        frac_dis = 0.0; frac_bud_m = 0.0;
-                                        d_x = dx;
+                                        dh = dtm[row, col] - dtm[row + i, col + j];
+                                        if (dh > 0)
+                                        {// i j is a lower neighbour
+                                            if ((row != row + i) && (col != col + j)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }
+                                            slope_tan = dh / d_x;
+                                            if (slope_tan > minimum_slope_for_movement_tan + DANGER_extra_factor_ArT_GSA2024)
+                                            {
+                                                double powered_slope = Math.Pow(slope_tan, LS_conv_fac);
+                                                fraction = powered_slope / powered_slope_sum;
+                                                for (int tex = 0; tex < n_texture_classes; tex++)
+                                                {
+                                                    sediment_in_transport_kg[row + i, col + j, tex] += fraction * sediment_in_transport_kg[row, col, tex];
+                                                    //Debug.WriteLine("routed " + texture_kg[donorrow, donorcol, layer_slide, ti] * slidfraction + " to sed in trans, now " + sediment_in_transport_kg[donorrow, donorcol, ti]);
+                                                }
+                                                young_SOM_in_transport_kg[row + i, col + j] += fraction * young_SOM_in_transport_kg[row, col];
+                                                old_SOM_in_transport_kg[row + i, col + j] += fraction * old_SOM_in_transport_kg[row, col];
+                                                remaining_vertical_size_m[row + i, col + j] = Math.Max(remaining_vertical_size_m[row + i, col + j], (dtm[row, col] - dtm[row + i, col + j]) + remaining_vertical_size_m[row, col]);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        //so, all cells under this cell have received the sediment in transport and OM in transport that they need.
+                        //We will work on those cells when it's their turn but not now.
+                        //for now, we are done with this cell, and it does no longer have sediment in transport:
+                        for (int tex = 0; tex < n_texture_classes; tex++)
+                        {
+                            sediment_in_transport_kg[row, col, tex] = 0;
+                        }
+                        young_SOM_in_transport_kg[row, col] = 0;
+                        old_SOM_in_transport_kg[row, col] = 0;
+                        //final administration:
+                        if (situation_A == true)
+                        {
+                            //initiation
+                            slidestatus[row, col] = 1;
+                            landslide_initiation_cells += 1;
+                        }
+                        else if (situation_B == true)
+                        {
+                            //continuation
+                            slidestatus[row, col] = 2;
+                            landslide_continuation_cells += 1;
+                        }
+                    }
+
+                    if (situation_C == true) // deposition
+                    {
+                        //deposit, route downhill, and administer
+                        //we would like to deposit everything we have in transport, but we can only deposit a fraction of that because of the momentum.
+                        //we use a literature-based runout-ratio  -> remaining_vertical_size_m * runout ratio is how far this slide can still travel in m
+                        double remaining_runout_distance_cells = remaining_vertical_size_m[row, col] / dx * runout_ratio;
+                        if (remaining_runout_distance_cells > 1000)
+                        {
+                            Debug.WriteLine("hold it right there ");
+                        }
+                        double[] available_mass_kg = { 0, 0, 0, 0, 0 };
+                        //let's calculate how much landslide mass and thickness we have available:
+                        for (int size = 0; size < n_texture_classes; size++)
+                        {
+                            available_mass_kg[size] = sediment_in_transport_kg[row, col, size];
+                        }
+                        double available_landslide_material_m = calc_thickness_from_mass(available_mass_kg, young_SOM_in_transport_kg[row, col], old_SOM_in_transport_kg[row, col]);
+
+                        //Debug.WriteLine(" approximate bd of material to be deposited: " + ( available_mass_kg.Sum() / (available_landslide_material_m * dx * dx)) + " kg/m3");
+                        //OK, we know what we have available, and what its remaining momentum=runout distance is                        
+                        double requested_deposition_m = available_landslide_material_m;
+                        if (remaining_runout_distance_cells > 1)
+                        {
+                            // limit deposition here to a fraction determined by the remaining runout:
+                            requested_deposition_m /= remaining_runout_distance_cells;
+                        }
+                        //now, let's check how much we can deposit without creating a peak: a bit less than the highest higher nb cell, or nothing if there is no cell like that.
+                        //so, lets look around at all possible higher cells to find that out
+                        double maximum_allowed_deposition_m = 0;
+                        powered_slope_sum = 0;
+                        for (int i = -1; i <= 1; i++)
+                        {
+                            for (int j = -1; j <= 1; j++)
+                            {
+                                dh = 0; dh1 = 0;
+                                if (((row + i) >= 0) && ((row + i) < nr) && ((col + j) >= 0) && ((col + j) < nc) && !((i == 0) && (j == 0)))
+                                {
+                                    if (dtm[row + i, col + j] != -9999)
+                                    {
+                                        dh = dtm[row, col] - dtm[row + i, col + j];
+                                        if (dh <= 0)
+                                        {
+                                            // i j was originally a higher neighbour, but it may have eroded by now from sliding
+                                            //let's see how much/whether it is currently higher than the previous lowest higher neighbour, taking into account erosion of the overlying cell and deposition on the overlying cell.
+                                            dh1 = (dtm[row + i, col + j] + ero_slid_m[row + i, col + j] + sed_slid_m[row + i, col + j]) - dtm[row, col];
+                                            if (dh1 > maximum_allowed_deposition_m) { maximum_allowed_deposition_m = dh1; }
+                                        }
+                                    }
+                                }//end if
+                            }//end for j
+                        }//end for i
+                         //we now know how much we CAN deposit here. It's equal to maximum_allowed_deposition_m. 
+                         //we pick the largest possible amount - either what topography allows (maximum_allowed), or what we insist on (requested). 
+                         //maximum_allowed_deposition_m = Math.Max(maximum_allowed_deposition_m, requested_deposition_m);
+                         //alternatively, we pick the minimum: we deposit what we would like, unless that amount is too much, in which case we take less:
+                        maximum_allowed_deposition_m = Math.Min(maximum_allowed_deposition_m, requested_deposition_m);
+                        //But we do of course limit ourselves to the entire amount that we want to deposit:
+                        maximum_allowed_deposition_m = Math.Min(maximum_allowed_deposition_m, available_landslide_material_m);
+                        double deposited_landslide_fraction = maximum_allowed_deposition_m / available_landslide_material_m;
+                        sed_slid_m[row, col] += maximum_allowed_deposition_m;
+                        deposition_volume_m3 += maximum_allowed_deposition_m * dx * dx;
+                        decimal previous_dep_mass_kg = deposition_mass_kg;
+                        deposition_mass_kg += Convert.ToDecimal(deposit_slid_mass_new(deposited_landslide_fraction, row, col));
+                        try
+                        {
+                            if (maximum_allowed_deposition_m > 0)
+                            {
+                                decimal dep_bd_kg_m3 = (deposition_mass_kg - previous_dep_mass_kg) / Convert.ToDecimal(maximum_allowed_deposition_m * dx * dx);
+                                if (Convert.ToBoolean(Convert.ToDouble(dep_bd_kg_m3) < 1))
+                                {
+                                    Debug.WriteLine("approximate bd of material just deposited: " + dep_bd_kg_m3 + " kg/m3 at " + row + " " + col + " cell dist " + remaining_runout_distance_cells);
+                                }
+                            }
+                        }
+                        catch { }
+                        //move downstream with everything else
+                        //we don't need to know how many meters of  material are left - it's the material in transport (kg) that we need to distribute
+                        double undeposited_landslide_fraction = 1 - deposited_landslide_fraction;
+                        if (undeposited_landslide_fraction > 0)
+                        {
+                            for (int i = -1; i <= 1; i++)
+                            {
+                                for (int j = -1; j <= 1; j++)
+                                {
+                                    dh = 0; dh1 = 0;
+                                    if (((row + i) >= 0) && ((row + i) < nr) && ((col + j) >= 0) && ((col + j) < nc) && !((i == 0) && (j == 0)))
+                                    {
+                                        if (dtm[row + i, col + j] != -9999)
+                                        {
+                                            dh = dtm[row, col] + sed_slid_m[row, col] - dtm[row + i, col + j];
+                                            if (dh > 0)
+                                            {// i j is a lower neighbour (where by definition there has not yet been erosion)
+                                                if ((row != row + i) && (col != col + j)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }
+                                                slope_tan = dh / d_x;
+                                                double powered_slope = Math.Pow(slope_tan, LS_conv_fac);
+                                                powered_slope_sum += powered_slope;
+                                            }//end if
+                                        }
+                                    }//end if
+                                }//end for j
+                            }//end for i
+                            if (powered_slope_sum == 0) { Debug.WriteLine("there was vertical space to deposit, but no lower space to send sediment to. Sediment left in transport at " + row + " " + col); }
+                            else
+                            {
+                                for (int i = -1; i <= 1; i++)
+                                {
+                                    for (int j = -1; j <= 1; j++)
+                                    {
                                         if (((row + i) >= 0) && ((row + i) < nr) && ((col + j) >= 0) && ((col + j) < nc) && !((i == 0) && (j == 0)))
                                         {
                                             if (dtm[row + i, col + j] != -9999)
                                             {
-                                                dh = (dtm[row, col] - dtm[row + i, col + j]);
-                                                //Multiple Flow: If there are lower neighbours start evaluating
-                                                if (dh > 0.000000)
-                                                {// && (cel_dist[row,col]>0.0)) { // multiple flow, 'celdistance'
-                                                 // fraction of discharge into a neighbour grid
+                                                dh = dtm[row, col] + sed_slid_m[row, col] - dtm[row + i, col + j];
+                                                if (dh > 0)
+                                                {// i j is a lower neighbour (where by definition there has not yet been erosion)
                                                     if ((row != row + i) && (col != col + j)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }
-                                                    slope = dh / d_x;
-                                                    dh = dh / d_x;
-                                                    dh = Math.Pow(dh, conv_fac);
-                                                    fraction = (dh / powered_slope_sum); // multiple fow
-                                                                                         // "fraction" now holds the fraction of all available sediment that will be deposited.
-                                                    if (cel_dist[row, col] <= 1.0) //if we're done with our outflow, if momentum has been used up, then we use the remaining frac_bud_m and 
-                                                        //give its fractions to the current set of lower cells. 
+                                                    slope_tan = dh / d_x;
+                                                    double powered_slope = Math.Pow(slope_tan, LS_conv_fac);
+                                                    double distribution_fraction = powered_slope / powered_slope_sum;
+                                                    for (int tex = 0; tex < n_texture_classes; tex++)
                                                     {
-                                                        frac_bud_m = (sed_bud_m[row, col] * fraction);
+                                                        sediment_in_transport_kg[row + i, col + j, tex] += distribution_fraction * undeposited_landslide_fraction * sediment_in_transport_kg[row, col, tex];
                                                     }
-                                                    else   //otherwise, we use less than the total for this set of lower cells , by reducing the part of the budget that we use by cel_dist.
-                                                    //this results in us using LESS sediment closer to the start of deposition, where cel_dist is larger.
-                                                    {
-                                                        frac_bud_m = ((sed_bud_m[row, col] / cel_dist[row, col]) * fraction);
-                                                    }
-                                                    //We then move the remainder of sed_bud_m down to the next cell:
-                                                    sed_bud_m[row + i, col + j] += ((sed_bud_m[row, col] * fraction) - frac_bud_m);
-                                                    // and we store deposition in m in this cell:
-                                                    sed_slid_m[row, col] += frac_bud_m;
-                                                    // and add the amount in kg to the local soil (which will determine the real impact on dtm[row,col];
-                                                    double overall_thickness_fraction = frac_bud_m / landslidesum_thickness_m[landslidenumber];
-                                                    deposit_slid_mass(overall_thickness_fraction, landslidenumber, row, col);
-                                                    //accounting for total counters of landslide deposition:
-                                                    sedtot += frac_bud_m;
-                                                    
-                                                    if (cel_dist[row, col]  > 1)
-                                                    {
-                                                        if ((sed_bud_m[row + i, col + j] > 0.0) && (cel_dist[row + i, col + j] < (cel_dist[row, col] - 1.0)))
-                                                        {
-                                                            cel_dist[row + i, col + j] = (cel_dist[row, col] - 1.0);
-                                                        }
-                                                        else { cel_dist[row + i, col + j] += 0.0; }
-                                                    }
-                                                    else { cel_dist[row + i, col + j] += 0.0; }
-                                                    if ((camf[row, col] >= 500.0) && (sed_slid_m[row, col] > 0.0))
-                                                    { // FACTOR 3
-                                                        strsed += sed_slid_m[row, col];
-                                                    }
+                                                    young_SOM_in_transport_kg[row + i, col + j] += distribution_fraction * undeposited_landslide_fraction * young_SOM_in_transport_kg[row, col];
+                                                    old_SOM_in_transport_kg[row + i, col + j] += distribution_fraction * undeposited_landslide_fraction * old_SOM_in_transport_kg[row, col];
+                                                    remaining_vertical_size_m[row + i, col + j] = Math.Max(remaining_vertical_size_m[row + i, col + j], (remaining_runout_distance_cells - (d_x / dx)) * dx / runout_ratio);
                                                 }//end if
-                                            }
-                                        }//end borders
+                                            } // end if
+                                        }//end if
                                     }//end for j
                                 }//end for i
-                            } //end if too small sed_bud_m
-                        }//2 end if sed_bud
-                    } // end if slidenr > 0
-                } //all landslide deposition has happened from all landslides
-
-
-                //here, we used to set landsliding 'off' for a few years after a landslide.
-                //that does not help Mostafa (or anyone) who is interested in finding out what/when/where landslides reoccur
-                //we might however set a temporary change from residual to peak friction angle ( not now done)
-
-                //ArT : here, at the end, it is necessary to adapt DEM, and soils, after calculation of sliding and depositing
-                //
-                int ls_ero_cell_counter = 0, ls_dep_cell_counter = 0;
+                            } // end else
+                        }
+                        //clean up after we are done here:
+                        for (int tex = 0; tex < n_texture_classes; tex++)
+                        {
+                            sediment_in_transport_kg[row, col, tex] = 0;
+                        }
+                        young_SOM_in_transport_kg[row, col] = 0;
+                        old_SOM_in_transport_kg[row, col] = 0;
+                        //do administration:
+                        if (maximum_allowed_deposition_m == 0)
+                        {
+                            slidestatus[row, col] = 4; //means: deposition was needed, but not allowed topographically
+                        }
+                        else
+                        {
+                            slidestatus[row, col] = 3; // means: deposition was needed, and happened
+                        }
+                        landslide_deposition_cells += 1;
+                    } // end if situation C = deposition
+                    if (situation_D == true)
+                    {
+                        slidestatus[row, col] = 5; // means: this is outside of landslide initiation, continuation, deposition area - beyond the runout distance. 
+                        for (int tex = 0; tex < n_texture_classes; tex++)
+                        {
+                            if (sediment_in_transport_kg[row, col, tex] > 0)
+                            {
+                                //Debug.WriteLine(" there is sediment left but no place to put it. Now what? " + row + " " + col + " " + sediment_in_transport_kg[row, col, tex] + " kg");
+                            }
+                        }
+                    }
+                } //for runner
+                //now update the DTM:
                 for (row = 0; row < nr; row++)
                 {
                     for (col = 0; col < nc; col++)
                     {
-                        //something here that takes away soils, mixes textures, dumps soils, adapts layers, adapts DTM etc
-                        //soils have been denuded and dtm has bee adapted earlier during the erosion phase in store_slid_mass()
-                        //texture mixing and soil dumping has happened during the deposition phase
-                        //now we adapt the DTM
                         if (dtm[row, col] != -9999)
                         {
-                            dtm[row, col] += sed_slid_m[row, col] + ero_slid_m[row, col];
-                            if(ero_slid_m[row, col] < 0){
-                                ls_ero_cell_counter += 1;
-                            }
-                            if (sed_slid_m[row, col] > 0)
-                            {
-                                ls_dep_cell_counter += 1;
-                            }
+                            dtm[row, col] += ero_slid_m[row, col] + sed_slid_m[row, col];
+                            dtmchange_m[row, col] += ero_slid_m[row, col] + sed_slid_m[row, col];
+                            soildepth_m[row, col] = total_soil_thickness(row, col);
                         }
                     }
                 }
-                out_double(workdir + "\\" + run_number + "_" + t + "_slide_erosion.asc", ero_slid_m);
-                out_double(workdir + "\\" + run_number + "_" + t + "_slide_deposit.asc", sed_slid_m);
-                out_integer(workdir + "\\" + run_number + "_" + t + "_slide_presence.asc", slidenr);
 
-                //write landslide process summaries to the console
-                Debug.WriteLine(" there were " + landslidenumber + " landslides");
-                Debug.WriteLine(" there were " + ls_ero_cell_counter + " cells eroded by landslides, and " + ls_dep_cell_counter + " cells received ls deposits");
-            }
-            catch
-            {
-                Debug.WriteLine("error in sliding");
-            }
+                if (t > 498)
+                {
+                    out_double(workdir + "\\" + run_number + "_" + string.Format("{0:0000.}", t) + "_slide_erosion_m.asc", ero_slid_m);
+                    out_double(workdir + "\\" + run_number + "_" + string.Format("{0:0000.}", t) + "_slide_deposit_m.asc", sed_slid_m);
+                    out_short(workdir + "\\" + run_number + "_" + string.Format("{0:0000.}", t) + "_slide_status.asc", slidestatus);
+                    out_double(workdir + "\\" + run_number + "_" + string.Format("{0:0000.}", t) + "_dtm_m.asc", dtm);
+                    //out_double(workdir + "\\" + run_number + "_" + string.Format("{0:0000.}", t) + "_verticalsize_m.asc", remaining_vertical_size_m);
+                    //out_sed_in_tran_kg(workdir + "\\" + run_number + "_" + string.Format("{0:0000.}", t) + "_sed_in_trans_kg.asc", sediment_in_transport_kg);
+                }
 
-        } // end calc_slide()   
+                Debug.WriteLine(" initiated on " + landslide_initiation_cells + " cells (" + (100 * landslide_initiation_cells / number_of_data_cells) + "%)");
+                Debug.WriteLine(" continued through " + landslide_continuation_cells + " cells(" + (100 * landslide_continuation_cells / number_of_data_cells) + "%)");
+                Debug.WriteLine(" deposited on " + landslide_deposition_cells + " cells(" + (100 * landslide_deposition_cells / number_of_data_cells) + "%)");
+                /*
+                Debug.WriteLine(" initiation caused " + string.Format("{0:0.0000}", (initiation_volume_m3 / 1000000)) + " million m3 erosion");
+                Debug.WriteLine(" continuation caused " + string.Format("{0:0.0000}", (continuation_volume_m3 / 1000000)) + " million m3 erosion");
+                Debug.WriteLine(" deposition caused " + string.Format("{0:0.0000}", (deposition_volume_m3 / 1000000)) + " million m3 deposition");
+                Debug.WriteLine(" material dropped into the river network: " + string.Format("{0:0.0000}", ((initiation_volume_m3 + continuation_volume_m3 - deposition_volume_m3) / 1000000)) + " million m3 ");
+
+                Debug.WriteLine(" initiation caused " + string.Format("{0:0.0000}", (initiation_mass_kg / 1000000)) + " million kg erosion");
+                Debug.WriteLine(" continuation caused " + string.Format("{0:0.0000}", (continuation_mass_kg / 1000000)) + " million kg erosion");
+                Debug.WriteLine(" deposition caused " + string.Format("{0:0.0000}", (deposition_mass_kg / 1000000)) + " million kg deposition");
+                Debug.WriteLine(" material disappeared into thin air: " + string.Format("{0:0.0000}", ((initiation_mass_kg + continuation_mass_kg - deposition_mass_kg) / 1000000)) + " million kg ");
+
+                //Check overall bulk densities:
+                if (deposition_volume_m3 > 0) { Debug.WriteLine(" density of material from initiation: " + string.Format("{0:0.0}", ((initiation_mass_kg / Convert.ToDecimal(initiation_volume_m3)))) + " kg/m3 "); }
+                if (continuation_volume_m3 > 0) { Debug.WriteLine(" density of material from continuation: " + string.Format("{0:0.0}", ((continuation_mass_kg / Convert.ToDecimal(continuation_volume_m3)))) + " kg/m3 "); }
+                if (deposition_volume_m3 > 0) {Debug.WriteLine(" density of material from deposition: " + string.Format("{0:0.0}", ((deposition_mass_kg / Convert.ToDecimal(deposition_volume_m3)))) + " kg/m3 "); }
+                if (initiation_volume_m3 + continuation_volume_m3 - deposition_volume_m3 > 0) { Debug.WriteLine(" density of material lost into thin air: " + string.Format("{0:0.0}", (((initiation_mass_kg + continuation_mass_kg - deposition_mass_kg) / Convert.ToDecimal((initiation_volume_m3 + continuation_volume_m3 - deposition_volume_m3))))) + " kg/m3 ");   }
+                */
+
+                average_rainfall_intensity_m_d = sum_rainfall_intensity_m_d / number_of_data_cells;
+                if (timeseries.timeseries_slide_checkbox.Checked)
+                {
+                    timeseries_matrix[t, timeseries_order[34]] = Convert.ToDouble(initiation_mass_kg);
+                    timeseries_matrix[t, timeseries_order[35]] = Convert.ToDouble(continuation_mass_kg);
+                    timeseries_matrix[t, timeseries_order[36]] = Convert.ToDouble(deposition_mass_kg);
+                    timeseries_matrix[t, timeseries_order[37]] = Convert.ToDouble((initiation_mass_kg + continuation_mass_kg - deposition_mass_kg));
+                    timeseries_matrix[t, timeseries_order[38]] = average_rainfall_intensity_m_d;
+                }
+                Debug.WriteLine(" finished landsliding process");
+            } // try
+            catch (Exception e) { }
+        }
 
         private void calculate_tillage()
         {
@@ -22607,7 +22744,7 @@ Example: rainfall.asc can look like:
                 comb_sort();
                 ini_slope();
                 calculate_critical_rain();
-                calculate_slide();
+                calculate_slide_new();
                 soil_update_split_and_combine_layers();
             }
 
