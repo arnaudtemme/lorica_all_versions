@@ -41,7 +41,7 @@ For Alessia:
 
 1. M - transport functions + apply everywhere, remove restart inside the code after crashing
 1. Ale - separate branch - improve temporally changing root cohesion, OM input, tillage, bioturbation rate, as a function of landuse
-2. A - landslide inside
+2. FINISHED A - landslide inside
 3. A - splitting into different files, setting NA value as a variable
 4a. MvdM : 
 	-- layer thickness: 1. top layer thickness, 2. traingular or a fixed factor, 3. max number of layers, 4. calculate layers. 
