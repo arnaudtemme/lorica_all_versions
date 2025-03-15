@@ -1593,7 +1593,6 @@ namespace LORICA4
                         all_process_output_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("all_processes"));
                         water_output_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("waterflow"));
                         depressions_output_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("depressions"));
-                        diagnostic_output_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("diagnostics"));
                         xreader.ReadEndElement();
                         xreader.ReadEndElement();
                         xreader.ReadStartElement("Other_outputs");
@@ -1958,7 +1957,6 @@ namespace LORICA4
                 xwriter.WriteElementString("all_processes", XmlConvert.ToString(all_process_output_checkbox.Checked));
                 xwriter.WriteElementString("waterflow", XmlConvert.ToString(water_output_checkbox.Checked));
                 xwriter.WriteElementString("depressions", XmlConvert.ToString(depressions_output_checkbox.Checked));
-                xwriter.WriteElementString("diagnostics", XmlConvert.ToString(diagnostic_output_checkbox.Checked));
                 xwriter.WriteEndElement();
 
                 xwriter.WriteEndElement();

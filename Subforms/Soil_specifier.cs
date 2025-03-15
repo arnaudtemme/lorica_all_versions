@@ -11,19 +11,27 @@ namespace LORICA4
 {
     public partial class Soil_specifier : Form
     {
+        private double sum_perc(string one, string two, string three, string four, string five, string six, string seven)
+        {
+            double sumtext = System.Convert.ToDouble(one) + System.Convert.ToDouble(two) + System.Convert.ToDouble(three) 
+                + System.Convert.ToDouble(four) + System.Convert.ToDouble(five) + System.Convert.ToDouble(six) 
+                + System.Convert.ToDouble(seven);
+            return (sumtext);
+        }
+
+        
         public Soil_specifier()
         {
             InitializeComponent();
-            double sum_perc = System.Convert.ToDouble(coarsebox.Text) + System.Convert.ToDouble(sandbox.Text) + System.Convert.ToDouble(siltbox.Text) + System.Convert.ToDouble(claybox.Text) + System.Convert.ToDouble(fineclaybox.Text);
-            total_box.Text = System.Convert.ToString(sum_perc);
+            this.ControlBox = false;
+            total_box.Text = System.Convert.ToString(sum_perc(coarsebox.Text, sandbox.Text, siltbox.Text, claybox.Text, fineclaybox.Text,yombox.Text, oombox.Text));
         }
 
         public void textBox1_TextChanged(object sender, EventArgs e)
         {
             try
             {
-                double sum_perc = System.Convert.ToDouble(coarsebox.Text) + System.Convert.ToDouble(sandbox.Text) + System.Convert.ToDouble(siltbox.Text) + System.Convert.ToDouble(claybox.Text) + System.Convert.ToDouble(fineclaybox.Text);
-                total_box.Text = System.Convert.ToString(sum_perc);
+                total_box.Text = System.Convert.ToString(sum_perc(coarsebox.Text, sandbox.Text, siltbox.Text, claybox.Text, fineclaybox.Text, yombox.Text, oombox.Text));
             }
             catch { };
         }
@@ -32,8 +40,7 @@ namespace LORICA4
         {
             try
             {
-                double sum_perc = System.Convert.ToDouble(coarsebox.Text) + System.Convert.ToDouble(sandbox.Text) + System.Convert.ToDouble(siltbox.Text) + System.Convert.ToDouble(claybox.Text) + System.Convert.ToDouble(fineclaybox.Text);
-                total_box.Text = System.Convert.ToString(sum_perc);
+                total_box.Text = System.Convert.ToString(sum_perc(coarsebox.Text, sandbox.Text, siltbox.Text, claybox.Text, fineclaybox.Text, yombox.Text, oombox.Text));
             }
             catch { };
         }
@@ -42,8 +49,7 @@ namespace LORICA4
         {
             try
             {
-                double sum_perc = System.Convert.ToDouble(coarsebox.Text) + System.Convert.ToDouble(sandbox.Text) + System.Convert.ToDouble(siltbox.Text) + System.Convert.ToDouble(claybox.Text) + System.Convert.ToDouble(fineclaybox.Text);
-                total_box.Text = System.Convert.ToString(sum_perc);
+                total_box.Text = System.Convert.ToString(sum_perc(coarsebox.Text, sandbox.Text, siltbox.Text, claybox.Text, fineclaybox.Text, yombox.Text, oombox.Text));
             }
             catch { };
         }
@@ -52,8 +58,7 @@ namespace LORICA4
         {
             try
             {
-                double sum_perc = System.Convert.ToDouble(coarsebox.Text) + System.Convert.ToDouble(sandbox.Text) + System.Convert.ToDouble(siltbox.Text) + System.Convert.ToDouble(claybox.Text) + System.Convert.ToDouble(fineclaybox.Text);
-                total_box.Text = System.Convert.ToString(sum_perc);
+                total_box.Text = System.Convert.ToString(sum_perc(coarsebox.Text, sandbox.Text, siltbox.Text, claybox.Text, fineclaybox.Text, yombox.Text, oombox.Text));
             }
             catch { };
         }
@@ -62,8 +67,7 @@ namespace LORICA4
         {
             try
             {
-                double sum_perc = System.Convert.ToDouble(coarsebox.Text) + System.Convert.ToDouble(sandbox.Text) + System.Convert.ToDouble(siltbox.Text) + System.Convert.ToDouble(claybox.Text) + System.Convert.ToDouble(fineclaybox.Text);
-                total_box.Text = System.Convert.ToString(sum_perc);
+                total_box.Text = System.Convert.ToString(sum_perc(coarsebox.Text, sandbox.Text, siltbox.Text, claybox.Text, fineclaybox.Text, yombox.Text, oombox.Text));
             }
             catch { };
         }
@@ -72,8 +76,8 @@ namespace LORICA4
         {
             try
             {
-                double sum_perc = System.Convert.ToDouble(coarsebox.Text) + System.Convert.ToDouble(sandbox.Text) + System.Convert.ToDouble(siltbox.Text) + System.Convert.ToDouble(claybox.Text) + System.Convert.ToDouble(fineclaybox.Text);
-                if (sum_perc == 100)
+
+                if (100 == sum_perc(coarsebox.Text, sandbox.Text, siltbox.Text, claybox.Text, fineclaybox.Text, yombox.Text, oombox.Text)) 
                 {
                     this.Visible = false;
                 }
@@ -85,5 +89,22 @@ namespace LORICA4
             catch { MessageBox.Show(" percentages contain an error. Please improve"); }
         }
 
+        private void yombox_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                total_box.Text = System.Convert.ToString(sum_perc(coarsebox.Text, sandbox.Text, siltbox.Text, claybox.Text, fineclaybox.Text, yombox.Text, oombox.Text));
+            }
+            catch { };
+        }
+
+        private void oombox_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                total_box.Text = System.Convert.ToString(sum_perc(coarsebox.Text, sandbox.Text, siltbox.Text, claybox.Text, fineclaybox.Text, yombox.Text, oombox.Text));
+            }
+            catch { };
+        }
     }
 }

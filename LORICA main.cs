@@ -127,7 +127,6 @@ namespace LORICA4
         private System.Windows.Forms.Label label29;
         private Button explain_input_button;
         private MenuItem Menu_About_box;
-        private CheckBox diagnostic_output_checkbox;
         private GroupBox groupBox3;
         private Button landuse_determinator_button;
         #endregion
@@ -1199,7 +1198,6 @@ namespace LORICA4
             this.Final_output_checkbox = new System.Windows.Forms.CheckBox();
             this.Box_years_output = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.diagnostic_output_checkbox = new System.Windows.Forms.CheckBox();
             this.water_output_checkbox = new System.Windows.Forms.CheckBox();
             this.depressions_output_checkbox = new System.Windows.Forms.CheckBox();
             this.all_process_output_checkbox = new System.Windows.Forms.CheckBox();
@@ -1467,7 +1465,6 @@ namespace LORICA4
             this.calibration = new System.Windows.Forms.CheckBox();
             this.Spitsbergen_case_study = new System.Windows.Forms.CheckBox();
             this.dtm_iterate_checkbox = new System.Windows.Forms.CheckBox();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.treefall = new System.Windows.Forms.TabPage();
             this.tf_freq = new System.Windows.Forms.TextBox();
             this.tf_age = new System.Windows.Forms.TextBox();
@@ -1480,6 +1477,7 @@ namespace LORICA4
             this.label95 = new System.Windows.Forms.Label();
             this.label107 = new System.Windows.Forms.Label();
             this.treefall_checkbox = new System.Windows.Forms.CheckBox();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             label6 = new System.Windows.Forms.Label();
             label76 = new System.Windows.Forms.Label();
             label75 = new System.Windows.Forms.Label();
@@ -2547,7 +2545,6 @@ namespace LORICA4
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.diagnostic_output_checkbox);
             this.groupBox1.Controls.Add(this.water_output_checkbox);
             this.groupBox1.Controls.Add(this.depressions_output_checkbox);
             this.groupBox1.Controls.Add(this.all_process_output_checkbox);
@@ -2560,17 +2557,6 @@ namespace LORICA4
             this.groupBox1.TabIndex = 225;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Outputs:";
-            // 
-            // diagnostic_output_checkbox
-            // 
-            this.diagnostic_output_checkbox.AutoSize = true;
-            this.diagnostic_output_checkbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.diagnostic_output_checkbox.Location = new System.Drawing.Point(125, 141);
-            this.diagnostic_output_checkbox.Name = "diagnostic_output_checkbox";
-            this.diagnostic_output_checkbox.Size = new System.Drawing.Size(81, 17);
-            this.diagnostic_output_checkbox.TabIndex = 230;
-            this.diagnostic_output_checkbox.Text = "Diagnostics";
-            this.diagnostic_output_checkbox.UseVisualStyleBackColor = true;
             // 
             // water_output_checkbox
             // 
@@ -7167,18 +7153,6 @@ namespace LORICA4
                     try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_dtmfillA.asc", dtmfill_A); }
                     catch { MessageBox.Show("dfmfill has not been written"); }
                 }
-                if (diagnostic_output_checkbox.Checked)
-                {
-                    //try { out_double(workdir + "\\" + t + "_out_sedintrans.asc", sediment_in_transport); }
-                    //catch {  MessageBox.Show("sed in trans has not been written"); }
-                    try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_dzero.asc", dz_ero_m); }
-                    catch { MessageBox.Show("dzero has not been written"); }
-                    try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_dzsed.asc", dz_sed_m); }
-                    catch { MessageBox.Show("dzsed has not been written"); }
-                    try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_lakesed.asc", lake_sed_m); }
-                    catch { MessageBox.Show("lakesed has not been written"); }
-                }
-
                 if (Water_ero_checkbox.Checked)
                 {
                     // Debug.WriteLine("before writing water erosion");
