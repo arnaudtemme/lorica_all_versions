@@ -4,26 +4,26 @@ For Alessia/Arnaud:
 - move things into experimental:
 -- FINISHED remove solifluction tab
 -- tree fall to expe
--- blocks to experimental
--- rock weathering to soil as spoil production
+-- FINISHED blocks to experimental
+-- FINISHED rock weathering to soil as spoil production
 -- pohys weath particle size to soil specifier
 -- chem weath surface area to soil specifier
 -- check clay dynbamics versus chemical weathering
 -- change Jagercikova cm units
 -- bioturbation upheaval to treefaal
 -- split mounding and mxing in bioturbation
--- carbon cyclke -> organic matter
--- TWI decay constant remove
+-- FINISHED carbon cyclke -> organic matter
+-- FINISHED TWI decay constant remove
 -- Two OM models next to each other
 -- FINISHED remove decalcification
--- geochron tracers stays
--- particle ages --> luminescence
--- hydrological to experimental (and remove default values)
+-- EXISTS geochron tracers stays
+-- FINISHED particle ages --> luminescence
+-- FINISHED hydrological to experimental (and remove default values)
 =- clean up inputs
 -- allow to read in OM in soil specifier
--- iterate DEMs to experiemental; 
--- remove sinks and flats before, after ruinning cleaner
--- all versions go to experiemental tab, also calib/sensit, also purely calculate terrain derivatives
+-- FINISHED iterate DEMs to experiemental; 
+-- FINISHED remove sinks and flats before, after ruinning cleaner
+-- FINISHED all versions go to experiemental tab, also calib/sensit, also purely calculate terrain derivatives
 -- EXISTS add explanmatipon of satrt at year
 -- FINISHED remove parallel stuff
 -- FINISHED output code : remove

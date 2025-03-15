@@ -1441,10 +1441,8 @@ namespace LORICA4
                         carbon_humification_fraction_textbox.Text = xreader.ReadElementString("carbon_hum_fraction");
                         carbon_y_decomp_rate_textbox.Text = xreader.ReadElementString("carbon_y_decomp");
                         carbon_y_depth_decay_textbox.Text = xreader.ReadElementString("carbon_y_depth_decay");
-                        carbon_y_twi_decay_textbox.Text = xreader.ReadElementString("carbon_y_twi_decay");
                         carbon_o_decomp_rate_textbox.Text = xreader.ReadElementString("carbon_o_decomp");
                         carbon_o_depth_decay_textbox.Text = xreader.ReadElementString("carbon_o_depth_decay");
-                        carbon_o_twi_decay_textbox.Text = xreader.ReadElementString("carbon_o_twi_decay");
                         xreader.ReadEndElement();
                         xreader.ReadEndElement();
                     }
@@ -1833,10 +1831,8 @@ namespace LORICA4
                 xwriter.WriteElementString("carbon_hum_fraction", carbon_humification_fraction_textbox.Text);
                 xwriter.WriteElementString("carbon_y_decomp", carbon_y_decomp_rate_textbox.Text);
                 xwriter.WriteElementString("carbon_y_depth_decay", carbon_y_depth_decay_textbox.Text);
-                xwriter.WriteElementString("carbon_y_twi_decay", carbon_y_twi_decay_textbox.Text);
                 xwriter.WriteElementString("carbon_o_decomp", carbon_o_decomp_rate_textbox.Text);
                 xwriter.WriteElementString("carbon_o_depth_decay", carbon_o_depth_decay_textbox.Text);
-                xwriter.WriteElementString("carbon_o_twi_decay", carbon_o_twi_decay_textbox.Text);
                 xwriter.WriteEndElement();
 
                 xwriter.WriteEndElement();

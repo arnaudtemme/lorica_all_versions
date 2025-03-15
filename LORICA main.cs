@@ -22,13 +22,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml;
 
 namespace LORICA4
 {
@@ -42,87 +40,6 @@ namespace LORICA4
         static extern int _getch();
 
         #region global interface parameters
-        private TabControl Process_tabs;
-        private TabPage Water;
-        private TextBox parameter_n_textbox;
-        private TextBox parameter_conv_textbox;
-        private TextBox parameter_K_textbox;
-        private TextBox parameter_m_textbox;
-        private CheckBox only_waterflow_checkbox;
-        private PictureBox pictureBox1;
-        private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.Label label9;
-        private CheckBox Water_ero_checkbox;
-        private TabPage Tillage;
-        private PictureBox pictureBox2;
-        private System.Windows.Forms.Label label20;
-        private System.Windows.Forms.Label trte;
-        private TextBox parameter_tillage_constant_textbox;
-        private TextBox parameter_ploughing_depth_textbox;
-        private CheckBox Tillage_checkbox;
-        private TabPage Creeper;
-        private PictureBox pictureBox3;
-        private System.Windows.Forms.Label label19;
-        private TextBox parameter_diffusivity_textbox;
-        private CheckBox creep_active_checkbox;
-        private System.Windows.Forms.Label label36;
-        private RadioButton radio_ls_fraction;
-        private RadioButton radio_ls_absolute;
-        private System.Windows.Forms.Label label35;
-        private System.Windows.Forms.Label label34;
-        private TextBox text_ls_rel_rain_intens;
-        private TextBox textBox_ls_trans;
-        private TextBox textBox_ls_bd;
-        private TextBox textBox_ls_ifr;
-        private TextBox textBox_ls_coh;
-        private TextBox text_ls_abs_rain_intens;
-        private System.Windows.Forms.Label label32;
-        private System.Windows.Forms.Label label31;
-        private System.Windows.Forms.Label label30;
-        private System.Windows.Forms.Label label22;
-        private System.Windows.Forms.Label label18;
-        private PictureBox pictureBox4;
-        private CheckBox Landslide_checkbox;
-        private TabPage Rock_weathering;
-        private PictureBox pictureBox6;
-        private GroupBox groupBox10;
-        private CheckBox Frost_weathering_checkbox;
-        private GroupBox groupBox9;
-        private TextBox parameter_k1_textbox;
-        private System.Windows.Forms.Label label24;
-        private System.Windows.Forms.Label label26;
-        private System.Windows.Forms.Label label27;
-        private System.Windows.Forms.Label label28;
-        private TextBox parameter_k2_textbox;
-        private TextBox parameter_Pa_textbox;
-        private TextBox parameter_P0_textbox;
-        private System.Windows.Forms.Label label21;
-        private CheckBox Biological_weathering_checkbox;
-        private TabPage Tectonics;
-        private GroupBox groupBox14;
-        private GroupBox groupBox16;
-        private TextBox text_lift_col_less;
-        private TextBox text_lift_col_more;
-        private TextBox text_lift_row_less;
-        private TextBox text_lift_row_more;
-        private RadioButton radio_lift_col_less_than;
-        private RadioButton radio_lift_row_more_than;
-        private RadioButton radio_lift_col_more_than;
-        private RadioButton radio_lift_row_less_than;
-        private TextBox Uplift_rate_textbox;
-        private CheckBox uplift_active_checkbox;
-        private System.Windows.Forms.Label label39;
-        private GroupBox groupBox4;
-        private System.Windows.Forms.Label label38;
-        private TextBox Tilting_rate_textbox;
-        private GroupBox groupBox15;
-        private RadioButton radio_tilt_col_max;
-        private RadioButton radio_tilt_row_zero;
-        private RadioButton radio_tilt_col_zero;
-        private RadioButton radio_tilt_row_max;
-        private CheckBox tilting_active_checkbox;
         private TabPage Soil;
 
         private System.Windows.Forms.MainMenu mainMenu1;
@@ -178,8 +95,6 @@ namespace LORICA4
         private TextBox soildepth_input_filename_textbox;
         private TextBox rain_input_filename_textbox;
         private TextBox dtm_input_filename_textbox;
-        private GroupBox groupBox8;
-        private CheckBox fill_sinks_before_checkbox;
         private CheckBox check_space_evap;
         private CheckBox check_space_infil;
         private CheckBox check_space_rain;
@@ -203,8 +118,6 @@ namespace LORICA4
         private System.Windows.Forms.Label label8;
         private RadioButton annual_output_checkbox;
         private RadioButton cumulative_output_checkbox;
-        private GroupBox groupBox13;
-        private CheckBox fill_sinks_during_checkbox;
         private CheckBox check_space_DTM;
         private CheckBox check_time_evap;
         private CheckBox check_time_infil;
@@ -220,81 +133,15 @@ namespace LORICA4
         #endregion
 
         #region global model parameters
-        private System.Windows.Forms.Label label87;
-        private TextBox selectivity_constant_textbox;
-        private TextBox bio_protection_constant_textbox;
-        private TextBox erosion_threshold_textbox;
-        private TextBox rock_protection_constant_textbox;
-        private System.Windows.Forms.Label label90;
-        private System.Windows.Forms.Label label91;
-        private System.Windows.Forms.Label label92;
         private System.Windows.Forms.Label label88;
         private Button soil_specify_button;
-        private CheckBox Spitsbergen_case_study;
-        private CheckBox calibration;
-        private CheckBox creep_testing;
-        private ComboBox rockweath_method;
-        private CheckBox daily_water;
-        private TabPage treefall;
-        private CheckBox treefall_checkbox;
         private bool merely_calculating_derivatives;
         private System.Windows.Forms.Label label98;
         private TextBox temp_input_filename_textbox;
         private TextBox temp_constant_value_box;
         private System.Windows.Forms.Label label99;
         private CheckBox check_time_T;
-        private TabPage Hydro;
-        private System.Windows.Forms.Label label105;
-        private TextBox snowmelt_factor_textbox;
-        private System.Windows.Forms.Label label104;
-        private System.Windows.Forms.Label latitude_min;
-        private System.Windows.Forms.Label label103;
-        private TextBox latitude_deg;
-        private System.Windows.Forms.Label label100;
-        private System.Windows.Forms.Label label101;
-        private System.Windows.Forms.Label label102;
-        private TextBox dailyT_min;
-        private TextBox dailyT_max;
-        private TextBox dailyT_avg;
-        private System.Windows.Forms.Label label97;
-        private TextBox daily_n;
-        private System.Windows.Forms.Label label96;
-        private System.Windows.Forms.Label label93;
-        private System.Windows.Forms.Label label89;
-        private System.Windows.Forms.Label label40;
-        private TextBox dailyET0;
-        private TextBox dailyD;
-        private TextBox dailyP;
-        private System.Windows.Forms.Label label106;
-        private TextBox snow_threshold_textbox;
         private System.Windows.Forms.Timer timer1;
-        private CheckBox check_scaling_daily_weather;
-        private TextBox tf_D;
-        private System.Windows.Forms.Label label95;
-        private System.Windows.Forms.Label label107;
-        private TextBox tf_W;
-        private TextBox tf_growth;
-        private System.Windows.Forms.Label label110;
-        private TextBox tf_age;
-        private System.Windows.Forms.Label label111;
-        private TextBox tf_freq;
-        private System.Windows.Forms.Label label112;
-        private GroupBox groupBox2;
-        private System.Windows.Forms.Label label118;
-        private System.Windows.Forms.Label label117;
-        private System.Windows.Forms.Label label115;
-        private System.Windows.Forms.Label label114;
-        private RadioButton Sensitivity_button;
-        private RadioButton Calibration_button;
-        private System.Windows.Forms.Label label113;
-        private TextBox calibration_ratios_textbox;
-        private TextBox calibration_levels_textbox;
-        private System.Windows.Forms.Label label116;
-        private TextBox calibration_ratio_reduction_parameter_textbox;
-        private System.Windows.Forms.Label label119;
-        private System.Windows.Forms.Label label120;
-        private CheckBox version_lux_checkbox;
-        private Button button4;
         private TextBox textbox_t_intervene;
         private CheckBox checkbox_t_intervene;
         private System.Windows.Forms.Label label_max_soil_layers;
@@ -415,7 +262,7 @@ namespace LORICA4
                     treefall_count,     // count number of tree falls
                     vegetation_type,
                     slidenr;
-        short[,]    slidestatus;
+        short[,] slidestatus;
 
         int[,,][] OSL_grainages, OSL_depositionages, OSL_surfacedcount;
         int[,][] OSL_grainages_in_transport, OSL_depositionages_in_transport, OSL_surfacedcount_in_transport;
@@ -572,25 +419,7 @@ namespace LORICA4
         //USER INPUT NEEDED: establish best versions of parameters varied in calibration:
         double[] best_parameters;
         double[,] calib_ratios;
-        private TabPage tabPage6;
-        private System.Windows.Forms.Label label129;
-        private System.Windows.Forms.Label label128;
-        private System.Windows.Forms.Label label127;
-        private TextBox blockweath_textbox;
-        private TextBox blocksize_textbox;
-        private TextBox hardlayerweath_textbox;
-        private System.Windows.Forms.Label label63;
-        private System.Windows.Forms.Label label62;
-        private TextBox hardlayerdensity_textbox;
-        private TextBox hardlayerelevation_textbox;
-        private TextBox hardlayerthickness_textbox;
-        private System.Windows.Forms.Label label61;
-        private CheckBox blocks_active_checkbox;
         private Button timeseries_button;
-        private CheckBox version_Konza_checkbox;
-        private System.Windows.Forms.Label label33;
-        private TextBox obsfile_textbox;
-        private TextBox num_cal_paras_textbox;
         private System.Windows.Forms.Label label79_cn;
         private System.Windows.Forms.Label label78_cn;
         private TextBox C14_decay_textbox;
@@ -671,7 +500,6 @@ namespace LORICA4
                 total_average_altitude_m,
                 total_rain_m, total_evap_m, total_infil_m,
                 total_rain_m3, total_evap_m3, total_infil_m3, total_outflow_m3;
-        private CheckBox dtm_iterate_checkbox;
         private TabPage Experimental;
         private TabControl tabControl2;
         private TabPage physical;
@@ -715,15 +543,182 @@ namespace LORICA4
         private TabPage carbon;
         private TextBox carbon_o_decomp_rate_textbox;
         private TextBox carbon_y_decomp_rate_textbox;
-        private TextBox carbon_o_twi_decay_textbox;
-        private TextBox carbon_y_twi_decay_textbox;
         private TextBox carbon_o_depth_decay_textbox;
         private TextBox carbon_y_depth_decay_textbox;
         private TextBox carbon_humification_fraction_textbox;
         private TextBox carbon_depth_decay_textbox;
         private TextBox carbon_input_textbox;
         private CheckBox soil_carbon_cycle_checkbox;
+        private TabControl Process_tabs;
+        private TabPage Water;
+        private CheckBox daily_water;
+        private Label label87;
+        private TextBox selectivity_constant_textbox;
+        private TextBox bio_protection_constant_textbox;
+        private TextBox erosion_threshold_textbox;
+        private TextBox rock_protection_constant_textbox;
+        private TextBox parameter_n_textbox;
+        private TextBox parameter_conv_textbox;
+        private TextBox parameter_K_textbox;
+        private TextBox parameter_m_textbox;
+        private Label label90;
+        private Label label91;
+        private Label label92;
+        private CheckBox only_waterflow_checkbox;
+        private PictureBox pictureBox1;
+        private Label label12;
+        private Label label11;
+        private Label label10;
+        private Label label9;
+        private CheckBox Water_ero_checkbox;
+        private TabPage Tillage;
+        private PictureBox pictureBox2;
+        private Label label20;
+        private Label trte;
+        private TextBox parameter_tillage_constant_textbox;
+        private TextBox parameter_ploughing_depth_textbox;
+        private CheckBox Tillage_checkbox;
+        private TabPage Creeper;
+        private CheckBox creep_testing;
+        private PictureBox pictureBox3;
+        private Label label19;
+        private TextBox parameter_diffusivity_textbox;
+        private CheckBox creep_active_checkbox;
+        private Label label36;
+        private RadioButton radio_ls_fraction;
+        private RadioButton radio_ls_absolute;
+        private Label label35;
+        private Label label34;
+        private TextBox text_ls_rel_rain_intens;
+        private TextBox textBox_ls_trans;
+        private TextBox textBox_ls_bd;
+        private TextBox textBox_ls_ifr;
+        private TextBox textBox_ls_coh;
+        private TextBox text_ls_abs_rain_intens;
+        private Label label32;
+        private Label label31;
+        private Label label30;
+        private Label label22;
+        private Label label18;
+        private PictureBox pictureBox4;
+        private CheckBox Landslide_checkbox;
+        private TabPage Tectonics;
+        private GroupBox groupBox14;
+        private GroupBox groupBox16;
+        private TextBox text_lift_col_less;
+        private TextBox text_lift_col_more;
+        private TextBox text_lift_row_less;
+        private TextBox text_lift_row_more;
+        private RadioButton radio_lift_col_less_than;
+        private RadioButton radio_lift_row_more_than;
+        private RadioButton radio_lift_col_more_than;
+        private RadioButton radio_lift_row_less_than;
+        private TextBox Uplift_rate_textbox;
+        private CheckBox uplift_active_checkbox;
+        private Label label39;
+        private GroupBox groupBox4;
+        private Label label38;
+        private TextBox Tilting_rate_textbox;
+        private GroupBox groupBox15;
+        private RadioButton radio_tilt_col_max;
+        private RadioButton radio_tilt_row_zero;
+        private RadioButton radio_tilt_col_zero;
+        private RadioButton radio_tilt_row_max;
+        private CheckBox tilting_active_checkbox;
+        private TabPage treefall;
+        private TextBox tf_freq;
+        private TextBox tf_age;
+        private TextBox tf_growth;
+        private TextBox tf_D;
+        private TextBox tf_W;
+        private Label label112;
+        private Label label111;
+        private Label label110;
+        private Label label95;
+        private Label label107;
+        private CheckBox treefall_checkbox;
+        private TabControl tabControl4;
+        private TabPage blocks;
+        private Label label129;
+        private Label label128;
+        private Label label127;
+        private TextBox blockweath_textbox;
+        private TextBox blocksize_textbox;
+        private TextBox hardlayerweath_textbox;
+        private TextBox hardlayerdensity_textbox;
+        private TextBox hardlayerelevation_textbox;
+        private TextBox hardlayerthickness_textbox;
+        private Label label63;
+        private Label label62;
+        private Label label61;
+        private CheckBox blocks_active_checkbox;
+        private TabPage Rock_weathering;
+        private ComboBox rockweath_method;
+        private PictureBox pictureBox6;
+        private GroupBox groupBox10;
+        private CheckBox Frost_weathering_checkbox;
+        private GroupBox groupBox9;
+        private TextBox parameter_k1_textbox;
+        private Label label24;
+        private Label label26;
+        private Label label27;
+        private Label label28;
+        private TextBox parameter_k2_textbox;
+        private TextBox parameter_Pa_textbox;
+        private TextBox parameter_P0_textbox;
+        private Label label21;
+        private CheckBox Biological_weathering_checkbox;
+        private TabPage Hydro;
+        private CheckBox check_scaling_daily_weather;
+        private Label label106;
+        private TextBox snow_threshold_textbox;
+        private Label label105;
+        private TextBox snowmelt_factor_textbox;
+        private Label label104;
+        private Label latitude_min;
+        private Label label103;
+        private TextBox latitude_deg;
+        private Label label100;
+        private Label label101;
+        private Label label102;
+        private TextBox dailyT_min;
+        private TextBox dailyT_max;
+        private TextBox dailyT_avg;
+        private Label label97;
+        private TextBox daily_n;
+        private Label label96;
+        private Label label93;
+        private Label label89;
+        private Label label40;
+        private TextBox dailyET0;
+        private TextBox dailyD;
+        private TextBox dailyP;
+        private TabPage Options;
+        private CheckBox dtm_iterate_checkbox;
         private CheckBox luxlitter_checkbox;
+        private CheckBox version_Konza_checkbox;
+        private Button button4;
+        private CheckBox version_lux_checkbox;
+        private GroupBox groupBox2;
+        private TextBox num_cal_paras_textbox;
+        private Label label33;
+        private TextBox obsfile_textbox;
+        private TextBox calibration_ratio_reduction_parameter_textbox;
+        private Label label119;
+        private TextBox calibration_levels_textbox;
+        private Label label116;
+        private Label label118;
+        private Label label117;
+        private Label label115;
+        private Label label114;
+        private RadioButton Calibration_button;
+        private Label label113;
+        private TextBox calibration_ratios_textbox;
+        private CheckBox calibration;
+        private GroupBox groupBox8;
+        private CheckBox fill_sinks_during_checkbox;
+        private CheckBox fill_sinks_before_checkbox;
+        private CheckBox Spitsbergen_case_study;
 
         private void obsfile_textbox_Click(object sender, EventArgs e)
         {
@@ -761,16 +756,6 @@ namespace LORICA4
             merely_calculating_derivatives = true;
             try { calculate_terrain_derivatives(); MessageBox.Show("terrain derivatives calculation succeeded"); }
             catch { MessageBox.Show("terrain derivatives calculation failed"); }
-        }
-
-        private void radioButton1_CheckedChanged(object sender, EventArgs e)
-        {
-            if (Calibration_button.Checked == true) { Sensitivity_button.Checked = false; }
-        }
-
-        private void radioButton2_CheckedChanged(object sender, EventArgs e)
-        {
-            if (Sensitivity_button.Checked == true) { Calibration_button.Checked = false; }
         }
 
         private void dailyT_max_TextChanged(object sender, EventArgs e)
@@ -834,7 +819,6 @@ namespace LORICA4
             latitude_min.Enabled = (daily_water.CheckState == CheckState.Checked);
             snowmelt_factor_textbox.Enabled = (daily_water.CheckState == CheckState.Checked);
             snow_threshold_textbox.Enabled = (daily_water.CheckState == CheckState.Checked);
-
         }
 
         //soil timeseries_variables
@@ -1118,8 +1102,6 @@ namespace LORICA4
         {
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.Label label6;
-            System.Windows.Forms.TabPage Landsliding;
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Mother_form));
             System.Windows.Forms.Label label76;
             System.Windows.Forms.Label label75;
             System.Windows.Forms.Label label74;
@@ -1129,7 +1111,6 @@ namespace LORICA4
             System.Windows.Forms.Label label82;
             System.Windows.Forms.Label label83;
             System.Windows.Forms.Label label84;
-            System.Windows.Forms.Label label85;
             System.Windows.Forms.Label label86;
             System.Windows.Forms.Label label73;
             System.Windows.Forms.Label label71;
@@ -1163,6 +1144,8 @@ namespace LORICA4
             System.Windows.Forms.Label label47;
             System.Windows.Forms.Label label48;
             System.Windows.Forms.Label label49;
+            System.Windows.Forms.TabPage Landsliding;
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Mother_form));
             this.label36 = new System.Windows.Forms.Label();
             this.radio_ls_fraction = new System.Windows.Forms.RadioButton();
             this.radio_ls_absolute = new System.Windows.Forms.RadioButton();
@@ -1199,15 +1182,15 @@ namespace LORICA4
             this.label14 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
-            this.fill_sinks_before_checkbox = new System.Windows.Forms.CheckBox();
             this.label8 = new System.Windows.Forms.Label();
-            this.fill_sinks_during_checkbox = new System.Windows.Forms.CheckBox();
-            this.groupBox13 = new System.Windows.Forms.GroupBox();
             this.label7 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label29 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.landuse_determinator_button = new System.Windows.Forms.Button();
+            this.label98 = new System.Windows.Forms.Label();
+            this.label99 = new System.Windows.Forms.Label();
+            this.checkbox_t_intervene = new System.Windows.Forms.CheckBox();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
             this.parameter_k1_textbox = new System.Windows.Forms.TextBox();
             this.label24 = new System.Windows.Forms.Label();
@@ -1219,9 +1202,6 @@ namespace LORICA4
             this.parameter_P0_textbox = new System.Windows.Forms.TextBox();
             this.label21 = new System.Windows.Forms.Label();
             this.Biological_weathering_checkbox = new System.Windows.Forms.CheckBox();
-            this.label98 = new System.Windows.Forms.Label();
-            this.label99 = new System.Windows.Forms.Label();
-            this.checkbox_t_intervene = new System.Windows.Forms.CheckBox();
             this.UTMzonebox = new System.Windows.Forms.TextBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.label1 = new System.Windows.Forms.Label();
@@ -1250,36 +1230,12 @@ namespace LORICA4
             this.textBox6 = new System.Windows.Forms.TextBox();
             this.UTMsouthcheck = new System.Windows.Forms.CheckBox();
             this.Run = new System.Windows.Forms.TabPage();
-            this.luxlitter_checkbox = new System.Windows.Forms.CheckBox();
-            this.version_Konza_checkbox = new System.Windows.Forms.CheckBox();
-            this.button4 = new System.Windows.Forms.Button();
-            this.version_lux_checkbox = new System.Windows.Forms.CheckBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.num_cal_paras_textbox = new System.Windows.Forms.TextBox();
-            this.label33 = new System.Windows.Forms.Label();
-            this.obsfile_textbox = new System.Windows.Forms.TextBox();
-            this.label120 = new System.Windows.Forms.Label();
-            this.calibration_ratio_reduction_parameter_textbox = new System.Windows.Forms.TextBox();
-            this.label119 = new System.Windows.Forms.Label();
-            this.calibration_levels_textbox = new System.Windows.Forms.TextBox();
-            this.label116 = new System.Windows.Forms.Label();
-            this.label118 = new System.Windows.Forms.Label();
-            this.label117 = new System.Windows.Forms.Label();
-            this.label115 = new System.Windows.Forms.Label();
-            this.label114 = new System.Windows.Forms.Label();
-            this.Sensitivity_button = new System.Windows.Forms.RadioButton();
-            this.Calibration_button = new System.Windows.Forms.RadioButton();
-            this.label113 = new System.Windows.Forms.Label();
-            this.calibration_ratios_textbox = new System.Windows.Forms.TextBox();
-            this.calibration = new System.Windows.Forms.CheckBox();
-            this.Spitsbergen_case_study = new System.Windows.Forms.CheckBox();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.textbox_t_intervene = new System.Windows.Forms.TextBox();
             this.runs_checkbox = new System.Windows.Forms.RadioButton();
             this.label16 = new System.Windows.Forms.Label();
             this.Number_runs_textbox = new System.Windows.Forms.TextBox();
             this.Input = new System.Windows.Forms.TabPage();
-            this.dtm_iterate_checkbox = new System.Windows.Forms.CheckBox();
             this.textbox_layer_thickness = new System.Windows.Forms.TextBox();
             this.checkbox_layer_thickness = new System.Windows.Forms.CheckBox();
             this.label_max_soil_layers = new System.Windows.Forms.Label();
@@ -1309,7 +1265,6 @@ namespace LORICA4
             this.soildepth_input_filename_textbox = new System.Windows.Forms.TextBox();
             this.rain_input_filename_textbox = new System.Windows.Forms.TextBox();
             this.dtm_input_filename_textbox = new System.Windows.Forms.TextBox();
-            this.groupBox8 = new System.Windows.Forms.GroupBox();
             this.check_space_evap = new System.Windows.Forms.CheckBox();
             this.check_space_infil = new System.Windows.Forms.CheckBox();
             this.check_space_rain = new System.Windows.Forms.CheckBox();
@@ -1328,13 +1283,13 @@ namespace LORICA4
             this.bio_protection_constant_textbox = new System.Windows.Forms.TextBox();
             this.erosion_threshold_textbox = new System.Windows.Forms.TextBox();
             this.rock_protection_constant_textbox = new System.Windows.Forms.TextBox();
-            this.label90 = new System.Windows.Forms.Label();
-            this.label91 = new System.Windows.Forms.Label();
-            this.label92 = new System.Windows.Forms.Label();
             this.parameter_n_textbox = new System.Windows.Forms.TextBox();
             this.parameter_conv_textbox = new System.Windows.Forms.TextBox();
             this.parameter_K_textbox = new System.Windows.Forms.TextBox();
             this.parameter_m_textbox = new System.Windows.Forms.TextBox();
+            this.label90 = new System.Windows.Forms.Label();
+            this.label91 = new System.Windows.Forms.Label();
+            this.label92 = new System.Windows.Forms.Label();
             this.only_waterflow_checkbox = new System.Windows.Forms.CheckBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.label12 = new System.Windows.Forms.Label();
@@ -1355,11 +1310,6 @@ namespace LORICA4
             this.label19 = new System.Windows.Forms.Label();
             this.parameter_diffusivity_textbox = new System.Windows.Forms.TextBox();
             this.creep_active_checkbox = new System.Windows.Forms.CheckBox();
-            this.Rock_weathering = new System.Windows.Forms.TabPage();
-            this.rockweath_method = new System.Windows.Forms.ComboBox();
-            this.pictureBox6 = new System.Windows.Forms.PictureBox();
-            this.groupBox10 = new System.Windows.Forms.GroupBox();
-            this.Frost_weathering_checkbox = new System.Windows.Forms.CheckBox();
             this.Tectonics = new System.Windows.Forms.TabPage();
             this.groupBox14 = new System.Windows.Forms.GroupBox();
             this.groupBox16 = new System.Windows.Forms.GroupBox();
@@ -1385,33 +1335,72 @@ namespace LORICA4
             this.tilting_active_checkbox = new System.Windows.Forms.CheckBox();
             this.treefall = new System.Windows.Forms.TabPage();
             this.tf_freq = new System.Windows.Forms.TextBox();
-            this.label112 = new System.Windows.Forms.Label();
             this.tf_age = new System.Windows.Forms.TextBox();
-            this.label111 = new System.Windows.Forms.Label();
             this.tf_growth = new System.Windows.Forms.TextBox();
-            this.label110 = new System.Windows.Forms.Label();
             this.tf_D = new System.Windows.Forms.TextBox();
+            this.tf_W = new System.Windows.Forms.TextBox();
+            this.label112 = new System.Windows.Forms.Label();
+            this.label111 = new System.Windows.Forms.Label();
+            this.label110 = new System.Windows.Forms.Label();
             this.label95 = new System.Windows.Forms.Label();
             this.label107 = new System.Windows.Forms.Label();
-            this.tf_W = new System.Windows.Forms.TextBox();
             this.treefall_checkbox = new System.Windows.Forms.CheckBox();
-            this.tabPage6 = new System.Windows.Forms.TabPage();
-            this.label129 = new System.Windows.Forms.Label();
-            this.label128 = new System.Windows.Forms.Label();
-            this.label127 = new System.Windows.Forms.Label();
-            this.blockweath_textbox = new System.Windows.Forms.TextBox();
-            this.blocksize_textbox = new System.Windows.Forms.TextBox();
-            this.hardlayerweath_textbox = new System.Windows.Forms.TextBox();
-            this.label63 = new System.Windows.Forms.Label();
-            this.label62 = new System.Windows.Forms.Label();
-            this.hardlayerdensity_textbox = new System.Windows.Forms.TextBox();
-            this.hardlayerelevation_textbox = new System.Windows.Forms.TextBox();
-            this.hardlayerthickness_textbox = new System.Windows.Forms.TextBox();
-            this.label61 = new System.Windows.Forms.Label();
-            this.blocks_active_checkbox = new System.Windows.Forms.CheckBox();
             this.Creep_Checkbox = new System.Windows.Forms.CheckBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.Soil = new System.Windows.Forms.TabPage();
+            this.tabControl2 = new System.Windows.Forms.TabControl();
+            this.Rock_weathering = new System.Windows.Forms.TabPage();
+            this.rockweath_method = new System.Windows.Forms.ComboBox();
+            this.pictureBox6 = new System.Windows.Forms.PictureBox();
+            this.groupBox10 = new System.Windows.Forms.GroupBox();
+            this.Frost_weathering_checkbox = new System.Windows.Forms.CheckBox();
+            this.physical = new System.Windows.Forms.TabPage();
+            this.upper_particle_fine_clay_textbox = new System.Windows.Forms.TextBox();
+            this.upper_particle_clay_textbox = new System.Windows.Forms.TextBox();
+            this.upper_particle_silt_textbox = new System.Windows.Forms.TextBox();
+            this.upper_particle_sand_textbox = new System.Windows.Forms.TextBox();
+            this.upper_particle_coarse_textbox = new System.Windows.Forms.TextBox();
+            this.physical_weath_constant2 = new System.Windows.Forms.TextBox();
+            this.physical_weath_constant1 = new System.Windows.Forms.TextBox();
+            this.Physical_weath_C1_textbox = new System.Windows.Forms.TextBox();
+            this.soil_phys_weath_checkbox = new System.Windows.Forms.CheckBox();
+            this.chemical = new System.Windows.Forms.TabPage();
+            this.specific_area_fine_clay_textbox = new System.Windows.Forms.TextBox();
+            this.specific_area_clay_textbox = new System.Windows.Forms.TextBox();
+            this.specific_area_silt_textbox = new System.Windows.Forms.TextBox();
+            this.specific_area_sand_textbox = new System.Windows.Forms.TextBox();
+            this.specific_area_coarse_textbox = new System.Windows.Forms.TextBox();
+            this.chem_weath_specific_coefficient_textbox = new System.Windows.Forms.TextBox();
+            this.chem_weath_depth_constant_textbox = new System.Windows.Forms.TextBox();
+            this.chem_weath_rate_constant_textbox = new System.Windows.Forms.TextBox();
+            this.soil_chem_weath_checkbox = new System.Windows.Forms.CheckBox();
+            this.clay = new System.Windows.Forms.TabPage();
+            this.ct_Jagercikova = new System.Windows.Forms.CheckBox();
+            this.label109 = new System.Windows.Forms.Label();
+            this.label108 = new System.Windows.Forms.Label();
+            this.ct_dd_Jagercikova = new System.Windows.Forms.TextBox();
+            this.ct_v0_Jagercikova = new System.Windows.Forms.TextBox();
+            this.ct_depth_decay = new System.Windows.Forms.TextBox();
+            this.eluviation_coefficient_textbox = new System.Windows.Forms.TextBox();
+            this.maximum_eluviation_textbox = new System.Windows.Forms.TextBox();
+            this.clay_neoform_C2_textbox = new System.Windows.Forms.TextBox();
+            this.clay_neoform_C1_textbox = new System.Windows.Forms.TextBox();
+            this.clay_neoform_constant_textbox = new System.Windows.Forms.TextBox();
+            this.CT_depth_decay_checkbox = new System.Windows.Forms.CheckBox();
+            this.soil_clay_transloc_checkbox = new System.Windows.Forms.CheckBox();
+            this.bioturbation = new System.Windows.Forms.TabPage();
+            this.bioturbation_depth_decay_textbox = new System.Windows.Forms.TextBox();
+            this.potential_bioturbation_textbox = new System.Windows.Forms.TextBox();
+            this.soil_bioturb_checkbox = new System.Windows.Forms.CheckBox();
+            this.carbon = new System.Windows.Forms.TabPage();
+            this.carbon_o_decomp_rate_textbox = new System.Windows.Forms.TextBox();
+            this.carbon_y_decomp_rate_textbox = new System.Windows.Forms.TextBox();
+            this.carbon_o_depth_decay_textbox = new System.Windows.Forms.TextBox();
+            this.carbon_y_depth_decay_textbox = new System.Windows.Forms.TextBox();
+            this.carbon_humification_fraction_textbox = new System.Windows.Forms.TextBox();
+            this.carbon_depth_decay_textbox = new System.Windows.Forms.TextBox();
+            this.carbon_input_textbox = new System.Windows.Forms.TextBox();
+            this.soil_carbon_cycle_checkbox = new System.Windows.Forms.CheckBox();
             this.Geochron = new System.Windows.Forms.TabPage();
             this.tabControl3 = new System.Windows.Forms.TabControl();
             this.tabPage4 = new System.Windows.Forms.TabPage();
@@ -1455,6 +1444,23 @@ namespace LORICA4
             this.label124 = new System.Windows.Forms.Label();
             this.label123 = new System.Windows.Forms.Label();
             this.CN_checkbox = new System.Windows.Forms.CheckBox();
+            this.Experimental = new System.Windows.Forms.TabPage();
+            this.tabControl4 = new System.Windows.Forms.TabControl();
+            this.blocks = new System.Windows.Forms.TabPage();
+            this.label129 = new System.Windows.Forms.Label();
+            this.label128 = new System.Windows.Forms.Label();
+            this.label127 = new System.Windows.Forms.Label();
+            this.blockweath_textbox = new System.Windows.Forms.TextBox();
+            this.blocksize_textbox = new System.Windows.Forms.TextBox();
+            this.hardlayerweath_textbox = new System.Windows.Forms.TextBox();
+            this.hardlayerdensity_textbox = new System.Windows.Forms.TextBox();
+            this.hardlayerelevation_textbox = new System.Windows.Forms.TextBox();
+            this.hardlayerthickness_textbox = new System.Windows.Forms.TextBox();
+            this.label63 = new System.Windows.Forms.Label();
+            this.label62 = new System.Windows.Forms.Label();
+            this.label61 = new System.Windows.Forms.Label();
+            this.blocks_active_checkbox = new System.Windows.Forms.CheckBox();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.Hydro = new System.Windows.Forms.TabPage();
             this.check_scaling_daily_weather = new System.Windows.Forms.CheckBox();
             this.label106 = new System.Windows.Forms.Label();
@@ -1480,60 +1486,33 @@ namespace LORICA4
             this.dailyET0 = new System.Windows.Forms.TextBox();
             this.dailyD = new System.Windows.Forms.TextBox();
             this.dailyP = new System.Windows.Forms.TextBox();
-            this.Experimental = new System.Windows.Forms.TabPage();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.carbon = new System.Windows.Forms.TabPage();
-            this.soil_carbon_cycle_checkbox = new System.Windows.Forms.CheckBox();
-            this.carbon_input_textbox = new System.Windows.Forms.TextBox();
-            this.carbon_depth_decay_textbox = new System.Windows.Forms.TextBox();
-            this.carbon_humification_fraction_textbox = new System.Windows.Forms.TextBox();
-            this.carbon_y_depth_decay_textbox = new System.Windows.Forms.TextBox();
-            this.carbon_o_depth_decay_textbox = new System.Windows.Forms.TextBox();
-            this.carbon_y_twi_decay_textbox = new System.Windows.Forms.TextBox();
-            this.carbon_o_twi_decay_textbox = new System.Windows.Forms.TextBox();
-            this.carbon_y_decomp_rate_textbox = new System.Windows.Forms.TextBox();
-            this.carbon_o_decomp_rate_textbox = new System.Windows.Forms.TextBox();
-            this.bioturbation = new System.Windows.Forms.TabPage();
-            this.soil_bioturb_checkbox = new System.Windows.Forms.CheckBox();
-            this.potential_bioturbation_textbox = new System.Windows.Forms.TextBox();
-            this.bioturbation_depth_decay_textbox = new System.Windows.Forms.TextBox();
-            this.clay = new System.Windows.Forms.TabPage();
-            this.soil_clay_transloc_checkbox = new System.Windows.Forms.CheckBox();
-            this.clay_neoform_constant_textbox = new System.Windows.Forms.TextBox();
-            this.clay_neoform_C1_textbox = new System.Windows.Forms.TextBox();
-            this.clay_neoform_C2_textbox = new System.Windows.Forms.TextBox();
-            this.maximum_eluviation_textbox = new System.Windows.Forms.TextBox();
-            this.eluviation_coefficient_textbox = new System.Windows.Forms.TextBox();
-            this.CT_depth_decay_checkbox = new System.Windows.Forms.CheckBox();
-            this.ct_depth_decay = new System.Windows.Forms.TextBox();
-            this.ct_v0_Jagercikova = new System.Windows.Forms.TextBox();
-            this.ct_dd_Jagercikova = new System.Windows.Forms.TextBox();
-            this.label108 = new System.Windows.Forms.Label();
-            this.label109 = new System.Windows.Forms.Label();
-            this.ct_Jagercikova = new System.Windows.Forms.CheckBox();
-            this.chemical = new System.Windows.Forms.TabPage();
-            this.soil_chem_weath_checkbox = new System.Windows.Forms.CheckBox();
-            this.chem_weath_rate_constant_textbox = new System.Windows.Forms.TextBox();
-            this.chem_weath_depth_constant_textbox = new System.Windows.Forms.TextBox();
-            this.chem_weath_specific_coefficient_textbox = new System.Windows.Forms.TextBox();
-            this.specific_area_coarse_textbox = new System.Windows.Forms.TextBox();
-            this.specific_area_sand_textbox = new System.Windows.Forms.TextBox();
-            this.specific_area_silt_textbox = new System.Windows.Forms.TextBox();
-            this.specific_area_clay_textbox = new System.Windows.Forms.TextBox();
-            this.specific_area_fine_clay_textbox = new System.Windows.Forms.TextBox();
-            this.physical = new System.Windows.Forms.TabPage();
-            this.soil_phys_weath_checkbox = new System.Windows.Forms.CheckBox();
-            this.Physical_weath_C1_textbox = new System.Windows.Forms.TextBox();
-            this.physical_weath_constant1 = new System.Windows.Forms.TextBox();
-            this.physical_weath_constant2 = new System.Windows.Forms.TextBox();
-            this.upper_particle_coarse_textbox = new System.Windows.Forms.TextBox();
-            this.upper_particle_sand_textbox = new System.Windows.Forms.TextBox();
-            this.upper_particle_silt_textbox = new System.Windows.Forms.TextBox();
-            this.upper_particle_clay_textbox = new System.Windows.Forms.TextBox();
-            this.upper_particle_fine_clay_textbox = new System.Windows.Forms.TextBox();
-            this.tabControl2 = new System.Windows.Forms.TabControl();
+            this.Options = new System.Windows.Forms.TabPage();
+            this.dtm_iterate_checkbox = new System.Windows.Forms.CheckBox();
+            this.luxlitter_checkbox = new System.Windows.Forms.CheckBox();
+            this.version_Konza_checkbox = new System.Windows.Forms.CheckBox();
+            this.button4 = new System.Windows.Forms.Button();
+            this.version_lux_checkbox = new System.Windows.Forms.CheckBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.num_cal_paras_textbox = new System.Windows.Forms.TextBox();
+            this.label33 = new System.Windows.Forms.Label();
+            this.obsfile_textbox = new System.Windows.Forms.TextBox();
+            this.calibration_ratio_reduction_parameter_textbox = new System.Windows.Forms.TextBox();
+            this.label119 = new System.Windows.Forms.Label();
+            this.calibration_levels_textbox = new System.Windows.Forms.TextBox();
+            this.label116 = new System.Windows.Forms.Label();
+            this.label118 = new System.Windows.Forms.Label();
+            this.label117 = new System.Windows.Forms.Label();
+            this.label115 = new System.Windows.Forms.Label();
+            this.label114 = new System.Windows.Forms.Label();
+            this.Calibration_button = new System.Windows.Forms.RadioButton();
+            this.label113 = new System.Windows.Forms.Label();
+            this.calibration_ratios_textbox = new System.Windows.Forms.TextBox();
+            this.calibration = new System.Windows.Forms.CheckBox();
+            this.Spitsbergen_case_study = new System.Windows.Forms.CheckBox();
+            this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.fill_sinks_during_checkbox = new System.Windows.Forms.CheckBox();
+            this.fill_sinks_before_checkbox = new System.Windows.Forms.CheckBox();
             label6 = new System.Windows.Forms.Label();
-            Landsliding = new System.Windows.Forms.TabPage();
             label76 = new System.Windows.Forms.Label();
             label75 = new System.Windows.Forms.Label();
             label74 = new System.Windows.Forms.Label();
@@ -1543,7 +1522,6 @@ namespace LORICA4
             label82 = new System.Windows.Forms.Label();
             label83 = new System.Windows.Forms.Label();
             label84 = new System.Windows.Forms.Label();
-            label85 = new System.Windows.Forms.Label();
             label86 = new System.Windows.Forms.Label();
             label73 = new System.Windows.Forms.Label();
             label71 = new System.Windows.Forms.Label();
@@ -1577,12 +1555,12 @@ namespace LORICA4
             label47 = new System.Windows.Forms.Label();
             label48 = new System.Windows.Forms.Label();
             label49 = new System.Windows.Forms.Label();
+            Landsliding = new System.Windows.Forms.TabPage();
             Landsliding.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.InfoStatusPanel)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.TimeStatusPanel)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ScenarioStatusPanel)).BeginInit();
-            this.groupBox13.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox9.SuspendLayout();
             this.Output.SuspendLayout();
@@ -1591,10 +1569,8 @@ namespace LORICA4
             this.groupBox11.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.Run.SuspendLayout();
-            this.groupBox2.SuspendLayout();
             this.groupBox7.SuspendLayout();
             this.Input.SuspendLayout();
-            this.groupBox8.SuspendLayout();
             this.Geomorph.SuspendLayout();
             this.Process_tabs.SuspendLayout();
             this.Water.SuspendLayout();
@@ -1603,29 +1579,34 @@ namespace LORICA4
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.Creeper.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
-            this.Rock_weathering.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).BeginInit();
-            this.groupBox10.SuspendLayout();
             this.Tectonics.SuspendLayout();
             this.groupBox14.SuspendLayout();
             this.groupBox16.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox15.SuspendLayout();
             this.treefall.SuspendLayout();
-            this.tabPage6.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.Soil.SuspendLayout();
+            this.tabControl2.SuspendLayout();
+            this.Rock_weathering.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).BeginInit();
+            this.groupBox10.SuspendLayout();
+            this.physical.SuspendLayout();
+            this.chemical.SuspendLayout();
+            this.clay.SuspendLayout();
+            this.bioturbation.SuspendLayout();
+            this.carbon.SuspendLayout();
             this.Geochron.SuspendLayout();
             this.tabControl3.SuspendLayout();
             this.tabPage4.SuspendLayout();
             this.tabPage5.SuspendLayout();
+            this.Experimental.SuspendLayout();
+            this.tabControl4.SuspendLayout();
+            this.blocks.SuspendLayout();
             this.Hydro.SuspendLayout();
-            this.carbon.SuspendLayout();
-            this.bioturbation.SuspendLayout();
-            this.clay.SuspendLayout();
-            this.chemical.SuspendLayout();
-            this.physical.SuspendLayout();
-            this.tabControl2.SuspendLayout();
+            this.Options.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            this.groupBox8.SuspendLayout();
             this.SuspendLayout();
             // 
             // label6
@@ -1637,6 +1618,378 @@ namespace LORICA4
             label6.Text = "f(x,y)";
             label6.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.toolTip1.SetToolTip(label6, "Check this for spatially variable inputs");
+            // 
+            // label76
+            // 
+            label76.AutoSize = true;
+            label76.Location = new System.Drawing.Point(130, 62);
+            label76.Name = "label76";
+            label76.Size = new System.Drawing.Size(205, 13);
+            label76.TabIndex = 62;
+            label76.Text = "potential organic matter input [kg / m2 / y]";
+            // 
+            // label75
+            // 
+            label75.AutoSize = true;
+            label75.Location = new System.Drawing.Point(130, 91);
+            label75.Name = "label75";
+            label75.Size = new System.Drawing.Size(124, 13);
+            label75.TabIndex = 63;
+            label75.Text = "depth limitation rate [m-1]";
+            // 
+            // label74
+            // 
+            label74.AutoSize = true;
+            label74.Location = new System.Drawing.Point(130, 117);
+            label74.Name = "label74";
+            label74.Size = new System.Drawing.Size(0, 13);
+            label74.TabIndex = 64;
+            // 
+            // label81
+            // 
+            label81.AutoSize = true;
+            label81.Location = new System.Drawing.Point(130, 117);
+            label81.Name = "label81";
+            label81.Size = new System.Drawing.Size(113, 13);
+            label81.TabIndex = 67;
+            label81.Text = "humification fraction [-]";
+            // 
+            // label77
+            // 
+            label77.AutoSize = true;
+            label77.Location = new System.Drawing.Point(130, 172);
+            label77.Name = "label77";
+            label77.Size = new System.Drawing.Size(0, 13);
+            label77.TabIndex = 69;
+            // 
+            // label80
+            // 
+            label80.AutoSize = true;
+            label80.Location = new System.Drawing.Point(381, 62);
+            label80.Name = "label80";
+            label80.Size = new System.Drawing.Size(133, 26);
+            label80.TabIndex = 70;
+            label80.Text = "decomposition parameters \r\nfor two OM pools:";
+            // 
+            // label82
+            // 
+            label82.AutoSize = true;
+            label82.Location = new System.Drawing.Point(382, 94);
+            label82.Name = "label82";
+            label82.Size = new System.Drawing.Size(36, 13);
+            label82.TabIndex = 71;
+            label82.Text = "young";
+            // 
+            // label83
+            // 
+            label83.AutoSize = true;
+            label83.Location = new System.Drawing.Point(496, 94);
+            label83.Name = "label83";
+            label83.Size = new System.Drawing.Size(21, 13);
+            label83.TabIndex = 72;
+            label83.Text = "old";
+            // 
+            // label84
+            // 
+            label84.AutoSize = true;
+            label84.Location = new System.Drawing.Point(558, 140);
+            label84.Name = "label84";
+            label84.Size = new System.Drawing.Size(136, 13);
+            label84.TabIndex = 74;
+            label84.Text = "depth decay constant [m-1]";
+            // 
+            // label86
+            // 
+            label86.AutoSize = true;
+            label86.Location = new System.Drawing.Point(558, 114);
+            label86.Name = "label86";
+            label86.Size = new System.Drawing.Size(115, 13);
+            label86.TabIndex = 80;
+            label86.Text = "decomposition rate [/y]";
+            // 
+            // label73
+            // 
+            label73.AutoSize = true;
+            label73.Location = new System.Drawing.Point(133, 48);
+            label73.Name = "label73";
+            label73.Size = new System.Drawing.Size(167, 13);
+            label73.TabIndex = 57;
+            label73.Text = "potential bioturbation [kg / m2 / y]";
+            // 
+            // label71
+            // 
+            label71.AutoSize = true;
+            label71.Location = new System.Drawing.Point(133, 77);
+            label71.Name = "label71";
+            label71.Size = new System.Drawing.Size(99, 13);
+            label71.TabIndex = 58;
+            label71.Text = "depth decay rate [-]";
+            // 
+            // label68
+            // 
+            label68.AutoSize = true;
+            label68.Location = new System.Drawing.Point(133, 103);
+            label68.Name = "label68";
+            label68.Size = new System.Drawing.Size(0, 13);
+            label68.TabIndex = 59;
+            // 
+            // label60
+            // 
+            label60.AutoSize = true;
+            label60.Location = new System.Drawing.Point(23, 59);
+            label60.Name = "label60";
+            label60.Size = new System.Drawing.Size(110, 13);
+            label60.TabIndex = 39;
+            label60.Text = "fine clay neoformation";
+            // 
+            // label67
+            // 
+            label67.AutoSize = true;
+            label67.Location = new System.Drawing.Point(132, 75);
+            label67.Name = "label67";
+            label67.Size = new System.Drawing.Size(121, 13);
+            label67.TabIndex = 43;
+            label67.Text = "neoformation constant []";
+            // 
+            // label66
+            // 
+            label66.AutoSize = true;
+            label66.Location = new System.Drawing.Point(132, 104);
+            label66.Name = "label66";
+            label66.Size = new System.Drawing.Size(60, 13);
+            label66.TabIndex = 44;
+            label66.Text = "constant 1 ";
+            // 
+            // label65
+            // 
+            label65.AutoSize = true;
+            label65.Location = new System.Drawing.Point(132, 130);
+            label65.Name = "label65";
+            label65.Size = new System.Drawing.Size(0, 13);
+            label65.TabIndex = 45;
+            // 
+            // label64
+            // 
+            label64.AutoSize = true;
+            label64.Location = new System.Drawing.Point(131, 134);
+            label64.Name = "label64";
+            label64.Size = new System.Drawing.Size(83, 13);
+            label64.TabIndex = 46;
+            label64.Text = "constant 2 [m-1]";
+            // 
+            // label72
+            // 
+            label72.AutoSize = true;
+            label72.Location = new System.Drawing.Point(302, 59);
+            label72.Name = "label72";
+            label72.Size = new System.Drawing.Size(109, 13);
+            label72.TabIndex = 47;
+            label72.Text = "fine clay translocation";
+            // 
+            // eluviation_rate_constant
+            // 
+            eluviation_rate_constant.AutoSize = true;
+            eluviation_rate_constant.Location = new System.Drawing.Point(411, 75);
+            eluviation_rate_constant.Name = "eluviation_rate_constant";
+            eluviation_rate_constant.Size = new System.Drawing.Size(119, 13);
+            eluviation_rate_constant.TabIndex = 51;
+            eluviation_rate_constant.Text = "maximum eluviation [kg]";
+            // 
+            // label70
+            // 
+            label70.AutoSize = true;
+            label70.Location = new System.Drawing.Point(411, 104);
+            label70.Name = "label70";
+            label70.Size = new System.Drawing.Size(97, 13);
+            label70.TabIndex = 52;
+            label70.Text = "saturation constant";
+            // 
+            // label69
+            // 
+            label69.AutoSize = true;
+            label69.Location = new System.Drawing.Point(411, 130);
+            label69.Name = "label69";
+            label69.Size = new System.Drawing.Size(0, 13);
+            label69.TabIndex = 53;
+            // 
+            // label13
+            // 
+            label13.AutoSize = true;
+            label13.Location = new System.Drawing.Point(410, 172);
+            label13.Name = "label13";
+            label13.Size = new System.Drawing.Size(112, 13);
+            label13.TabIndex = 56;
+            label13.Text = "Depth decay constant";
+            // 
+            // label52
+            // 
+            label52.AutoSize = true;
+            label52.Location = new System.Drawing.Point(136, 38);
+            label52.Name = "label52";
+            label52.Size = new System.Drawing.Size(268, 13);
+            label52.TabIndex = 16;
+            label52.Text = "weathering rate constant [kg / m2 mineral surface area]";
+            // 
+            // label51
+            // 
+            label51.AutoSize = true;
+            label51.Location = new System.Drawing.Point(136, 67);
+            label51.Name = "label51";
+            label51.Size = new System.Drawing.Size(136, 13);
+            label51.TabIndex = 17;
+            label51.Text = "depth decay constant [m-1]";
+            // 
+            // label50
+            // 
+            label50.AutoSize = true;
+            label50.Location = new System.Drawing.Point(136, 93);
+            label50.Name = "label50";
+            label50.Size = new System.Drawing.Size(0, 13);
+            label50.TabIndex = 18;
+            // 
+            // label53
+            // 
+            label53.AutoSize = true;
+            label53.Location = new System.Drawing.Point(135, 97);
+            label53.Name = "label53";
+            label53.Size = new System.Drawing.Size(131, 13);
+            label53.TabIndex = 19;
+            label53.Text = "specific area coefficient [-]";
+            // 
+            // label59
+            // 
+            label59.AutoSize = true;
+            label59.Location = new System.Drawing.Point(526, 44);
+            label59.Name = "label59";
+            label59.Size = new System.Drawing.Size(77, 13);
+            label59.TabIndex = 25;
+            label59.Text = "coarse fraction";
+            // 
+            // label58
+            // 
+            label58.AutoSize = true;
+            label58.Location = new System.Drawing.Point(526, 67);
+            label58.Name = "label58";
+            label58.Size = new System.Drawing.Size(68, 13);
+            label58.TabIndex = 26;
+            label58.Text = "sand fraction";
+            // 
+            // label57
+            // 
+            label57.AutoSize = true;
+            label57.Location = new System.Drawing.Point(526, 93);
+            label57.Name = "label57";
+            label57.Size = new System.Drawing.Size(57, 13);
+            label57.TabIndex = 27;
+            label57.Text = "silt fraction";
+            // 
+            // label56
+            // 
+            label56.AutoSize = true;
+            label56.Location = new System.Drawing.Point(526, 119);
+            label56.Name = "label56";
+            label56.Size = new System.Drawing.Size(64, 13);
+            label56.TabIndex = 28;
+            label56.Text = "clay fraction";
+            // 
+            // label55
+            // 
+            label55.AutoSize = true;
+            label55.Location = new System.Drawing.Point(526, 145);
+            label55.Name = "label55";
+            label55.Size = new System.Drawing.Size(84, 13);
+            label55.TabIndex = 29;
+            label55.Text = "fine clay fraction";
+            // 
+            // label54
+            // 
+            label54.AutoSize = true;
+            label54.Location = new System.Drawing.Point(417, 22);
+            label54.Name = "label54";
+            label54.Size = new System.Drawing.Size(239, 13);
+            label54.TabIndex = 30;
+            label54.Text = "specific surface area for texture classes [m2 / kg]";
+            // 
+            // label41
+            // 
+            label41.AutoSize = true;
+            label41.Location = new System.Drawing.Point(142, 49);
+            label41.Name = "label41";
+            label41.Size = new System.Drawing.Size(147, 13);
+            label41.TabIndex = 10;
+            label41.Text = "weathering rate constant [y-1]";
+            // 
+            // label42
+            // 
+            label42.AutoSize = true;
+            label42.Location = new System.Drawing.Point(142, 72);
+            label42.Name = "label42";
+            label42.Size = new System.Drawing.Size(136, 13);
+            label42.TabIndex = 11;
+            label42.Text = "depth decay constant [m-1]";
+            // 
+            // label43
+            // 
+            label43.AutoSize = true;
+            label43.Location = new System.Drawing.Point(142, 98);
+            label43.Name = "label43";
+            label43.Size = new System.Drawing.Size(123, 13);
+            label43.TabIndex = 12;
+            label43.Text = "particle size constant [m]";
+            // 
+            // label44
+            // 
+            label44.AutoSize = true;
+            label44.Location = new System.Drawing.Point(409, 49);
+            label44.Name = "label44";
+            label44.Size = new System.Drawing.Size(77, 13);
+            label44.TabIndex = 13;
+            label44.Text = "coarse fraction";
+            // 
+            // label45
+            // 
+            label45.AutoSize = true;
+            label45.Location = new System.Drawing.Point(409, 72);
+            label45.Name = "label45";
+            label45.Size = new System.Drawing.Size(68, 13);
+            label45.TabIndex = 14;
+            label45.Text = "sand fraction";
+            // 
+            // label46
+            // 
+            label46.AutoSize = true;
+            label46.Location = new System.Drawing.Point(409, 98);
+            label46.Name = "label46";
+            label46.Size = new System.Drawing.Size(57, 13);
+            label46.TabIndex = 15;
+            label46.Text = "silt fraction";
+            // 
+            // label47
+            // 
+            label47.AutoSize = true;
+            label47.Location = new System.Drawing.Point(409, 124);
+            label47.Name = "label47";
+            label47.Size = new System.Drawing.Size(64, 13);
+            label47.TabIndex = 16;
+            label47.Text = "clay fraction";
+            // 
+            // label48
+            // 
+            label48.AutoSize = true;
+            label48.Location = new System.Drawing.Point(409, 150);
+            label48.Name = "label48";
+            label48.Size = new System.Drawing.Size(84, 13);
+            label48.TabIndex = 17;
+            label48.Text = "fine clay fraction";
+            // 
+            // label49
+            // 
+            label49.AutoSize = true;
+            label49.Location = new System.Drawing.Point(300, 27);
+            label49.Name = "label49";
+            label49.Size = new System.Drawing.Size(229, 13);
+            label49.TabIndex = 18;
+            label49.Text = "upper limit of particle size for texture classes [m]";
             // 
             // Landsliding
             // 
@@ -1866,7 +2219,7 @@ namespace LORICA4
             // 
             // statusBar1
             // 
-            this.statusBar1.Location = new System.Drawing.Point(0, 447);
+            this.statusBar1.Location = new System.Drawing.Point(0, 468);
             this.statusBar1.Name = "statusBar1";
             this.statusBar1.Panels.AddRange(new System.Windows.Forms.StatusBarPanel[] {
             this.InfoStatusPanel,
@@ -1966,17 +2319,6 @@ namespace LORICA4
             this.label17.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.toolTip1.SetToolTip(this.label17, "Hourly rainfall data - in an ascii format");
             // 
-            // fill_sinks_before_checkbox
-            // 
-            this.fill_sinks_before_checkbox.AutoSize = true;
-            this.fill_sinks_before_checkbox.Location = new System.Drawing.Point(11, 22);
-            this.fill_sinks_before_checkbox.Name = "fill_sinks_before_checkbox";
-            this.fill_sinks_before_checkbox.Size = new System.Drawing.Size(131, 17);
-            this.fill_sinks_before_checkbox.TabIndex = 132;
-            this.fill_sinks_before_checkbox.Text = "remove sinks and flats";
-            this.toolTip1.SetToolTip(this.fill_sinks_before_checkbox, resources.GetString("fill_sinks_before_checkbox.ToolTip"));
-            this.fill_sinks_before_checkbox.UseVisualStyleBackColor = true;
-            // 
             // label8
             // 
             this.label8.Location = new System.Drawing.Point(110, 31);
@@ -1986,28 +2328,6 @@ namespace LORICA4
             this.label8.Text = "timesteps";
             this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.toolTip1.SetToolTip(this.label8, "How often the avi file AND the other data files are saved");
-            // 
-            // fill_sinks_during_checkbox
-            // 
-            this.fill_sinks_during_checkbox.AutoSize = true;
-            this.fill_sinks_during_checkbox.Location = new System.Drawing.Point(11, 25);
-            this.fill_sinks_during_checkbox.Name = "fill_sinks_during_checkbox";
-            this.fill_sinks_during_checkbox.Size = new System.Drawing.Size(131, 17);
-            this.fill_sinks_during_checkbox.TabIndex = 132;
-            this.fill_sinks_during_checkbox.Text = "remove sinks and flats";
-            this.toolTip1.SetToolTip(this.fill_sinks_during_checkbox, resources.GetString("fill_sinks_during_checkbox.ToolTip"));
-            this.fill_sinks_during_checkbox.UseVisualStyleBackColor = true;
-            // 
-            // groupBox13
-            // 
-            this.groupBox13.Controls.Add(this.fill_sinks_during_checkbox);
-            this.groupBox13.Location = new System.Drawing.Point(589, 91);
-            this.groupBox13.Name = "groupBox13";
-            this.groupBox13.Size = new System.Drawing.Size(158, 55);
-            this.groupBox13.TabIndex = 135;
-            this.groupBox13.TabStop = false;
-            this.groupBox13.Text = "while running: ";
-            this.toolTip1.SetToolTip(this.groupBox13, "LORICA");
             // 
             // label7
             // 
@@ -2043,7 +2363,7 @@ namespace LORICA4
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.landuse_determinator_button);
-            this.groupBox3.Location = new System.Drawing.Point(589, 152);
+            this.groupBox3.Location = new System.Drawing.Point(589, 123);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(158, 55);
             this.groupBox3.TabIndex = 136;
@@ -2060,6 +2380,39 @@ namespace LORICA4
             this.landuse_determinator_button.Text = "determine effects";
             this.landuse_determinator_button.UseVisualStyleBackColor = true;
             this.landuse_determinator_button.Click += new System.EventHandler(this.landuse_determinator_button_Click);
+            // 
+            // label98
+            // 
+            this.label98.Location = new System.Drawing.Point(19, 245);
+            this.label98.Name = "label98";
+            this.label98.Size = new System.Drawing.Size(151, 24);
+            this.label98.TabIndex = 152;
+            this.label98.Text = "mean annual temperature [C]";
+            this.label98.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.toolTip1.SetToolTip(this.label98, "Hourly rainfall data - in an ascii format");
+            // 
+            // label99
+            // 
+            this.label99.Location = new System.Drawing.Point(52, 269);
+            this.label99.Name = "label99";
+            this.label99.Size = new System.Drawing.Size(151, 24);
+            this.label99.TabIndex = 153;
+            this.label99.Text = "Only with daily water balance";
+            this.label99.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.toolTip1.SetToolTip(this.label99, "Hourly rainfall data - in an ascii format");
+            // 
+            // checkbox_t_intervene
+            // 
+            this.checkbox_t_intervene.AutoSize = true;
+            this.checkbox_t_intervene.Location = new System.Drawing.Point(54, 61);
+            this.checkbox_t_intervene.Name = "checkbox_t_intervene";
+            this.checkbox_t_intervene.Size = new System.Drawing.Size(83, 17);
+            this.checkbox_t_intervene.TabIndex = 4;
+            this.checkbox_t_intervene.Text = "Start at year";
+            this.toolTip1.SetToolTip(this.checkbox_t_intervene, "Select this checkbox when you want to run simulations starting with output from a" +
+        "n earlier run. Model output should be available in the output directory for the " +
+        "indicated year.");
+            this.checkbox_t_intervene.UseVisualStyleBackColor = true;
             // 
             // groupBox9
             // 
@@ -2166,39 +2519,6 @@ namespace LORICA4
             this.Biological_weathering_checkbox.TabIndex = 3;
             this.Biological_weathering_checkbox.Text = "Activate this process";
             this.Biological_weathering_checkbox.UseVisualStyleBackColor = true;
-            // 
-            // label98
-            // 
-            this.label98.Location = new System.Drawing.Point(19, 245);
-            this.label98.Name = "label98";
-            this.label98.Size = new System.Drawing.Size(151, 24);
-            this.label98.TabIndex = 152;
-            this.label98.Text = "mean annual temperature [C]";
-            this.label98.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.toolTip1.SetToolTip(this.label98, "Hourly rainfall data - in an ascii format");
-            // 
-            // label99
-            // 
-            this.label99.Location = new System.Drawing.Point(52, 269);
-            this.label99.Name = "label99";
-            this.label99.Size = new System.Drawing.Size(151, 24);
-            this.label99.TabIndex = 153;
-            this.label99.Text = "Only with daily water balance";
-            this.label99.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.toolTip1.SetToolTip(this.label99, "Hourly rainfall data - in an ascii format");
-            // 
-            // checkbox_t_intervene
-            // 
-            this.checkbox_t_intervene.AutoSize = true;
-            this.checkbox_t_intervene.Location = new System.Drawing.Point(54, 61);
-            this.checkbox_t_intervene.Name = "checkbox_t_intervene";
-            this.checkbox_t_intervene.Size = new System.Drawing.Size(83, 17);
-            this.checkbox_t_intervene.TabIndex = 4;
-            this.checkbox_t_intervene.Text = "Start at year";
-            this.toolTip1.SetToolTip(this.checkbox_t_intervene, "Select this checkbox when you want to run simulations starting with output from a" +
-        "n earlier run. Model output should be available in the output directory for the " +
-        "indicated year.");
-            this.checkbox_t_intervene.UseVisualStyleBackColor = true;
             // 
             // UTMzonebox
             // 
@@ -2492,13 +2812,7 @@ namespace LORICA4
             // 
             // Run
             // 
-            this.Run.Controls.Add(this.luxlitter_checkbox);
-            this.Run.Controls.Add(this.version_Konza_checkbox);
-            this.Run.Controls.Add(this.button4);
-            this.Run.Controls.Add(this.version_lux_checkbox);
-            this.Run.Controls.Add(this.groupBox2);
-            this.Run.Controls.Add(this.calibration);
-            this.Run.Controls.Add(this.Spitsbergen_case_study);
+            this.Run.Controls.Add(this.groupBox8);
             this.Run.Controls.Add(this.groupBox7);
             this.Run.Location = new System.Drawing.Point(4, 22);
             this.Run.Name = "Run";
@@ -2506,234 +2820,6 @@ namespace LORICA4
             this.Run.TabIndex = 8;
             this.Run.Text = "Run";
             this.Run.UseVisualStyleBackColor = true;
-            // 
-            // luxlitter_checkbox
-            // 
-            this.luxlitter_checkbox.AutoSize = true;
-            this.luxlitter_checkbox.Location = new System.Drawing.Point(48, 170);
-            this.luxlitter_checkbox.Name = "luxlitter_checkbox";
-            this.luxlitter_checkbox.Size = new System.Drawing.Size(80, 17);
-            this.luxlitter_checkbox.TabIndex = 14;
-            this.luxlitter_checkbox.Text = "Lux litter on";
-            this.luxlitter_checkbox.UseVisualStyleBackColor = true;
-            // 
-            // version_Konza_checkbox
-            // 
-            this.version_Konza_checkbox.AutoSize = true;
-            this.version_Konza_checkbox.Location = new System.Drawing.Point(174, 126);
-            this.version_Konza_checkbox.Name = "version_Konza_checkbox";
-            this.version_Konza_checkbox.Size = new System.Drawing.Size(93, 17);
-            this.version_Konza_checkbox.TabIndex = 12;
-            this.version_Konza_checkbox.Text = "Konza version";
-            this.version_Konza_checkbox.UseVisualStyleBackColor = true;
-            // 
-            // button4
-            // 
-            this.button4.Location = new System.Drawing.Point(174, 170);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(163, 41);
-            this.button4.TabIndex = 7;
-            this.button4.Text = "now purely calculate terrain derivatives";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
-            // 
-            // version_lux_checkbox
-            // 
-            this.version_lux_checkbox.AutoSize = true;
-            this.version_lux_checkbox.Location = new System.Drawing.Point(48, 147);
-            this.version_lux_checkbox.Name = "version_lux_checkbox";
-            this.version_lux_checkbox.Size = new System.Drawing.Size(115, 17);
-            this.version_lux_checkbox.TabIndex = 6;
-            this.version_lux_checkbox.Text = "Luxemburg version";
-            this.version_lux_checkbox.UseVisualStyleBackColor = true;
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.num_cal_paras_textbox);
-            this.groupBox2.Controls.Add(this.label33);
-            this.groupBox2.Controls.Add(this.obsfile_textbox);
-            this.groupBox2.Controls.Add(this.label120);
-            this.groupBox2.Controls.Add(this.calibration_ratio_reduction_parameter_textbox);
-            this.groupBox2.Controls.Add(this.label119);
-            this.groupBox2.Controls.Add(this.calibration_levels_textbox);
-            this.groupBox2.Controls.Add(this.label116);
-            this.groupBox2.Controls.Add(this.label118);
-            this.groupBox2.Controls.Add(this.label117);
-            this.groupBox2.Controls.Add(this.label115);
-            this.groupBox2.Controls.Add(this.label114);
-            this.groupBox2.Controls.Add(this.Sensitivity_button);
-            this.groupBox2.Controls.Add(this.Calibration_button);
-            this.groupBox2.Controls.Add(this.label113);
-            this.groupBox2.Controls.Add(this.calibration_ratios_textbox);
-            this.groupBox2.Location = new System.Drawing.Point(346, 32);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(422, 246);
-            this.groupBox2.TabIndex = 4;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Calibration / sensitivity options";
-            // 
-            // num_cal_paras_textbox
-            // 
-            this.num_cal_paras_textbox.Location = new System.Drawing.Point(338, 73);
-            this.num_cal_paras_textbox.Name = "num_cal_paras_textbox";
-            this.num_cal_paras_textbox.Size = new System.Drawing.Size(65, 20);
-            this.num_cal_paras_textbox.TabIndex = 16;
-            this.num_cal_paras_textbox.Text = "1";
-            // 
-            // label33
-            // 
-            this.label33.AutoSize = true;
-            this.label33.Location = new System.Drawing.Point(39, 177);
-            this.label33.Name = "label33";
-            this.label33.Size = new System.Drawing.Size(116, 13);
-            this.label33.TabIndex = 15;
-            this.label33.Text = "observations (optional):";
-            // 
-            // obsfile_textbox
-            // 
-            this.obsfile_textbox.Location = new System.Drawing.Point(218, 174);
-            this.obsfile_textbox.Name = "obsfile_textbox";
-            this.obsfile_textbox.Size = new System.Drawing.Size(186, 20);
-            this.obsfile_textbox.TabIndex = 14;
-            this.obsfile_textbox.Text = "..";
-            this.obsfile_textbox.Click += new System.EventHandler(this.obsfile_textbox_Click);
-            // 
-            // label120
-            // 
-            this.label120.AutoSize = true;
-            this.label120.Location = new System.Drawing.Point(39, 226);
-            this.label120.Name = "label120";
-            this.label120.Size = new System.Drawing.Size(199, 13);
-            this.label120.TabIndex = 13;
-            this.label120.Text = "1. describe the parameter values in code";
-            // 
-            // calibration_ratio_reduction_parameter_textbox
-            // 
-            this.calibration_ratio_reduction_parameter_textbox.Location = new System.Drawing.Point(338, 148);
-            this.calibration_ratio_reduction_parameter_textbox.Name = "calibration_ratio_reduction_parameter_textbox";
-            this.calibration_ratio_reduction_parameter_textbox.Size = new System.Drawing.Size(66, 20);
-            this.calibration_ratio_reduction_parameter_textbox.TabIndex = 12;
-            this.calibration_ratio_reduction_parameter_textbox.Text = "1.5";
-            // 
-            // label119
-            // 
-            this.label119.AutoSize = true;
-            this.label119.Location = new System.Drawing.Point(39, 151);
-            this.label119.Name = "label119";
-            this.label119.Size = new System.Drawing.Size(208, 13);
-            this.label119.TabIndex = 11;
-            this.label119.Text = "5. reduction of variations per level (if smart)";
-            // 
-            // calibration_levels_textbox
-            // 
-            this.calibration_levels_textbox.Location = new System.Drawing.Point(338, 124);
-            this.calibration_levels_textbox.Name = "calibration_levels_textbox";
-            this.calibration_levels_textbox.Size = new System.Drawing.Size(66, 20);
-            this.calibration_levels_textbox.TabIndex = 10;
-            this.calibration_levels_textbox.Text = "3";
-            // 
-            // label116
-            // 
-            this.label116.AutoSize = true;
-            this.label116.Location = new System.Drawing.Point(194, 35);
-            this.label116.Name = "label116";
-            this.label116.Size = new System.Drawing.Size(210, 13);
-            this.label116.TabIndex = 9;
-            this.label116.Text = "The optimal set of parameters will be stored";
-            // 
-            // label118
-            // 
-            this.label118.AutoSize = true;
-            this.label118.Location = new System.Drawing.Point(39, 127);
-            this.label118.Name = "label118";
-            this.label118.Size = new System.Drawing.Size(97, 13);
-            this.label118.TabIndex = 8;
-            this.label118.Text = "4. levels (iterations)";
-            // 
-            // label117
-            // 
-            this.label117.AutoSize = true;
-            this.label117.Location = new System.Drawing.Point(39, 80);
-            this.label117.Name = "label117";
-            this.label117.Size = new System.Drawing.Size(176, 13);
-            this.label117.TabIndex = 7;
-            this.label117.Text = "2. number of parameters to calibrate";
-            // 
-            // label115
-            // 
-            this.label115.AutoSize = true;
-            this.label115.Location = new System.Drawing.Point(39, 56);
-            this.label115.Name = "label115";
-            this.label115.Size = new System.Drawing.Size(350, 13);
-            this.label115.TabIndex = 5;
-            this.label115.Text = "1. define objective function in code, and describe parameters to calibrate";
-            // 
-            // label114
-            // 
-            this.label114.AutoSize = true;
-            this.label114.Location = new System.Drawing.Point(39, 102);
-            this.label114.Name = "label114";
-            this.label114.Size = new System.Drawing.Size(132, 13);
-            this.label114.TabIndex = 4;
-            this.label114.Text = "3. variations per parameter";
-            // 
-            // Sensitivity_button
-            // 
-            this.Sensitivity_button.AutoSize = true;
-            this.Sensitivity_button.Location = new System.Drawing.Point(22, 195);
-            this.Sensitivity_button.Name = "Sensitivity_button";
-            this.Sensitivity_button.Size = new System.Drawing.Size(200, 17);
-            this.Sensitivity_button.TabIndex = 3;
-            this.Sensitivity_button.Text = "Run sensitivity analysis (non-iterative)";
-            this.Sensitivity_button.UseVisualStyleBackColor = true;
-            this.Sensitivity_button.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
-            // 
-            // Calibration_button
-            // 
-            this.Calibration_button.AutoSize = true;
-            this.Calibration_button.Location = new System.Drawing.Point(22, 33);
-            this.Calibration_button.Name = "Calibration_button";
-            this.Calibration_button.Size = new System.Drawing.Size(142, 17);
-            this.Calibration_button.TabIndex = 2;
-            this.Calibration_button.Text = "Run calibration (iterative)";
-            this.Calibration_button.UseVisualStyleBackColor = true;
-            this.Calibration_button.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
-            // 
-            // label113
-            // 
-            this.label113.AutoSize = true;
-            this.label113.Location = new System.Drawing.Point(73, 39);
-            this.label113.Name = "label113";
-            this.label113.Size = new System.Drawing.Size(0, 13);
-            this.label113.TabIndex = 1;
-            // 
-            // calibration_ratios_textbox
-            // 
-            this.calibration_ratios_textbox.Location = new System.Drawing.Point(218, 99);
-            this.calibration_ratios_textbox.Name = "calibration_ratios_textbox";
-            this.calibration_ratios_textbox.Size = new System.Drawing.Size(186, 20);
-            this.calibration_ratios_textbox.TabIndex = 0;
-            this.calibration_ratios_textbox.Text = "0.25;0.5;1;2;4";
-            // 
-            // calibration
-            // 
-            this.calibration.AutoSize = true;
-            this.calibration.Location = new System.Drawing.Point(174, 147);
-            this.calibration.Name = "calibration";
-            this.calibration.Size = new System.Drawing.Size(125, 17);
-            this.calibration.TabIndex = 5;
-            this.calibration.Text = "Lessivage calibration";
-            this.calibration.UseVisualStyleBackColor = true;
-            // 
-            // Spitsbergen_case_study
-            // 
-            this.Spitsbergen_case_study.AutoSize = true;
-            this.Spitsbergen_case_study.Location = new System.Drawing.Point(48, 126);
-            this.Spitsbergen_case_study.Name = "Spitsbergen_case_study";
-            this.Spitsbergen_case_study.Size = new System.Drawing.Size(119, 17);
-            this.Spitsbergen_case_study.TabIndex = 4;
-            this.Spitsbergen_case_study.Text = "Spitsbergen version";
-            this.Spitsbergen_case_study.UseVisualStyleBackColor = true;
             // 
             // groupBox7
             // 
@@ -2787,7 +2873,6 @@ namespace LORICA4
             // 
             // Input
             // 
-            this.Input.Controls.Add(this.dtm_iterate_checkbox);
             this.Input.Controls.Add(this.textbox_layer_thickness);
             this.Input.Controls.Add(this.checkbox_layer_thickness);
             this.Input.Controls.Add(this.label_max_soil_layers);
@@ -2808,7 +2893,6 @@ namespace LORICA4
             this.Input.Controls.Add(this.check_time_landuse);
             this.Input.Controls.Add(this.label29);
             this.Input.Controls.Add(this.check_space_DTM);
-            this.Input.Controls.Add(this.groupBox13);
             this.Input.Controls.Add(this.tillfields_constant_textbox);
             this.Input.Controls.Add(this.tillfields_input_filename_textbox);
             this.Input.Controls.Add(this.evap_constant_value_box);
@@ -2822,7 +2906,6 @@ namespace LORICA4
             this.Input.Controls.Add(this.soildepth_input_filename_textbox);
             this.Input.Controls.Add(this.rain_input_filename_textbox);
             this.Input.Controls.Add(this.dtm_input_filename_textbox);
-            this.Input.Controls.Add(this.groupBox8);
             this.Input.Controls.Add(this.check_space_evap);
             this.Input.Controls.Add(this.check_space_infil);
             this.Input.Controls.Add(this.check_space_rain);
@@ -2845,16 +2928,6 @@ namespace LORICA4
             this.Input.TabIndex = 0;
             this.Input.Text = "Inputs";
             this.Input.UseVisualStyleBackColor = true;
-            // 
-            // dtm_iterate_checkbox
-            // 
-            this.dtm_iterate_checkbox.AutoSize = true;
-            this.dtm_iterate_checkbox.Location = new System.Drawing.Point(410, 51);
-            this.dtm_iterate_checkbox.Name = "dtm_iterate_checkbox";
-            this.dtm_iterate_checkbox.Size = new System.Drawing.Size(151, 17);
-            this.dtm_iterate_checkbox.TabIndex = 159;
-            this.dtm_iterate_checkbox.Text = "iterate comparable DEMs?";
-            this.dtm_iterate_checkbox.UseVisualStyleBackColor = true;
             // 
             // textbox_layer_thickness
             // 
@@ -3137,16 +3210,6 @@ namespace LORICA4
             this.dtm_input_filename_textbox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.dtm_input_filename_textbox.Click += new System.EventHandler(this.dtm_input_filename_textbox_Click);
             // 
-            // groupBox8
-            // 
-            this.groupBox8.Controls.Add(this.fill_sinks_before_checkbox);
-            this.groupBox8.Location = new System.Drawing.Point(589, 37);
-            this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(158, 48);
-            this.groupBox8.TabIndex = 134;
-            this.groupBox8.TabStop = false;
-            this.groupBox8.Text = "before running: ";
-            // 
             // check_space_evap
             // 
             this.check_space_evap.AutoSize = true;
@@ -3250,10 +3313,8 @@ namespace LORICA4
             this.Process_tabs.Controls.Add(this.Tillage);
             this.Process_tabs.Controls.Add(this.Creeper);
             this.Process_tabs.Controls.Add(Landsliding);
-            this.Process_tabs.Controls.Add(this.Rock_weathering);
             this.Process_tabs.Controls.Add(this.Tectonics);
             this.Process_tabs.Controls.Add(this.treefall);
-            this.Process_tabs.Controls.Add(this.tabPage6);
             this.Process_tabs.Location = new System.Drawing.Point(8, 14);
             this.Process_tabs.MaximumSize = new System.Drawing.Size(740, 276);
             this.Process_tabs.MinimumSize = new System.Drawing.Size(740, 276);
@@ -3270,13 +3331,13 @@ namespace LORICA4
             this.Water.Controls.Add(this.bio_protection_constant_textbox);
             this.Water.Controls.Add(this.erosion_threshold_textbox);
             this.Water.Controls.Add(this.rock_protection_constant_textbox);
-            this.Water.Controls.Add(this.label90);
-            this.Water.Controls.Add(this.label91);
-            this.Water.Controls.Add(this.label92);
             this.Water.Controls.Add(this.parameter_n_textbox);
             this.Water.Controls.Add(this.parameter_conv_textbox);
             this.Water.Controls.Add(this.parameter_K_textbox);
             this.Water.Controls.Add(this.parameter_m_textbox);
+            this.Water.Controls.Add(this.label90);
+            this.Water.Controls.Add(this.label91);
+            this.Water.Controls.Add(this.label92);
             this.Water.Controls.Add(this.only_waterflow_checkbox);
             this.Water.Controls.Add(this.pictureBox1);
             this.Water.Controls.Add(this.label12);
@@ -3344,33 +3405,6 @@ namespace LORICA4
             this.rock_protection_constant_textbox.TabIndex = 17;
             this.rock_protection_constant_textbox.Text = "1";
             // 
-            // label90
-            // 
-            this.label90.AutoSize = true;
-            this.label90.Location = new System.Drawing.Point(101, 150);
-            this.label90.Name = "label90";
-            this.label90.Size = new System.Drawing.Size(87, 13);
-            this.label90.TabIndex = 24;
-            this.label90.Text = "erosion threshold";
-            // 
-            // label91
-            // 
-            this.label91.AutoSize = true;
-            this.label91.Location = new System.Drawing.Point(101, 202);
-            this.label91.Name = "label91";
-            this.label91.Size = new System.Drawing.Size(115, 13);
-            this.label91.TabIndex = 23;
-            this.label91.Text = "bio protection constant";
-            // 
-            // label92
-            // 
-            this.label92.AutoSize = true;
-            this.label92.Location = new System.Drawing.Point(101, 176);
-            this.label92.Name = "label92";
-            this.label92.Size = new System.Drawing.Size(122, 13);
-            this.label92.TabIndex = 22;
-            this.label92.Text = "rock protection constant";
-            // 
             // parameter_n_textbox
             // 
             this.parameter_n_textbox.Location = new System.Drawing.Point(26, 96);
@@ -3402,6 +3436,33 @@ namespace LORICA4
             this.parameter_m_textbox.Size = new System.Drawing.Size(53, 20);
             this.parameter_m_textbox.TabIndex = 1;
             this.parameter_m_textbox.Text = "1.67";
+            // 
+            // label90
+            // 
+            this.label90.AutoSize = true;
+            this.label90.Location = new System.Drawing.Point(101, 150);
+            this.label90.Name = "label90";
+            this.label90.Size = new System.Drawing.Size(87, 13);
+            this.label90.TabIndex = 24;
+            this.label90.Text = "erosion threshold";
+            // 
+            // label91
+            // 
+            this.label91.AutoSize = true;
+            this.label91.Location = new System.Drawing.Point(101, 202);
+            this.label91.Name = "label91";
+            this.label91.Size = new System.Drawing.Size(115, 13);
+            this.label91.TabIndex = 23;
+            this.label91.Text = "bio protection constant";
+            // 
+            // label92
+            // 
+            this.label92.AutoSize = true;
+            this.label92.Location = new System.Drawing.Point(101, 176);
+            this.label92.Name = "label92";
+            this.label92.Size = new System.Drawing.Size(122, 13);
+            this.label92.TabIndex = 22;
+            this.label92.Text = "rock protection constant";
             // 
             // only_waterflow_checkbox
             // 
@@ -3601,65 +3662,6 @@ namespace LORICA4
             this.creep_active_checkbox.TabIndex = 20;
             this.creep_active_checkbox.Text = "Activate this process";
             this.creep_active_checkbox.UseVisualStyleBackColor = true;
-            // 
-            // Rock_weathering
-            // 
-            this.Rock_weathering.Controls.Add(this.rockweath_method);
-            this.Rock_weathering.Controls.Add(this.pictureBox6);
-            this.Rock_weathering.Controls.Add(this.groupBox10);
-            this.Rock_weathering.Controls.Add(this.groupBox9);
-            this.Rock_weathering.Location = new System.Drawing.Point(4, 22);
-            this.Rock_weathering.Name = "Rock_weathering";
-            this.Rock_weathering.Size = new System.Drawing.Size(732, 250);
-            this.Rock_weathering.TabIndex = 5;
-            this.Rock_weathering.Text = "Rock weathering";
-            this.Rock_weathering.UseVisualStyleBackColor = true;
-            // 
-            // rockweath_method
-            // 
-            this.rockweath_method.AllowDrop = true;
-            this.rockweath_method.FormattingEnabled = true;
-            this.rockweath_method.Items.AddRange(new object[] {
-            "Humped",
-            "Exponential (-P0 exp(-k1*dsoil))",
-            "Function of infiltration (only with daily water flow)"});
-            this.rockweath_method.Location = new System.Drawing.Point(26, 200);
-            this.rockweath_method.Name = "rockweath_method";
-            this.rockweath_method.Size = new System.Drawing.Size(121, 21);
-            this.rockweath_method.TabIndex = 15;
-            this.rockweath_method.Text = "Humped";
-            // 
-            // pictureBox6
-            // 
-            this.pictureBox6.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox6.Image")));
-            this.pictureBox6.Location = new System.Drawing.Point(276, 57);
-            this.pictureBox6.Name = "pictureBox6";
-            this.pictureBox6.Size = new System.Drawing.Size(180, 137);
-            this.pictureBox6.TabIndex = 14;
-            this.pictureBox6.TabStop = false;
-            // 
-            // groupBox10
-            // 
-            this.groupBox10.Controls.Add(this.Frost_weathering_checkbox);
-            this.groupBox10.Enabled = false;
-            this.groupBox10.Location = new System.Drawing.Point(250, 14);
-            this.groupBox10.Name = "groupBox10";
-            this.groupBox10.Size = new System.Drawing.Size(222, 179);
-            this.groupBox10.TabIndex = 6;
-            this.groupBox10.TabStop = false;
-            this.groupBox10.Text = "Frost weathering ";
-            this.groupBox10.Visible = false;
-            // 
-            // Frost_weathering_checkbox
-            // 
-            this.Frost_weathering_checkbox.AutoSize = true;
-            this.Frost_weathering_checkbox.Enabled = false;
-            this.Frost_weathering_checkbox.Location = new System.Drawing.Point(14, 19);
-            this.Frost_weathering_checkbox.Name = "Frost_weathering_checkbox";
-            this.Frost_weathering_checkbox.Size = new System.Drawing.Size(124, 17);
-            this.Frost_weathering_checkbox.TabIndex = 3;
-            this.Frost_weathering_checkbox.Text = "Activate this process";
-            this.Frost_weathering_checkbox.UseVisualStyleBackColor = true;
             // 
             // Tectonics
             // 
@@ -3900,15 +3902,15 @@ namespace LORICA4
             // treefall
             // 
             this.treefall.Controls.Add(this.tf_freq);
-            this.treefall.Controls.Add(this.label112);
             this.treefall.Controls.Add(this.tf_age);
-            this.treefall.Controls.Add(this.label111);
             this.treefall.Controls.Add(this.tf_growth);
-            this.treefall.Controls.Add(this.label110);
             this.treefall.Controls.Add(this.tf_D);
+            this.treefall.Controls.Add(this.tf_W);
+            this.treefall.Controls.Add(this.label112);
+            this.treefall.Controls.Add(this.label111);
+            this.treefall.Controls.Add(this.label110);
             this.treefall.Controls.Add(this.label95);
             this.treefall.Controls.Add(this.label107);
-            this.treefall.Controls.Add(this.tf_W);
             this.treefall.Controls.Add(this.treefall_checkbox);
             this.treefall.Location = new System.Drawing.Point(4, 22);
             this.treefall.Name = "treefall";
@@ -3925,6 +3927,38 @@ namespace LORICA4
             this.tf_freq.TabIndex = 30;
             this.tf_freq.Text = "0.00002";
             // 
+            // tf_age
+            // 
+            this.tf_age.Location = new System.Drawing.Point(25, 131);
+            this.tf_age.Name = "tf_age";
+            this.tf_age.Size = new System.Drawing.Size(53, 20);
+            this.tf_age.TabIndex = 28;
+            this.tf_age.Text = "300";
+            // 
+            // tf_growth
+            // 
+            this.tf_growth.Location = new System.Drawing.Point(25, 103);
+            this.tf_growth.Name = "tf_growth";
+            this.tf_growth.Size = new System.Drawing.Size(53, 20);
+            this.tf_growth.TabIndex = 26;
+            this.tf_growth.Text = "150";
+            // 
+            // tf_D
+            // 
+            this.tf_D.Location = new System.Drawing.Point(25, 77);
+            this.tf_D.Name = "tf_D";
+            this.tf_D.Size = new System.Drawing.Size(53, 20);
+            this.tf_D.TabIndex = 24;
+            this.tf_D.Text = "0.7";
+            // 
+            // tf_W
+            // 
+            this.tf_W.Location = new System.Drawing.Point(25, 51);
+            this.tf_W.Name = "tf_W";
+            this.tf_W.Size = new System.Drawing.Size(53, 20);
+            this.tf_W.TabIndex = 21;
+            this.tf_W.Text = "4";
+            // 
             // label112
             // 
             this.label112.AutoSize = true;
@@ -3933,14 +3967,6 @@ namespace LORICA4
             this.label112.Size = new System.Drawing.Size(132, 13);
             this.label112.TabIndex = 29;
             this.label112.Text = "fall frequency [trees/m2/a]";
-            // 
-            // tf_age
-            // 
-            this.tf_age.Location = new System.Drawing.Point(25, 131);
-            this.tf_age.Name = "tf_age";
-            this.tf_age.Size = new System.Drawing.Size(53, 20);
-            this.tf_age.TabIndex = 28;
-            this.tf_age.Text = "300";
             // 
             // label111
             // 
@@ -3951,14 +3977,6 @@ namespace LORICA4
             this.label111.TabIndex = 27;
             this.label111.Text = "maximum age of tree [a]";
             // 
-            // tf_growth
-            // 
-            this.tf_growth.Location = new System.Drawing.Point(25, 103);
-            this.tf_growth.Name = "tf_growth";
-            this.tf_growth.Size = new System.Drawing.Size(53, 20);
-            this.tf_growth.TabIndex = 26;
-            this.tf_growth.Text = "150";
-            // 
             // label110
             // 
             this.label110.AutoSize = true;
@@ -3967,14 +3985,6 @@ namespace LORICA4
             this.label110.Size = new System.Drawing.Size(204, 13);
             this.label110.TabIndex = 25;
             this.label110.Text = "time it takes to reach these dimensions [a]";
-            // 
-            // tf_D
-            // 
-            this.tf_D.Location = new System.Drawing.Point(25, 77);
-            this.tf_D.Name = "tf_D";
-            this.tf_D.Size = new System.Drawing.Size(53, 20);
-            this.tf_D.TabIndex = 24;
-            this.tf_D.Text = "0.7";
             // 
             // label95
             // 
@@ -3994,14 +4004,6 @@ namespace LORICA4
             this.label107.TabIndex = 22;
             this.label107.Text = "maximum diameter root mass [m]";
             // 
-            // tf_W
-            // 
-            this.tf_W.Location = new System.Drawing.Point(25, 51);
-            this.tf_W.Name = "tf_W";
-            this.tf_W.Size = new System.Drawing.Size(53, 20);
-            this.tf_W.TabIndex = 21;
-            this.tf_W.Text = "4";
-            // 
             // treefall_checkbox
             // 
             this.treefall_checkbox.AutoSize = true;
@@ -4011,141 +4013,6 @@ namespace LORICA4
             this.treefall_checkbox.TabIndex = 0;
             this.treefall_checkbox.Text = "Activate this process";
             this.treefall_checkbox.UseVisualStyleBackColor = true;
-            // 
-            // tabPage6
-            // 
-            this.tabPage6.Controls.Add(this.label129);
-            this.tabPage6.Controls.Add(this.label128);
-            this.tabPage6.Controls.Add(this.label127);
-            this.tabPage6.Controls.Add(this.blockweath_textbox);
-            this.tabPage6.Controls.Add(this.blocksize_textbox);
-            this.tabPage6.Controls.Add(this.hardlayerweath_textbox);
-            this.tabPage6.Controls.Add(this.label63);
-            this.tabPage6.Controls.Add(this.label62);
-            this.tabPage6.Controls.Add(this.hardlayerdensity_textbox);
-            this.tabPage6.Controls.Add(this.hardlayerelevation_textbox);
-            this.tabPage6.Controls.Add(this.hardlayerthickness_textbox);
-            this.tabPage6.Controls.Add(this.label61);
-            this.tabPage6.Controls.Add(this.blocks_active_checkbox);
-            this.tabPage6.Location = new System.Drawing.Point(4, 22);
-            this.tabPage6.Name = "tabPage6";
-            this.tabPage6.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage6.Size = new System.Drawing.Size(732, 250);
-            this.tabPage6.TabIndex = 9;
-            this.tabPage6.Text = "Blocks";
-            this.tabPage6.UseVisualStyleBackColor = true;
-            // 
-            // label129
-            // 
-            this.label129.AutoSize = true;
-            this.label129.Location = new System.Drawing.Point(129, 162);
-            this.label129.Name = "label129";
-            this.label129.Size = new System.Drawing.Size(115, 13);
-            this.label129.TabIndex = 21;
-            this.label129.Text = "Minimum block size (m)";
-            // 
-            // label128
-            // 
-            this.label128.AutoSize = true;
-            this.label128.Location = new System.Drawing.Point(129, 136);
-            this.label128.Name = "label128";
-            this.label128.Size = new System.Drawing.Size(110, 13);
-            this.label128.TabIndex = 20;
-            this.label128.Text = "Block weathering rate";
-            // 
-            // label127
-            // 
-            this.label127.AutoSize = true;
-            this.label127.Location = new System.Drawing.Point(129, 110);
-            this.label127.Name = "label127";
-            this.label127.Size = new System.Drawing.Size(110, 13);
-            this.label127.TabIndex = 19;
-            this.label127.Text = "Hard layer weathering";
-            // 
-            // blockweath_textbox
-            // 
-            this.blockweath_textbox.Location = new System.Drawing.Point(6, 133);
-            this.blockweath_textbox.Name = "blockweath_textbox";
-            this.blockweath_textbox.Size = new System.Drawing.Size(100, 20);
-            this.blockweath_textbox.TabIndex = 18;
-            this.blockweath_textbox.Text = "0.01";
-            // 
-            // blocksize_textbox
-            // 
-            this.blocksize_textbox.Location = new System.Drawing.Point(6, 159);
-            this.blocksize_textbox.Name = "blocksize_textbox";
-            this.blocksize_textbox.Size = new System.Drawing.Size(100, 20);
-            this.blocksize_textbox.TabIndex = 17;
-            this.blocksize_textbox.Text = "0.15";
-            // 
-            // hardlayerweath_textbox
-            // 
-            this.hardlayerweath_textbox.Location = new System.Drawing.Point(6, 107);
-            this.hardlayerweath_textbox.Name = "hardlayerweath_textbox";
-            this.hardlayerweath_textbox.Size = new System.Drawing.Size(100, 20);
-            this.hardlayerweath_textbox.TabIndex = 16;
-            this.hardlayerweath_textbox.Text = "0.01";
-            // 
-            // label63
-            // 
-            this.label63.AutoSize = true;
-            this.label63.Location = new System.Drawing.Point(129, 84);
-            this.label63.Name = "label63";
-            this.label63.Size = new System.Drawing.Size(131, 13);
-            this.label63.TabIndex = 15;
-            this.label63.Text = "Hard layer density (kg/m3)";
-            // 
-            // label62
-            // 
-            this.label62.AutoSize = true;
-            this.label62.Location = new System.Drawing.Point(129, 58);
-            this.label62.Name = "label62";
-            this.label62.Size = new System.Drawing.Size(118, 13);
-            this.label62.TabIndex = 14;
-            this.label62.Text = "Hard layer elevation (m)";
-            // 
-            // hardlayerdensity_textbox
-            // 
-            this.hardlayerdensity_textbox.Location = new System.Drawing.Point(6, 81);
-            this.hardlayerdensity_textbox.Name = "hardlayerdensity_textbox";
-            this.hardlayerdensity_textbox.Size = new System.Drawing.Size(100, 20);
-            this.hardlayerdensity_textbox.TabIndex = 13;
-            this.hardlayerdensity_textbox.Text = "2500";
-            // 
-            // hardlayerelevation_textbox
-            // 
-            this.hardlayerelevation_textbox.Location = new System.Drawing.Point(6, 55);
-            this.hardlayerelevation_textbox.Name = "hardlayerelevation_textbox";
-            this.hardlayerelevation_textbox.Size = new System.Drawing.Size(100, 20);
-            this.hardlayerelevation_textbox.TabIndex = 12;
-            this.hardlayerelevation_textbox.Text = "1";
-            // 
-            // hardlayerthickness_textbox
-            // 
-            this.hardlayerthickness_textbox.Location = new System.Drawing.Point(6, 29);
-            this.hardlayerthickness_textbox.Name = "hardlayerthickness_textbox";
-            this.hardlayerthickness_textbox.Size = new System.Drawing.Size(100, 20);
-            this.hardlayerthickness_textbox.TabIndex = 11;
-            this.hardlayerthickness_textbox.Text = "1";
-            // 
-            // label61
-            // 
-            this.label61.AutoSize = true;
-            this.label61.Location = new System.Drawing.Point(129, 32);
-            this.label61.Name = "label61";
-            this.label61.Size = new System.Drawing.Size(120, 13);
-            this.label61.TabIndex = 10;
-            this.label61.Text = "Hard layer thickness (m)";
-            // 
-            // blocks_active_checkbox
-            // 
-            this.blocks_active_checkbox.AutoSize = true;
-            this.blocks_active_checkbox.Location = new System.Drawing.Point(6, 6);
-            this.blocks_active_checkbox.Name = "blocks_active_checkbox";
-            this.blocks_active_checkbox.Size = new System.Drawing.Size(124, 17);
-            this.blocks_active_checkbox.TabIndex = 9;
-            this.blocks_active_checkbox.Text = "Activate this process";
-            this.blocks_active_checkbox.UseVisualStyleBackColor = true;
             // 
             // Creep_Checkbox
             // 
@@ -4166,7 +4033,6 @@ namespace LORICA4
             this.tabControl1.Controls.Add(this.Geomorph);
             this.tabControl1.Controls.Add(this.Soil);
             this.tabControl1.Controls.Add(this.Geochron);
-            this.tabControl1.Controls.Add(this.Hydro);
             this.tabControl1.Controls.Add(this.Input);
             this.tabControl1.Controls.Add(this.Run);
             this.tabControl1.Controls.Add(this.Output);
@@ -4188,6 +4054,574 @@ namespace LORICA4
             this.Soil.TabIndex = 9;
             this.Soil.Text = "Soil forming processes";
             this.Soil.UseVisualStyleBackColor = true;
+            // 
+            // tabControl2
+            // 
+            this.tabControl2.Controls.Add(this.Rock_weathering);
+            this.tabControl2.Controls.Add(this.physical);
+            this.tabControl2.Controls.Add(this.chemical);
+            this.tabControl2.Controls.Add(this.clay);
+            this.tabControl2.Controls.Add(this.bioturbation);
+            this.tabControl2.Controls.Add(this.carbon);
+            this.tabControl2.Location = new System.Drawing.Point(16, 15);
+            this.tabControl2.Name = "tabControl2";
+            this.tabControl2.SelectedIndex = 0;
+            this.tabControl2.Size = new System.Drawing.Size(759, 261);
+            this.tabControl2.TabIndex = 0;
+            // 
+            // Rock_weathering
+            // 
+            this.Rock_weathering.Controls.Add(this.rockweath_method);
+            this.Rock_weathering.Controls.Add(this.pictureBox6);
+            this.Rock_weathering.Controls.Add(this.groupBox10);
+            this.Rock_weathering.Controls.Add(this.groupBox9);
+            this.Rock_weathering.Location = new System.Drawing.Point(4, 22);
+            this.Rock_weathering.Name = "Rock_weathering";
+            this.Rock_weathering.Size = new System.Drawing.Size(751, 235);
+            this.Rock_weathering.TabIndex = 6;
+            this.Rock_weathering.Text = "Soil production";
+            this.Rock_weathering.UseVisualStyleBackColor = true;
+            // 
+            // rockweath_method
+            // 
+            this.rockweath_method.AllowDrop = true;
+            this.rockweath_method.FormattingEnabled = true;
+            this.rockweath_method.Items.AddRange(new object[] {
+            "Humped",
+            "Exponential (-P0 exp(-k1*dsoil))",
+            "Function of infiltration (only with daily water flow)"});
+            this.rockweath_method.Location = new System.Drawing.Point(26, 200);
+            this.rockweath_method.Name = "rockweath_method";
+            this.rockweath_method.Size = new System.Drawing.Size(121, 21);
+            this.rockweath_method.TabIndex = 15;
+            this.rockweath_method.Text = "Humped";
+            // 
+            // pictureBox6
+            // 
+            this.pictureBox6.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox6.Image")));
+            this.pictureBox6.Location = new System.Drawing.Point(276, 57);
+            this.pictureBox6.Name = "pictureBox6";
+            this.pictureBox6.Size = new System.Drawing.Size(180, 137);
+            this.pictureBox6.TabIndex = 14;
+            this.pictureBox6.TabStop = false;
+            // 
+            // groupBox10
+            // 
+            this.groupBox10.Controls.Add(this.Frost_weathering_checkbox);
+            this.groupBox10.Enabled = false;
+            this.groupBox10.Location = new System.Drawing.Point(250, 14);
+            this.groupBox10.Name = "groupBox10";
+            this.groupBox10.Size = new System.Drawing.Size(222, 179);
+            this.groupBox10.TabIndex = 6;
+            this.groupBox10.TabStop = false;
+            this.groupBox10.Text = "Frost weathering ";
+            this.groupBox10.Visible = false;
+            // 
+            // Frost_weathering_checkbox
+            // 
+            this.Frost_weathering_checkbox.AutoSize = true;
+            this.Frost_weathering_checkbox.Enabled = false;
+            this.Frost_weathering_checkbox.Location = new System.Drawing.Point(14, 19);
+            this.Frost_weathering_checkbox.Name = "Frost_weathering_checkbox";
+            this.Frost_weathering_checkbox.Size = new System.Drawing.Size(124, 17);
+            this.Frost_weathering_checkbox.TabIndex = 3;
+            this.Frost_weathering_checkbox.Text = "Activate this process";
+            this.Frost_weathering_checkbox.UseVisualStyleBackColor = true;
+            // 
+            // physical
+            // 
+            this.physical.Controls.Add(label49);
+            this.physical.Controls.Add(label48);
+            this.physical.Controls.Add(label47);
+            this.physical.Controls.Add(label46);
+            this.physical.Controls.Add(label45);
+            this.physical.Controls.Add(label44);
+            this.physical.Controls.Add(label43);
+            this.physical.Controls.Add(label42);
+            this.physical.Controls.Add(label41);
+            this.physical.Controls.Add(this.upper_particle_fine_clay_textbox);
+            this.physical.Controls.Add(this.upper_particle_clay_textbox);
+            this.physical.Controls.Add(this.upper_particle_silt_textbox);
+            this.physical.Controls.Add(this.upper_particle_sand_textbox);
+            this.physical.Controls.Add(this.upper_particle_coarse_textbox);
+            this.physical.Controls.Add(this.physical_weath_constant2);
+            this.physical.Controls.Add(this.physical_weath_constant1);
+            this.physical.Controls.Add(this.Physical_weath_C1_textbox);
+            this.physical.Controls.Add(this.soil_phys_weath_checkbox);
+            this.physical.Location = new System.Drawing.Point(4, 22);
+            this.physical.Name = "physical";
+            this.physical.Padding = new System.Windows.Forms.Padding(3);
+            this.physical.Size = new System.Drawing.Size(751, 235);
+            this.physical.TabIndex = 0;
+            this.physical.Text = "Physical weathering";
+            this.physical.UseVisualStyleBackColor = true;
+            // 
+            // upper_particle_fine_clay_textbox
+            // 
+            this.upper_particle_fine_clay_textbox.Location = new System.Drawing.Point(303, 147);
+            this.upper_particle_fine_clay_textbox.Name = "upper_particle_fine_clay_textbox";
+            this.upper_particle_fine_clay_textbox.Size = new System.Drawing.Size(100, 20);
+            this.upper_particle_fine_clay_textbox.TabIndex = 9;
+            this.upper_particle_fine_clay_textbox.Text = "0.0000001";
+            // 
+            // upper_particle_clay_textbox
+            // 
+            this.upper_particle_clay_textbox.Location = new System.Drawing.Point(303, 121);
+            this.upper_particle_clay_textbox.Name = "upper_particle_clay_textbox";
+            this.upper_particle_clay_textbox.Size = new System.Drawing.Size(100, 20);
+            this.upper_particle_clay_textbox.TabIndex = 8;
+            this.upper_particle_clay_textbox.Text = "0.000002";
+            // 
+            // upper_particle_silt_textbox
+            // 
+            this.upper_particle_silt_textbox.Location = new System.Drawing.Point(303, 95);
+            this.upper_particle_silt_textbox.Name = "upper_particle_silt_textbox";
+            this.upper_particle_silt_textbox.Size = new System.Drawing.Size(100, 20);
+            this.upper_particle_silt_textbox.TabIndex = 7;
+            this.upper_particle_silt_textbox.Text = "0.00005";
+            // 
+            // upper_particle_sand_textbox
+            // 
+            this.upper_particle_sand_textbox.Location = new System.Drawing.Point(303, 69);
+            this.upper_particle_sand_textbox.Name = "upper_particle_sand_textbox";
+            this.upper_particle_sand_textbox.Size = new System.Drawing.Size(100, 20);
+            this.upper_particle_sand_textbox.TabIndex = 6;
+            this.upper_particle_sand_textbox.Text = "0.002";
+            // 
+            // upper_particle_coarse_textbox
+            // 
+            this.upper_particle_coarse_textbox.Location = new System.Drawing.Point(303, 43);
+            this.upper_particle_coarse_textbox.Name = "upper_particle_coarse_textbox";
+            this.upper_particle_coarse_textbox.Size = new System.Drawing.Size(100, 20);
+            this.upper_particle_coarse_textbox.TabIndex = 5;
+            this.upper_particle_coarse_textbox.Text = "0.01";
+            // 
+            // physical_weath_constant2
+            // 
+            this.physical_weath_constant2.Location = new System.Drawing.Point(35, 95);
+            this.physical_weath_constant2.Name = "physical_weath_constant2";
+            this.physical_weath_constant2.Size = new System.Drawing.Size(100, 20);
+            this.physical_weath_constant2.TabIndex = 4;
+            this.physical_weath_constant2.Text = "5";
+            // 
+            // physical_weath_constant1
+            // 
+            this.physical_weath_constant1.Location = new System.Drawing.Point(35, 69);
+            this.physical_weath_constant1.Name = "physical_weath_constant1";
+            this.physical_weath_constant1.Size = new System.Drawing.Size(100, 20);
+            this.physical_weath_constant1.TabIndex = 3;
+            this.physical_weath_constant1.Text = "0.5";
+            // 
+            // Physical_weath_C1_textbox
+            // 
+            this.Physical_weath_C1_textbox.Location = new System.Drawing.Point(35, 43);
+            this.Physical_weath_C1_textbox.Name = "Physical_weath_C1_textbox";
+            this.Physical_weath_C1_textbox.Size = new System.Drawing.Size(100, 20);
+            this.Physical_weath_C1_textbox.TabIndex = 2;
+            this.Physical_weath_C1_textbox.Text = "0.000000004";
+            // 
+            // soil_phys_weath_checkbox
+            // 
+            this.soil_phys_weath_checkbox.AutoSize = true;
+            this.soil_phys_weath_checkbox.Checked = true;
+            this.soil_phys_weath_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.soil_phys_weath_checkbox.Location = new System.Drawing.Point(21, 6);
+            this.soil_phys_weath_checkbox.Name = "soil_phys_weath_checkbox";
+            this.soil_phys_weath_checkbox.Size = new System.Drawing.Size(124, 17);
+            this.soil_phys_weath_checkbox.TabIndex = 1;
+            this.soil_phys_weath_checkbox.Text = "Activate this process";
+            this.soil_phys_weath_checkbox.UseVisualStyleBackColor = true;
+            // 
+            // chemical
+            // 
+            this.chemical.Controls.Add(label54);
+            this.chemical.Controls.Add(label55);
+            this.chemical.Controls.Add(label56);
+            this.chemical.Controls.Add(label57);
+            this.chemical.Controls.Add(label58);
+            this.chemical.Controls.Add(label59);
+            this.chemical.Controls.Add(this.specific_area_fine_clay_textbox);
+            this.chemical.Controls.Add(this.specific_area_clay_textbox);
+            this.chemical.Controls.Add(this.specific_area_silt_textbox);
+            this.chemical.Controls.Add(this.specific_area_sand_textbox);
+            this.chemical.Controls.Add(this.specific_area_coarse_textbox);
+            this.chemical.Controls.Add(this.chem_weath_specific_coefficient_textbox);
+            this.chemical.Controls.Add(this.chem_weath_depth_constant_textbox);
+            this.chemical.Controls.Add(this.chem_weath_rate_constant_textbox);
+            this.chemical.Controls.Add(label53);
+            this.chemical.Controls.Add(label50);
+            this.chemical.Controls.Add(label51);
+            this.chemical.Controls.Add(label52);
+            this.chemical.Controls.Add(this.soil_chem_weath_checkbox);
+            this.chemical.Location = new System.Drawing.Point(4, 22);
+            this.chemical.Name = "chemical";
+            this.chemical.Padding = new System.Windows.Forms.Padding(3);
+            this.chemical.Size = new System.Drawing.Size(751, 235);
+            this.chemical.TabIndex = 1;
+            this.chemical.Text = "Chemical weathering";
+            this.chemical.UseVisualStyleBackColor = true;
+            // 
+            // specific_area_fine_clay_textbox
+            // 
+            this.specific_area_fine_clay_textbox.Location = new System.Drawing.Point(420, 142);
+            this.specific_area_fine_clay_textbox.Name = "specific_area_fine_clay_textbox";
+            this.specific_area_fine_clay_textbox.Size = new System.Drawing.Size(100, 20);
+            this.specific_area_fine_clay_textbox.TabIndex = 24;
+            this.specific_area_fine_clay_textbox.Text = "100000";
+            // 
+            // specific_area_clay_textbox
+            // 
+            this.specific_area_clay_textbox.Location = new System.Drawing.Point(420, 116);
+            this.specific_area_clay_textbox.Name = "specific_area_clay_textbox";
+            this.specific_area_clay_textbox.Size = new System.Drawing.Size(100, 20);
+            this.specific_area_clay_textbox.TabIndex = 23;
+            this.specific_area_clay_textbox.Text = "50000";
+            // 
+            // specific_area_silt_textbox
+            // 
+            this.specific_area_silt_textbox.Location = new System.Drawing.Point(420, 90);
+            this.specific_area_silt_textbox.Name = "specific_area_silt_textbox";
+            this.specific_area_silt_textbox.Size = new System.Drawing.Size(100, 20);
+            this.specific_area_silt_textbox.TabIndex = 22;
+            this.specific_area_silt_textbox.Text = "1000";
+            // 
+            // specific_area_sand_textbox
+            // 
+            this.specific_area_sand_textbox.Location = new System.Drawing.Point(420, 64);
+            this.specific_area_sand_textbox.Name = "specific_area_sand_textbox";
+            this.specific_area_sand_textbox.Size = new System.Drawing.Size(100, 20);
+            this.specific_area_sand_textbox.TabIndex = 21;
+            this.specific_area_sand_textbox.Text = "100";
+            // 
+            // specific_area_coarse_textbox
+            // 
+            this.specific_area_coarse_textbox.Location = new System.Drawing.Point(420, 38);
+            this.specific_area_coarse_textbox.Name = "specific_area_coarse_textbox";
+            this.specific_area_coarse_textbox.Size = new System.Drawing.Size(100, 20);
+            this.specific_area_coarse_textbox.TabIndex = 20;
+            this.specific_area_coarse_textbox.Text = "10";
+            // 
+            // chem_weath_specific_coefficient_textbox
+            // 
+            this.chem_weath_specific_coefficient_textbox.Location = new System.Drawing.Point(29, 90);
+            this.chem_weath_specific_coefficient_textbox.Name = "chem_weath_specific_coefficient_textbox";
+            this.chem_weath_specific_coefficient_textbox.Size = new System.Drawing.Size(100, 20);
+            this.chem_weath_specific_coefficient_textbox.TabIndex = 15;
+            this.chem_weath_specific_coefficient_textbox.Text = "1";
+            // 
+            // chem_weath_depth_constant_textbox
+            // 
+            this.chem_weath_depth_constant_textbox.Location = new System.Drawing.Point(29, 64);
+            this.chem_weath_depth_constant_textbox.Name = "chem_weath_depth_constant_textbox";
+            this.chem_weath_depth_constant_textbox.Size = new System.Drawing.Size(100, 20);
+            this.chem_weath_depth_constant_textbox.TabIndex = 14;
+            this.chem_weath_depth_constant_textbox.Text = "2.5";
+            // 
+            // chem_weath_rate_constant_textbox
+            // 
+            this.chem_weath_rate_constant_textbox.Location = new System.Drawing.Point(29, 38);
+            this.chem_weath_rate_constant_textbox.Name = "chem_weath_rate_constant_textbox";
+            this.chem_weath_rate_constant_textbox.Size = new System.Drawing.Size(100, 20);
+            this.chem_weath_rate_constant_textbox.TabIndex = 13;
+            this.chem_weath_rate_constant_textbox.Text = "0.000000004";
+            // 
+            // soil_chem_weath_checkbox
+            // 
+            this.soil_chem_weath_checkbox.AutoSize = true;
+            this.soil_chem_weath_checkbox.Checked = true;
+            this.soil_chem_weath_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.soil_chem_weath_checkbox.Location = new System.Drawing.Point(29, 6);
+            this.soil_chem_weath_checkbox.Name = "soil_chem_weath_checkbox";
+            this.soil_chem_weath_checkbox.Size = new System.Drawing.Size(124, 17);
+            this.soil_chem_weath_checkbox.TabIndex = 1;
+            this.soil_chem_weath_checkbox.Text = "Activate this process";
+            this.soil_chem_weath_checkbox.UseVisualStyleBackColor = true;
+            // 
+            // clay
+            // 
+            this.clay.Controls.Add(this.ct_Jagercikova);
+            this.clay.Controls.Add(this.label109);
+            this.clay.Controls.Add(this.label108);
+            this.clay.Controls.Add(this.ct_dd_Jagercikova);
+            this.clay.Controls.Add(this.ct_v0_Jagercikova);
+            this.clay.Controls.Add(this.ct_depth_decay);
+            this.clay.Controls.Add(this.eluviation_coefficient_textbox);
+            this.clay.Controls.Add(this.maximum_eluviation_textbox);
+            this.clay.Controls.Add(this.clay_neoform_C2_textbox);
+            this.clay.Controls.Add(this.clay_neoform_C1_textbox);
+            this.clay.Controls.Add(this.clay_neoform_constant_textbox);
+            this.clay.Controls.Add(label13);
+            this.clay.Controls.Add(this.CT_depth_decay_checkbox);
+            this.clay.Controls.Add(label69);
+            this.clay.Controls.Add(label70);
+            this.clay.Controls.Add(eluviation_rate_constant);
+            this.clay.Controls.Add(label72);
+            this.clay.Controls.Add(label64);
+            this.clay.Controls.Add(label65);
+            this.clay.Controls.Add(label66);
+            this.clay.Controls.Add(label67);
+            this.clay.Controls.Add(label60);
+            this.clay.Controls.Add(this.soil_clay_transloc_checkbox);
+            this.clay.Location = new System.Drawing.Point(4, 22);
+            this.clay.Name = "clay";
+            this.clay.Size = new System.Drawing.Size(751, 235);
+            this.clay.TabIndex = 2;
+            this.clay.Text = "Clay dynamics";
+            this.clay.UseVisualStyleBackColor = true;
+            // 
+            // ct_Jagercikova
+            // 
+            this.ct_Jagercikova.AutoSize = true;
+            this.ct_Jagercikova.Location = new System.Drawing.Point(540, 52);
+            this.ct_Jagercikova.Name = "ct_Jagercikova";
+            this.ct_Jagercikova.Size = new System.Drawing.Size(179, 17);
+            this.ct_Jagercikova.TabIndex = 62;
+            this.ct_Jagercikova.Text = "Advection equation Jagercikova";
+            this.ct_Jagercikova.UseVisualStyleBackColor = true;
+            // 
+            // label109
+            // 
+            this.label109.AutoSize = true;
+            this.label109.Location = new System.Drawing.Point(602, 108);
+            this.label109.Name = "label109";
+            this.label109.Size = new System.Drawing.Size(98, 13);
+            this.label109.TabIndex = 61;
+            this.label109.Text = "depth decay [cm-1]";
+            // 
+            // label108
+            // 
+            this.label108.AutoSize = true;
+            this.label108.Location = new System.Drawing.Point(597, 78);
+            this.label108.Name = "label108";
+            this.label108.Size = new System.Drawing.Size(148, 13);
+            this.label108.TabIndex = 60;
+            this.label108.Text = "surface advection v0 [cm a-1]";
+            // 
+            // ct_dd_Jagercikova
+            // 
+            this.ct_dd_Jagercikova.Location = new System.Drawing.Point(540, 104);
+            this.ct_dd_Jagercikova.Name = "ct_dd_Jagercikova";
+            this.ct_dd_Jagercikova.Size = new System.Drawing.Size(51, 20);
+            this.ct_dd_Jagercikova.TabIndex = 58;
+            this.ct_dd_Jagercikova.Text = "0.09";
+            // 
+            // ct_v0_Jagercikova
+            // 
+            this.ct_v0_Jagercikova.Location = new System.Drawing.Point(540, 75);
+            this.ct_v0_Jagercikova.Name = "ct_v0_Jagercikova";
+            this.ct_v0_Jagercikova.Size = new System.Drawing.Size(51, 20);
+            this.ct_v0_Jagercikova.TabIndex = 57;
+            this.ct_v0_Jagercikova.Text = "0.18";
+            // 
+            // ct_depth_decay
+            // 
+            this.ct_depth_decay.Location = new System.Drawing.Point(303, 169);
+            this.ct_depth_decay.Name = "ct_depth_decay";
+            this.ct_depth_decay.Size = new System.Drawing.Size(100, 20);
+            this.ct_depth_decay.TabIndex = 55;
+            this.ct_depth_decay.Text = "2";
+            // 
+            // eluviation_coefficient_textbox
+            // 
+            this.eluviation_coefficient_textbox.Location = new System.Drawing.Point(304, 101);
+            this.eluviation_coefficient_textbox.Name = "eluviation_coefficient_textbox";
+            this.eluviation_coefficient_textbox.Size = new System.Drawing.Size(100, 20);
+            this.eluviation_coefficient_textbox.TabIndex = 49;
+            this.eluviation_coefficient_textbox.Text = "2";
+            // 
+            // maximum_eluviation_textbox
+            // 
+            this.maximum_eluviation_textbox.Location = new System.Drawing.Point(304, 75);
+            this.maximum_eluviation_textbox.Name = "maximum_eluviation_textbox";
+            this.maximum_eluviation_textbox.Size = new System.Drawing.Size(100, 20);
+            this.maximum_eluviation_textbox.TabIndex = 48;
+            this.maximum_eluviation_textbox.Text = "0.007";
+            // 
+            // clay_neoform_C2_textbox
+            // 
+            this.clay_neoform_C2_textbox.Location = new System.Drawing.Point(25, 127);
+            this.clay_neoform_C2_textbox.Name = "clay_neoform_C2_textbox";
+            this.clay_neoform_C2_textbox.Size = new System.Drawing.Size(100, 20);
+            this.clay_neoform_C2_textbox.TabIndex = 42;
+            this.clay_neoform_C2_textbox.Text = "20";
+            // 
+            // clay_neoform_C1_textbox
+            // 
+            this.clay_neoform_C1_textbox.Location = new System.Drawing.Point(25, 101);
+            this.clay_neoform_C1_textbox.Name = "clay_neoform_C1_textbox";
+            this.clay_neoform_C1_textbox.Size = new System.Drawing.Size(100, 20);
+            this.clay_neoform_C1_textbox.TabIndex = 41;
+            this.clay_neoform_C1_textbox.Text = "1";
+            // 
+            // clay_neoform_constant_textbox
+            // 
+            this.clay_neoform_constant_textbox.Location = new System.Drawing.Point(25, 75);
+            this.clay_neoform_constant_textbox.Name = "clay_neoform_constant_textbox";
+            this.clay_neoform_constant_textbox.Size = new System.Drawing.Size(100, 20);
+            this.clay_neoform_constant_textbox.TabIndex = 40;
+            this.clay_neoform_constant_textbox.Text = "0.5";
+            // 
+            // CT_depth_decay_checkbox
+            // 
+            this.CT_depth_decay_checkbox.AutoSize = true;
+            this.CT_depth_decay_checkbox.Checked = true;
+            this.CT_depth_decay_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CT_depth_decay_checkbox.Location = new System.Drawing.Point(304, 146);
+            this.CT_depth_decay_checkbox.Name = "CT_depth_decay_checkbox";
+            this.CT_depth_decay_checkbox.Size = new System.Drawing.Size(137, 17);
+            this.CT_depth_decay_checkbox.TabIndex = 54;
+            this.CT_depth_decay_checkbox.Text = "Depth decay constant?";
+            this.CT_depth_decay_checkbox.UseVisualStyleBackColor = true;
+            // 
+            // soil_clay_transloc_checkbox
+            // 
+            this.soil_clay_transloc_checkbox.AutoSize = true;
+            this.soil_clay_transloc_checkbox.Checked = true;
+            this.soil_clay_transloc_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.soil_clay_transloc_checkbox.Location = new System.Drawing.Point(26, 12);
+            this.soil_clay_transloc_checkbox.Name = "soil_clay_transloc_checkbox";
+            this.soil_clay_transloc_checkbox.Size = new System.Drawing.Size(124, 17);
+            this.soil_clay_transloc_checkbox.TabIndex = 1;
+            this.soil_clay_transloc_checkbox.Text = "Activate this process";
+            this.soil_clay_transloc_checkbox.UseVisualStyleBackColor = true;
+            // 
+            // bioturbation
+            // 
+            this.bioturbation.Controls.Add(label68);
+            this.bioturbation.Controls.Add(label71);
+            this.bioturbation.Controls.Add(label73);
+            this.bioturbation.Controls.Add(this.bioturbation_depth_decay_textbox);
+            this.bioturbation.Controls.Add(this.potential_bioturbation_textbox);
+            this.bioturbation.Controls.Add(this.soil_bioturb_checkbox);
+            this.bioturbation.Location = new System.Drawing.Point(4, 22);
+            this.bioturbation.Name = "bioturbation";
+            this.bioturbation.Size = new System.Drawing.Size(751, 235);
+            this.bioturbation.TabIndex = 3;
+            this.bioturbation.Text = "Bioturbation";
+            this.bioturbation.UseVisualStyleBackColor = true;
+            // 
+            // bioturbation_depth_decay_textbox
+            // 
+            this.bioturbation_depth_decay_textbox.Location = new System.Drawing.Point(26, 74);
+            this.bioturbation_depth_decay_textbox.Name = "bioturbation_depth_decay_textbox";
+            this.bioturbation_depth_decay_textbox.Size = new System.Drawing.Size(100, 20);
+            this.bioturbation_depth_decay_textbox.TabIndex = 56;
+            this.bioturbation_depth_decay_textbox.Text = "2.5";
+            // 
+            // potential_bioturbation_textbox
+            // 
+            this.potential_bioturbation_textbox.Location = new System.Drawing.Point(26, 48);
+            this.potential_bioturbation_textbox.Name = "potential_bioturbation_textbox";
+            this.potential_bioturbation_textbox.Size = new System.Drawing.Size(100, 20);
+            this.potential_bioturbation_textbox.TabIndex = 55;
+            this.potential_bioturbation_textbox.Text = "4.3";
+            // 
+            // soil_bioturb_checkbox
+            // 
+            this.soil_bioturb_checkbox.AutoSize = true;
+            this.soil_bioturb_checkbox.Checked = true;
+            this.soil_bioturb_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.soil_bioturb_checkbox.Location = new System.Drawing.Point(26, 12);
+            this.soil_bioturb_checkbox.Name = "soil_bioturb_checkbox";
+            this.soil_bioturb_checkbox.Size = new System.Drawing.Size(124, 17);
+            this.soil_bioturb_checkbox.TabIndex = 1;
+            this.soil_bioturb_checkbox.Text = "Activate this process";
+            this.soil_bioturb_checkbox.UseVisualStyleBackColor = true;
+            // 
+            // carbon
+            // 
+            this.carbon.Controls.Add(this.carbon_o_decomp_rate_textbox);
+            this.carbon.Controls.Add(this.carbon_y_decomp_rate_textbox);
+            this.carbon.Controls.Add(this.carbon_o_depth_decay_textbox);
+            this.carbon.Controls.Add(this.carbon_y_depth_decay_textbox);
+            this.carbon.Controls.Add(this.carbon_humification_fraction_textbox);
+            this.carbon.Controls.Add(this.carbon_depth_decay_textbox);
+            this.carbon.Controls.Add(this.carbon_input_textbox);
+            this.carbon.Controls.Add(label86);
+            this.carbon.Controls.Add(label84);
+            this.carbon.Controls.Add(label83);
+            this.carbon.Controls.Add(label82);
+            this.carbon.Controls.Add(label80);
+            this.carbon.Controls.Add(label77);
+            this.carbon.Controls.Add(label81);
+            this.carbon.Controls.Add(label74);
+            this.carbon.Controls.Add(label75);
+            this.carbon.Controls.Add(label76);
+            this.carbon.Controls.Add(this.soil_carbon_cycle_checkbox);
+            this.carbon.Location = new System.Drawing.Point(4, 22);
+            this.carbon.Name = "carbon";
+            this.carbon.Size = new System.Drawing.Size(751, 235);
+            this.carbon.TabIndex = 4;
+            this.carbon.Text = "Organic Matter";
+            this.carbon.UseVisualStyleBackColor = true;
+            // 
+            // carbon_o_decomp_rate_textbox
+            // 
+            this.carbon_o_decomp_rate_textbox.Location = new System.Drawing.Point(453, 111);
+            this.carbon_o_decomp_rate_textbox.Name = "carbon_o_decomp_rate_textbox";
+            this.carbon_o_decomp_rate_textbox.Size = new System.Drawing.Size(100, 20);
+            this.carbon_o_decomp_rate_textbox.TabIndex = 81;
+            this.carbon_o_decomp_rate_textbox.Text = "0.005";
+            // 
+            // carbon_y_decomp_rate_textbox
+            // 
+            this.carbon_y_decomp_rate_textbox.Location = new System.Drawing.Point(347, 111);
+            this.carbon_y_decomp_rate_textbox.Name = "carbon_y_decomp_rate_textbox";
+            this.carbon_y_decomp_rate_textbox.Size = new System.Drawing.Size(100, 20);
+            this.carbon_y_decomp_rate_textbox.TabIndex = 79;
+            this.carbon_y_decomp_rate_textbox.Text = "0.01";
+            // 
+            // carbon_o_depth_decay_textbox
+            // 
+            this.carbon_o_depth_decay_textbox.Location = new System.Drawing.Point(453, 137);
+            this.carbon_o_depth_decay_textbox.Name = "carbon_o_depth_decay_textbox";
+            this.carbon_o_depth_decay_textbox.Size = new System.Drawing.Size(100, 20);
+            this.carbon_o_depth_decay_textbox.TabIndex = 75;
+            this.carbon_o_depth_decay_textbox.Text = "8";
+            // 
+            // carbon_y_depth_decay_textbox
+            // 
+            this.carbon_y_depth_decay_textbox.Location = new System.Drawing.Point(347, 137);
+            this.carbon_y_depth_decay_textbox.Name = "carbon_y_depth_decay_textbox";
+            this.carbon_y_depth_decay_textbox.Size = new System.Drawing.Size(100, 20);
+            this.carbon_y_depth_decay_textbox.TabIndex = 73;
+            this.carbon_y_depth_decay_textbox.Text = "8";
+            // 
+            // carbon_humification_fraction_textbox
+            // 
+            this.carbon_humification_fraction_textbox.Location = new System.Drawing.Point(23, 117);
+            this.carbon_humification_fraction_textbox.Name = "carbon_humification_fraction_textbox";
+            this.carbon_humification_fraction_textbox.Size = new System.Drawing.Size(100, 20);
+            this.carbon_humification_fraction_textbox.TabIndex = 65;
+            this.carbon_humification_fraction_textbox.Text = "0.8";
+            // 
+            // carbon_depth_decay_textbox
+            // 
+            this.carbon_depth_decay_textbox.Location = new System.Drawing.Point(23, 88);
+            this.carbon_depth_decay_textbox.Name = "carbon_depth_decay_textbox";
+            this.carbon_depth_decay_textbox.Size = new System.Drawing.Size(100, 20);
+            this.carbon_depth_decay_textbox.TabIndex = 61;
+            this.carbon_depth_decay_textbox.Text = "8";
+            // 
+            // carbon_input_textbox
+            // 
+            this.carbon_input_textbox.Location = new System.Drawing.Point(23, 62);
+            this.carbon_input_textbox.Name = "carbon_input_textbox";
+            this.carbon_input_textbox.Size = new System.Drawing.Size(100, 20);
+            this.carbon_input_textbox.TabIndex = 60;
+            this.carbon_input_textbox.Text = "1.5";
+            // 
+            // soil_carbon_cycle_checkbox
+            // 
+            this.soil_carbon_cycle_checkbox.AutoSize = true;
+            this.soil_carbon_cycle_checkbox.Checked = true;
+            this.soil_carbon_cycle_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.soil_carbon_cycle_checkbox.Location = new System.Drawing.Point(25, 14);
+            this.soil_carbon_cycle_checkbox.Name = "soil_carbon_cycle_checkbox";
+            this.soil_carbon_cycle_checkbox.Size = new System.Drawing.Size(124, 17);
+            this.soil_carbon_cycle_checkbox.TabIndex = 2;
+            this.soil_carbon_cycle_checkbox.Text = "Activate this process";
+            this.soil_carbon_cycle_checkbox.UseVisualStyleBackColor = true;
             // 
             // Geochron
             // 
@@ -4224,7 +4658,7 @@ namespace LORICA4
             this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage4.Size = new System.Drawing.Size(789, 252);
             this.tabPage4.TabIndex = 0;
-            this.tabPage4.Text = "Particle ages";
+            this.tabPage4.Text = "Luminescence";
             this.tabPage4.UseVisualStyleBackColor = true;
             // 
             // label137
@@ -4607,6 +5041,163 @@ namespace LORICA4
             this.CN_checkbox.Text = "Activate this process";
             this.CN_checkbox.UseVisualStyleBackColor = true;
             // 
+            // Experimental
+            // 
+            this.Experimental.Controls.Add(this.tabControl4);
+            this.Experimental.Location = new System.Drawing.Point(4, 22);
+            this.Experimental.Name = "Experimental";
+            this.Experimental.Padding = new System.Windows.Forms.Padding(3);
+            this.Experimental.Size = new System.Drawing.Size(803, 293);
+            this.Experimental.TabIndex = 12;
+            this.Experimental.Text = "Experimental";
+            this.Experimental.UseVisualStyleBackColor = true;
+            // 
+            // tabControl4
+            // 
+            this.tabControl4.Controls.Add(this.blocks);
+            this.tabControl4.Controls.Add(this.Hydro);
+            this.tabControl4.Controls.Add(this.Options);
+            this.tabControl4.Location = new System.Drawing.Point(8, 18);
+            this.tabControl4.Name = "tabControl4";
+            this.tabControl4.SelectedIndex = 0;
+            this.tabControl4.Size = new System.Drawing.Size(698, 269);
+            this.tabControl4.TabIndex = 0;
+            // 
+            // blocks
+            // 
+            this.blocks.Controls.Add(this.label129);
+            this.blocks.Controls.Add(this.label128);
+            this.blocks.Controls.Add(this.label127);
+            this.blocks.Controls.Add(this.blockweath_textbox);
+            this.blocks.Controls.Add(this.blocksize_textbox);
+            this.blocks.Controls.Add(this.hardlayerweath_textbox);
+            this.blocks.Controls.Add(this.hardlayerdensity_textbox);
+            this.blocks.Controls.Add(this.hardlayerelevation_textbox);
+            this.blocks.Controls.Add(this.hardlayerthickness_textbox);
+            this.blocks.Controls.Add(this.label63);
+            this.blocks.Controls.Add(this.label62);
+            this.blocks.Controls.Add(this.label61);
+            this.blocks.Controls.Add(this.blocks_active_checkbox);
+            this.blocks.Location = new System.Drawing.Point(4, 22);
+            this.blocks.Name = "blocks";
+            this.blocks.Padding = new System.Windows.Forms.Padding(3);
+            this.blocks.Size = new System.Drawing.Size(690, 243);
+            this.blocks.TabIndex = 10;
+            this.blocks.Text = "Blocks";
+            this.blocks.UseVisualStyleBackColor = true;
+            // 
+            // label129
+            // 
+            this.label129.AutoSize = true;
+            this.label129.Location = new System.Drawing.Point(129, 162);
+            this.label129.Name = "label129";
+            this.label129.Size = new System.Drawing.Size(115, 13);
+            this.label129.TabIndex = 21;
+            this.label129.Text = "Minimum block size (m)";
+            // 
+            // label128
+            // 
+            this.label128.AutoSize = true;
+            this.label128.Location = new System.Drawing.Point(129, 136);
+            this.label128.Name = "label128";
+            this.label128.Size = new System.Drawing.Size(110, 13);
+            this.label128.TabIndex = 20;
+            this.label128.Text = "Block weathering rate";
+            // 
+            // label127
+            // 
+            this.label127.AutoSize = true;
+            this.label127.Location = new System.Drawing.Point(129, 110);
+            this.label127.Name = "label127";
+            this.label127.Size = new System.Drawing.Size(110, 13);
+            this.label127.TabIndex = 19;
+            this.label127.Text = "Hard layer weathering";
+            // 
+            // blockweath_textbox
+            // 
+            this.blockweath_textbox.Location = new System.Drawing.Point(6, 133);
+            this.blockweath_textbox.Name = "blockweath_textbox";
+            this.blockweath_textbox.Size = new System.Drawing.Size(100, 20);
+            this.blockweath_textbox.TabIndex = 18;
+            this.blockweath_textbox.Text = "0.01";
+            // 
+            // blocksize_textbox
+            // 
+            this.blocksize_textbox.Location = new System.Drawing.Point(6, 159);
+            this.blocksize_textbox.Name = "blocksize_textbox";
+            this.blocksize_textbox.Size = new System.Drawing.Size(100, 20);
+            this.blocksize_textbox.TabIndex = 17;
+            this.blocksize_textbox.Text = "0.15";
+            // 
+            // hardlayerweath_textbox
+            // 
+            this.hardlayerweath_textbox.Location = new System.Drawing.Point(6, 107);
+            this.hardlayerweath_textbox.Name = "hardlayerweath_textbox";
+            this.hardlayerweath_textbox.Size = new System.Drawing.Size(100, 20);
+            this.hardlayerweath_textbox.TabIndex = 16;
+            this.hardlayerweath_textbox.Text = "0.01";
+            // 
+            // hardlayerdensity_textbox
+            // 
+            this.hardlayerdensity_textbox.Location = new System.Drawing.Point(6, 81);
+            this.hardlayerdensity_textbox.Name = "hardlayerdensity_textbox";
+            this.hardlayerdensity_textbox.Size = new System.Drawing.Size(100, 20);
+            this.hardlayerdensity_textbox.TabIndex = 13;
+            this.hardlayerdensity_textbox.Text = "2500";
+            // 
+            // hardlayerelevation_textbox
+            // 
+            this.hardlayerelevation_textbox.Location = new System.Drawing.Point(6, 55);
+            this.hardlayerelevation_textbox.Name = "hardlayerelevation_textbox";
+            this.hardlayerelevation_textbox.Size = new System.Drawing.Size(100, 20);
+            this.hardlayerelevation_textbox.TabIndex = 12;
+            this.hardlayerelevation_textbox.Text = "1";
+            // 
+            // hardlayerthickness_textbox
+            // 
+            this.hardlayerthickness_textbox.Location = new System.Drawing.Point(6, 29);
+            this.hardlayerthickness_textbox.Name = "hardlayerthickness_textbox";
+            this.hardlayerthickness_textbox.Size = new System.Drawing.Size(100, 20);
+            this.hardlayerthickness_textbox.TabIndex = 11;
+            this.hardlayerthickness_textbox.Text = "1";
+            // 
+            // label63
+            // 
+            this.label63.AutoSize = true;
+            this.label63.Location = new System.Drawing.Point(129, 84);
+            this.label63.Name = "label63";
+            this.label63.Size = new System.Drawing.Size(131, 13);
+            this.label63.TabIndex = 15;
+            this.label63.Text = "Hard layer density (kg/m3)";
+            // 
+            // label62
+            // 
+            this.label62.AutoSize = true;
+            this.label62.Location = new System.Drawing.Point(129, 58);
+            this.label62.Name = "label62";
+            this.label62.Size = new System.Drawing.Size(118, 13);
+            this.label62.TabIndex = 14;
+            this.label62.Text = "Hard layer elevation (m)";
+            // 
+            // label61
+            // 
+            this.label61.AutoSize = true;
+            this.label61.Location = new System.Drawing.Point(129, 32);
+            this.label61.Name = "label61";
+            this.label61.Size = new System.Drawing.Size(120, 13);
+            this.label61.TabIndex = 10;
+            this.label61.Text = "Hard layer thickness (m)";
+            // 
+            // blocks_active_checkbox
+            // 
+            this.blocks_active_checkbox.AutoSize = true;
+            this.blocks_active_checkbox.Location = new System.Drawing.Point(6, 6);
+            this.blocks_active_checkbox.Name = "blocks_active_checkbox";
+            this.blocks_active_checkbox.Size = new System.Drawing.Size(124, 17);
+            this.blocks_active_checkbox.TabIndex = 9;
+            this.blocks_active_checkbox.Text = "Activate this process";
+            this.blocks_active_checkbox.UseVisualStyleBackColor = true;
+            // 
             // Hydro
             // 
             this.Hydro.Controls.Add(this.check_scaling_daily_weather);
@@ -4635,8 +5226,8 @@ namespace LORICA4
             this.Hydro.Controls.Add(this.dailyP);
             this.Hydro.Location = new System.Drawing.Point(4, 22);
             this.Hydro.Name = "Hydro";
-            this.Hydro.Size = new System.Drawing.Size(803, 293);
-            this.Hydro.TabIndex = 10;
+            this.Hydro.Size = new System.Drawing.Size(690, 243);
+            this.Hydro.TabIndex = 11;
             this.Hydro.Text = "Hydrological parameters";
             this.Hydro.UseVisualStyleBackColor = true;
             // 
@@ -4759,8 +5350,6 @@ namespace LORICA4
             this.dailyT_min.Name = "dailyT_min";
             this.dailyT_min.Size = new System.Drawing.Size(100, 20);
             this.dailyT_min.TabIndex = 59;
-            this.dailyT_min.Text = "D:\\PhD\\projects\\1g_basic LORICA development\\daily water\\Grunow\\Tminday_grunow.csv" +
-    "";
             this.dailyT_min.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // dailyT_max
@@ -4770,8 +5359,6 @@ namespace LORICA4
             this.dailyT_max.Name = "dailyT_max";
             this.dailyT_max.Size = new System.Drawing.Size(100, 20);
             this.dailyT_max.TabIndex = 58;
-            this.dailyT_max.Text = "D:\\PhD\\projects\\1g_basic LORICA development\\daily water\\Grunow\\Tmaxday_grunow.csv" +
-    "";
             this.dailyT_max.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // dailyT_avg
@@ -4781,8 +5368,6 @@ namespace LORICA4
             this.dailyT_avg.Name = "dailyT_avg";
             this.dailyT_avg.Size = new System.Drawing.Size(100, 20);
             this.dailyT_avg.TabIndex = 57;
-            this.dailyT_avg.Text = "D:\\PhD\\projects\\1g_basic LORICA development\\daily water\\Grunow\\Tavgday_grunow.csv" +
-    "";
             this.dailyT_avg.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // label97
@@ -4816,7 +5401,7 @@ namespace LORICA4
             // label93
             // 
             this.label93.AutoSize = true;
-            this.label93.Location = new System.Drawing.Point(142, 65);
+            this.label93.Location = new System.Drawing.Point(142, 60);
             this.label93.Name = "label93";
             this.label93.Size = new System.Drawing.Size(53, 13);
             this.label93.TabIndex = 53;
@@ -4843,11 +5428,10 @@ namespace LORICA4
             // dailyET0
             // 
             this.dailyET0.Enabled = false;
-            this.dailyET0.Location = new System.Drawing.Point(36, 62);
+            this.dailyET0.Location = new System.Drawing.Point(36, 57);
             this.dailyET0.Name = "dailyET0";
             this.dailyET0.Size = new System.Drawing.Size(100, 20);
             this.dailyET0.TabIndex = 50;
-            this.dailyET0.Text = "D:\\PhD\\projects\\1g_basic LORICA development\\daily water\\Grunow\\ET0day_grunow.csv";
             this.dailyET0.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // dailyD
@@ -4857,7 +5441,6 @@ namespace LORICA4
             this.dailyD.Name = "dailyD";
             this.dailyD.Size = new System.Drawing.Size(100, 20);
             this.dailyD.TabIndex = 49;
-            this.dailyD.Text = "D:\\PhD\\projects\\1g_basic LORICA development\\daily water\\Grunow\\Dday_grunow.csv";
             this.dailyD.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // dailyP
@@ -4867,933 +5450,277 @@ namespace LORICA4
             this.dailyP.Name = "dailyP";
             this.dailyP.Size = new System.Drawing.Size(100, 20);
             this.dailyP.TabIndex = 48;
-            this.dailyP.Text = "D:\\PhD\\projects\\1g_basic LORICA development\\daily water\\Grunow\\Pday_grunow.csv";
             this.dailyP.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
-            // Experimental
-            // 
-            this.Experimental.Location = new System.Drawing.Point(4, 22);
-            this.Experimental.Name = "Experimental";
-            this.Experimental.Padding = new System.Windows.Forms.Padding(3);
-            this.Experimental.Size = new System.Drawing.Size(803, 293);
-            this.Experimental.TabIndex = 12;
-            this.Experimental.Text = "Experimental";
-            this.Experimental.UseVisualStyleBackColor = true;
-            // 
-            // carbon
-            // 
-            this.carbon.Controls.Add(this.carbon_o_decomp_rate_textbox);
-            this.carbon.Controls.Add(this.carbon_y_decomp_rate_textbox);
-            this.carbon.Controls.Add(this.carbon_o_twi_decay_textbox);
-            this.carbon.Controls.Add(this.carbon_y_twi_decay_textbox);
-            this.carbon.Controls.Add(this.carbon_o_depth_decay_textbox);
-            this.carbon.Controls.Add(this.carbon_y_depth_decay_textbox);
-            this.carbon.Controls.Add(this.carbon_humification_fraction_textbox);
-            this.carbon.Controls.Add(this.carbon_depth_decay_textbox);
-            this.carbon.Controls.Add(this.carbon_input_textbox);
-            this.carbon.Controls.Add(label86);
-            this.carbon.Controls.Add(label85);
-            this.carbon.Controls.Add(label84);
-            this.carbon.Controls.Add(label83);
-            this.carbon.Controls.Add(label82);
-            this.carbon.Controls.Add(label80);
-            this.carbon.Controls.Add(label77);
-            this.carbon.Controls.Add(label81);
-            this.carbon.Controls.Add(label74);
-            this.carbon.Controls.Add(label75);
-            this.carbon.Controls.Add(label76);
-            this.carbon.Controls.Add(this.soil_carbon_cycle_checkbox);
-            this.carbon.Location = new System.Drawing.Point(4, 22);
-            this.carbon.Name = "carbon";
-            this.carbon.Size = new System.Drawing.Size(751, 235);
-            this.carbon.TabIndex = 4;
-            this.carbon.Text = "Carbon Cycle";
-            this.carbon.UseVisualStyleBackColor = true;
-            // 
-            // soil_carbon_cycle_checkbox
-            // 
-            this.soil_carbon_cycle_checkbox.AutoSize = true;
-            this.soil_carbon_cycle_checkbox.Checked = true;
-            this.soil_carbon_cycle_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.soil_carbon_cycle_checkbox.Location = new System.Drawing.Point(25, 14);
-            this.soil_carbon_cycle_checkbox.Name = "soil_carbon_cycle_checkbox";
-            this.soil_carbon_cycle_checkbox.Size = new System.Drawing.Size(124, 17);
-            this.soil_carbon_cycle_checkbox.TabIndex = 2;
-            this.soil_carbon_cycle_checkbox.Text = "Activate this process";
-            this.soil_carbon_cycle_checkbox.UseVisualStyleBackColor = true;
-            // 
-            // carbon_input_textbox
-            // 
-            this.carbon_input_textbox.Location = new System.Drawing.Point(23, 62);
-            this.carbon_input_textbox.Name = "carbon_input_textbox";
-            this.carbon_input_textbox.Size = new System.Drawing.Size(100, 20);
-            this.carbon_input_textbox.TabIndex = 60;
-            this.carbon_input_textbox.Text = "1.5";
-            // 
-            // carbon_depth_decay_textbox
-            // 
-            this.carbon_depth_decay_textbox.Location = new System.Drawing.Point(23, 88);
-            this.carbon_depth_decay_textbox.Name = "carbon_depth_decay_textbox";
-            this.carbon_depth_decay_textbox.Size = new System.Drawing.Size(100, 20);
-            this.carbon_depth_decay_textbox.TabIndex = 61;
-            this.carbon_depth_decay_textbox.Text = "8";
-            // 
-            // label76
-            // 
-            label76.AutoSize = true;
-            label76.Location = new System.Drawing.Point(130, 62);
-            label76.Name = "label76";
-            label76.Size = new System.Drawing.Size(205, 13);
-            label76.TabIndex = 62;
-            label76.Text = "potential organic matter input [kg / m2 / y]";
-            // 
-            // label75
-            // 
-            label75.AutoSize = true;
-            label75.Location = new System.Drawing.Point(130, 91);
-            label75.Name = "label75";
-            label75.Size = new System.Drawing.Size(124, 13);
-            label75.TabIndex = 63;
-            label75.Text = "depth limitation rate [m-1]";
-            // 
-            // label74
-            // 
-            label74.AutoSize = true;
-            label74.Location = new System.Drawing.Point(130, 117);
-            label74.Name = "label74";
-            label74.Size = new System.Drawing.Size(0, 13);
-            label74.TabIndex = 64;
-            // 
-            // carbon_humification_fraction_textbox
-            // 
-            this.carbon_humification_fraction_textbox.Location = new System.Drawing.Point(23, 117);
-            this.carbon_humification_fraction_textbox.Name = "carbon_humification_fraction_textbox";
-            this.carbon_humification_fraction_textbox.Size = new System.Drawing.Size(100, 20);
-            this.carbon_humification_fraction_textbox.TabIndex = 65;
-            this.carbon_humification_fraction_textbox.Text = "0.8";
-            // 
-            // label81
-            // 
-            label81.AutoSize = true;
-            label81.Location = new System.Drawing.Point(130, 117);
-            label81.Name = "label81";
-            label81.Size = new System.Drawing.Size(113, 13);
-            label81.TabIndex = 67;
-            label81.Text = "humification fraction [-]";
-            // 
-            // label77
-            // 
-            label77.AutoSize = true;
-            label77.Location = new System.Drawing.Point(130, 172);
-            label77.Name = "label77";
-            label77.Size = new System.Drawing.Size(0, 13);
-            label77.TabIndex = 69;
-            // 
-            // label80
-            // 
-            label80.AutoSize = true;
-            label80.Location = new System.Drawing.Point(381, 62);
-            label80.Name = "label80";
-            label80.Size = new System.Drawing.Size(133, 26);
-            label80.TabIndex = 70;
-            label80.Text = "decomposition parameters \r\nfor two OM pools:";
-            // 
-            // label82
-            // 
-            label82.AutoSize = true;
-            label82.Location = new System.Drawing.Point(382, 94);
-            label82.Name = "label82";
-            label82.Size = new System.Drawing.Size(36, 13);
-            label82.TabIndex = 71;
-            label82.Text = "young";
-            // 
-            // label83
-            // 
-            label83.AutoSize = true;
-            label83.Location = new System.Drawing.Point(496, 94);
-            label83.Name = "label83";
-            label83.Size = new System.Drawing.Size(21, 13);
-            label83.TabIndex = 72;
-            label83.Text = "old";
-            // 
-            // carbon_y_depth_decay_textbox
-            // 
-            this.carbon_y_depth_decay_textbox.Location = new System.Drawing.Point(347, 137);
-            this.carbon_y_depth_decay_textbox.Name = "carbon_y_depth_decay_textbox";
-            this.carbon_y_depth_decay_textbox.Size = new System.Drawing.Size(100, 20);
-            this.carbon_y_depth_decay_textbox.TabIndex = 73;
-            this.carbon_y_depth_decay_textbox.Text = "8";
-            // 
-            // label84
-            // 
-            label84.AutoSize = true;
-            label84.Location = new System.Drawing.Point(558, 140);
-            label84.Name = "label84";
-            label84.Size = new System.Drawing.Size(136, 13);
-            label84.TabIndex = 74;
-            label84.Text = "depth decay constant [m-1]";
-            // 
-            // carbon_o_depth_decay_textbox
-            // 
-            this.carbon_o_depth_decay_textbox.Location = new System.Drawing.Point(453, 137);
-            this.carbon_o_depth_decay_textbox.Name = "carbon_o_depth_decay_textbox";
-            this.carbon_o_depth_decay_textbox.Size = new System.Drawing.Size(100, 20);
-            this.carbon_o_depth_decay_textbox.TabIndex = 75;
-            this.carbon_o_depth_decay_textbox.Text = "8";
-            // 
-            // carbon_y_twi_decay_textbox
-            // 
-            this.carbon_y_twi_decay_textbox.Location = new System.Drawing.Point(347, 163);
-            this.carbon_y_twi_decay_textbox.Name = "carbon_y_twi_decay_textbox";
-            this.carbon_y_twi_decay_textbox.Size = new System.Drawing.Size(100, 20);
-            this.carbon_y_twi_decay_textbox.TabIndex = 76;
-            this.carbon_y_twi_decay_textbox.Text = "0.03";
-            // 
-            // label85
-            // 
-            label85.AutoSize = true;
-            label85.Location = new System.Drawing.Point(558, 166);
-            label85.Name = "label85";
-            label85.Size = new System.Drawing.Size(116, 13);
-            label85.TabIndex = 77;
-            label85.Text = "TWI decay constant [-]";
-            // 
-            // carbon_o_twi_decay_textbox
-            // 
-            this.carbon_o_twi_decay_textbox.Location = new System.Drawing.Point(453, 163);
-            this.carbon_o_twi_decay_textbox.Name = "carbon_o_twi_decay_textbox";
-            this.carbon_o_twi_decay_textbox.Size = new System.Drawing.Size(100, 20);
-            this.carbon_o_twi_decay_textbox.TabIndex = 78;
-            this.carbon_o_twi_decay_textbox.Text = "0.03";
-            // 
-            // carbon_y_decomp_rate_textbox
-            // 
-            this.carbon_y_decomp_rate_textbox.Location = new System.Drawing.Point(347, 111);
-            this.carbon_y_decomp_rate_textbox.Name = "carbon_y_decomp_rate_textbox";
-            this.carbon_y_decomp_rate_textbox.Size = new System.Drawing.Size(100, 20);
-            this.carbon_y_decomp_rate_textbox.TabIndex = 79;
-            this.carbon_y_decomp_rate_textbox.Text = "0.01";
-            // 
-            // label86
-            // 
-            label86.AutoSize = true;
-            label86.Location = new System.Drawing.Point(558, 114);
-            label86.Name = "label86";
-            label86.Size = new System.Drawing.Size(115, 13);
-            label86.TabIndex = 80;
-            label86.Text = "decomposition rate [/y]";
-            // 
-            // carbon_o_decomp_rate_textbox
-            // 
-            this.carbon_o_decomp_rate_textbox.Location = new System.Drawing.Point(453, 111);
-            this.carbon_o_decomp_rate_textbox.Name = "carbon_o_decomp_rate_textbox";
-            this.carbon_o_decomp_rate_textbox.Size = new System.Drawing.Size(100, 20);
-            this.carbon_o_decomp_rate_textbox.TabIndex = 81;
-            this.carbon_o_decomp_rate_textbox.Text = "0.005";
-            // 
-            // bioturbation
-            // 
-            this.bioturbation.Controls.Add(label68);
-            this.bioturbation.Controls.Add(label71);
-            this.bioturbation.Controls.Add(label73);
-            this.bioturbation.Controls.Add(this.bioturbation_depth_decay_textbox);
-            this.bioturbation.Controls.Add(this.potential_bioturbation_textbox);
-            this.bioturbation.Controls.Add(this.soil_bioturb_checkbox);
-            this.bioturbation.Location = new System.Drawing.Point(4, 22);
-            this.bioturbation.Name = "bioturbation";
-            this.bioturbation.Size = new System.Drawing.Size(751, 235);
-            this.bioturbation.TabIndex = 3;
-            this.bioturbation.Text = "Bioturbation";
-            this.bioturbation.UseVisualStyleBackColor = true;
-            // 
-            // soil_bioturb_checkbox
-            // 
-            this.soil_bioturb_checkbox.AutoSize = true;
-            this.soil_bioturb_checkbox.Checked = true;
-            this.soil_bioturb_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.soil_bioturb_checkbox.Location = new System.Drawing.Point(26, 12);
-            this.soil_bioturb_checkbox.Name = "soil_bioturb_checkbox";
-            this.soil_bioturb_checkbox.Size = new System.Drawing.Size(124, 17);
-            this.soil_bioturb_checkbox.TabIndex = 1;
-            this.soil_bioturb_checkbox.Text = "Activate this process";
-            this.soil_bioturb_checkbox.UseVisualStyleBackColor = true;
-            // 
-            // potential_bioturbation_textbox
-            // 
-            this.potential_bioturbation_textbox.Location = new System.Drawing.Point(26, 48);
-            this.potential_bioturbation_textbox.Name = "potential_bioturbation_textbox";
-            this.potential_bioturbation_textbox.Size = new System.Drawing.Size(100, 20);
-            this.potential_bioturbation_textbox.TabIndex = 55;
-            this.potential_bioturbation_textbox.Text = "4.3";
-            // 
-            // bioturbation_depth_decay_textbox
-            // 
-            this.bioturbation_depth_decay_textbox.Location = new System.Drawing.Point(26, 74);
-            this.bioturbation_depth_decay_textbox.Name = "bioturbation_depth_decay_textbox";
-            this.bioturbation_depth_decay_textbox.Size = new System.Drawing.Size(100, 20);
-            this.bioturbation_depth_decay_textbox.TabIndex = 56;
-            this.bioturbation_depth_decay_textbox.Text = "2.5";
-            // 
-            // label73
-            // 
-            label73.AutoSize = true;
-            label73.Location = new System.Drawing.Point(133, 48);
-            label73.Name = "label73";
-            label73.Size = new System.Drawing.Size(167, 13);
-            label73.TabIndex = 57;
-            label73.Text = "potential bioturbation [kg / m2 / y]";
-            // 
-            // label71
-            // 
-            label71.AutoSize = true;
-            label71.Location = new System.Drawing.Point(133, 77);
-            label71.Name = "label71";
-            label71.Size = new System.Drawing.Size(99, 13);
-            label71.TabIndex = 58;
-            label71.Text = "depth decay rate [-]";
-            // 
-            // label68
-            // 
-            label68.AutoSize = true;
-            label68.Location = new System.Drawing.Point(133, 103);
-            label68.Name = "label68";
-            label68.Size = new System.Drawing.Size(0, 13);
-            label68.TabIndex = 59;
-            // 
-            // clay
-            // 
-            this.clay.Controls.Add(this.ct_Jagercikova);
-            this.clay.Controls.Add(this.label109);
-            this.clay.Controls.Add(this.label108);
-            this.clay.Controls.Add(this.ct_dd_Jagercikova);
-            this.clay.Controls.Add(this.ct_v0_Jagercikova);
-            this.clay.Controls.Add(this.ct_depth_decay);
-            this.clay.Controls.Add(this.eluviation_coefficient_textbox);
-            this.clay.Controls.Add(this.maximum_eluviation_textbox);
-            this.clay.Controls.Add(this.clay_neoform_C2_textbox);
-            this.clay.Controls.Add(this.clay_neoform_C1_textbox);
-            this.clay.Controls.Add(this.clay_neoform_constant_textbox);
-            this.clay.Controls.Add(label13);
-            this.clay.Controls.Add(this.CT_depth_decay_checkbox);
-            this.clay.Controls.Add(label69);
-            this.clay.Controls.Add(label70);
-            this.clay.Controls.Add(eluviation_rate_constant);
-            this.clay.Controls.Add(label72);
-            this.clay.Controls.Add(label64);
-            this.clay.Controls.Add(label65);
-            this.clay.Controls.Add(label66);
-            this.clay.Controls.Add(label67);
-            this.clay.Controls.Add(label60);
-            this.clay.Controls.Add(this.soil_clay_transloc_checkbox);
-            this.clay.Location = new System.Drawing.Point(4, 22);
-            this.clay.Name = "clay";
-            this.clay.Size = new System.Drawing.Size(751, 235);
-            this.clay.TabIndex = 2;
-            this.clay.Text = "Clay dynamics";
-            this.clay.UseVisualStyleBackColor = true;
-            // 
-            // soil_clay_transloc_checkbox
-            // 
-            this.soil_clay_transloc_checkbox.AutoSize = true;
-            this.soil_clay_transloc_checkbox.Checked = true;
-            this.soil_clay_transloc_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.soil_clay_transloc_checkbox.Location = new System.Drawing.Point(26, 12);
-            this.soil_clay_transloc_checkbox.Name = "soil_clay_transloc_checkbox";
-            this.soil_clay_transloc_checkbox.Size = new System.Drawing.Size(124, 17);
-            this.soil_clay_transloc_checkbox.TabIndex = 1;
-            this.soil_clay_transloc_checkbox.Text = "Activate this process";
-            this.soil_clay_transloc_checkbox.UseVisualStyleBackColor = true;
-            // 
-            // label60
-            // 
-            label60.AutoSize = true;
-            label60.Location = new System.Drawing.Point(23, 59);
-            label60.Name = "label60";
-            label60.Size = new System.Drawing.Size(110, 13);
-            label60.TabIndex = 39;
-            label60.Text = "fine clay neoformation";
-            // 
-            // clay_neoform_constant_textbox
-            // 
-            this.clay_neoform_constant_textbox.Location = new System.Drawing.Point(25, 75);
-            this.clay_neoform_constant_textbox.Name = "clay_neoform_constant_textbox";
-            this.clay_neoform_constant_textbox.Size = new System.Drawing.Size(100, 20);
-            this.clay_neoform_constant_textbox.TabIndex = 40;
-            this.clay_neoform_constant_textbox.Text = "0.5";
-            // 
-            // clay_neoform_C1_textbox
-            // 
-            this.clay_neoform_C1_textbox.Location = new System.Drawing.Point(25, 101);
-            this.clay_neoform_C1_textbox.Name = "clay_neoform_C1_textbox";
-            this.clay_neoform_C1_textbox.Size = new System.Drawing.Size(100, 20);
-            this.clay_neoform_C1_textbox.TabIndex = 41;
-            this.clay_neoform_C1_textbox.Text = "1";
-            // 
-            // clay_neoform_C2_textbox
-            // 
-            this.clay_neoform_C2_textbox.Location = new System.Drawing.Point(25, 127);
-            this.clay_neoform_C2_textbox.Name = "clay_neoform_C2_textbox";
-            this.clay_neoform_C2_textbox.Size = new System.Drawing.Size(100, 20);
-            this.clay_neoform_C2_textbox.TabIndex = 42;
-            this.clay_neoform_C2_textbox.Text = "20";
-            // 
-            // label67
-            // 
-            label67.AutoSize = true;
-            label67.Location = new System.Drawing.Point(132, 75);
-            label67.Name = "label67";
-            label67.Size = new System.Drawing.Size(121, 13);
-            label67.TabIndex = 43;
-            label67.Text = "neoformation constant []";
-            // 
-            // label66
-            // 
-            label66.AutoSize = true;
-            label66.Location = new System.Drawing.Point(132, 104);
-            label66.Name = "label66";
-            label66.Size = new System.Drawing.Size(60, 13);
-            label66.TabIndex = 44;
-            label66.Text = "constant 1 ";
-            // 
-            // label65
-            // 
-            label65.AutoSize = true;
-            label65.Location = new System.Drawing.Point(132, 130);
-            label65.Name = "label65";
-            label65.Size = new System.Drawing.Size(0, 13);
-            label65.TabIndex = 45;
-            // 
-            // label64
-            // 
-            label64.AutoSize = true;
-            label64.Location = new System.Drawing.Point(131, 134);
-            label64.Name = "label64";
-            label64.Size = new System.Drawing.Size(83, 13);
-            label64.TabIndex = 46;
-            label64.Text = "constant 2 [m-1]";
-            // 
-            // label72
-            // 
-            label72.AutoSize = true;
-            label72.Location = new System.Drawing.Point(302, 59);
-            label72.Name = "label72";
-            label72.Size = new System.Drawing.Size(109, 13);
-            label72.TabIndex = 47;
-            label72.Text = "fine clay translocation";
-            // 
-            // maximum_eluviation_textbox
-            // 
-            this.maximum_eluviation_textbox.Location = new System.Drawing.Point(304, 75);
-            this.maximum_eluviation_textbox.Name = "maximum_eluviation_textbox";
-            this.maximum_eluviation_textbox.Size = new System.Drawing.Size(100, 20);
-            this.maximum_eluviation_textbox.TabIndex = 48;
-            this.maximum_eluviation_textbox.Text = "0.007";
-            // 
-            // eluviation_coefficient_textbox
-            // 
-            this.eluviation_coefficient_textbox.Location = new System.Drawing.Point(304, 101);
-            this.eluviation_coefficient_textbox.Name = "eluviation_coefficient_textbox";
-            this.eluviation_coefficient_textbox.Size = new System.Drawing.Size(100, 20);
-            this.eluviation_coefficient_textbox.TabIndex = 49;
-            this.eluviation_coefficient_textbox.Text = "2";
-            // 
-            // eluviation_rate_constant
-            // 
-            eluviation_rate_constant.AutoSize = true;
-            eluviation_rate_constant.Location = new System.Drawing.Point(411, 75);
-            eluviation_rate_constant.Name = "eluviation_rate_constant";
-            eluviation_rate_constant.Size = new System.Drawing.Size(119, 13);
-            eluviation_rate_constant.TabIndex = 51;
-            eluviation_rate_constant.Text = "maximum eluviation [kg]";
-            // 
-            // label70
-            // 
-            label70.AutoSize = true;
-            label70.Location = new System.Drawing.Point(411, 104);
-            label70.Name = "label70";
-            label70.Size = new System.Drawing.Size(97, 13);
-            label70.TabIndex = 52;
-            label70.Text = "saturation constant";
-            // 
-            // label69
-            // 
-            label69.AutoSize = true;
-            label69.Location = new System.Drawing.Point(411, 130);
-            label69.Name = "label69";
-            label69.Size = new System.Drawing.Size(0, 13);
-            label69.TabIndex = 53;
-            // 
-            // CT_depth_decay_checkbox
-            // 
-            this.CT_depth_decay_checkbox.AutoSize = true;
-            this.CT_depth_decay_checkbox.Checked = true;
-            this.CT_depth_decay_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.CT_depth_decay_checkbox.Location = new System.Drawing.Point(304, 146);
-            this.CT_depth_decay_checkbox.Name = "CT_depth_decay_checkbox";
-            this.CT_depth_decay_checkbox.Size = new System.Drawing.Size(137, 17);
-            this.CT_depth_decay_checkbox.TabIndex = 54;
-            this.CT_depth_decay_checkbox.Text = "Depth decay constant?";
-            this.CT_depth_decay_checkbox.UseVisualStyleBackColor = true;
-            // 
-            // ct_depth_decay
-            // 
-            this.ct_depth_decay.Location = new System.Drawing.Point(303, 169);
-            this.ct_depth_decay.Name = "ct_depth_decay";
-            this.ct_depth_decay.Size = new System.Drawing.Size(100, 20);
-            this.ct_depth_decay.TabIndex = 55;
-            this.ct_depth_decay.Text = "2";
-            // 
-            // label13
-            // 
-            label13.AutoSize = true;
-            label13.Location = new System.Drawing.Point(410, 172);
-            label13.Name = "label13";
-            label13.Size = new System.Drawing.Size(112, 13);
-            label13.TabIndex = 56;
-            label13.Text = "Depth decay constant";
-            // 
-            // ct_v0_Jagercikova
-            // 
-            this.ct_v0_Jagercikova.Location = new System.Drawing.Point(540, 75);
-            this.ct_v0_Jagercikova.Name = "ct_v0_Jagercikova";
-            this.ct_v0_Jagercikova.Size = new System.Drawing.Size(51, 20);
-            this.ct_v0_Jagercikova.TabIndex = 57;
-            this.ct_v0_Jagercikova.Text = "0.18";
-            // 
-            // ct_dd_Jagercikova
-            // 
-            this.ct_dd_Jagercikova.Location = new System.Drawing.Point(540, 104);
-            this.ct_dd_Jagercikova.Name = "ct_dd_Jagercikova";
-            this.ct_dd_Jagercikova.Size = new System.Drawing.Size(51, 20);
-            this.ct_dd_Jagercikova.TabIndex = 58;
-            this.ct_dd_Jagercikova.Text = "0.09";
-            // 
-            // label108
-            // 
-            this.label108.AutoSize = true;
-            this.label108.Location = new System.Drawing.Point(597, 78);
-            this.label108.Name = "label108";
-            this.label108.Size = new System.Drawing.Size(148, 13);
-            this.label108.TabIndex = 60;
-            this.label108.Text = "surface advection v0 [cm a-1]";
-            // 
-            // label109
-            // 
-            this.label109.AutoSize = true;
-            this.label109.Location = new System.Drawing.Point(602, 108);
-            this.label109.Name = "label109";
-            this.label109.Size = new System.Drawing.Size(98, 13);
-            this.label109.TabIndex = 61;
-            this.label109.Text = "depth decay [cm-1]";
-            // 
-            // ct_Jagercikova
-            // 
-            this.ct_Jagercikova.AutoSize = true;
-            this.ct_Jagercikova.Location = new System.Drawing.Point(540, 52);
-            this.ct_Jagercikova.Name = "ct_Jagercikova";
-            this.ct_Jagercikova.Size = new System.Drawing.Size(179, 17);
-            this.ct_Jagercikova.TabIndex = 62;
-            this.ct_Jagercikova.Text = "Advection equation Jagercikova";
-            this.ct_Jagercikova.UseVisualStyleBackColor = true;
-            // 
-            // chemical
-            // 
-            this.chemical.Controls.Add(label54);
-            this.chemical.Controls.Add(label55);
-            this.chemical.Controls.Add(label56);
-            this.chemical.Controls.Add(label57);
-            this.chemical.Controls.Add(label58);
-            this.chemical.Controls.Add(label59);
-            this.chemical.Controls.Add(this.specific_area_fine_clay_textbox);
-            this.chemical.Controls.Add(this.specific_area_clay_textbox);
-            this.chemical.Controls.Add(this.specific_area_silt_textbox);
-            this.chemical.Controls.Add(this.specific_area_sand_textbox);
-            this.chemical.Controls.Add(this.specific_area_coarse_textbox);
-            this.chemical.Controls.Add(this.chem_weath_specific_coefficient_textbox);
-            this.chemical.Controls.Add(this.chem_weath_depth_constant_textbox);
-            this.chemical.Controls.Add(this.chem_weath_rate_constant_textbox);
-            this.chemical.Controls.Add(label53);
-            this.chemical.Controls.Add(label50);
-            this.chemical.Controls.Add(label51);
-            this.chemical.Controls.Add(label52);
-            this.chemical.Controls.Add(this.soil_chem_weath_checkbox);
-            this.chemical.Location = new System.Drawing.Point(4, 22);
-            this.chemical.Name = "chemical";
-            this.chemical.Padding = new System.Windows.Forms.Padding(3);
-            this.chemical.Size = new System.Drawing.Size(751, 235);
-            this.chemical.TabIndex = 1;
-            this.chemical.Text = "Chemical weathering";
-            this.chemical.UseVisualStyleBackColor = true;
-            // 
-            // soil_chem_weath_checkbox
-            // 
-            this.soil_chem_weath_checkbox.AutoSize = true;
-            this.soil_chem_weath_checkbox.Checked = true;
-            this.soil_chem_weath_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.soil_chem_weath_checkbox.Location = new System.Drawing.Point(29, 6);
-            this.soil_chem_weath_checkbox.Name = "soil_chem_weath_checkbox";
-            this.soil_chem_weath_checkbox.Size = new System.Drawing.Size(124, 17);
-            this.soil_chem_weath_checkbox.TabIndex = 1;
-            this.soil_chem_weath_checkbox.Text = "Activate this process";
-            this.soil_chem_weath_checkbox.UseVisualStyleBackColor = true;
-            // 
-            // chem_weath_rate_constant_textbox
-            // 
-            this.chem_weath_rate_constant_textbox.Location = new System.Drawing.Point(29, 38);
-            this.chem_weath_rate_constant_textbox.Name = "chem_weath_rate_constant_textbox";
-            this.chem_weath_rate_constant_textbox.Size = new System.Drawing.Size(100, 20);
-            this.chem_weath_rate_constant_textbox.TabIndex = 13;
-            this.chem_weath_rate_constant_textbox.Text = "0.000000004";
-            // 
-            // chem_weath_depth_constant_textbox
-            // 
-            this.chem_weath_depth_constant_textbox.Location = new System.Drawing.Point(29, 64);
-            this.chem_weath_depth_constant_textbox.Name = "chem_weath_depth_constant_textbox";
-            this.chem_weath_depth_constant_textbox.Size = new System.Drawing.Size(100, 20);
-            this.chem_weath_depth_constant_textbox.TabIndex = 14;
-            this.chem_weath_depth_constant_textbox.Text = "2.5";
-            // 
-            // chem_weath_specific_coefficient_textbox
-            // 
-            this.chem_weath_specific_coefficient_textbox.Location = new System.Drawing.Point(29, 90);
-            this.chem_weath_specific_coefficient_textbox.Name = "chem_weath_specific_coefficient_textbox";
-            this.chem_weath_specific_coefficient_textbox.Size = new System.Drawing.Size(100, 20);
-            this.chem_weath_specific_coefficient_textbox.TabIndex = 15;
-            this.chem_weath_specific_coefficient_textbox.Text = "1";
-            // 
-            // label52
-            // 
-            label52.AutoSize = true;
-            label52.Location = new System.Drawing.Point(136, 38);
-            label52.Name = "label52";
-            label52.Size = new System.Drawing.Size(268, 13);
-            label52.TabIndex = 16;
-            label52.Text = "weathering rate constant [kg / m2 mineral surface area]";
-            // 
-            // label51
-            // 
-            label51.AutoSize = true;
-            label51.Location = new System.Drawing.Point(136, 67);
-            label51.Name = "label51";
-            label51.Size = new System.Drawing.Size(136, 13);
-            label51.TabIndex = 17;
-            label51.Text = "depth decay constant [m-1]";
-            // 
-            // label50
-            // 
-            label50.AutoSize = true;
-            label50.Location = new System.Drawing.Point(136, 93);
-            label50.Name = "label50";
-            label50.Size = new System.Drawing.Size(0, 13);
-            label50.TabIndex = 18;
-            // 
-            // label53
-            // 
-            label53.AutoSize = true;
-            label53.Location = new System.Drawing.Point(135, 97);
-            label53.Name = "label53";
-            label53.Size = new System.Drawing.Size(131, 13);
-            label53.TabIndex = 19;
-            label53.Text = "specific area coefficient [-]";
-            // 
-            // specific_area_coarse_textbox
-            // 
-            this.specific_area_coarse_textbox.Location = new System.Drawing.Point(420, 38);
-            this.specific_area_coarse_textbox.Name = "specific_area_coarse_textbox";
-            this.specific_area_coarse_textbox.Size = new System.Drawing.Size(100, 20);
-            this.specific_area_coarse_textbox.TabIndex = 20;
-            this.specific_area_coarse_textbox.Text = "10";
-            // 
-            // specific_area_sand_textbox
-            // 
-            this.specific_area_sand_textbox.Location = new System.Drawing.Point(420, 64);
-            this.specific_area_sand_textbox.Name = "specific_area_sand_textbox";
-            this.specific_area_sand_textbox.Size = new System.Drawing.Size(100, 20);
-            this.specific_area_sand_textbox.TabIndex = 21;
-            this.specific_area_sand_textbox.Text = "100";
-            // 
-            // specific_area_silt_textbox
-            // 
-            this.specific_area_silt_textbox.Location = new System.Drawing.Point(420, 90);
-            this.specific_area_silt_textbox.Name = "specific_area_silt_textbox";
-            this.specific_area_silt_textbox.Size = new System.Drawing.Size(100, 20);
-            this.specific_area_silt_textbox.TabIndex = 22;
-            this.specific_area_silt_textbox.Text = "1000";
-            // 
-            // specific_area_clay_textbox
-            // 
-            this.specific_area_clay_textbox.Location = new System.Drawing.Point(420, 116);
-            this.specific_area_clay_textbox.Name = "specific_area_clay_textbox";
-            this.specific_area_clay_textbox.Size = new System.Drawing.Size(100, 20);
-            this.specific_area_clay_textbox.TabIndex = 23;
-            this.specific_area_clay_textbox.Text = "50000";
-            // 
-            // specific_area_fine_clay_textbox
-            // 
-            this.specific_area_fine_clay_textbox.Location = new System.Drawing.Point(420, 142);
-            this.specific_area_fine_clay_textbox.Name = "specific_area_fine_clay_textbox";
-            this.specific_area_fine_clay_textbox.Size = new System.Drawing.Size(100, 20);
-            this.specific_area_fine_clay_textbox.TabIndex = 24;
-            this.specific_area_fine_clay_textbox.Text = "100000";
-            // 
-            // label59
-            // 
-            label59.AutoSize = true;
-            label59.Location = new System.Drawing.Point(526, 44);
-            label59.Name = "label59";
-            label59.Size = new System.Drawing.Size(77, 13);
-            label59.TabIndex = 25;
-            label59.Text = "coarse fraction";
-            // 
-            // label58
-            // 
-            label58.AutoSize = true;
-            label58.Location = new System.Drawing.Point(526, 67);
-            label58.Name = "label58";
-            label58.Size = new System.Drawing.Size(68, 13);
-            label58.TabIndex = 26;
-            label58.Text = "sand fraction";
-            // 
-            // label57
-            // 
-            label57.AutoSize = true;
-            label57.Location = new System.Drawing.Point(526, 93);
-            label57.Name = "label57";
-            label57.Size = new System.Drawing.Size(57, 13);
-            label57.TabIndex = 27;
-            label57.Text = "silt fraction";
-            // 
-            // label56
-            // 
-            label56.AutoSize = true;
-            label56.Location = new System.Drawing.Point(526, 119);
-            label56.Name = "label56";
-            label56.Size = new System.Drawing.Size(64, 13);
-            label56.TabIndex = 28;
-            label56.Text = "clay fraction";
-            // 
-            // label55
-            // 
-            label55.AutoSize = true;
-            label55.Location = new System.Drawing.Point(526, 145);
-            label55.Name = "label55";
-            label55.Size = new System.Drawing.Size(84, 13);
-            label55.TabIndex = 29;
-            label55.Text = "fine clay fraction";
-            // 
-            // label54
-            // 
-            label54.AutoSize = true;
-            label54.Location = new System.Drawing.Point(417, 22);
-            label54.Name = "label54";
-            label54.Size = new System.Drawing.Size(239, 13);
-            label54.TabIndex = 30;
-            label54.Text = "specific surface area for texture classes [m2 / kg]";
-            // 
-            // physical
-            // 
-            this.physical.Controls.Add(label49);
-            this.physical.Controls.Add(label48);
-            this.physical.Controls.Add(label47);
-            this.physical.Controls.Add(label46);
-            this.physical.Controls.Add(label45);
-            this.physical.Controls.Add(label44);
-            this.physical.Controls.Add(label43);
-            this.physical.Controls.Add(label42);
-            this.physical.Controls.Add(label41);
-            this.physical.Controls.Add(this.upper_particle_fine_clay_textbox);
-            this.physical.Controls.Add(this.upper_particle_clay_textbox);
-            this.physical.Controls.Add(this.upper_particle_silt_textbox);
-            this.physical.Controls.Add(this.upper_particle_sand_textbox);
-            this.physical.Controls.Add(this.upper_particle_coarse_textbox);
-            this.physical.Controls.Add(this.physical_weath_constant2);
-            this.physical.Controls.Add(this.physical_weath_constant1);
-            this.physical.Controls.Add(this.Physical_weath_C1_textbox);
-            this.physical.Controls.Add(this.soil_phys_weath_checkbox);
-            this.physical.Location = new System.Drawing.Point(4, 22);
-            this.physical.Name = "physical";
-            this.physical.Padding = new System.Windows.Forms.Padding(3);
-            this.physical.Size = new System.Drawing.Size(751, 235);
-            this.physical.TabIndex = 0;
-            this.physical.Text = "Physical weathering";
-            this.physical.UseVisualStyleBackColor = true;
-            // 
-            // soil_phys_weath_checkbox
-            // 
-            this.soil_phys_weath_checkbox.AutoSize = true;
-            this.soil_phys_weath_checkbox.Checked = true;
-            this.soil_phys_weath_checkbox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.soil_phys_weath_checkbox.Location = new System.Drawing.Point(21, 6);
-            this.soil_phys_weath_checkbox.Name = "soil_phys_weath_checkbox";
-            this.soil_phys_weath_checkbox.Size = new System.Drawing.Size(124, 17);
-            this.soil_phys_weath_checkbox.TabIndex = 1;
-            this.soil_phys_weath_checkbox.Text = "Activate this process";
-            this.soil_phys_weath_checkbox.UseVisualStyleBackColor = true;
-            // 
-            // Physical_weath_C1_textbox
-            // 
-            this.Physical_weath_C1_textbox.Location = new System.Drawing.Point(35, 43);
-            this.Physical_weath_C1_textbox.Name = "Physical_weath_C1_textbox";
-            this.Physical_weath_C1_textbox.Size = new System.Drawing.Size(100, 20);
-            this.Physical_weath_C1_textbox.TabIndex = 2;
-            this.Physical_weath_C1_textbox.Text = "0.000000004";
-            // 
-            // physical_weath_constant1
-            // 
-            this.physical_weath_constant1.Location = new System.Drawing.Point(35, 69);
-            this.physical_weath_constant1.Name = "physical_weath_constant1";
-            this.physical_weath_constant1.Size = new System.Drawing.Size(100, 20);
-            this.physical_weath_constant1.TabIndex = 3;
-            this.physical_weath_constant1.Text = "0.5";
-            // 
-            // physical_weath_constant2
-            // 
-            this.physical_weath_constant2.Location = new System.Drawing.Point(35, 95);
-            this.physical_weath_constant2.Name = "physical_weath_constant2";
-            this.physical_weath_constant2.Size = new System.Drawing.Size(100, 20);
-            this.physical_weath_constant2.TabIndex = 4;
-            this.physical_weath_constant2.Text = "5";
-            // 
-            // upper_particle_coarse_textbox
-            // 
-            this.upper_particle_coarse_textbox.Location = new System.Drawing.Point(303, 43);
-            this.upper_particle_coarse_textbox.Name = "upper_particle_coarse_textbox";
-            this.upper_particle_coarse_textbox.Size = new System.Drawing.Size(100, 20);
-            this.upper_particle_coarse_textbox.TabIndex = 5;
-            this.upper_particle_coarse_textbox.Text = "0.01";
-            // 
-            // upper_particle_sand_textbox
-            // 
-            this.upper_particle_sand_textbox.Location = new System.Drawing.Point(303, 69);
-            this.upper_particle_sand_textbox.Name = "upper_particle_sand_textbox";
-            this.upper_particle_sand_textbox.Size = new System.Drawing.Size(100, 20);
-            this.upper_particle_sand_textbox.TabIndex = 6;
-            this.upper_particle_sand_textbox.Text = "0.002";
-            // 
-            // upper_particle_silt_textbox
-            // 
-            this.upper_particle_silt_textbox.Location = new System.Drawing.Point(303, 95);
-            this.upper_particle_silt_textbox.Name = "upper_particle_silt_textbox";
-            this.upper_particle_silt_textbox.Size = new System.Drawing.Size(100, 20);
-            this.upper_particle_silt_textbox.TabIndex = 7;
-            this.upper_particle_silt_textbox.Text = "0.00005";
-            // 
-            // upper_particle_clay_textbox
-            // 
-            this.upper_particle_clay_textbox.Location = new System.Drawing.Point(303, 121);
-            this.upper_particle_clay_textbox.Name = "upper_particle_clay_textbox";
-            this.upper_particle_clay_textbox.Size = new System.Drawing.Size(100, 20);
-            this.upper_particle_clay_textbox.TabIndex = 8;
-            this.upper_particle_clay_textbox.Text = "0.000002";
-            // 
-            // upper_particle_fine_clay_textbox
-            // 
-            this.upper_particle_fine_clay_textbox.Location = new System.Drawing.Point(303, 147);
-            this.upper_particle_fine_clay_textbox.Name = "upper_particle_fine_clay_textbox";
-            this.upper_particle_fine_clay_textbox.Size = new System.Drawing.Size(100, 20);
-            this.upper_particle_fine_clay_textbox.TabIndex = 9;
-            this.upper_particle_fine_clay_textbox.Text = "0.0000001";
-            // 
-            // label41
-            // 
-            label41.AutoSize = true;
-            label41.Location = new System.Drawing.Point(142, 49);
-            label41.Name = "label41";
-            label41.Size = new System.Drawing.Size(147, 13);
-            label41.TabIndex = 10;
-            label41.Text = "weathering rate constant [y-1]";
-            // 
-            // label42
-            // 
-            label42.AutoSize = true;
-            label42.Location = new System.Drawing.Point(142, 72);
-            label42.Name = "label42";
-            label42.Size = new System.Drawing.Size(136, 13);
-            label42.TabIndex = 11;
-            label42.Text = "depth decay constant [m-1]";
-            // 
-            // label43
-            // 
-            label43.AutoSize = true;
-            label43.Location = new System.Drawing.Point(142, 98);
-            label43.Name = "label43";
-            label43.Size = new System.Drawing.Size(123, 13);
-            label43.TabIndex = 12;
-            label43.Text = "particle size constant [m]";
-            // 
-            // label44
-            // 
-            label44.AutoSize = true;
-            label44.Location = new System.Drawing.Point(409, 49);
-            label44.Name = "label44";
-            label44.Size = new System.Drawing.Size(77, 13);
-            label44.TabIndex = 13;
-            label44.Text = "coarse fraction";
-            // 
-            // label45
-            // 
-            label45.AutoSize = true;
-            label45.Location = new System.Drawing.Point(409, 72);
-            label45.Name = "label45";
-            label45.Size = new System.Drawing.Size(68, 13);
-            label45.TabIndex = 14;
-            label45.Text = "sand fraction";
-            // 
-            // label46
-            // 
-            label46.AutoSize = true;
-            label46.Location = new System.Drawing.Point(409, 98);
-            label46.Name = "label46";
-            label46.Size = new System.Drawing.Size(57, 13);
-            label46.TabIndex = 15;
-            label46.Text = "silt fraction";
-            // 
-            // label47
-            // 
-            label47.AutoSize = true;
-            label47.Location = new System.Drawing.Point(409, 124);
-            label47.Name = "label47";
-            label47.Size = new System.Drawing.Size(64, 13);
-            label47.TabIndex = 16;
-            label47.Text = "clay fraction";
-            // 
-            // label48
-            // 
-            label48.AutoSize = true;
-            label48.Location = new System.Drawing.Point(409, 150);
-            label48.Name = "label48";
-            label48.Size = new System.Drawing.Size(84, 13);
-            label48.TabIndex = 17;
-            label48.Text = "fine clay fraction";
-            // 
-            // label49
-            // 
-            label49.AutoSize = true;
-            label49.Location = new System.Drawing.Point(300, 27);
-            label49.Name = "label49";
-            label49.Size = new System.Drawing.Size(229, 13);
-            label49.TabIndex = 18;
-            label49.Text = "upper limit of particle size for texture classes [m]";
-            // 
-            // tabControl2
-            // 
-            this.tabControl2.Controls.Add(this.physical);
-            this.tabControl2.Controls.Add(this.chemical);
-            this.tabControl2.Controls.Add(this.clay);
-            this.tabControl2.Controls.Add(this.bioturbation);
-            this.tabControl2.Controls.Add(this.carbon);
-            this.tabControl2.Location = new System.Drawing.Point(16, 15);
-            this.tabControl2.Name = "tabControl2";
-            this.tabControl2.SelectedIndex = 0;
-            this.tabControl2.Size = new System.Drawing.Size(759, 261);
-            this.tabControl2.TabIndex = 0;
+            // Options
+            // 
+            this.Options.Controls.Add(this.luxlitter_checkbox);
+            this.Options.Controls.Add(this.version_Konza_checkbox);
+            this.Options.Controls.Add(this.button4);
+            this.Options.Controls.Add(this.version_lux_checkbox);
+            this.Options.Controls.Add(this.groupBox2);
+            this.Options.Controls.Add(this.calibration);
+            this.Options.Controls.Add(this.Spitsbergen_case_study);
+            this.Options.Controls.Add(this.dtm_iterate_checkbox);
+            this.Options.Location = new System.Drawing.Point(4, 22);
+            this.Options.Name = "Options";
+            this.Options.Size = new System.Drawing.Size(690, 243);
+            this.Options.TabIndex = 12;
+            this.Options.Text = "Options";
+            this.Options.UseVisualStyleBackColor = true;
+            // 
+            // dtm_iterate_checkbox
+            // 
+            this.dtm_iterate_checkbox.AutoSize = true;
+            this.dtm_iterate_checkbox.Location = new System.Drawing.Point(13, 17);
+            this.dtm_iterate_checkbox.Name = "dtm_iterate_checkbox";
+            this.dtm_iterate_checkbox.Size = new System.Drawing.Size(145, 17);
+            this.dtm_iterate_checkbox.TabIndex = 160;
+            this.dtm_iterate_checkbox.Text = "iterate comparable DEMs";
+            this.dtm_iterate_checkbox.UseVisualStyleBackColor = true;
+            // 
+            // luxlitter_checkbox
+            // 
+            this.luxlitter_checkbox.AutoSize = true;
+            this.luxlitter_checkbox.Location = new System.Drawing.Point(13, 115);
+            this.luxlitter_checkbox.Name = "luxlitter_checkbox";
+            this.luxlitter_checkbox.Size = new System.Drawing.Size(80, 17);
+            this.luxlitter_checkbox.TabIndex = 167;
+            this.luxlitter_checkbox.Text = "Lux litter on";
+            this.luxlitter_checkbox.UseVisualStyleBackColor = true;
+            // 
+            // version_Konza_checkbox
+            // 
+            this.version_Konza_checkbox.AutoSize = true;
+            this.version_Konza_checkbox.Location = new System.Drawing.Point(13, 136);
+            this.version_Konza_checkbox.Name = "version_Konza_checkbox";
+            this.version_Konza_checkbox.Size = new System.Drawing.Size(93, 17);
+            this.version_Konza_checkbox.TabIndex = 166;
+            this.version_Konza_checkbox.Text = "Konza version";
+            this.version_Konza_checkbox.UseVisualStyleBackColor = true;
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(13, 181);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(191, 41);
+            this.button4.TabIndex = 165;
+            this.button4.Text = "now purely calculate terrain derivatives";
+            this.button4.UseVisualStyleBackColor = true;
+            // 
+            // version_lux_checkbox
+            // 
+            this.version_lux_checkbox.AutoSize = true;
+            this.version_lux_checkbox.Location = new System.Drawing.Point(13, 92);
+            this.version_lux_checkbox.Name = "version_lux_checkbox";
+            this.version_lux_checkbox.Size = new System.Drawing.Size(115, 17);
+            this.version_lux_checkbox.TabIndex = 164;
+            this.version_lux_checkbox.Text = "Luxemburg version";
+            this.version_lux_checkbox.UseVisualStyleBackColor = true;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.num_cal_paras_textbox);
+            this.groupBox2.Controls.Add(this.label33);
+            this.groupBox2.Controls.Add(this.obsfile_textbox);
+            this.groupBox2.Controls.Add(this.calibration_ratio_reduction_parameter_textbox);
+            this.groupBox2.Controls.Add(this.label119);
+            this.groupBox2.Controls.Add(this.calibration_levels_textbox);
+            this.groupBox2.Controls.Add(this.label116);
+            this.groupBox2.Controls.Add(this.label118);
+            this.groupBox2.Controls.Add(this.label117);
+            this.groupBox2.Controls.Add(this.label115);
+            this.groupBox2.Controls.Add(this.label114);
+            this.groupBox2.Controls.Add(this.Calibration_button);
+            this.groupBox2.Controls.Add(this.label113);
+            this.groupBox2.Controls.Add(this.calibration_ratios_textbox);
+            this.groupBox2.Location = new System.Drawing.Point(219, 8);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(430, 214);
+            this.groupBox2.TabIndex = 161;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Calibration";
+            // 
+            // num_cal_paras_textbox
+            // 
+            this.num_cal_paras_textbox.Location = new System.Drawing.Point(338, 73);
+            this.num_cal_paras_textbox.Name = "num_cal_paras_textbox";
+            this.num_cal_paras_textbox.Size = new System.Drawing.Size(65, 20);
+            this.num_cal_paras_textbox.TabIndex = 16;
+            this.num_cal_paras_textbox.Text = "1";
+            // 
+            // label33
+            // 
+            this.label33.AutoSize = true;
+            this.label33.Location = new System.Drawing.Point(39, 177);
+            this.label33.Name = "label33";
+            this.label33.Size = new System.Drawing.Size(116, 13);
+            this.label33.TabIndex = 15;
+            this.label33.Text = "observations (optional):";
+            // 
+            // obsfile_textbox
+            // 
+            this.obsfile_textbox.Location = new System.Drawing.Point(218, 174);
+            this.obsfile_textbox.Name = "obsfile_textbox";
+            this.obsfile_textbox.Size = new System.Drawing.Size(186, 20);
+            this.obsfile_textbox.TabIndex = 14;
+            this.obsfile_textbox.Text = "..";
+            // 
+            // calibration_ratio_reduction_parameter_textbox
+            // 
+            this.calibration_ratio_reduction_parameter_textbox.Location = new System.Drawing.Point(338, 148);
+            this.calibration_ratio_reduction_parameter_textbox.Name = "calibration_ratio_reduction_parameter_textbox";
+            this.calibration_ratio_reduction_parameter_textbox.Size = new System.Drawing.Size(66, 20);
+            this.calibration_ratio_reduction_parameter_textbox.TabIndex = 12;
+            this.calibration_ratio_reduction_parameter_textbox.Text = "1.5";
+            // 
+            // label119
+            // 
+            this.label119.AutoSize = true;
+            this.label119.Location = new System.Drawing.Point(39, 151);
+            this.label119.Name = "label119";
+            this.label119.Size = new System.Drawing.Size(208, 13);
+            this.label119.TabIndex = 11;
+            this.label119.Text = "5. reduction of variations per level (if smart)";
+            // 
+            // calibration_levels_textbox
+            // 
+            this.calibration_levels_textbox.Location = new System.Drawing.Point(338, 124);
+            this.calibration_levels_textbox.Name = "calibration_levels_textbox";
+            this.calibration_levels_textbox.Size = new System.Drawing.Size(66, 20);
+            this.calibration_levels_textbox.TabIndex = 10;
+            this.calibration_levels_textbox.Text = "3";
+            // 
+            // label116
+            // 
+            this.label116.AutoSize = true;
+            this.label116.Location = new System.Drawing.Point(194, 35);
+            this.label116.Name = "label116";
+            this.label116.Size = new System.Drawing.Size(210, 13);
+            this.label116.TabIndex = 9;
+            this.label116.Text = "The optimal set of parameters will be stored";
+            // 
+            // label118
+            // 
+            this.label118.AutoSize = true;
+            this.label118.Location = new System.Drawing.Point(39, 127);
+            this.label118.Name = "label118";
+            this.label118.Size = new System.Drawing.Size(97, 13);
+            this.label118.TabIndex = 8;
+            this.label118.Text = "4. levels (iterations)";
+            // 
+            // label117
+            // 
+            this.label117.AutoSize = true;
+            this.label117.Location = new System.Drawing.Point(39, 80);
+            this.label117.Name = "label117";
+            this.label117.Size = new System.Drawing.Size(176, 13);
+            this.label117.TabIndex = 7;
+            this.label117.Text = "2. number of parameters to calibrate";
+            // 
+            // label115
+            // 
+            this.label115.AutoSize = true;
+            this.label115.Location = new System.Drawing.Point(39, 56);
+            this.label115.Name = "label115";
+            this.label115.Size = new System.Drawing.Size(350, 13);
+            this.label115.TabIndex = 5;
+            this.label115.Text = "1. define objective function in code, and describe parameters to calibrate";
+            // 
+            // label114
+            // 
+            this.label114.AutoSize = true;
+            this.label114.Location = new System.Drawing.Point(39, 102);
+            this.label114.Name = "label114";
+            this.label114.Size = new System.Drawing.Size(132, 13);
+            this.label114.TabIndex = 4;
+            this.label114.Text = "3. variations per parameter";
+            // 
+            // Calibration_button
+            // 
+            this.Calibration_button.AutoSize = true;
+            this.Calibration_button.Location = new System.Drawing.Point(22, 33);
+            this.Calibration_button.Name = "Calibration_button";
+            this.Calibration_button.Size = new System.Drawing.Size(142, 17);
+            this.Calibration_button.TabIndex = 2;
+            this.Calibration_button.Text = "Run calibration (iterative)";
+            this.Calibration_button.UseVisualStyleBackColor = true;
+            // 
+            // label113
+            // 
+            this.label113.AutoSize = true;
+            this.label113.Location = new System.Drawing.Point(73, 39);
+            this.label113.Name = "label113";
+            this.label113.Size = new System.Drawing.Size(0, 13);
+            this.label113.TabIndex = 1;
+            // 
+            // calibration_ratios_textbox
+            // 
+            this.calibration_ratios_textbox.Location = new System.Drawing.Point(218, 99);
+            this.calibration_ratios_textbox.Name = "calibration_ratios_textbox";
+            this.calibration_ratios_textbox.Size = new System.Drawing.Size(186, 20);
+            this.calibration_ratios_textbox.TabIndex = 0;
+            this.calibration_ratios_textbox.Text = "0.25;0.5;1;2;4";
+            // 
+            // calibration
+            // 
+            this.calibration.AutoSize = true;
+            this.calibration.Location = new System.Drawing.Point(13, 157);
+            this.calibration.Name = "calibration";
+            this.calibration.Size = new System.Drawing.Size(125, 17);
+            this.calibration.TabIndex = 163;
+            this.calibration.Text = "Lessivage calibration";
+            this.calibration.UseVisualStyleBackColor = true;
+            // 
+            // Spitsbergen_case_study
+            // 
+            this.Spitsbergen_case_study.AutoSize = true;
+            this.Spitsbergen_case_study.Location = new System.Drawing.Point(13, 71);
+            this.Spitsbergen_case_study.Name = "Spitsbergen_case_study";
+            this.Spitsbergen_case_study.Size = new System.Drawing.Size(119, 17);
+            this.Spitsbergen_case_study.TabIndex = 162;
+            this.Spitsbergen_case_study.Text = "Spitsbergen version";
+            this.Spitsbergen_case_study.UseVisualStyleBackColor = true;
+            // 
+            // groupBox8
+            // 
+            this.groupBox8.Controls.Add(this.fill_sinks_during_checkbox);
+            this.groupBox8.Controls.Add(this.fill_sinks_before_checkbox);
+            this.groupBox8.Location = new System.Drawing.Point(351, 39);
+            this.groupBox8.Name = "groupBox8";
+            this.groupBox8.Size = new System.Drawing.Size(158, 73);
+            this.groupBox8.TabIndex = 135;
+            this.groupBox8.TabStop = false;
+            this.groupBox8.Text = "remove sinks and flats: ";
+            // 
+            // fill_sinks_during_checkbox
+            // 
+            this.fill_sinks_during_checkbox.AutoSize = true;
+            this.fill_sinks_during_checkbox.Location = new System.Drawing.Point(11, 45);
+            this.fill_sinks_during_checkbox.Name = "fill_sinks_during_checkbox";
+            this.fill_sinks_during_checkbox.Size = new System.Drawing.Size(88, 17);
+            this.fill_sinks_during_checkbox.TabIndex = 133;
+            this.fill_sinks_during_checkbox.Text = "while running";
+            this.toolTip1.SetToolTip(this.fill_sinks_during_checkbox, resources.GetString("fill_sinks_during_checkbox.ToolTip"));
+            this.fill_sinks_during_checkbox.UseVisualStyleBackColor = true;
+            // 
+            // fill_sinks_before_checkbox
+            // 
+            this.fill_sinks_before_checkbox.AutoSize = true;
+            this.fill_sinks_before_checkbox.Location = new System.Drawing.Point(11, 22);
+            this.fill_sinks_before_checkbox.Name = "fill_sinks_before_checkbox";
+            this.fill_sinks_before_checkbox.Size = new System.Drawing.Size(94, 17);
+            this.fill_sinks_before_checkbox.TabIndex = 132;
+            this.fill_sinks_before_checkbox.Text = "before running";
+            this.toolTip1.SetToolTip(this.fill_sinks_before_checkbox, resources.GetString("fill_sinks_before_checkbox.ToolTip"));
+            this.fill_sinks_before_checkbox.UseVisualStyleBackColor = true;
             // 
             // Mother_form
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.AutoScroll = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ClientSize = new System.Drawing.Size(842, 470);
+            this.ClientSize = new System.Drawing.Size(842, 491);
             this.Controls.Add(this.End_button);
             this.Controls.Add(this.start_button);
             this.Controls.Add(this.tabControl1);
@@ -5812,8 +5739,6 @@ namespace LORICA4
             ((System.ComponentModel.ISupportInitialize)(this.InfoStatusPanel)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.TimeStatusPanel)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ScenarioStatusPanel)).EndInit();
-            this.groupBox13.ResumeLayout(false);
-            this.groupBox13.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox9.ResumeLayout(false);
             this.groupBox9.PerformLayout();
@@ -5826,15 +5751,10 @@ namespace LORICA4
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.Run.ResumeLayout(false);
-            this.Run.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
             this.groupBox7.ResumeLayout(false);
             this.groupBox7.PerformLayout();
             this.Input.ResumeLayout(false);
             this.Input.PerformLayout();
-            this.groupBox8.ResumeLayout(false);
-            this.groupBox8.PerformLayout();
             this.Geomorph.ResumeLayout(false);
             this.Process_tabs.ResumeLayout(false);
             this.Water.ResumeLayout(false);
@@ -5846,10 +5766,6 @@ namespace LORICA4
             this.Creeper.ResumeLayout(false);
             this.Creeper.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
-            this.Rock_weathering.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).EndInit();
-            this.groupBox10.ResumeLayout(false);
-            this.groupBox10.PerformLayout();
             this.Tectonics.ResumeLayout(false);
             this.groupBox14.ResumeLayout(false);
             this.groupBox14.PerformLayout();
@@ -5861,29 +5777,41 @@ namespace LORICA4
             this.groupBox15.PerformLayout();
             this.treefall.ResumeLayout(false);
             this.treefall.PerformLayout();
-            this.tabPage6.ResumeLayout(false);
-            this.tabPage6.PerformLayout();
             this.tabControl1.ResumeLayout(false);
             this.Soil.ResumeLayout(false);
+            this.tabControl2.ResumeLayout(false);
+            this.Rock_weathering.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).EndInit();
+            this.groupBox10.ResumeLayout(false);
+            this.groupBox10.PerformLayout();
+            this.physical.ResumeLayout(false);
+            this.physical.PerformLayout();
+            this.chemical.ResumeLayout(false);
+            this.chemical.PerformLayout();
+            this.clay.ResumeLayout(false);
+            this.clay.PerformLayout();
+            this.bioturbation.ResumeLayout(false);
+            this.bioturbation.PerformLayout();
+            this.carbon.ResumeLayout(false);
+            this.carbon.PerformLayout();
             this.Geochron.ResumeLayout(false);
             this.tabControl3.ResumeLayout(false);
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
             this.tabPage5.ResumeLayout(false);
             this.tabPage5.PerformLayout();
+            this.Experimental.ResumeLayout(false);
+            this.tabControl4.ResumeLayout(false);
+            this.blocks.ResumeLayout(false);
+            this.blocks.PerformLayout();
             this.Hydro.ResumeLayout(false);
             this.Hydro.PerformLayout();
-            this.carbon.ResumeLayout(false);
-            this.carbon.PerformLayout();
-            this.bioturbation.ResumeLayout(false);
-            this.bioturbation.PerformLayout();
-            this.clay.ResumeLayout(false);
-            this.clay.PerformLayout();
-            this.chemical.ResumeLayout(false);
-            this.chemical.PerformLayout();
-            this.physical.ResumeLayout(false);
-            this.physical.PerformLayout();
-            this.tabControl2.ResumeLayout(false);
+            this.Options.ResumeLayout(false);
+            this.Options.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
+            this.groupBox8.ResumeLayout(false);
+            this.groupBox8.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -6472,10 +6400,7 @@ namespace LORICA4
                         Debug.WriteLine(" starting " + maxruns + " calibration runs");
                         calib_prepare_report();
                     }
-                    if (Sensitivity_button.Checked == true)
-                    { //dev needed
-                    }
-                    
+
                     for (run_number = 0; run_number < maxruns; run_number++) //Maxruns Loop()
                     {
 
@@ -6706,9 +6631,7 @@ namespace LORICA4
                                 potential_young_decomp_rate = Convert.ToDouble(carbon_y_decomp_rate_textbox.Text);
                                 potential_old_decomp_rate = Convert.ToDouble(carbon_o_decomp_rate_textbox.Text);
                                 young_depth_decay_constant = Convert.ToDouble(carbon_y_depth_decay_textbox.Text);
-                                old_CTI_decay_constant = Convert.ToDouble(carbon_o_twi_decay_textbox.Text);
                                 old_depth_decay_constant = Convert.ToDouble(carbon_o_depth_decay_textbox.Text);
-                                young_CTI_decay_constant = Convert.ToDouble(carbon_y_twi_decay_textbox.Text);
                             }
                             catch
                             {
