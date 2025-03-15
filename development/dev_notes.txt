@@ -1,8 +1,8 @@
 - visualization : Marijn finishes, we add case study + data (runfile) --> towards publication
 
-For Alessia:
+For Alessia/Arnaud:
 - move things into experimental:
--- remove solifluction tab
+-- FINISHED remove solifluction tab
 -- tree fall to expe
 -- blocks to experimental
 -- rock weathering to soil as spoil production
@@ -15,7 +15,7 @@ For Alessia:
 -- carbon cyclke -> organic matter
 -- TWI decay constant remove
 -- Two OM models next to each other
--- remove decalcification
+-- FINISHED remove decalcification
 -- geochron tracers stays
 -- particle ages --> luminescence
 -- hydrological to experimental (and remove default values)
@@ -24,17 +24,17 @@ For Alessia:
 -- iterate DEMs to experiemental; 
 -- remove sinks and flats before, after ruinning cleaner
 -- all versions go to experiemental tab, also calib/sensit, also purely calculate terrain derivatives
--- add explanmatipon of satrt at year
--- remove parallel stuff
--- output code : remove
+-- EXISTS add explanmatipon of satrt at year
+-- FINISHED remove parallel stuff
+-- FINISHED output code : remove
 -- structure timeseries output
--- when ready --> at final timestep, not a choice
--- profile outputs: remove 
+-- FINISHED when ready --> at final timestep, not a choice
+-- FINISHED profile outputs: remove 
 -- remove diagnostic output
 -- add extra output maps to experimental tab (lakes)
--- make entire model smaller
--- runfile --> settings
--- deactivate the start button once clicked
+-- FINISHED make entire model smaller
+-- FINISHED runfile --> settings
+-- FINISHED deactivate the start button once clicked
 -- fix the soil specifier open after clicking X
 -- check that the mnodel really does not run when wrong decimal separator
 -- update the xml reading and writing with removed and added parameters
