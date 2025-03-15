@@ -28,7 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Soil_specifier));
+            System.Windows.Forms.Label label49;
+            System.Windows.Forms.Label label54;
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -44,21 +45,43 @@
             this.label8 = new System.Windows.Forms.Label();
             this.total_box = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
+            this.upper_particle_fine_clay_textbox = new System.Windows.Forms.TextBox();
+            this.upper_particle_clay_textbox = new System.Windows.Forms.TextBox();
+            this.upper_particle_silt_textbox = new System.Windows.Forms.TextBox();
+            this.upper_particle_sand_textbox = new System.Windows.Forms.TextBox();
+            this.upper_particle_coarse_textbox = new System.Windows.Forms.TextBox();
+            this.specific_area_fine_clay_textbox = new System.Windows.Forms.TextBox();
+            this.specific_area_clay_textbox = new System.Windows.Forms.TextBox();
+            this.specific_area_silt_textbox = new System.Windows.Forms.TextBox();
+            this.specific_area_sand_textbox = new System.Windows.Forms.TextBox();
+            this.specific_area_coarse_textbox = new System.Windows.Forms.TextBox();
+            label49 = new System.Windows.Forms.Label();
+            label54 = new System.Windows.Forms.Label();
             this.SuspendLayout();
+            // 
+            // label49
+            // 
+            label49.AutoSize = true;
+            label49.Location = new System.Drawing.Point(217, 56);
+            label49.Name = "label49";
+            label49.Size = new System.Drawing.Size(141, 13);
+            label49.TabIndex = 29;
+            label49.Text = "upper limit of particle size [m]";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(12, 9);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(233, 91);
+            this.label1.Size = new System.Drawing.Size(343, 26);
             this.label1.TabIndex = 0;
-            this.label1.Text = resources.GetString("label1.Text");
+            this.label1.Text = "Please fill in properties for the five LORICA grain size classes. \r\nThis will be " +
+    "used to define any soil existing before the start of simulation.\r\n";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 138);
+            this.label2.Location = new System.Drawing.Point(12, 75);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(88, 13);
             this.label2.TabIndex = 1;
@@ -67,7 +90,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 161);
+            this.label3.Location = new System.Drawing.Point(12, 101);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(30, 13);
             this.label3.TabIndex = 2;
@@ -76,7 +99,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(12, 185);
+            this.label4.Location = new System.Drawing.Point(15, 127);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(19, 13);
             this.label4.TabIndex = 3;
@@ -85,7 +108,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(12, 209);
+            this.label5.Location = new System.Drawing.Point(12, 153);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(61, 13);
             this.label5.TabIndex = 4;
@@ -94,7 +117,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(12, 231);
+            this.label6.Location = new System.Drawing.Point(12, 179);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(46, 13);
             this.label6.TabIndex = 5;
@@ -102,7 +125,7 @@
             // 
             // coarsebox
             // 
-            this.coarsebox.Location = new System.Drawing.Point(125, 135);
+            this.coarsebox.Location = new System.Drawing.Point(125, 72);
             this.coarsebox.Name = "coarsebox";
             this.coarsebox.Size = new System.Drawing.Size(82, 20);
             this.coarsebox.TabIndex = 6;
@@ -112,15 +135,15 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(79, 119);
+            this.label7.Location = new System.Drawing.Point(125, 56);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(88, 13);
+            this.label7.Size = new System.Drawing.Size(82, 13);
             this.label7.TabIndex = 7;
-            this.label7.Text = "mass percentage";
+            this.label7.Text = "mass percent [-]";
             // 
             // sandbox
             // 
-            this.sandbox.Location = new System.Drawing.Point(125, 158);
+            this.sandbox.Location = new System.Drawing.Point(125, 98);
             this.sandbox.Name = "sandbox";
             this.sandbox.Size = new System.Drawing.Size(82, 20);
             this.sandbox.TabIndex = 8;
@@ -129,7 +152,7 @@
             // 
             // siltbox
             // 
-            this.siltbox.Location = new System.Drawing.Point(125, 182);
+            this.siltbox.Location = new System.Drawing.Point(125, 124);
             this.siltbox.Name = "siltbox";
             this.siltbox.Size = new System.Drawing.Size(82, 20);
             this.siltbox.TabIndex = 9;
@@ -138,7 +161,7 @@
             // 
             // claybox
             // 
-            this.claybox.Location = new System.Drawing.Point(125, 206);
+            this.claybox.Location = new System.Drawing.Point(125, 150);
             this.claybox.Name = "claybox";
             this.claybox.Size = new System.Drawing.Size(82, 20);
             this.claybox.TabIndex = 10;
@@ -147,7 +170,7 @@
             // 
             // fineclaybox
             // 
-            this.fineclaybox.Location = new System.Drawing.Point(125, 228);
+            this.fineclaybox.Location = new System.Drawing.Point(125, 176);
             this.fineclaybox.Name = "fineclaybox";
             this.fineclaybox.Size = new System.Drawing.Size(82, 20);
             this.fineclaybox.TabIndex = 11;
@@ -157,7 +180,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(12, 257);
+            this.label8.Location = new System.Drawing.Point(15, 215);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(27, 13);
             this.label8.TabIndex = 12;
@@ -165,7 +188,7 @@
             // 
             // total_box
             // 
-            this.total_box.Location = new System.Drawing.Point(125, 254);
+            this.total_box.Location = new System.Drawing.Point(125, 212);
             this.total_box.Name = "total_box";
             this.total_box.ReadOnly = true;
             this.total_box.Size = new System.Drawing.Size(82, 20);
@@ -174,19 +197,120 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(138, 280);
+            this.button1.Location = new System.Drawing.Point(367, 250);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(69, 24);
             this.button1.TabIndex = 14;
-            this.button1.Text = "ready";
+            this.button1.Text = "done";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // upper_particle_fine_clay_textbox
+            // 
+            this.upper_particle_fine_clay_textbox.Location = new System.Drawing.Point(220, 176);
+            this.upper_particle_fine_clay_textbox.Name = "upper_particle_fine_clay_textbox";
+            this.upper_particle_fine_clay_textbox.Size = new System.Drawing.Size(100, 20);
+            this.upper_particle_fine_clay_textbox.TabIndex = 23;
+            this.upper_particle_fine_clay_textbox.Text = "0.0000001";
+            // 
+            // upper_particle_clay_textbox
+            // 
+            this.upper_particle_clay_textbox.Location = new System.Drawing.Point(220, 150);
+            this.upper_particle_clay_textbox.Name = "upper_particle_clay_textbox";
+            this.upper_particle_clay_textbox.Size = new System.Drawing.Size(100, 20);
+            this.upper_particle_clay_textbox.TabIndex = 22;
+            this.upper_particle_clay_textbox.Text = "0.000002";
+            // 
+            // upper_particle_silt_textbox
+            // 
+            this.upper_particle_silt_textbox.Location = new System.Drawing.Point(220, 124);
+            this.upper_particle_silt_textbox.Name = "upper_particle_silt_textbox";
+            this.upper_particle_silt_textbox.Size = new System.Drawing.Size(100, 20);
+            this.upper_particle_silt_textbox.TabIndex = 21;
+            this.upper_particle_silt_textbox.Text = "0.00005";
+            // 
+            // upper_particle_sand_textbox
+            // 
+            this.upper_particle_sand_textbox.Location = new System.Drawing.Point(220, 98);
+            this.upper_particle_sand_textbox.Name = "upper_particle_sand_textbox";
+            this.upper_particle_sand_textbox.Size = new System.Drawing.Size(100, 20);
+            this.upper_particle_sand_textbox.TabIndex = 20;
+            this.upper_particle_sand_textbox.Text = "0.002";
+            // 
+            // upper_particle_coarse_textbox
+            // 
+            this.upper_particle_coarse_textbox.Location = new System.Drawing.Point(220, 72);
+            this.upper_particle_coarse_textbox.Name = "upper_particle_coarse_textbox";
+            this.upper_particle_coarse_textbox.Size = new System.Drawing.Size(100, 20);
+            this.upper_particle_coarse_textbox.TabIndex = 19;
+            this.upper_particle_coarse_textbox.Text = "0.01";
+            // 
+            // label54
+            // 
+            label54.AutoSize = true;
+            label54.Location = new System.Drawing.Point(364, 56);
+            label54.Name = "label54";
+            label54.Size = new System.Drawing.Size(151, 13);
+            label54.TabIndex = 41;
+            label54.Text = "specific surface area [m2 / kg]";
+            // 
+            // specific_area_fine_clay_textbox
+            // 
+            this.specific_area_fine_clay_textbox.Location = new System.Drawing.Point(367, 176);
+            this.specific_area_fine_clay_textbox.Name = "specific_area_fine_clay_textbox";
+            this.specific_area_fine_clay_textbox.Size = new System.Drawing.Size(100, 20);
+            this.specific_area_fine_clay_textbox.TabIndex = 35;
+            this.specific_area_fine_clay_textbox.Text = "100000";
+            // 
+            // specific_area_clay_textbox
+            // 
+            this.specific_area_clay_textbox.Location = new System.Drawing.Point(367, 150);
+            this.specific_area_clay_textbox.Name = "specific_area_clay_textbox";
+            this.specific_area_clay_textbox.Size = new System.Drawing.Size(100, 20);
+            this.specific_area_clay_textbox.TabIndex = 34;
+            this.specific_area_clay_textbox.Text = "50000";
+            // 
+            // specific_area_silt_textbox
+            // 
+            this.specific_area_silt_textbox.Location = new System.Drawing.Point(367, 124);
+            this.specific_area_silt_textbox.Name = "specific_area_silt_textbox";
+            this.specific_area_silt_textbox.Size = new System.Drawing.Size(100, 20);
+            this.specific_area_silt_textbox.TabIndex = 33;
+            this.specific_area_silt_textbox.Text = "1000";
+            // 
+            // specific_area_sand_textbox
+            // 
+            this.specific_area_sand_textbox.Location = new System.Drawing.Point(367, 98);
+            this.specific_area_sand_textbox.Name = "specific_area_sand_textbox";
+            this.specific_area_sand_textbox.Size = new System.Drawing.Size(100, 20);
+            this.specific_area_sand_textbox.TabIndex = 32;
+            this.specific_area_sand_textbox.Text = "100";
+            // 
+            // specific_area_coarse_textbox
+            // 
+            this.specific_area_coarse_textbox.Location = new System.Drawing.Point(367, 72);
+            this.specific_area_coarse_textbox.Name = "specific_area_coarse_textbox";
+            this.specific_area_coarse_textbox.Size = new System.Drawing.Size(100, 20);
+            this.specific_area_coarse_textbox.TabIndex = 31;
+            this.specific_area_coarse_textbox.Text = "10";
             // 
             // Soil_specifier
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(259, 311);
+            this.ClientSize = new System.Drawing.Size(535, 289);
+            this.Controls.Add(label54);
+            this.Controls.Add(this.specific_area_fine_clay_textbox);
+            this.Controls.Add(this.specific_area_clay_textbox);
+            this.Controls.Add(this.specific_area_silt_textbox);
+            this.Controls.Add(this.specific_area_sand_textbox);
+            this.Controls.Add(this.specific_area_coarse_textbox);
+            this.Controls.Add(label49);
+            this.Controls.Add(this.upper_particle_fine_clay_textbox);
+            this.Controls.Add(this.upper_particle_clay_textbox);
+            this.Controls.Add(this.upper_particle_silt_textbox);
+            this.Controls.Add(this.upper_particle_sand_textbox);
+            this.Controls.Add(this.upper_particle_coarse_textbox);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.total_box);
             this.Controls.Add(this.label8);
@@ -226,5 +350,15 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox total_box;
         private System.Windows.Forms.Button button1;
+        public System.Windows.Forms.TextBox upper_particle_fine_clay_textbox;
+        public System.Windows.Forms.TextBox upper_particle_clay_textbox;
+        public System.Windows.Forms.TextBox upper_particle_silt_textbox;
+        public System.Windows.Forms.TextBox upper_particle_sand_textbox;
+        public System.Windows.Forms.TextBox upper_particle_coarse_textbox;
+        public System.Windows.Forms.TextBox specific_area_fine_clay_textbox;
+        public System.Windows.Forms.TextBox specific_area_clay_textbox;
+        public System.Windows.Forms.TextBox specific_area_silt_textbox;
+        public System.Windows.Forms.TextBox specific_area_sand_textbox;
+        public System.Windows.Forms.TextBox specific_area_coarse_textbox;
     }
 }

@@ -724,11 +724,11 @@ namespace LORICA4
             // We do not yet know how many layers that corresponds to.
             // If soildepth is not zero, we will calculate the number of layers and assign thicknesses and material to them.
             int soil_layer, texture_class;
-            upper_particle_size[0] = Convert.ToDouble(upper_particle_coarse_textbox.Text);
-            upper_particle_size[1] = Convert.ToDouble(upper_particle_sand_textbox.Text);
-            upper_particle_size[2] = Convert.ToDouble(upper_particle_silt_textbox.Text);
-            upper_particle_size[3] = Convert.ToDouble(upper_particle_clay_textbox.Text);
-            upper_particle_size[4] = Convert.ToDouble(upper_particle_fine_clay_textbox.Text);
+            upper_particle_size[0] = Convert.ToDouble(soildata.upper_particle_coarse_textbox.Text);
+            upper_particle_size[1] = Convert.ToDouble(soildata.upper_particle_sand_textbox.Text);
+            upper_particle_size[2] = Convert.ToDouble(soildata.upper_particle_silt_textbox.Text);
+            upper_particle_size[3] = Convert.ToDouble(soildata.upper_particle_clay_textbox.Text);
+            upper_particle_size[4] = Convert.ToDouble(soildata.upper_particle_fine_clay_textbox.Text);
             //calculate bulk density so that we know how much kg of material goes into a layer.  //ART this will go wrong when there are different textures in different locations, but is faster up until that time.
             double coarsefrac = Convert.ToDouble(soildata.coarsebox.Text) / 100;
             double sandfrac = Convert.ToDouble(soildata.sandbox.Text) / 100;
@@ -882,11 +882,11 @@ namespace LORICA4
             // We do not yet know how many layers that corresponds to.
             // If soildepth is not zero, we will calculate the number of layers and assign thicknesses and material to them.
             int soil_layer, texture_class;
-            upper_particle_size[0] = Convert.ToDouble(upper_particle_coarse_textbox.Text);
-            upper_particle_size[1] = Convert.ToDouble(upper_particle_sand_textbox.Text);
-            upper_particle_size[2] = Convert.ToDouble(upper_particle_silt_textbox.Text);
-            upper_particle_size[3] = Convert.ToDouble(upper_particle_clay_textbox.Text);
-            upper_particle_size[4] = Convert.ToDouble(upper_particle_fine_clay_textbox.Text);
+            upper_particle_size[0] = Convert.ToDouble(soildata.upper_particle_coarse_textbox.Text);
+            upper_particle_size[1] = Convert.ToDouble(soildata.upper_particle_sand_textbox.Text);
+            upper_particle_size[2] = Convert.ToDouble(soildata.upper_particle_silt_textbox.Text);
+            upper_particle_size[3] = Convert.ToDouble(soildata.upper_particle_clay_textbox.Text);
+            upper_particle_size[4] = Convert.ToDouble(soildata.upper_particle_fine_clay_textbox.Text);
             //calculate bulk density so that we know how much kg of material goes into a layer.  //ART this will go wrong when there are different textures in different locations, but is faster up until that time.
             double coarsefrac = Convert.ToDouble(soildata.coarsebox.Text) / 100;
             double sandfrac = Convert.ToDouble(soildata.sandbox.Text) / 100;

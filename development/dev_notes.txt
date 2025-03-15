@@ -6,8 +6,8 @@ For Alessia/Arnaud:
 -- tree fall to expe
 -- FINISHED blocks to experimental
 -- FINISHED rock weathering to soil as spoil production
--- pohys weath particle size to soil specifier
--- chem weath surface area to soil specifier
+-- FINISHED pohys weath particle size to soil specifier
+-- FINISHED chem weath surface area to soil specifier
 -- check clay dynbamics versus chemical weathering
 -- change Jagercikova cm units
 -- bioturbation upheaval to treefaal

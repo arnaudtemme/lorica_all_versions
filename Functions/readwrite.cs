@@ -1378,11 +1378,11 @@ namespace LORICA4
                         Physical_weath_C1_textbox.Text = xreader.ReadElementString("weath_rate_constant");
                         physical_weath_constant1.Text = xreader.ReadElementString("constant1");
                         physical_weath_constant2.Text = xreader.ReadElementString("constant2");
-                        upper_particle_coarse_textbox.Text = xreader.ReadElementString("size_coarse");
-                        upper_particle_sand_textbox.Text = xreader.ReadElementString("size_sand");
-                        upper_particle_silt_textbox.Text = xreader.ReadElementString("size_silt");
-                        upper_particle_clay_textbox.Text = xreader.ReadElementString("size_clay");
-                        upper_particle_fine_clay_textbox.Text = xreader.ReadElementString("size_fine");
+                        soildata.upper_particle_coarse_textbox.Text = xreader.ReadElementString("size_coarse");
+                        soildata.upper_particle_sand_textbox.Text = xreader.ReadElementString("size_sand");
+                        soildata.upper_particle_silt_textbox.Text = xreader.ReadElementString("size_silt");
+                        soildata.upper_particle_clay_textbox.Text = xreader.ReadElementString("size_clay");
+                        soildata.upper_particle_fine_clay_textbox.Text = xreader.ReadElementString("size_fine");
                         xreader.ReadEndElement();
                     }
                     catch { read_error = 1; Debug.WriteLine("failed reading soil phys weath paras"); }
@@ -1394,11 +1394,11 @@ namespace LORICA4
                         chem_weath_rate_constant_textbox.Text = xreader.ReadElementString("weath_rate_constant");
                         chem_weath_depth_constant_textbox.Text = xreader.ReadElementString("constant3");
                         chem_weath_specific_coefficient_textbox.Text = xreader.ReadElementString("constant4");
-                        specific_area_coarse_textbox.Text = xreader.ReadElementString("surface_coarse");
-                        specific_area_sand_textbox.Text = xreader.ReadElementString("surface_sand");
-                        specific_area_silt_textbox.Text = xreader.ReadElementString("surface_silt");
-                        specific_area_clay_textbox.Text = xreader.ReadElementString("surface_clay");
-                        specific_area_fine_clay_textbox.Text = xreader.ReadElementString("surface_fine_clay");
+                        soildata.specific_area_coarse_textbox.Text = xreader.ReadElementString("surface_coarse");
+                        soildata.specific_area_sand_textbox.Text = xreader.ReadElementString("surface_sand");
+                        soildata.specific_area_silt_textbox.Text = xreader.ReadElementString("surface_silt");
+                        soildata.specific_area_clay_textbox.Text = xreader.ReadElementString("surface_clay");
+                        soildata.specific_area_fine_clay_textbox.Text = xreader.ReadElementString("surface_fine_clay");
                         xreader.ReadEndElement();
                     }
                     catch { read_error = 1; Debug.WriteLine("failed reading soil chemical weath paras"); }
@@ -1787,11 +1787,11 @@ namespace LORICA4
                 xwriter.WriteElementString("weath_rate_constant", Physical_weath_C1_textbox.Text);
                 xwriter.WriteElementString("constant1", physical_weath_constant1.Text);
                 xwriter.WriteElementString("constant2", physical_weath_constant2.Text);
-                xwriter.WriteElementString("size_coarse", upper_particle_coarse_textbox.Text);
-                xwriter.WriteElementString("size_sand", upper_particle_sand_textbox.Text);
-                xwriter.WriteElementString("size_silt", upper_particle_silt_textbox.Text);
-                xwriter.WriteElementString("size_clay", upper_particle_clay_textbox.Text);
-                xwriter.WriteElementString("size_fine", upper_particle_fine_clay_textbox.Text);
+                xwriter.WriteElementString("size_coarse", soildata.upper_particle_coarse_textbox.Text);
+                xwriter.WriteElementString("size_sand", soildata.upper_particle_sand_textbox.Text);
+                xwriter.WriteElementString("size_silt", soildata.upper_particle_silt_textbox.Text);
+                xwriter.WriteElementString("size_clay", soildata.upper_particle_clay_textbox.Text);
+                xwriter.WriteElementString("size_fine", soildata.upper_particle_fine_clay_textbox.Text);
                 xwriter.WriteEndElement();
 
                 xwriter.WriteStartElement("Chemical_weathering");
@@ -1799,11 +1799,11 @@ namespace LORICA4
                 xwriter.WriteElementString("weath_rate_constant", chem_weath_rate_constant_textbox.Text);
                 xwriter.WriteElementString("constant3", chem_weath_depth_constant_textbox.Text);
                 xwriter.WriteElementString("constant4", chem_weath_specific_coefficient_textbox.Text);
-                xwriter.WriteElementString("surface_coarse", specific_area_coarse_textbox.Text);
-                xwriter.WriteElementString("surface_sand", specific_area_sand_textbox.Text);
-                xwriter.WriteElementString("surface_silt", specific_area_silt_textbox.Text);
-                xwriter.WriteElementString("surface_clay", specific_area_clay_textbox.Text);
-                xwriter.WriteElementString("surface_fine_clay", specific_area_fine_clay_textbox.Text);
+                xwriter.WriteElementString("surface_coarse", soildata.specific_area_coarse_textbox.Text);
+                xwriter.WriteElementString("surface_sand", soildata.specific_area_sand_textbox.Text);
+                xwriter.WriteElementString("surface_silt", soildata.specific_area_silt_textbox.Text);
+                xwriter.WriteElementString("surface_clay", soildata.specific_area_clay_textbox.Text);
+                xwriter.WriteElementString("surface_fine_clay", soildata.specific_area_fine_clay_textbox.Text);
                 xwriter.WriteEndElement();
 
                 xwriter.WriteStartElement("Clay_dynamics");
