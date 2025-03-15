@@ -172,7 +172,6 @@ namespace LORICA4
                     {
                         dz_soil[row, col] = 0;
                         if (Creep_Checkbox.Checked) { sum_creep_grid[row, col] = 0; creep[row, col] = 0; }
-                        if (Solifluction_checkbox.Checked) { sum_solifluction[row, col] = 0; }
                         if (Water_ero_checkbox.Checked && only_waterflow_checkbox.Checked == false) { sum_water_erosion[row, col] = 0; total_sed_export = 0; }
                         if (treefall_checkbox.Checked) { dz_treefall[row, col] = 0; treefall_count[row, col] = 0; }
                         if (Biological_weathering_checkbox.Checked) { sum_biological_weathering[row, col] = 0; }
@@ -531,7 +530,6 @@ namespace LORICA4
                     {
                         dz_soil[row, col] = 0;
                         if (Creep_Checkbox.Checked) { sum_creep_grid[row, col] = 0; creep[row, col] = 0; }
-                        if (Solifluction_checkbox.Checked) { sum_solifluction[row, col] = 0; }
                         if (Water_ero_checkbox.Checked && only_waterflow_checkbox.Checked == false) { sum_water_erosion[row, col] = 0; total_sed_export = 0; }
                         if (treefall_checkbox.Checked) { dz_treefall[row, col] = 0; treefall_count[row, col] = 0; }
                         if (Biological_weathering_checkbox.Checked) { sum_biological_weathering[row, col] = 0; }
@@ -855,11 +853,6 @@ namespace LORICA4
                                 texture_kg[row, col, soil_layer, 4] = location_bd * layerthickness_m[row, col, soil_layer] * fclayfrac * dx * dx;
                                 bulkdensity[row, col, soil_layer] = location_bd;
 
-                                if (decalcification_checkbox.Checked)
-                                {
-                                    CO3_kg[row, col, soil_layer] = (location_bd * layerthickness_m[row, col, soil_layer] * dx * dx) * Convert.ToDouble(ini_CaCO3_content.Text) * 40.08 / (40.08 + 60.01); // calculate total CO3: total mass * fraction of soil * fraction of CaCO3 molecule
-                                }
-
                             }
                             if (creep_testing.Checked)
                             {
@@ -992,10 +985,6 @@ namespace LORICA4
                                     texture_kg[row, col, soil_layer, 4] = location_bd * layerthickness_m[row, col, soil_layer] * fclayfrac * dx * dx;
                                     bulkdensity[row, col, soil_layer] = location_bd;
 
-                                    if (decalcification_checkbox.Checked)
-                                    {
-                                        CO3_kg[row, col, soil_layer] = (location_bd * layerthickness_m[row, col, soil_layer] * dx * dx) * Convert.ToDouble(ini_CaCO3_content.Text) * 40.08 / (40.08 + 60.01); // calculate total CO3: total mass * fraction of soil * fraction of CaCO3 molecule
-                                    }
                                 }
                                 if (creep_testing.Checked)
                                 {
@@ -1099,10 +1088,6 @@ namespace LORICA4
                                     texture_kg[row, col, soil_layer, 4] = location_bd * layerthickness_m[row, col, soil_layer] * fclayfrac * dx * dx;
                                     bulkdensity[row, col, soil_layer] = location_bd;
 
-                                    if (decalcification_checkbox.Checked)
-                                    {
-                                        CO3_kg[row, col, soil_layer] = (location_bd * layerthickness_m[row, col, soil_layer] * dx * dx) * Convert.ToDouble(ini_CaCO3_content.Text) * 40.08 / (40.08 + 60.01); // calculate total CO3: total mass * fraction of soil * fraction of CaCO3 molecule
-                                    }
                                 }
                                 if (creep_testing.Checked)
                                 {
@@ -1211,7 +1196,6 @@ namespace LORICA4
                         dz_soil[row, col] = 0;
                         if (Creep_Checkbox.Checked) { sum_creep_grid[row, col] = 0; creep[row, col] = 0; }
                         if (treefall_checkbox.Checked) { dz_treefall[row, col] = 0; treefall_count[row, col] = 0; }
-                        if (Solifluction_checkbox.Checked) { sum_solifluction[row, col] = 0; }
                         if (Water_ero_checkbox.Checked) { sum_water_erosion[row, col] = 0; }
                         if (Biological_weathering_checkbox.Checked) { sum_biological_weathering[row, col] = 0; }
                         if (Frost_weathering_checkbox.Checked) { sum_frost_weathering[row, col] = 0; }
