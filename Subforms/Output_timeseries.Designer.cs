@@ -80,12 +80,20 @@
             this.timeseries_outflow_cells_checkbox = new System.Windows.Forms.CheckBox();
             this.timeseries_sedexport_checkbox = new System.Windows.Forms.CheckBox();
             this.timeseries_slide_checkbox = new System.Windows.Forms.CheckBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.panel3 = new System.Windows.Forms.Panel();
+            this.panel1.SuspendLayout();
+            this.panel2.SuspendLayout();
+            this.panel3.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(306, 69);
+            this.label1.Location = new System.Drawing.Point(279, 35);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(197, 20);
@@ -94,7 +102,7 @@
             // 
             // timeseries_textbox_waterflow_threshold
             // 
-            this.timeseries_textbox_waterflow_threshold.Location = new System.Drawing.Point(503, 95);
+            this.timeseries_textbox_waterflow_threshold.Location = new System.Drawing.Point(476, 61);
             this.timeseries_textbox_waterflow_threshold.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.timeseries_textbox_waterflow_threshold.Name = "timeseries_textbox_waterflow_threshold";
             this.timeseries_textbox_waterflow_threshold.Size = new System.Drawing.Size(67, 26);
@@ -102,7 +110,7 @@
             // 
             // timeseries_textbox_erosion_threshold
             // 
-            this.timeseries_textbox_erosion_threshold.Location = new System.Drawing.Point(503, 132);
+            this.timeseries_textbox_erosion_threshold.Location = new System.Drawing.Point(476, 98);
             this.timeseries_textbox_erosion_threshold.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.timeseries_textbox_erosion_threshold.Name = "timeseries_textbox_erosion_threshold";
             this.timeseries_textbox_erosion_threshold.Size = new System.Drawing.Size(67, 26);
@@ -110,7 +118,7 @@
             // 
             // timeseries_textbox_deposition_threshold
             // 
-            this.timeseries_textbox_deposition_threshold.Location = new System.Drawing.Point(503, 167);
+            this.timeseries_textbox_deposition_threshold.Location = new System.Drawing.Point(476, 133);
             this.timeseries_textbox_deposition_threshold.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.timeseries_textbox_deposition_threshold.Name = "timeseries_textbox_deposition_threshold";
             this.timeseries_textbox_deposition_threshold.Size = new System.Drawing.Size(67, 26);
@@ -119,7 +127,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(581, 99);
+            this.label2.Location = new System.Drawing.Point(554, 65);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(31, 20);
@@ -129,7 +137,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(581, 170);
+            this.label3.Location = new System.Drawing.Point(554, 136);
             this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(22, 20);
@@ -139,7 +147,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(581, 135);
+            this.label4.Location = new System.Drawing.Point(554, 101);
             this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(22, 20);
@@ -149,7 +157,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(304, 290);
+            this.label5.Location = new System.Drawing.Point(13, 251);
             this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(116, 20);
@@ -158,7 +166,7 @@
             // 
             // timeseries_textbox_cell_row
             // 
-            this.timeseries_textbox_cell_row.Location = new System.Drawing.Point(429, 285);
+            this.timeseries_textbox_cell_row.Location = new System.Drawing.Point(138, 246);
             this.timeseries_textbox_cell_row.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.timeseries_textbox_cell_row.Name = "timeseries_textbox_cell_row";
             this.timeseries_textbox_cell_row.Size = new System.Drawing.Size(67, 26);
@@ -166,7 +174,7 @@
             // 
             // timeseries_textbox_cell_col
             // 
-            this.timeseries_textbox_cell_col.Location = new System.Drawing.Point(570, 285);
+            this.timeseries_textbox_cell_col.Location = new System.Drawing.Point(279, 246);
             this.timeseries_textbox_cell_col.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.timeseries_textbox_cell_col.Name = "timeseries_textbox_cell_col";
             this.timeseries_textbox_cell_col.Size = new System.Drawing.Size(67, 26);
@@ -175,7 +183,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(498, 290);
+            this.label6.Location = new System.Drawing.Point(207, 251);
             this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(60, 20);
@@ -194,7 +202,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(570, 714);
+            this.button1.Location = new System.Drawing.Point(566, 810);
             this.button1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(105, 37);
@@ -206,7 +214,7 @@
             // timeseries_total_ero_check
             // 
             this.timeseries_total_ero_check.AutoSize = true;
-            this.timeseries_total_ero_check.Location = new System.Drawing.Point(39, 95);
+            this.timeseries_total_ero_check.Location = new System.Drawing.Point(14, 35);
             this.timeseries_total_ero_check.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.timeseries_total_ero_check.Name = "timeseries_total_ero_check";
             this.timeseries_total_ero_check.Size = new System.Drawing.Size(158, 24);
@@ -217,7 +225,7 @@
             // timeseries_total_rain_check
             // 
             this.timeseries_total_rain_check.AutoSize = true;
-            this.timeseries_total_rain_check.Location = new System.Drawing.Point(38, 302);
+            this.timeseries_total_rain_check.Location = new System.Drawing.Point(13, 44);
             this.timeseries_total_rain_check.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.timeseries_total_rain_check.Name = "timeseries_total_rain_check";
             this.timeseries_total_rain_check.Size = new System.Drawing.Size(132, 24);
@@ -228,7 +236,7 @@
             // timeseries_total_average_alt_check
             // 
             this.timeseries_total_average_alt_check.AutoSize = true;
-            this.timeseries_total_average_alt_check.Location = new System.Drawing.Point(38, 266);
+            this.timeseries_total_average_alt_check.Location = new System.Drawing.Point(13, 206);
             this.timeseries_total_average_alt_check.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.timeseries_total_average_alt_check.Name = "timeseries_total_average_alt_check";
             this.timeseries_total_average_alt_check.Size = new System.Drawing.Size(210, 24);
@@ -239,7 +247,7 @@
             // timeseries_SDR_check
             // 
             this.timeseries_SDR_check.AutoSize = true;
-            this.timeseries_SDR_check.Location = new System.Drawing.Point(38, 230);
+            this.timeseries_SDR_check.Location = new System.Drawing.Point(13, 170);
             this.timeseries_SDR_check.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.timeseries_SDR_check.Name = "timeseries_SDR_check";
             this.timeseries_SDR_check.Size = new System.Drawing.Size(223, 24);
@@ -250,7 +258,7 @@
             // timeseries_net_ero_check
             // 
             this.timeseries_net_ero_check.AutoSize = true;
-            this.timeseries_net_ero_check.Location = new System.Drawing.Point(38, 165);
+            this.timeseries_net_ero_check.Location = new System.Drawing.Point(13, 105);
             this.timeseries_net_ero_check.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.timeseries_net_ero_check.Name = "timeseries_net_ero_check";
             this.timeseries_net_ero_check.Size = new System.Drawing.Size(150, 24);
@@ -261,7 +269,7 @@
             // timeseries_total_dep_check
             // 
             this.timeseries_total_dep_check.AutoSize = true;
-            this.timeseries_total_dep_check.Location = new System.Drawing.Point(38, 132);
+            this.timeseries_total_dep_check.Location = new System.Drawing.Point(13, 72);
             this.timeseries_total_dep_check.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.timeseries_total_dep_check.Name = "timeseries_total_dep_check";
             this.timeseries_total_dep_check.Size = new System.Drawing.Size(179, 24);
@@ -272,7 +280,7 @@
             // timeseries_number_waterflow_check
             // 
             this.timeseries_number_waterflow_check.AutoSize = true;
-            this.timeseries_number_waterflow_check.Location = new System.Drawing.Point(307, 95);
+            this.timeseries_number_waterflow_check.Location = new System.Drawing.Point(280, 61);
             this.timeseries_number_waterflow_check.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.timeseries_number_waterflow_check.Name = "timeseries_number_waterflow_check";
             this.timeseries_number_waterflow_check.Size = new System.Drawing.Size(182, 24);
@@ -283,7 +291,7 @@
             // timeseries_total_outflow_check
             // 
             this.timeseries_total_outflow_check.AutoSize = true;
-            this.timeseries_total_outflow_check.Location = new System.Drawing.Point(38, 407);
+            this.timeseries_total_outflow_check.Location = new System.Drawing.Point(280, 79);
             this.timeseries_total_outflow_check.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.timeseries_total_outflow_check.Name = "timeseries_total_outflow_check";
             this.timeseries_total_outflow_check.Size = new System.Drawing.Size(157, 24);
@@ -294,7 +302,7 @@
             // timeseries_total_evap_check
             // 
             this.timeseries_total_evap_check.AutoSize = true;
-            this.timeseries_total_evap_check.Location = new System.Drawing.Point(38, 372);
+            this.timeseries_total_evap_check.Location = new System.Drawing.Point(280, 44);
             this.timeseries_total_evap_check.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.timeseries_total_evap_check.Name = "timeseries_total_evap_check";
             this.timeseries_total_evap_check.Size = new System.Drawing.Size(140, 24);
@@ -305,7 +313,7 @@
             // timeseries_total_infil_check
             // 
             this.timeseries_total_infil_check.AutoSize = true;
-            this.timeseries_total_infil_check.Location = new System.Drawing.Point(38, 337);
+            this.timeseries_total_infil_check.Location = new System.Drawing.Point(13, 79);
             this.timeseries_total_infil_check.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.timeseries_total_infil_check.Name = "timeseries_total_infil_check";
             this.timeseries_total_infil_check.Size = new System.Drawing.Size(129, 24);
@@ -316,7 +324,7 @@
             // timeseries_number_erosion_check
             // 
             this.timeseries_number_erosion_check.AutoSize = true;
-            this.timeseries_number_erosion_check.Location = new System.Drawing.Point(307, 130);
+            this.timeseries_number_erosion_check.Location = new System.Drawing.Point(280, 96);
             this.timeseries_number_erosion_check.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.timeseries_number_erosion_check.Name = "timeseries_number_erosion_check";
             this.timeseries_number_erosion_check.Size = new System.Drawing.Size(167, 24);
@@ -327,7 +335,7 @@
             // timeseries_number_dep_check
             // 
             this.timeseries_number_dep_check.AutoSize = true;
-            this.timeseries_number_dep_check.Location = new System.Drawing.Point(307, 166);
+            this.timeseries_number_dep_check.Location = new System.Drawing.Point(280, 132);
             this.timeseries_number_dep_check.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.timeseries_number_dep_check.Name = "timeseries_number_dep_check";
             this.timeseries_number_dep_check.Size = new System.Drawing.Size(188, 24);
@@ -338,7 +346,7 @@
             // timeseries_cell_waterflow_check
             // 
             this.timeseries_cell_waterflow_check.AutoSize = true;
-            this.timeseries_cell_waterflow_check.Location = new System.Drawing.Point(309, 358);
+            this.timeseries_cell_waterflow_check.Location = new System.Drawing.Point(138, 288);
             this.timeseries_cell_waterflow_check.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.timeseries_cell_waterflow_check.Name = "timeseries_cell_waterflow_check";
             this.timeseries_cell_waterflow_check.Size = new System.Drawing.Size(138, 24);
@@ -349,7 +357,7 @@
             // timeseries_cell_altitude_check
             // 
             this.timeseries_cell_altitude_check.AutoSize = true;
-            this.timeseries_cell_altitude_check.Location = new System.Drawing.Point(309, 325);
+            this.timeseries_cell_altitude_check.Location = new System.Drawing.Point(13, 288);
             this.timeseries_cell_altitude_check.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.timeseries_cell_altitude_check.Name = "timeseries_cell_altitude_check";
             this.timeseries_cell_altitude_check.Size = new System.Drawing.Size(114, 24);
@@ -360,7 +368,7 @@
             // total_OM_input_checkbox
             // 
             this.total_OM_input_checkbox.AutoSize = true;
-            this.total_OM_input_checkbox.Location = new System.Drawing.Point(39, 667);
+            this.total_OM_input_checkbox.Location = new System.Drawing.Point(16, 217);
             this.total_OM_input_checkbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.total_OM_input_checkbox.Name = "total_OM_input_checkbox";
             this.total_OM_input_checkbox.Size = new System.Drawing.Size(242, 24);
@@ -371,7 +379,7 @@
             // total_average_soilthickness_checkbox
             // 
             this.total_average_soilthickness_checkbox.AutoSize = true;
-            this.total_average_soilthickness_checkbox.Location = new System.Drawing.Point(39, 702);
+            this.total_average_soilthickness_checkbox.Location = new System.Drawing.Point(16, 252);
             this.total_average_soilthickness_checkbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.total_average_soilthickness_checkbox.Name = "total_average_soilthickness_checkbox";
             this.total_average_soilthickness_checkbox.Size = new System.Drawing.Size(248, 24);
@@ -382,7 +390,7 @@
             // total_phys_weath_checkbox
             // 
             this.total_phys_weath_checkbox.AutoSize = true;
-            this.total_phys_weath_checkbox.Location = new System.Drawing.Point(39, 490);
+            this.total_phys_weath_checkbox.Location = new System.Drawing.Point(16, 40);
             this.total_phys_weath_checkbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.total_phys_weath_checkbox.Name = "total_phys_weath_checkbox";
             this.total_phys_weath_checkbox.Size = new System.Drawing.Size(239, 24);
@@ -393,7 +401,7 @@
             // total_chem_weath_checkbox
             // 
             this.total_chem_weath_checkbox.AutoSize = true;
-            this.total_chem_weath_checkbox.Location = new System.Drawing.Point(39, 525);
+            this.total_chem_weath_checkbox.Location = new System.Drawing.Point(16, 75);
             this.total_chem_weath_checkbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.total_chem_weath_checkbox.Name = "total_chem_weath_checkbox";
             this.total_chem_weath_checkbox.Size = new System.Drawing.Size(245, 24);
@@ -404,7 +412,7 @@
             // total_fine_formed_checkbox
             // 
             this.total_fine_formed_checkbox.AutoSize = true;
-            this.total_fine_formed_checkbox.Location = new System.Drawing.Point(39, 560);
+            this.total_fine_formed_checkbox.Location = new System.Drawing.Point(16, 110);
             this.total_fine_formed_checkbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.total_fine_formed_checkbox.Name = "total_fine_formed_checkbox";
             this.total_fine_formed_checkbox.Size = new System.Drawing.Size(212, 24);
@@ -415,7 +423,7 @@
             // total_fine_eluviated_checkbox
             // 
             this.total_fine_eluviated_checkbox.AutoSize = true;
-            this.total_fine_eluviated_checkbox.Location = new System.Drawing.Point(39, 596);
+            this.total_fine_eluviated_checkbox.Location = new System.Drawing.Point(16, 146);
             this.total_fine_eluviated_checkbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.total_fine_eluviated_checkbox.Name = "total_fine_eluviated_checkbox";
             this.total_fine_eluviated_checkbox.Size = new System.Drawing.Size(225, 24);
@@ -426,7 +434,7 @@
             // total_mass_bioturbed_checkbox
             // 
             this.total_mass_bioturbed_checkbox.AutoSize = true;
-            this.total_mass_bioturbed_checkbox.Location = new System.Drawing.Point(39, 632);
+            this.total_mass_bioturbed_checkbox.Location = new System.Drawing.Point(16, 182);
             this.total_mass_bioturbed_checkbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.total_mass_bioturbed_checkbox.Name = "total_mass_bioturbed_checkbox";
             this.total_mass_bioturbed_checkbox.Size = new System.Drawing.Size(224, 24);
@@ -437,7 +445,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(38, 70);
+            this.label8.Location = new System.Drawing.Point(13, 10);
             this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(154, 20);
@@ -447,7 +455,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(34, 450);
+            this.label9.Location = new System.Drawing.Point(10, 11);
             this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(152, 20);
@@ -457,7 +465,7 @@
             // timeseries_soil_depth_checkbox
             // 
             this.timeseries_soil_depth_checkbox.AutoSize = true;
-            this.timeseries_soil_depth_checkbox.Location = new System.Drawing.Point(308, 668);
+            this.timeseries_soil_depth_checkbox.Location = new System.Drawing.Point(285, 218);
             this.timeseries_soil_depth_checkbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.timeseries_soil_depth_checkbox.Name = "timeseries_soil_depth_checkbox";
             this.timeseries_soil_depth_checkbox.Size = new System.Drawing.Size(129, 24);
@@ -468,7 +476,7 @@
             // timeseries_soil_mass_checkbox
             // 
             this.timeseries_soil_mass_checkbox.AutoSize = true;
-            this.timeseries_soil_mass_checkbox.Location = new System.Drawing.Point(308, 702);
+            this.timeseries_soil_mass_checkbox.Location = new System.Drawing.Point(285, 252);
             this.timeseries_soil_mass_checkbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.timeseries_soil_mass_checkbox.Name = "timeseries_soil_mass_checkbox";
             this.timeseries_soil_mass_checkbox.Size = new System.Drawing.Size(104, 24);
@@ -479,7 +487,7 @@
             // timeseries_coarser_checkbox
             // 
             this.timeseries_coarser_checkbox.AutoSize = true;
-            this.timeseries_coarser_checkbox.Location = new System.Drawing.Point(308, 560);
+            this.timeseries_coarser_checkbox.Location = new System.Drawing.Point(285, 110);
             this.timeseries_coarser_checkbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.timeseries_coarser_checkbox.Name = "timeseries_coarser_checkbox";
             this.timeseries_coarser_checkbox.Size = new System.Drawing.Size(292, 24);
@@ -490,7 +498,7 @@
             // timeseries_number_soil_thicker_checkbox
             // 
             this.timeseries_number_soil_thicker_checkbox.AutoSize = true;
-            this.timeseries_number_soil_thicker_checkbox.Location = new System.Drawing.Point(308, 525);
+            this.timeseries_number_soil_thicker_checkbox.Location = new System.Drawing.Point(285, 75);
             this.timeseries_number_soil_thicker_checkbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.timeseries_number_soil_thicker_checkbox.Name = "timeseries_number_soil_thicker_checkbox";
             this.timeseries_number_soil_thicker_checkbox.Size = new System.Drawing.Size(145, 24);
@@ -501,7 +509,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(496, 632);
+            this.label10.Location = new System.Drawing.Point(473, 182);
             this.label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(60, 20);
@@ -510,7 +518,7 @@
             // 
             // timeseries_soil_cell_col
             // 
-            this.timeseries_soil_cell_col.Location = new System.Drawing.Point(568, 628);
+            this.timeseries_soil_cell_col.Location = new System.Drawing.Point(545, 178);
             this.timeseries_soil_cell_col.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.timeseries_soil_cell_col.Name = "timeseries_soil_cell_col";
             this.timeseries_soil_cell_col.Size = new System.Drawing.Size(67, 26);
@@ -518,7 +526,7 @@
             // 
             // timeseries_soil_cell_row
             // 
-            this.timeseries_soil_cell_row.Location = new System.Drawing.Point(428, 628);
+            this.timeseries_soil_cell_row.Location = new System.Drawing.Point(405, 178);
             this.timeseries_soil_cell_row.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.timeseries_soil_cell_row.Name = "timeseries_soil_cell_row";
             this.timeseries_soil_cell_row.Size = new System.Drawing.Size(67, 26);
@@ -527,7 +535,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(303, 632);
+            this.label11.Location = new System.Drawing.Point(280, 182);
             this.label11.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(116, 20);
@@ -537,7 +545,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(650, 587);
+            this.label12.Location = new System.Drawing.Point(650, 660);
             this.label12.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(22, 20);
@@ -547,7 +555,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(582, 530);
+            this.label14.Location = new System.Drawing.Point(559, 80);
             this.label14.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(22, 20);
@@ -556,7 +564,7 @@
             // 
             // timeseries_soil_coarser_fraction_textbox
             // 
-            this.timeseries_soil_coarser_fraction_textbox.Location = new System.Drawing.Point(614, 557);
+            this.timeseries_soil_coarser_fraction_textbox.Location = new System.Drawing.Point(614, 630);
             this.timeseries_soil_coarser_fraction_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.timeseries_soil_coarser_fraction_textbox.Name = "timeseries_soil_coarser_fraction_textbox";
             this.timeseries_soil_coarser_fraction_textbox.Size = new System.Drawing.Size(60, 26);
@@ -564,7 +572,7 @@
             // 
             // timeseries_soil_thicker_textbox
             // 
-            this.timeseries_soil_thicker_textbox.Location = new System.Drawing.Point(504, 525);
+            this.timeseries_soil_thicker_textbox.Location = new System.Drawing.Point(481, 75);
             this.timeseries_soil_thicker_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.timeseries_soil_thicker_textbox.Name = "timeseries_soil_thicker_textbox";
             this.timeseries_soil_thicker_textbox.Size = new System.Drawing.Size(67, 26);
@@ -573,7 +581,7 @@
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(304, 492);
+            this.label15.Location = new System.Drawing.Point(281, 42);
             this.label15.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(197, 20);
@@ -583,7 +591,7 @@
             // timeseries_outflow_cells_checkbox
             // 
             this.timeseries_outflow_cells_checkbox.AutoSize = true;
-            this.timeseries_outflow_cells_checkbox.Location = new System.Drawing.Point(306, 202);
+            this.timeseries_outflow_cells_checkbox.Location = new System.Drawing.Point(279, 168);
             this.timeseries_outflow_cells_checkbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.timeseries_outflow_cells_checkbox.Name = "timeseries_outflow_cells_checkbox";
             this.timeseries_outflow_cells_checkbox.Size = new System.Drawing.Size(213, 24);
@@ -594,7 +602,7 @@
             // timeseries_sedexport_checkbox
             // 
             this.timeseries_sedexport_checkbox.AutoSize = true;
-            this.timeseries_sedexport_checkbox.Location = new System.Drawing.Point(38, 198);
+            this.timeseries_sedexport_checkbox.Location = new System.Drawing.Point(13, 138);
             this.timeseries_sedexport_checkbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.timeseries_sedexport_checkbox.Name = "timeseries_sedexport_checkbox";
             this.timeseries_sedexport_checkbox.Size = new System.Drawing.Size(211, 24);
@@ -605,7 +613,7 @@
             // timeseries_slide_checkbox
             // 
             this.timeseries_slide_checkbox.AutoSize = true;
-            this.timeseries_slide_checkbox.Location = new System.Drawing.Point(306, 236);
+            this.timeseries_slide_checkbox.Location = new System.Drawing.Point(279, 202);
             this.timeseries_slide_checkbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.timeseries_slide_checkbox.Name = "timeseries_slide_checkbox";
             this.timeseries_slide_checkbox.Size = new System.Drawing.Size(152, 24);
@@ -613,67 +621,119 @@
             this.timeseries_slide_checkbox.Text = "landslide metrics";
             this.timeseries_slide_checkbox.UseVisualStyleBackColor = true;
             // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(13, 10);
+            this.label13.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(120, 20);
+            this.label13.TabIndex = 71;
+            this.label13.Text = "Climate outputs";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(360, 252);
+            this.label16.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(13, 20);
+            this.label16.TabIndex = 72;
+            this.label16.Text = ":";
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.label13);
+            this.panel1.Controls.Add(this.timeseries_total_infil_check);
+            this.panel1.Controls.Add(this.timeseries_total_evap_check);
+            this.panel1.Controls.Add(this.timeseries_total_outflow_check);
+            this.panel1.Controls.Add(this.timeseries_total_rain_check);
+            this.panel1.Location = new System.Drawing.Point(24, 392);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(648, 120);
+            this.panel1.TabIndex = 73;
+            // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.timeseries_soil_depth_checkbox);
+            this.panel2.Controls.Add(this.timeseries_soil_mass_checkbox);
+            this.panel2.Controls.Add(this.timeseries_coarser_checkbox);
+            this.panel2.Controls.Add(this.timeseries_number_soil_thicker_checkbox);
+            this.panel2.Controls.Add(this.label10);
+            this.panel2.Controls.Add(this.timeseries_soil_cell_col);
+            this.panel2.Controls.Add(this.timeseries_soil_cell_row);
+            this.panel2.Controls.Add(this.label11);
+            this.panel2.Controls.Add(this.label14);
+            this.panel2.Controls.Add(this.timeseries_soil_thicker_textbox);
+            this.panel2.Controls.Add(this.label15);
+            this.panel2.Controls.Add(this.label9);
+            this.panel2.Controls.Add(this.total_OM_input_checkbox);
+            this.panel2.Controls.Add(this.total_average_soilthickness_checkbox);
+            this.panel2.Controls.Add(this.total_phys_weath_checkbox);
+            this.panel2.Controls.Add(this.total_chem_weath_checkbox);
+            this.panel2.Controls.Add(this.total_fine_formed_checkbox);
+            this.panel2.Controls.Add(this.total_fine_eluviated_checkbox);
+            this.panel2.Controls.Add(this.total_mass_bioturbed_checkbox);
+            this.panel2.Location = new System.Drawing.Point(23, 523);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(648, 281);
+            this.panel2.TabIndex = 74;
+            // 
+            // panel3
+            // 
+            this.panel3.Controls.Add(this.label16);
+            this.panel3.Controls.Add(this.timeseries_slide_checkbox);
+            this.panel3.Controls.Add(this.timeseries_sedexport_checkbox);
+            this.panel3.Controls.Add(this.timeseries_outflow_cells_checkbox);
+            this.panel3.Controls.Add(this.label8);
+            this.panel3.Controls.Add(this.timeseries_cell_altitude_check);
+            this.panel3.Controls.Add(this.timeseries_cell_waterflow_check);
+            this.panel3.Controls.Add(this.timeseries_number_dep_check);
+            this.panel3.Controls.Add(this.timeseries_number_erosion_check);
+            this.panel3.Controls.Add(this.timeseries_number_waterflow_check);
+            this.panel3.Controls.Add(this.timeseries_total_dep_check);
+            this.panel3.Controls.Add(this.timeseries_net_ero_check);
+            this.panel3.Controls.Add(this.timeseries_SDR_check);
+            this.panel3.Controls.Add(this.timeseries_total_average_alt_check);
+            this.panel3.Controls.Add(this.timeseries_total_ero_check);
+            this.panel3.Controls.Add(this.label6);
+            this.panel3.Controls.Add(this.timeseries_textbox_cell_col);
+            this.panel3.Controls.Add(this.timeseries_textbox_cell_row);
+            this.panel3.Controls.Add(this.label5);
+            this.panel3.Controls.Add(this.label4);
+            this.panel3.Controls.Add(this.label3);
+            this.panel3.Controls.Add(this.label2);
+            this.panel3.Controls.Add(this.timeseries_textbox_deposition_threshold);
+            this.panel3.Controls.Add(this.timeseries_textbox_erosion_threshold);
+            this.panel3.Controls.Add(this.timeseries_textbox_waterflow_threshold);
+            this.panel3.Controls.Add(this.label1);
+            this.panel3.Location = new System.Drawing.Point(25, 60);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(646, 321);
+            this.panel3.TabIndex = 75;
+            // 
             // Output_timeseries
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(696, 861);
-            this.Controls.Add(this.timeseries_slide_checkbox);
-            this.Controls.Add(this.timeseries_sedexport_checkbox);
-            this.Controls.Add(this.timeseries_outflow_cells_checkbox);
-            this.Controls.Add(this.timeseries_soil_depth_checkbox);
-            this.Controls.Add(this.timeseries_soil_mass_checkbox);
-            this.Controls.Add(this.timeseries_coarser_checkbox);
-            this.Controls.Add(this.timeseries_number_soil_thicker_checkbox);
-            this.Controls.Add(this.label10);
-            this.Controls.Add(this.timeseries_soil_cell_col);
-            this.Controls.Add(this.timeseries_soil_cell_row);
-            this.Controls.Add(this.label11);
+            this.Controls.Add(this.panel3);
+            this.Controls.Add(this.panel2);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.label12);
-            this.Controls.Add(this.label14);
             this.Controls.Add(this.timeseries_soil_coarser_fraction_textbox);
-            this.Controls.Add(this.timeseries_soil_thicker_textbox);
-            this.Controls.Add(this.label15);
-            this.Controls.Add(this.label9);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.total_OM_input_checkbox);
-            this.Controls.Add(this.total_average_soilthickness_checkbox);
-            this.Controls.Add(this.total_phys_weath_checkbox);
-            this.Controls.Add(this.total_chem_weath_checkbox);
-            this.Controls.Add(this.total_fine_formed_checkbox);
-            this.Controls.Add(this.total_fine_eluviated_checkbox);
-            this.Controls.Add(this.total_mass_bioturbed_checkbox);
-            this.Controls.Add(this.timeseries_cell_altitude_check);
-            this.Controls.Add(this.timeseries_cell_waterflow_check);
-            this.Controls.Add(this.timeseries_number_dep_check);
-            this.Controls.Add(this.timeseries_number_erosion_check);
-            this.Controls.Add(this.timeseries_total_infil_check);
-            this.Controls.Add(this.timeseries_total_evap_check);
-            this.Controls.Add(this.timeseries_total_outflow_check);
-            this.Controls.Add(this.timeseries_number_waterflow_check);
-            this.Controls.Add(this.timeseries_total_dep_check);
-            this.Controls.Add(this.timeseries_net_ero_check);
-            this.Controls.Add(this.timeseries_SDR_check);
-            this.Controls.Add(this.timeseries_total_average_alt_check);
-            this.Controls.Add(this.timeseries_total_rain_check);
-            this.Controls.Add(this.timeseries_total_ero_check);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label7);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.timeseries_textbox_cell_col);
-            this.Controls.Add(this.timeseries_textbox_cell_row);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.timeseries_textbox_deposition_threshold);
-            this.Controls.Add(this.timeseries_textbox_erosion_threshold);
-            this.Controls.Add(this.timeseries_textbox_waterflow_threshold);
-            this.Controls.Add(this.label1);
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "Output_timeseries";
             this.Text = "LORICA Timeseries output";
             this.Load += new System.EventHandler(this.Timeseries_output_Load);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
+            this.panel3.ResumeLayout(false);
+            this.panel3.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -733,5 +793,10 @@
         public System.Windows.Forms.CheckBox timeseries_outflow_cells_checkbox;
         public System.Windows.Forms.CheckBox timeseries_sedexport_checkbox;
         public System.Windows.Forms.CheckBox timeseries_slide_checkbox;
+        private System.Windows.Forms.Label label13;
+        public System.Windows.Forms.Label label16;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Panel panel3;
     }
 }
