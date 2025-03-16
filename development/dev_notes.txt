@@ -5,11 +5,11 @@ KEY TASKS AND THEIR ORDER:
 1. FINISHED Ale - separate branch - improve temporally changing root cohesion, OM input, tillage, bioturbation rate, as a function of landuse
 2. FINISHED A - landslide inside
 3a. FINISHED A - splitting into different files 
-3b. A - setting NA value as a variable
+3b. FINISHED A - setting NA value as a variable
 4a. MvdM : 
 	-- layer thickness: 1. top layer thickness, 2. traingular or a fixed factor, 3. max number of layers, 4. calculate layers. 
-	-- default numer soil layers = 20
-	-- split only the top layer when it gets too thick, and then immediately and always merge the bottom two layers if we need it.  
+	-- default number soil layers = 20
+	-- split only the top layer when it gets too thick, and then immediately and always merge the bottom two layers if we need it. Remove/deactivate more complex options 
 4b. Ale - all interface changes
 5. ArT + MvdM : model testing, checking functions, good error messaging (also xml reading writing), factor 100. Arnaud: geom, sinks, Marijn: soil mostly
 6. ArT - check Lorica for loose, unitless, parameters and warnings 
