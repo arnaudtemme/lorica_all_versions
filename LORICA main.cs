@@ -64,7 +64,6 @@ namespace LORICA4
         private GroupBox groupBox6;
         private GroupBox groupBox1;
         private CheckBox water_output_checkbox;
-        private CheckBox depressions_output_checkbox;
         private CheckBox all_process_output_checkbox;
         private CheckBox Soildepth_output_checkbox;
         private CheckBox Alt_change_output_checkbox;
@@ -707,6 +706,7 @@ namespace LORICA4
         private Label label95;
         private Label label107;
         private CheckBox treefall_checkbox;
+        private CheckBox depressions_output_checkbox;
         private CheckBox Spitsbergen_case_study;
 
         private void obsfile_textbox_Click(object sender, EventArgs e)
@@ -726,11 +726,6 @@ namespace LORICA4
         private void timeseries_button_Click_1(object sender, EventArgs e)
         {
             timeseries.Visible = true;
-        }
-
-        private void profiles_button_Click_1(object sender, EventArgs e)
-        {
-            profile.Visible = true;
         }
 
         private void checkBox1_CheckedChanged_3(object sender, EventArgs e)
@@ -1199,7 +1194,6 @@ namespace LORICA4
             this.Box_years_output = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.water_output_checkbox = new System.Windows.Forms.CheckBox();
-            this.depressions_output_checkbox = new System.Windows.Forms.CheckBox();
             this.all_process_output_checkbox = new System.Windows.Forms.CheckBox();
             this.Soildepth_output_checkbox = new System.Windows.Forms.CheckBox();
             this.Alt_change_output_checkbox = new System.Windows.Forms.CheckBox();
@@ -1478,6 +1472,7 @@ namespace LORICA4
             this.label107 = new System.Windows.Forms.Label();
             this.treefall_checkbox = new System.Windows.Forms.CheckBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.depressions_output_checkbox = new System.Windows.Forms.CheckBox();
             label6 = new System.Windows.Forms.Label();
             label76 = new System.Windows.Forms.Label();
             label75 = new System.Windows.Forms.Label();
@@ -2446,7 +2441,7 @@ namespace LORICA4
             // 
             // timeseries_button
             // 
-            this.timeseries_button.Location = new System.Drawing.Point(322, 35);
+            this.timeseries_button.Location = new System.Drawing.Point(330, 16);
             this.timeseries_button.Name = "timeseries_button";
             this.timeseries_button.Size = new System.Drawing.Size(149, 25);
             this.timeseries_button.TabIndex = 223;
@@ -2546,7 +2541,6 @@ namespace LORICA4
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.water_output_checkbox);
-            this.groupBox1.Controls.Add(this.depressions_output_checkbox);
             this.groupBox1.Controls.Add(this.all_process_output_checkbox);
             this.groupBox1.Controls.Add(this.Soildepth_output_checkbox);
             this.groupBox1.Controls.Add(this.Alt_change_output_checkbox);
@@ -2570,17 +2564,6 @@ namespace LORICA4
             this.water_output_checkbox.TabIndex = 227;
             this.water_output_checkbox.Text = "Waterflow";
             this.water_output_checkbox.UseVisualStyleBackColor = true;
-            // 
-            // depressions_output_checkbox
-            // 
-            this.depressions_output_checkbox.AutoSize = true;
-            this.depressions_output_checkbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.depressions_output_checkbox.Location = new System.Drawing.Point(24, 141);
-            this.depressions_output_checkbox.Name = "depressions_output_checkbox";
-            this.depressions_output_checkbox.Size = new System.Drawing.Size(84, 17);
-            this.depressions_output_checkbox.TabIndex = 226;
-            this.depressions_output_checkbox.Text = "Depressions";
-            this.depressions_output_checkbox.UseVisualStyleBackColor = true;
             // 
             // all_process_output_checkbox
             // 
@@ -4705,12 +4688,12 @@ namespace LORICA4
             // 
             this.tabControl4.Controls.Add(this.blocks);
             this.tabControl4.Controls.Add(this.Hydro);
-            this.tabControl4.Controls.Add(this.Options);
             this.tabControl4.Controls.Add(this.treefall);
+            this.tabControl4.Controls.Add(this.Options);
             this.tabControl4.Location = new System.Drawing.Point(8, 18);
             this.tabControl4.Name = "tabControl4";
             this.tabControl4.SelectedIndex = 0;
-            this.tabControl4.Size = new System.Drawing.Size(698, 269);
+            this.tabControl4.Size = new System.Drawing.Size(732, 269);
             this.tabControl4.TabIndex = 0;
             // 
             // blocks
@@ -4731,7 +4714,7 @@ namespace LORICA4
             this.blocks.Location = new System.Drawing.Point(4, 22);
             this.blocks.Name = "blocks";
             this.blocks.Padding = new System.Windows.Forms.Padding(3);
-            this.blocks.Size = new System.Drawing.Size(690, 243);
+            this.blocks.Size = new System.Drawing.Size(724, 243);
             this.blocks.TabIndex = 10;
             this.blocks.Text = "Blocks";
             this.blocks.UseVisualStyleBackColor = true;
@@ -4876,7 +4859,7 @@ namespace LORICA4
             this.Hydro.Controls.Add(this.dailyP);
             this.Hydro.Location = new System.Drawing.Point(4, 22);
             this.Hydro.Name = "Hydro";
-            this.Hydro.Size = new System.Drawing.Size(690, 243);
+            this.Hydro.Size = new System.Drawing.Size(724, 243);
             this.Hydro.TabIndex = 11;
             this.Hydro.Text = "Hydrological parameters";
             this.Hydro.UseVisualStyleBackColor = true;
@@ -5104,6 +5087,7 @@ namespace LORICA4
             // 
             // Options
             // 
+            this.Options.Controls.Add(this.depressions_output_checkbox);
             this.Options.Controls.Add(this.luxlitter_checkbox);
             this.Options.Controls.Add(this.version_Konza_checkbox);
             this.Options.Controls.Add(this.button4);
@@ -5114,7 +5098,7 @@ namespace LORICA4
             this.Options.Controls.Add(this.dtm_iterate_checkbox);
             this.Options.Location = new System.Drawing.Point(4, 22);
             this.Options.Name = "Options";
-            this.Options.Size = new System.Drawing.Size(690, 243);
+            this.Options.Size = new System.Drawing.Size(724, 243);
             this.Options.TabIndex = 12;
             this.Options.Text = "Options";
             this.Options.UseVisualStyleBackColor = true;
@@ -5141,7 +5125,7 @@ namespace LORICA4
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(13, 181);
+            this.button4.Location = new System.Drawing.Point(13, 185);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(191, 41);
             this.button4.TabIndex = 165;
@@ -5347,7 +5331,7 @@ namespace LORICA4
             this.treefall.Controls.Add(this.treefall_checkbox);
             this.treefall.Location = new System.Drawing.Point(4, 22);
             this.treefall.Name = "treefall";
-            this.treefall.Size = new System.Drawing.Size(690, 243);
+            this.treefall.Size = new System.Drawing.Size(724, 243);
             this.treefall.TabIndex = 13;
             this.treefall.Text = "Tree fall";
             this.treefall.UseVisualStyleBackColor = true;
@@ -5446,6 +5430,17 @@ namespace LORICA4
             this.treefall_checkbox.TabIndex = 0;
             this.treefall_checkbox.Text = "Activate this process";
             this.treefall_checkbox.UseVisualStyleBackColor = true;
+            // 
+            // depressions_output_checkbox
+            // 
+            this.depressions_output_checkbox.AutoSize = true;
+            this.depressions_output_checkbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.depressions_output_checkbox.Location = new System.Drawing.Point(13, 42);
+            this.depressions_output_checkbox.Name = "depressions_output_checkbox";
+            this.depressions_output_checkbox.Size = new System.Drawing.Size(143, 17);
+            this.depressions_output_checkbox.TabIndex = 227;
+            this.depressions_output_checkbox.Text = "Write depression outputs";
+            this.depressions_output_checkbox.UseVisualStyleBackColor = true;
             // 
             // Mother_form
             // 
@@ -5559,9 +5554,7 @@ namespace LORICA4
         }   // creates the forms
 
         LORICA4.Output_timeseries timeseries = new LORICA4.Output_timeseries();
-        LORICA4.Output_profile profile = new LORICA4.Output_profile();
         LORICA4.Landuse_determinator landuse_determinator = new LORICA4.Landuse_determinator();
-        LORICA4.About_LORICA aboutbox = new LORICA4.About_LORICA();
         public LORICA4.Soil_specifier soildata = new LORICA4.Soil_specifier();
         int clearmatrices_test()
         {
@@ -7202,85 +7195,6 @@ namespace LORICA4
                     try { out_double(workdir + "\\" + run_number + "_" + t_out + "_ca.asc", camf); }
                     catch { MessageBox.Show("ca has not been written"); }
                 }
-
-                if (profile.radio_pro1_col.Checked)
-                {
-                    if (profile.check_altitude_profile1.Checked)
-                    {
-                        try { out_profile(workdir + "\\profile_1_dtm_" + run_number + "_" + t_out + ".asc", dtm, false, System.Convert.ToInt32(profile.p1_row_col_box.Text)); }
-                        catch { MessageBox.Show("profile_1_dtm_" + run_number + "_" + t_out + ".asc has not been written"); }
-                    }
-                    if (profile.check_waterflow_profile1.Checked)
-                    {
-                        try { out_profile(workdir + "\\profile_1_water_" + run_number + "_" + t_out + ".asc", waterflow_m3, false, System.Convert.ToInt32(profile.p1_row_col_box.Text)); }
-                        catch { MessageBox.Show("profile_1_water_" + run_number + "_" + t_out + ".asc has not been written"); }
-                    }
-                }
-                if (profile.radio_pro1_row.Checked)
-                {
-                    if (profile.check_altitude_profile1.Checked)
-                    {
-                        try { out_profile(workdir + "\\profile_1_dtm_" + run_number + "_" + t_out + ".asc", dtm, true, System.Convert.ToInt32(profile.p1_row_col_box.Text)); }
-                        catch { MessageBox.Show("profile_1_dtm_" + run_number + "_" + t_out + ".asc has not been written"); }
-                    }
-                    if (profile.check_waterflow_profile1.Checked)
-                    {
-                        try { out_profile(workdir + "\\profile_1_water_" + run_number + "_" + t_out + ".asc", waterflow_m3, true, System.Convert.ToInt32(profile.p1_row_col_box.Text)); }
-                        catch { MessageBox.Show("profile_1_water_" + run_number + "_" + t_out + ".asc has not been written"); }
-                    }
-                }
-                if (profile.radio_pro2_col.Checked)
-                {
-                    if (profile.check_altitude_profile1.Checked)
-                    {
-                        try { out_profile(workdir + "\\profile_2_dtm_" + run_number + "_" + t_out + ".asc", dtm, false, System.Convert.ToInt32(profile.p2_row_col_box.Text)); }
-                        catch { MessageBox.Show("profile_2_dtm_" + run_number + "_" + t_out + ".asc has not been written"); }
-                    }
-                    if (profile.check_waterflow_profile1.Checked)
-                    {
-                        try { out_profile(workdir + "\\profile_2_water_" + run_number + "_" + t_out + ".asc", waterflow_m3, false, System.Convert.ToInt32(profile.p2_row_col_box.Text)); }
-                        catch { MessageBox.Show("profile_2_water_" + run_number + "_" + t_out + ".asc has not been written"); }
-                    }
-                }
-                if (profile.radio_pro2_row.Checked)
-                {
-                    if (profile.check_altitude_profile1.Checked)
-                    {
-                        try { out_profile(workdir + "\\profile_2_dtm_" + run_number + "_" + t_out + ".asc", dtm, true, System.Convert.ToInt32(profile.p2_row_col_box.Text)); }
-                        catch { MessageBox.Show("profile_dtm_" + run_number + "_" + t_out + ".asc has not been written"); }
-                    }
-                    if (profile.check_waterflow_profile1.Checked)
-                    {
-                        try { out_profile(workdir + "\\profile_2_water_" + run_number + "_" + t_out + ".asc", waterflow_m3, true, System.Convert.ToInt32(profile.p2_row_col_box.Text)); }
-                        catch { MessageBox.Show("profile_2_water_" + run_number + "_" + t_out + ".asc has not been written"); }
-                    }
-                }
-                if (profile.radio_pro3_col.Checked)
-                {
-                    if (profile.check_altitude_profile1.Checked)
-                    {
-                        try { out_profile(workdir + "\\profile_3_dtm_" + run_number + "_" + t_out + ".asc", dtm, false, System.Convert.ToInt32(profile.p3_row_col_box.Text)); }
-                        catch { MessageBox.Show("profile_3_dtm_" + run_number + "_" + t_out + ".asc has not been written"); }
-                    }
-                    if (profile.check_waterflow_profile1.Checked)
-                    {
-                        try { out_profile(workdir + "\\profile_3_water_" + run_number + "_" + t_out + ".asc", waterflow_m3, false, System.Convert.ToInt32(profile.p3_row_col_box.Text)); }
-                        catch { MessageBox.Show("profile_3_water_" + run_number + "_" + t_out + ".asc has not been written"); }
-                    }
-                }
-                if (profile.radio_pro3_row.Checked)
-                {
-                    if (profile.check_altitude_profile1.Checked)
-                    {
-                        try { out_profile(workdir + "\\profile_3_dtm_" + run_number + "_" + t_out + ".asc", dtm, true, System.Convert.ToInt32(profile.p3_row_col_box.Text)); }
-                        catch { MessageBox.Show("profile_3_dtm_" + run_number + "_" + t_out + ".asc has not been written"); }
-                    }
-                    if (profile.check_waterflow_profile1.Checked)
-                    {
-                        try { out_profile(workdir + "\\profile_3_water_" + run_number + "_" + t_out + ".asc", waterflow_m3, true, System.Convert.ToInt32(profile.p3_row_col_box.Text)); }
-                        catch { MessageBox.Show("profile_3_water_" + run_number + "_" + t_out + ".asc has not been written"); }
-                    }
-                }
                 //Debug.WriteLine("after outputs");
 
             }
@@ -7299,7 +7213,6 @@ namespace LORICA4
             #endregion
 
         }
-
         private void comb_sort()      //sorts the data cells in a dtm in order of increasing altitude
         {
             // comb sorting by Wlodek Dobosiewicz in 1980

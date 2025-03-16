@@ -1,48 +1,11 @@
 - visualization : Marijn finishes, we add case study + data (runfile) --> towards publication
 
-For Alessia/Arnaud:
-- move things into experimental:
--- FINISHED remove solifluction tab
--- tree fall to expe
--- FINISHED blocks to experimental
--- FINISHED rock weathering to soil as spoil production
--- FINISHED pohys weath particle size to soil specifier
--- FINISHED chem weath surface area to soil specifier
--- check clay dynbamics versus chemical weathering
--- change Jagercikova cm units
--- bioturbation upheaval to treefaal
--- split mounding and mxing in bioturbation
--- FINISHED carbon cyclke -> organic matter
--- FINISHED TWI decay constant remove
--- Two OM models next to each other
--- FINISHED remove decalcification
--- EXISTS geochron tracers stays
--- FINISHED particle ages --> luminescence
--- FINISHED hydrological to experimental (and remove default values)
-=- clean up inputs
--- FINISHED allow to read in OM in soil specifier
--- FINISHED iterate DEMs to experiemental; 
--- FINISHED remove sinks and flats before, after ruinning cleaner
--- FINISHED all versions go to experiemental tab, also calib/sensit, also purely calculate terrain derivatives
--- EXISTS add explanmatipon of satrt at year
--- FINISHED remove parallel stuff
--- FINISHED output code : remove
--- structure timeseries output
--- FINISHED when ready --> at final timestep, not a choice
--- FINISHED profile outputs: remove 
--- FINISHED remove diagnostic output
--- add extra output maps to experimental tab (lakes)
--- FINISHED make entire model smaller
--- FINISHED runfile --> settings
--- FINISHED deactivate the start button once clicked
--- FINISHED fix the soil specifier open after clicking X
--- check that the mnodel really does not run when wrong decimal separator
--- update the xml reading and writing with removed and added parameters
-
+KEY TASKS AND THEIR ORDER:
 1. M - transport functions + apply everywhere, remove restart inside the code after crashing
 1. FINISHED Ale - separate branch - improve temporally changing root cohesion, OM input, tillage, bioturbation rate, as a function of landuse
 2. FINISHED A - landslide inside
-3. FINISHED A - splitting into different files, setting NA value as a variable
+3a. FINISHED A - splitting into different files 
+3b. A - setting NA value as a variable
 4a. MvdM : 
 	-- layer thickness: 1. top layer thickness, 2. traingular or a fixed factor, 3. max number of layers, 4. calculate layers. 
 	-- default numer soil layers = 20
@@ -51,3 +14,49 @@ For Alessia/Arnaud:
 5. ArT + MvdM : model testing, checking functions, good error messaging (also xml reading writing), factor 100. Arnaud: geom, sinks, Marijn: soil mostly
 6. ArT - check Lorica for loose, unitless, parameters and warnings 
 7 separate branch Alessia; - proglacial code merge Alessia
+
+
+INTERFACE RELATED:
+For Alessia:
+move things into experimental:
+-- FINISHED remove solifluction tab
+-- FINISHED tree fall to expe
+-- FINISHED blocks to experimental
+-- FINISHED rock weathering to soil as spoil production
+-- FINISHED pohys weath particle size to soil specifier
+-- FINISHED chem weath surface area to soil specifier
+-- change Jagercikova cm units
+-- FINISHED carbon cyclke -> organic matter
+-- FINISHED TWI decay constant remove
+-- FINISHED remove decalcification
+-- EXISTS geochron tracers stays
+-- FINISHED particle ages --> luminescence
+-- FINISHED hydrological to experimental (and remove default values)
+=- clean up input section
+-- FINISHED allow to read in OM in soil specifier
+-- FINISHED iterate DEMs to experiemental; 
+-- FINISHED remove sinks and flats before, after ruinning cleaner
+-- FINISHED all versions go to experiemental tab, also calib/sensit, also purely calculate terrain derivatives
+-- EXISTS add explanation of satrt at year
+-- FINISHED remove parallel stuff
+-- FINISHED output code : remove
+-- structure timeseries output
+-- FINISHED when ready --> at final timestep, not a choice
+-- FINISHED profile outputs: remove 
+-- FINISHED remove diagnostic output
+-- FINISHED/MORE POSSIBLE add extra output maps to experimental tab (lakes)
+-- FINISHED make entire model smaller
+-- FINISHED runfile --> settings
+-- FINISHED deactivate the start button once clicked
+-- FINISHED fix the soil specifier open after clicking X
+-- check that the mnodel really does not run when wrong decimal separator
+-- update the xml reading and writing with removed and added parameters (esp. landuse and soil specifier variables)
+
+For Arnaud:
+-- steps already done
+
+For Marijn:
+-- Two OM models next to each other
+-- bioturbation upheaval to treefaal
+-- split mounding and mxing in bioturbation
+-- check clay dynbamics versus chemical weathering
