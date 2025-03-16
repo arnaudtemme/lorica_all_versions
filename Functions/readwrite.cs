@@ -1635,23 +1635,6 @@ namespace LORICA4
                         timeseries.timeseries_soil_coarser_fraction_textbox.Text = xreader.ReadElementString("coarser_fraction");
                         timeseries.timeseries_soil_thicker_textbox.Text = xreader.ReadElementString("thicker_threshold");
                         xreader.ReadEndElement();
-                        xreader.ReadStartElement("Profiles");
-                        profile.radio_pro1_row.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("profile1_row"));
-                        profile.radio_pro1_col.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("profile1_col"));
-                        profile.radio_pro2_row.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("profile2_row"));
-                        profile.radio_pro2_col.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("profile2_col"));
-                        profile.radio_pro3_row.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("profile3_row"));
-                        profile.radio_pro3_col.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("profile3_col"));
-                        profile.p1_row_col_box.Text = xreader.ReadElementString("p1_number");
-                        profile.p2_row_col_box.Text = xreader.ReadElementString("p2_number");
-                        profile.p3_row_col_box.Text = xreader.ReadElementString("p3_number");
-                        profile.check_waterflow_profile1.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("p1_waterflow"));
-                        profile.check_altitude_profile1.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("p1_altitude"));
-                        profile.check_waterflow_profile2.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("p2_waterflow"));
-                        profile.check_altitude_profile2.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("p2_altitude"));
-                        profile.check_waterflow_profile3.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("p3_waterflow"));
-                        profile.check_altitude_profile3.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("p3_altitude"));
-                        xreader.ReadEndElement();
                         xreader.ReadEndElement();
                     }
                     catch { read_error = 1; Debug.WriteLine("failed reading output paras"); }
@@ -2001,24 +1984,6 @@ namespace LORICA4
                 xwriter.WriteElementString("soil_col", timeseries.timeseries_soil_cell_row.Text);
                 xwriter.WriteElementString("coarser_fraction", timeseries.timeseries_soil_coarser_fraction_textbox.Text);
                 xwriter.WriteElementString("thicker_threshold", timeseries.timeseries_soil_thicker_textbox.Text);
-                xwriter.WriteEndElement();
-
-                xwriter.WriteStartElement("Profiles");
-                xwriter.WriteElementString("profile1_row", XmlConvert.ToString(profile.radio_pro1_row.Checked));
-                xwriter.WriteElementString("profile1_col", XmlConvert.ToString(profile.radio_pro1_col.Checked));
-                xwriter.WriteElementString("profile2_row", XmlConvert.ToString(profile.radio_pro2_row.Checked));
-                xwriter.WriteElementString("profile2_col", XmlConvert.ToString(profile.radio_pro2_col.Checked));
-                xwriter.WriteElementString("profile3_row", XmlConvert.ToString(profile.radio_pro3_row.Checked));
-                xwriter.WriteElementString("profile3_col", XmlConvert.ToString(profile.radio_pro3_col.Checked));
-                xwriter.WriteElementString("p1_number", profile.p1_row_col_box.Text);
-                xwriter.WriteElementString("p2_number", profile.p2_row_col_box.Text);
-                xwriter.WriteElementString("p3_number", profile.p3_row_col_box.Text);
-                xwriter.WriteElementString("p1_waterflow", XmlConvert.ToString(profile.check_waterflow_profile1.Checked));
-                xwriter.WriteElementString("p1_altitude", XmlConvert.ToString(profile.check_altitude_profile1.Checked));
-                xwriter.WriteElementString("p2_waterflow", XmlConvert.ToString(profile.check_waterflow_profile2.Checked));
-                xwriter.WriteElementString("p2_altitude", XmlConvert.ToString(profile.check_altitude_profile2.Checked));
-                xwriter.WriteElementString("p3_waterflow", XmlConvert.ToString(profile.check_waterflow_profile3.Checked));
-                xwriter.WriteElementString("p3_altitude", XmlConvert.ToString(profile.check_altitude_profile3.Checked));
                 xwriter.WriteEndElement();
 
                 xwriter.WriteEndElement();
