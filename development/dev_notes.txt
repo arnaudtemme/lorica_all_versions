@@ -40,7 +40,7 @@ For Alessia:
 -- EXISTS add explanation of satrt at year
 -- FINISHED remove parallel stuff
 -- FINISHED output code : remove
--- structure timeseries output
+-- FINISHED structure timeseries output
 -- FINISHED when ready --> at final timestep, not a choice
 -- FINISHED profile outputs: remove 
 -- FINISHED remove diagnostic output

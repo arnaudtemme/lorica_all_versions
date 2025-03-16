@@ -131,14 +131,8 @@ namespace LORICA4
         #endregion
 
         #region global model parameters
-        private System.Windows.Forms.Label label88;
         private Button soil_specify_button;
         private bool merely_calculating_derivatives;
-        private System.Windows.Forms.Label label98;
-        private TextBox temp_input_filename_textbox;
-        private TextBox temp_constant_value_box;
-        private System.Windows.Forms.Label label99;
-        private CheckBox check_time_T;
         private System.Windows.Forms.Timer timer1;
         private TextBox textbox_t_intervene;
         private CheckBox checkbox_t_intervene;
@@ -707,6 +701,10 @@ namespace LORICA4
         private Label label107;
         private CheckBox treefall_checkbox;
         private CheckBox depressions_output_checkbox;
+        private GroupBox groupBox5;
+        private GroupBox groupBox13;
+        private GroupBox groupBox17;
+        private Label label37;
         private CheckBox Spitsbergen_case_study;
 
         private void obsfile_textbox_Click(object sender, EventArgs e)
@@ -796,9 +794,6 @@ namespace LORICA4
             dailyT_avg.Enabled = (daily_water.CheckState == CheckState.Checked);
             dailyT_min.Enabled = (daily_water.CheckState == CheckState.Checked);
             dailyT_max.Enabled = (daily_water.CheckState == CheckState.Checked);
-            temp_constant_value_box.Enabled = (daily_water.CheckState == CheckState.Checked);
-            temp_input_filename_textbox.Enabled = (daily_water.CheckState == CheckState.Checked);
-            check_time_T.Enabled = (daily_water.CheckState == CheckState.Checked);
             latitude_deg.Enabled = (daily_water.CheckState == CheckState.Checked);
             latitude_min.Enabled = (daily_water.CheckState == CheckState.Checked);
             snowmelt_factor_textbox.Enabled = (daily_water.CheckState == CheckState.Checked);
@@ -1160,8 +1155,6 @@ namespace LORICA4
             this.label29 = new System.Windows.Forms.Label();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.landuse_determinator_button = new System.Windows.Forms.Button();
-            this.label98 = new System.Windows.Forms.Label();
-            this.label99 = new System.Windows.Forms.Label();
             this.checkbox_t_intervene = new System.Windows.Forms.CheckBox();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
             this.parameter_k1_textbox = new System.Windows.Forms.TextBox();
@@ -1213,11 +1206,7 @@ namespace LORICA4
             this.checkbox_layer_thickness = new System.Windows.Forms.CheckBox();
             this.label_max_soil_layers = new System.Windows.Forms.Label();
             this.textbox_max_soil_layers = new System.Windows.Forms.TextBox();
-            this.check_time_T = new System.Windows.Forms.CheckBox();
-            this.temp_input_filename_textbox = new System.Windows.Forms.TextBox();
-            this.temp_constant_value_box = new System.Windows.Forms.TextBox();
             this.soil_specify_button = new System.Windows.Forms.Button();
-            this.label88 = new System.Windows.Forms.Label();
             this.explain_input_button = new System.Windows.Forms.Button();
             this.check_time_evap = new System.Windows.Forms.CheckBox();
             this.check_time_infil = new System.Windows.Forms.CheckBox();
@@ -1473,6 +1462,10 @@ namespace LORICA4
             this.Spitsbergen_case_study = new System.Windows.Forms.CheckBox();
             this.dtm_iterate_checkbox = new System.Windows.Forms.CheckBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.groupBox13 = new System.Windows.Forms.GroupBox();
+            this.groupBox17 = new System.Windows.Forms.GroupBox();
+            this.label37 = new System.Windows.Forms.Label();
             label6 = new System.Windows.Forms.Label();
             label76 = new System.Windows.Forms.Label();
             label75 = new System.Windows.Forms.Label();
@@ -1556,11 +1549,14 @@ namespace LORICA4
             this.treefall.SuspendLayout();
             this.Options.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this.groupBox5.SuspendLayout();
+            this.groupBox13.SuspendLayout();
+            this.groupBox17.SuspendLayout();
             this.SuspendLayout();
             // 
             // label6
             // 
-            label6.Location = new System.Drawing.Point(179, 22);
+            label6.Location = new System.Drawing.Point(179, 13);
             label6.Name = "label6";
             label6.Size = new System.Drawing.Size(41, 24);
             label6.TabIndex = 109;
@@ -2122,7 +2118,7 @@ namespace LORICA4
             // 
             // label25
             // 
-            this.label25.Location = new System.Drawing.Point(19, 164);
+            this.label25.Location = new System.Drawing.Point(12, 73);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(143, 24);
             this.label25.TabIndex = 97;
@@ -2132,7 +2128,7 @@ namespace LORICA4
             // 
             // label14
             // 
-            this.label14.Location = new System.Drawing.Point(19, 190);
+            this.label14.Location = new System.Drawing.Point(12, 99);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(143, 24);
             this.label14.TabIndex = 115;
@@ -2142,7 +2138,7 @@ namespace LORICA4
             // 
             // label15
             // 
-            this.label15.Location = new System.Drawing.Point(19, 216);
+            this.label15.Location = new System.Drawing.Point(12, 125);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(151, 24);
             this.label15.TabIndex = 118;
@@ -2152,7 +2148,7 @@ namespace LORICA4
             // 
             // label17
             // 
-            this.label17.Location = new System.Drawing.Point(19, 140);
+            this.label17.Location = new System.Drawing.Point(12, 49);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(143, 24);
             this.label17.TabIndex = 121;
@@ -2172,7 +2168,7 @@ namespace LORICA4
             // 
             // label7
             // 
-            this.label7.Location = new System.Drawing.Point(407, 22);
+            this.label7.Location = new System.Drawing.Point(407, 13);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(134, 24);
             this.label7.TabIndex = 110;
@@ -2183,7 +2179,7 @@ namespace LORICA4
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(258, 23);
+            this.label5.Location = new System.Drawing.Point(258, 14);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(51, 24);
             this.label5.TabIndex = 108;
@@ -2193,7 +2189,7 @@ namespace LORICA4
             // 
             // label29
             // 
-            this.label29.Location = new System.Drawing.Point(217, 22);
+            this.label29.Location = new System.Drawing.Point(217, 13);
             this.label29.Name = "label29";
             this.label29.Size = new System.Drawing.Size(24, 24);
             this.label29.TabIndex = 139;
@@ -2204,9 +2200,9 @@ namespace LORICA4
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.landuse_determinator_button);
-            this.groupBox3.Location = new System.Drawing.Point(589, 123);
+            this.groupBox3.Location = new System.Drawing.Point(563, 29);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(158, 55);
+            this.groupBox3.Size = new System.Drawing.Size(121, 55);
             this.groupBox3.TabIndex = 136;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "for landuse: ";
@@ -2216,31 +2212,11 @@ namespace LORICA4
             // 
             this.landuse_determinator_button.Location = new System.Drawing.Point(11, 19);
             this.landuse_determinator_button.Name = "landuse_determinator_button";
-            this.landuse_determinator_button.Size = new System.Drawing.Size(122, 23);
+            this.landuse_determinator_button.Size = new System.Drawing.Size(110, 23);
             this.landuse_determinator_button.TabIndex = 0;
-            this.landuse_determinator_button.Text = "determine effects";
+            this.landuse_determinator_button.Text = "determine effects..";
             this.landuse_determinator_button.UseVisualStyleBackColor = true;
             this.landuse_determinator_button.Click += new System.EventHandler(this.landuse_determinator_button_Click);
-            // 
-            // label98
-            // 
-            this.label98.Location = new System.Drawing.Point(19, 245);
-            this.label98.Name = "label98";
-            this.label98.Size = new System.Drawing.Size(151, 24);
-            this.label98.TabIndex = 152;
-            this.label98.Text = "mean annual temperature [C]";
-            this.label98.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.toolTip1.SetToolTip(this.label98, "Hourly rainfall data - in an ascii format");
-            // 
-            // label99
-            // 
-            this.label99.Location = new System.Drawing.Point(52, 269);
-            this.label99.Name = "label99";
-            this.label99.Size = new System.Drawing.Size(151, 24);
-            this.label99.TabIndex = 153;
-            this.label99.Text = "Only with daily water balance";
-            this.label99.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.toolTip1.SetToolTip(this.label99, "Hourly rainfall data - in an ascii format");
             // 
             // checkbox_t_intervene
             // 
@@ -2723,55 +2699,13 @@ namespace LORICA4
             // 
             // Input
             // 
-            this.Input.Controls.Add(this.textbox_layer_thickness);
-            this.Input.Controls.Add(this.checkbox_layer_thickness);
-            this.Input.Controls.Add(this.label_max_soil_layers);
-            this.Input.Controls.Add(this.textbox_max_soil_layers);
-            this.Input.Controls.Add(this.check_time_T);
-            this.Input.Controls.Add(this.label99);
-            this.Input.Controls.Add(this.label98);
-            this.Input.Controls.Add(this.temp_input_filename_textbox);
-            this.Input.Controls.Add(this.temp_constant_value_box);
-            this.Input.Controls.Add(this.soil_specify_button);
-            this.Input.Controls.Add(this.label88);
-            this.Input.Controls.Add(this.groupBox3);
+            this.Input.Controls.Add(this.groupBox17);
+            this.Input.Controls.Add(this.groupBox13);
             this.Input.Controls.Add(this.explain_input_button);
-            this.Input.Controls.Add(this.check_time_evap);
-            this.Input.Controls.Add(this.check_time_infil);
-            this.Input.Controls.Add(this.check_time_rain);
-            this.Input.Controls.Add(this.check_time_till_fields);
-            this.Input.Controls.Add(this.check_time_landuse);
             this.Input.Controls.Add(this.label29);
-            this.Input.Controls.Add(this.check_space_DTM);
-            this.Input.Controls.Add(this.tillfields_constant_textbox);
-            this.Input.Controls.Add(this.tillfields_input_filename_textbox);
-            this.Input.Controls.Add(this.evap_constant_value_box);
-            this.Input.Controls.Add(this.evap_input_filename_textbox);
-            this.Input.Controls.Add(this.infil_constant_value_box);
-            this.Input.Controls.Add(this.infil_input_filename_textbox);
-            this.Input.Controls.Add(this.rainfall_constant_value_box);
-            this.Input.Controls.Add(this.landuse_constant_value_box);
-            this.Input.Controls.Add(this.soildepth_constant_value_box);
-            this.Input.Controls.Add(this.landuse_input_filename_textbox);
-            this.Input.Controls.Add(this.soildepth_input_filename_textbox);
-            this.Input.Controls.Add(this.rain_input_filename_textbox);
-            this.Input.Controls.Add(this.dtm_input_filename_textbox);
-            this.Input.Controls.Add(this.check_space_evap);
-            this.Input.Controls.Add(this.check_space_infil);
-            this.Input.Controls.Add(this.check_space_rain);
-            this.Input.Controls.Add(this.check_space_till_fields);
-            this.Input.Controls.Add(this.check_space_landuse);
-            this.Input.Controls.Add(this.check_space_soildepth);
-            this.Input.Controls.Add(this.label17);
-            this.Input.Controls.Add(this.label15);
-            this.Input.Controls.Add(this.label14);
             this.Input.Controls.Add(this.label7);
             this.Input.Controls.Add(label6);
             this.Input.Controls.Add(this.label5);
-            this.Input.Controls.Add(this.label4);
-            this.Input.Controls.Add(this.label3);
-            this.Input.Controls.Add(this.label25);
-            this.Input.Controls.Add(this.label23);
             this.Input.Location = new System.Drawing.Point(4, 22);
             this.Input.Name = "Input";
             this.Input.Size = new System.Drawing.Size(803, 293);
@@ -2781,9 +2715,9 @@ namespace LORICA4
             // 
             // textbox_layer_thickness
             // 
-            this.textbox_layer_thickness.Location = new System.Drawing.Point(736, 265);
+            this.textbox_layer_thickness.Location = new System.Drawing.Point(148, 43);
             this.textbox_layer_thickness.Name = "textbox_layer_thickness";
-            this.textbox_layer_thickness.Size = new System.Drawing.Size(50, 20);
+            this.textbox_layer_thickness.Size = new System.Drawing.Size(38, 20);
             this.textbox_layer_thickness.TabIndex = 158;
             this.textbox_layer_thickness.Text = "0.10";
             // 
@@ -2792,7 +2726,7 @@ namespace LORICA4
             this.checkbox_layer_thickness.AutoSize = true;
             this.checkbox_layer_thickness.Checked = true;
             this.checkbox_layer_thickness.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkbox_layer_thickness.Location = new System.Drawing.Point(558, 266);
+            this.checkbox_layer_thickness.Location = new System.Drawing.Point(12, 45);
             this.checkbox_layer_thickness.Name = "checkbox_layer_thickness";
             this.checkbox_layer_thickness.Size = new System.Drawing.Size(130, 17);
             this.checkbox_layer_thickness.TabIndex = 157;
@@ -2803,71 +2737,33 @@ namespace LORICA4
             // label_max_soil_layers
             // 
             this.label_max_soil_layers.AutoSize = true;
-            this.label_max_soil_layers.Location = new System.Drawing.Point(586, 242);
+            this.label_max_soil_layers.Location = new System.Drawing.Point(115, 23);
             this.label_max_soil_layers.Name = "label_max_soil_layers";
-            this.label_max_soil_layers.Size = new System.Drawing.Size(104, 13);
+            this.label_max_soil_layers.Size = new System.Drawing.Size(84, 13);
             this.label_max_soil_layers.TabIndex = 156;
-            this.label_max_soil_layers.Text = "Number of soil layers";
+            this.label_max_soil_layers.Text = "number of layers";
             // 
             // textbox_max_soil_layers
             // 
-            this.textbox_max_soil_layers.Location = new System.Drawing.Point(736, 241);
+            this.textbox_max_soil_layers.Location = new System.Drawing.Point(202, 20);
             this.textbox_max_soil_layers.Name = "textbox_max_soil_layers";
-            this.textbox_max_soil_layers.Size = new System.Drawing.Size(50, 20);
+            this.textbox_max_soil_layers.Size = new System.Drawing.Size(26, 20);
             this.textbox_max_soil_layers.TabIndex = 155;
             this.textbox_max_soil_layers.Text = "25";
             // 
-            // check_time_T
-            // 
-            this.check_time_T.AutoSize = true;
-            this.check_time_T.Enabled = false;
-            this.check_time_T.Location = new System.Drawing.Point(220, 251);
-            this.check_time_T.Name = "check_time_T";
-            this.check_time_T.Size = new System.Drawing.Size(15, 14);
-            this.check_time_T.TabIndex = 154;
-            this.check_time_T.UseVisualStyleBackColor = true;
-            // 
-            // temp_input_filename_textbox
-            // 
-            this.temp_input_filename_textbox.Enabled = false;
-            this.temp_input_filename_textbox.Location = new System.Drawing.Point(258, 245);
-            this.temp_input_filename_textbox.Name = "temp_input_filename_textbox";
-            this.temp_input_filename_textbox.Size = new System.Drawing.Size(120, 20);
-            this.temp_input_filename_textbox.TabIndex = 151;
-            this.temp_input_filename_textbox.Text = "..";
-            this.temp_input_filename_textbox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // temp_constant_value_box
-            // 
-            this.temp_constant_value_box.Enabled = false;
-            this.temp_constant_value_box.Location = new System.Drawing.Point(410, 245);
-            this.temp_constant_value_box.Name = "temp_constant_value_box";
-            this.temp_constant_value_box.Size = new System.Drawing.Size(120, 20);
-            this.temp_constant_value_box.TabIndex = 150;
-            this.temp_constant_value_box.Text = "10";
-            // 
             // soil_specify_button
             // 
-            this.soil_specify_button.Location = new System.Drawing.Point(188, 95);
+            this.soil_specify_button.Location = new System.Drawing.Point(6, 19);
             this.soil_specify_button.Name = "soil_specify_button";
-            this.soil_specify_button.Size = new System.Drawing.Size(63, 20);
+            this.soil_specify_button.Size = new System.Drawing.Size(97, 20);
             this.soil_specify_button.TabIndex = 149;
-            this.soil_specify_button.Text = "specify ..";
+            this.soil_specify_button.Text = "set properties..";
             this.soil_specify_button.UseVisualStyleBackColor = true;
             this.soil_specify_button.Click += new System.EventHandler(this.soil_specify_button_Click);
             // 
-            // label88
-            // 
-            this.label88.Location = new System.Drawing.Point(19, 95);
-            this.label88.Name = "label88";
-            this.label88.Size = new System.Drawing.Size(104, 24);
-            this.label88.TabIndex = 148;
-            this.label88.Text = "soilproperties";
-            this.label88.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
             // explain_input_button
             // 
-            this.explain_input_button.Location = new System.Drawing.Point(315, 25);
+            this.explain_input_button.Location = new System.Drawing.Point(315, 16);
             this.explain_input_button.Name = "explain_input_button";
             this.explain_input_button.Size = new System.Drawing.Size(63, 20);
             this.explain_input_button.TabIndex = 147;
@@ -2878,7 +2774,7 @@ namespace LORICA4
             // check_time_evap
             // 
             this.check_time_evap.AutoSize = true;
-            this.check_time_evap.Location = new System.Drawing.Point(220, 222);
+            this.check_time_evap.Location = new System.Drawing.Point(213, 131);
             this.check_time_evap.Name = "check_time_evap";
             this.check_time_evap.Size = new System.Drawing.Size(15, 14);
             this.check_time_evap.TabIndex = 145;
@@ -2888,7 +2784,7 @@ namespace LORICA4
             // check_time_infil
             // 
             this.check_time_infil.AutoSize = true;
-            this.check_time_infil.Location = new System.Drawing.Point(220, 198);
+            this.check_time_infil.Location = new System.Drawing.Point(213, 107);
             this.check_time_infil.Name = "check_time_infil";
             this.check_time_infil.Size = new System.Drawing.Size(15, 14);
             this.check_time_infil.TabIndex = 144;
@@ -2898,7 +2794,7 @@ namespace LORICA4
             // check_time_rain
             // 
             this.check_time_rain.AutoSize = true;
-            this.check_time_rain.Location = new System.Drawing.Point(220, 174);
+            this.check_time_rain.Location = new System.Drawing.Point(213, 83);
             this.check_time_rain.Name = "check_time_rain";
             this.check_time_rain.Size = new System.Drawing.Size(15, 14);
             this.check_time_rain.TabIndex = 143;
@@ -2908,7 +2804,7 @@ namespace LORICA4
             // check_time_till_fields
             // 
             this.check_time_till_fields.AutoSize = true;
-            this.check_time_till_fields.Location = new System.Drawing.Point(220, 150);
+            this.check_time_till_fields.Location = new System.Drawing.Point(213, 59);
             this.check_time_till_fields.Name = "check_time_till_fields";
             this.check_time_till_fields.Size = new System.Drawing.Size(15, 14);
             this.check_time_till_fields.TabIndex = 142;
@@ -2918,7 +2814,7 @@ namespace LORICA4
             // check_time_landuse
             // 
             this.check_time_landuse.AutoSize = true;
-            this.check_time_landuse.Location = new System.Drawing.Point(220, 123);
+            this.check_time_landuse.Location = new System.Drawing.Point(213, 32);
             this.check_time_landuse.Name = "check_time_landuse";
             this.check_time_landuse.Size = new System.Drawing.Size(15, 14);
             this.check_time_landuse.TabIndex = 141;
@@ -2931,7 +2827,7 @@ namespace LORICA4
             this.check_space_DTM.Checked = true;
             this.check_space_DTM.CheckState = System.Windows.Forms.CheckState.Checked;
             this.check_space_DTM.Enabled = false;
-            this.check_space_DTM.Location = new System.Drawing.Point(188, 51);
+            this.check_space_DTM.Location = new System.Drawing.Point(182, 22);
             this.check_space_DTM.Name = "check_space_DTM";
             this.check_space_DTM.Size = new System.Drawing.Size(15, 14);
             this.check_space_DTM.TabIndex = 138;
@@ -2939,17 +2835,17 @@ namespace LORICA4
             // 
             // tillfields_constant_textbox
             // 
-            this.tillfields_constant_textbox.Location = new System.Drawing.Point(410, 145);
+            this.tillfields_constant_textbox.Location = new System.Drawing.Point(403, 54);
             this.tillfields_constant_textbox.Name = "tillfields_constant_textbox";
             this.tillfields_constant_textbox.ReadOnly = true;
-            this.tillfields_constant_textbox.Size = new System.Drawing.Size(120, 20);
+            this.tillfields_constant_textbox.Size = new System.Drawing.Size(80, 20);
             this.tillfields_constant_textbox.TabIndex = 123;
             this.tillfields_constant_textbox.Text = "1";
             // 
             // tillfields_input_filename_textbox
             // 
             this.tillfields_input_filename_textbox.Enabled = false;
-            this.tillfields_input_filename_textbox.Location = new System.Drawing.Point(258, 145);
+            this.tillfields_input_filename_textbox.Location = new System.Drawing.Point(251, 54);
             this.tillfields_input_filename_textbox.Name = "tillfields_input_filename_textbox";
             this.tillfields_input_filename_textbox.Size = new System.Drawing.Size(120, 20);
             this.tillfields_input_filename_textbox.TabIndex = 122;
@@ -2959,16 +2855,16 @@ namespace LORICA4
             // 
             // evap_constant_value_box
             // 
-            this.evap_constant_value_box.Location = new System.Drawing.Point(410, 219);
+            this.evap_constant_value_box.Location = new System.Drawing.Point(403, 128);
             this.evap_constant_value_box.Name = "evap_constant_value_box";
-            this.evap_constant_value_box.Size = new System.Drawing.Size(120, 20);
+            this.evap_constant_value_box.Size = new System.Drawing.Size(80, 20);
             this.evap_constant_value_box.TabIndex = 120;
             this.evap_constant_value_box.Text = "0.35";
             // 
             // evap_input_filename_textbox
             // 
             this.evap_input_filename_textbox.Enabled = false;
-            this.evap_input_filename_textbox.Location = new System.Drawing.Point(258, 219);
+            this.evap_input_filename_textbox.Location = new System.Drawing.Point(251, 128);
             this.evap_input_filename_textbox.Name = "evap_input_filename_textbox";
             this.evap_input_filename_textbox.Size = new System.Drawing.Size(120, 20);
             this.evap_input_filename_textbox.TabIndex = 119;
@@ -2978,16 +2874,16 @@ namespace LORICA4
             // 
             // infil_constant_value_box
             // 
-            this.infil_constant_value_box.Location = new System.Drawing.Point(410, 193);
+            this.infil_constant_value_box.Location = new System.Drawing.Point(403, 102);
             this.infil_constant_value_box.Name = "infil_constant_value_box";
-            this.infil_constant_value_box.Size = new System.Drawing.Size(120, 20);
+            this.infil_constant_value_box.Size = new System.Drawing.Size(80, 20);
             this.infil_constant_value_box.TabIndex = 117;
             this.infil_constant_value_box.Text = "0.150";
             // 
             // infil_input_filename_textbox
             // 
             this.infil_input_filename_textbox.Enabled = false;
-            this.infil_input_filename_textbox.Location = new System.Drawing.Point(258, 193);
+            this.infil_input_filename_textbox.Location = new System.Drawing.Point(251, 102);
             this.infil_input_filename_textbox.Name = "infil_input_filename_textbox";
             this.infil_input_filename_textbox.Size = new System.Drawing.Size(120, 20);
             this.infil_input_filename_textbox.TabIndex = 116;
@@ -2997,31 +2893,31 @@ namespace LORICA4
             // 
             // rainfall_constant_value_box
             // 
-            this.rainfall_constant_value_box.Location = new System.Drawing.Point(410, 169);
+            this.rainfall_constant_value_box.Location = new System.Drawing.Point(403, 78);
             this.rainfall_constant_value_box.Name = "rainfall_constant_value_box";
-            this.rainfall_constant_value_box.Size = new System.Drawing.Size(120, 20);
+            this.rainfall_constant_value_box.Size = new System.Drawing.Size(80, 20);
             this.rainfall_constant_value_box.TabIndex = 114;
             this.rainfall_constant_value_box.Text = "0.700";
             // 
             // landuse_constant_value_box
             // 
-            this.landuse_constant_value_box.Location = new System.Drawing.Point(410, 120);
+            this.landuse_constant_value_box.Location = new System.Drawing.Point(403, 29);
             this.landuse_constant_value_box.Name = "landuse_constant_value_box";
-            this.landuse_constant_value_box.Size = new System.Drawing.Size(120, 20);
+            this.landuse_constant_value_box.Size = new System.Drawing.Size(80, 20);
             this.landuse_constant_value_box.TabIndex = 113;
             this.landuse_constant_value_box.Text = "1";
             // 
             // soildepth_constant_value_box
             // 
-            this.soildepth_constant_value_box.Location = new System.Drawing.Point(410, 76);
+            this.soildepth_constant_value_box.Location = new System.Drawing.Point(404, 47);
             this.soildepth_constant_value_box.Name = "soildepth_constant_value_box";
-            this.soildepth_constant_value_box.Size = new System.Drawing.Size(120, 20);
+            this.soildepth_constant_value_box.Size = new System.Drawing.Size(80, 20);
             this.soildepth_constant_value_box.TabIndex = 112;
             this.soildepth_constant_value_box.Text = "5";
             // 
             // landuse_input_filename_textbox
             // 
-            this.landuse_input_filename_textbox.Location = new System.Drawing.Point(258, 118);
+            this.landuse_input_filename_textbox.Location = new System.Drawing.Point(251, 27);
             this.landuse_input_filename_textbox.Name = "landuse_input_filename_textbox";
             this.landuse_input_filename_textbox.Size = new System.Drawing.Size(120, 20);
             this.landuse_input_filename_textbox.TabIndex = 107;
@@ -3031,7 +2927,7 @@ namespace LORICA4
             // 
             // soildepth_input_filename_textbox
             // 
-            this.soildepth_input_filename_textbox.Location = new System.Drawing.Point(258, 76);
+            this.soildepth_input_filename_textbox.Location = new System.Drawing.Point(252, 47);
             this.soildepth_input_filename_textbox.Name = "soildepth_input_filename_textbox";
             this.soildepth_input_filename_textbox.Size = new System.Drawing.Size(120, 20);
             this.soildepth_input_filename_textbox.TabIndex = 105;
@@ -3042,7 +2938,7 @@ namespace LORICA4
             // rain_input_filename_textbox
             // 
             this.rain_input_filename_textbox.Enabled = false;
-            this.rain_input_filename_textbox.Location = new System.Drawing.Point(258, 169);
+            this.rain_input_filename_textbox.Location = new System.Drawing.Point(251, 78);
             this.rain_input_filename_textbox.Name = "rain_input_filename_textbox";
             this.rain_input_filename_textbox.Size = new System.Drawing.Size(120, 20);
             this.rain_input_filename_textbox.TabIndex = 103;
@@ -3052,7 +2948,7 @@ namespace LORICA4
             // 
             // dtm_input_filename_textbox
             // 
-            this.dtm_input_filename_textbox.Location = new System.Drawing.Point(258, 50);
+            this.dtm_input_filename_textbox.Location = new System.Drawing.Point(252, 21);
             this.dtm_input_filename_textbox.Name = "dtm_input_filename_textbox";
             this.dtm_input_filename_textbox.Size = new System.Drawing.Size(120, 20);
             this.dtm_input_filename_textbox.TabIndex = 100;
@@ -3063,7 +2959,7 @@ namespace LORICA4
             // check_space_evap
             // 
             this.check_space_evap.AutoSize = true;
-            this.check_space_evap.Location = new System.Drawing.Point(188, 222);
+            this.check_space_evap.Location = new System.Drawing.Point(181, 131);
             this.check_space_evap.Name = "check_space_evap";
             this.check_space_evap.Size = new System.Drawing.Size(15, 14);
             this.check_space_evap.TabIndex = 130;
@@ -3073,7 +2969,7 @@ namespace LORICA4
             // check_space_infil
             // 
             this.check_space_infil.AutoSize = true;
-            this.check_space_infil.Location = new System.Drawing.Point(188, 198);
+            this.check_space_infil.Location = new System.Drawing.Point(181, 107);
             this.check_space_infil.Name = "check_space_infil";
             this.check_space_infil.Size = new System.Drawing.Size(15, 14);
             this.check_space_infil.TabIndex = 129;
@@ -3083,7 +2979,7 @@ namespace LORICA4
             // check_space_rain
             // 
             this.check_space_rain.AutoSize = true;
-            this.check_space_rain.Location = new System.Drawing.Point(188, 174);
+            this.check_space_rain.Location = new System.Drawing.Point(181, 83);
             this.check_space_rain.Name = "check_space_rain";
             this.check_space_rain.Size = new System.Drawing.Size(15, 14);
             this.check_space_rain.TabIndex = 128;
@@ -3093,7 +2989,7 @@ namespace LORICA4
             // check_space_till_fields
             // 
             this.check_space_till_fields.AutoSize = true;
-            this.check_space_till_fields.Location = new System.Drawing.Point(188, 150);
+            this.check_space_till_fields.Location = new System.Drawing.Point(181, 59);
             this.check_space_till_fields.Name = "check_space_till_fields";
             this.check_space_till_fields.Size = new System.Drawing.Size(15, 14);
             this.check_space_till_fields.TabIndex = 127;
@@ -3103,7 +2999,7 @@ namespace LORICA4
             // check_space_landuse
             // 
             this.check_space_landuse.AutoSize = true;
-            this.check_space_landuse.Location = new System.Drawing.Point(188, 123);
+            this.check_space_landuse.Location = new System.Drawing.Point(181, 32);
             this.check_space_landuse.Name = "check_space_landuse";
             this.check_space_landuse.Size = new System.Drawing.Size(15, 14);
             this.check_space_landuse.TabIndex = 126;
@@ -3113,7 +3009,7 @@ namespace LORICA4
             // check_space_soildepth
             // 
             this.check_space_soildepth.AutoSize = true;
-            this.check_space_soildepth.Location = new System.Drawing.Point(188, 76);
+            this.check_space_soildepth.Location = new System.Drawing.Point(182, 47);
             this.check_space_soildepth.Name = "check_space_soildepth";
             this.check_space_soildepth.Size = new System.Drawing.Size(15, 14);
             this.check_space_soildepth.TabIndex = 125;
@@ -3122,16 +3018,16 @@ namespace LORICA4
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(19, 116);
+            this.label4.Location = new System.Drawing.Point(12, 25);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(104, 24);
+            this.label4.Size = new System.Drawing.Size(151, 24);
             this.label4.TabIndex = 106;
             this.label4.Text = "landuse (classes)";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(19, 71);
+            this.label3.Location = new System.Drawing.Point(13, 42);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(104, 24);
             this.label3.TabIndex = 104;
@@ -3140,7 +3036,7 @@ namespace LORICA4
             // 
             // label23
             // 
-            this.label23.Location = new System.Drawing.Point(19, 45);
+            this.label23.Location = new System.Drawing.Point(13, 16);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(134, 24);
             this.label23.TabIndex = 56;
@@ -5442,6 +5338,82 @@ namespace LORICA4
             this.dtm_iterate_checkbox.Text = "iterate comparable DEMs";
             this.dtm_iterate_checkbox.UseVisualStyleBackColor = true;
             // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.label37);
+            this.groupBox5.Controls.Add(this.soil_specify_button);
+            this.groupBox5.Controls.Add(this.textbox_layer_thickness);
+            this.groupBox5.Controls.Add(this.label_max_soil_layers);
+            this.groupBox5.Controls.Add(this.checkbox_layer_thickness);
+            this.groupBox5.Controls.Add(this.textbox_max_soil_layers);
+            this.groupBox5.Location = new System.Drawing.Point(499, 16);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(234, 72);
+            this.groupBox5.TabIndex = 159;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "for soils:";
+            // 
+            // groupBox13
+            // 
+            this.groupBox13.Controls.Add(this.groupBox5);
+            this.groupBox13.Controls.Add(this.check_space_DTM);
+            this.groupBox13.Controls.Add(this.soildepth_constant_value_box);
+            this.groupBox13.Controls.Add(this.soildepth_input_filename_textbox);
+            this.groupBox13.Controls.Add(this.dtm_input_filename_textbox);
+            this.groupBox13.Controls.Add(this.check_space_soildepth);
+            this.groupBox13.Controls.Add(this.label3);
+            this.groupBox13.Controls.Add(this.label23);
+            this.groupBox13.Location = new System.Drawing.Point(6, 35);
+            this.groupBox13.Name = "groupBox13";
+            this.groupBox13.Size = new System.Drawing.Size(749, 94);
+            this.groupBox13.TabIndex = 160;
+            this.groupBox13.TabStop = false;
+            this.groupBox13.Text = "required";
+            // 
+            // groupBox17
+            // 
+            this.groupBox17.Controls.Add(this.groupBox3);
+            this.groupBox17.Controls.Add(this.check_time_evap);
+            this.groupBox17.Controls.Add(this.check_time_infil);
+            this.groupBox17.Controls.Add(this.check_time_rain);
+            this.groupBox17.Controls.Add(this.check_time_till_fields);
+            this.groupBox17.Controls.Add(this.check_time_landuse);
+            this.groupBox17.Controls.Add(this.tillfields_constant_textbox);
+            this.groupBox17.Controls.Add(this.tillfields_input_filename_textbox);
+            this.groupBox17.Controls.Add(this.evap_constant_value_box);
+            this.groupBox17.Controls.Add(this.evap_input_filename_textbox);
+            this.groupBox17.Controls.Add(this.infil_constant_value_box);
+            this.groupBox17.Controls.Add(this.infil_input_filename_textbox);
+            this.groupBox17.Controls.Add(this.rainfall_constant_value_box);
+            this.groupBox17.Controls.Add(this.landuse_constant_value_box);
+            this.groupBox17.Controls.Add(this.landuse_input_filename_textbox);
+            this.groupBox17.Controls.Add(this.rain_input_filename_textbox);
+            this.groupBox17.Controls.Add(this.check_space_evap);
+            this.groupBox17.Controls.Add(this.check_space_infil);
+            this.groupBox17.Controls.Add(this.check_space_rain);
+            this.groupBox17.Controls.Add(this.check_space_till_fields);
+            this.groupBox17.Controls.Add(this.check_space_landuse);
+            this.groupBox17.Controls.Add(this.label17);
+            this.groupBox17.Controls.Add(this.label15);
+            this.groupBox17.Controls.Add(this.label14);
+            this.groupBox17.Controls.Add(this.label4);
+            this.groupBox17.Controls.Add(this.label25);
+            this.groupBox17.Location = new System.Drawing.Point(7, 135);
+            this.groupBox17.Name = "groupBox17";
+            this.groupBox17.Size = new System.Drawing.Size(747, 155);
+            this.groupBox17.TabIndex = 161;
+            this.groupBox17.TabStop = false;
+            this.groupBox17.Text = "depending on process (optional)";
+            // 
+            // label37
+            // 
+            this.label37.AutoSize = true;
+            this.label37.Location = new System.Drawing.Point(192, 46);
+            this.label37.Name = "label37";
+            this.label37.Size = new System.Drawing.Size(21, 13);
+            this.label37.TabIndex = 159;
+            this.label37.Text = "cm";
+            // 
             // Mother_form
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -5483,7 +5455,6 @@ namespace LORICA4
             this.groupBox7.ResumeLayout(false);
             this.groupBox7.PerformLayout();
             this.Input.ResumeLayout(false);
-            this.Input.PerformLayout();
             this.Geomorph.ResumeLayout(false);
             this.Process_tabs.ResumeLayout(false);
             this.Water.ResumeLayout(false);
@@ -5539,6 +5510,12 @@ namespace LORICA4
             this.Options.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
+            this.groupBox13.ResumeLayout(false);
+            this.groupBox13.PerformLayout();
+            this.groupBox17.ResumeLayout(false);
+            this.groupBox17.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -6396,13 +6373,6 @@ namespace LORICA4
                                     try { rain_value_m = double.Parse(rainfall_constant_value_box.Text); }
 
                                     catch { MessageBox.Show("value for parameter rainfall is not valid"); }
-                                }
-
-                                if (check_time_T.Checked != true)
-
-                                {
-                                    try { temp_value_C = int.Parse(temp_constant_value_box.Text); }
-                                    catch { MessageBox.Show("value for parameter temperature is not valid"); }
                                 }
                             }
                             catch { MessageBox.Show("there was a problem reading input values"); input_data_error = true; }
