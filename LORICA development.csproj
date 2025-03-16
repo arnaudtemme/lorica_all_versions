@@ -104,12 +104,6 @@
     <Compile Include="Functions\vegetation.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Subforms\About_LORICA.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Subforms\About_LORICA.Designer.cs">
-      <DependentUpon>About_LORICA.cs</DependentUpon>
-    </Compile>
     <Compile Include="Functions\blocks.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -138,10 +132,6 @@
       <DependentUpon>Output_timeseries.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Subforms\About_LORICA.resx">
-      <DependentUpon>About_LORICA.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Subforms\Landuse_determinator.resx">
       <DependentUpon>Landuse_determinator.cs</DependentUpon>
     </EmbeddedResource>
