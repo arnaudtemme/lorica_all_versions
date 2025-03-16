@@ -1436,7 +1436,20 @@ namespace LORICA4
             this.dailyET0 = new System.Windows.Forms.TextBox();
             this.dailyD = new System.Windows.Forms.TextBox();
             this.dailyP = new System.Windows.Forms.TextBox();
+            this.treefall = new System.Windows.Forms.TabPage();
+            this.tf_freq = new System.Windows.Forms.TextBox();
+            this.tf_age = new System.Windows.Forms.TextBox();
+            this.tf_growth = new System.Windows.Forms.TextBox();
+            this.tf_D = new System.Windows.Forms.TextBox();
+            this.tf_W = new System.Windows.Forms.TextBox();
+            this.label112 = new System.Windows.Forms.Label();
+            this.label111 = new System.Windows.Forms.Label();
+            this.label110 = new System.Windows.Forms.Label();
+            this.label95 = new System.Windows.Forms.Label();
+            this.label107 = new System.Windows.Forms.Label();
+            this.treefall_checkbox = new System.Windows.Forms.CheckBox();
             this.Options = new System.Windows.Forms.TabPage();
+            this.depressions_output_checkbox = new System.Windows.Forms.CheckBox();
             this.luxlitter_checkbox = new System.Windows.Forms.CheckBox();
             this.version_Konza_checkbox = new System.Windows.Forms.CheckBox();
             this.button4 = new System.Windows.Forms.Button();
@@ -1459,20 +1472,7 @@ namespace LORICA4
             this.calibration = new System.Windows.Forms.CheckBox();
             this.Spitsbergen_case_study = new System.Windows.Forms.CheckBox();
             this.dtm_iterate_checkbox = new System.Windows.Forms.CheckBox();
-            this.treefall = new System.Windows.Forms.TabPage();
-            this.tf_freq = new System.Windows.Forms.TextBox();
-            this.tf_age = new System.Windows.Forms.TextBox();
-            this.tf_growth = new System.Windows.Forms.TextBox();
-            this.tf_D = new System.Windows.Forms.TextBox();
-            this.tf_W = new System.Windows.Forms.TextBox();
-            this.label112 = new System.Windows.Forms.Label();
-            this.label111 = new System.Windows.Forms.Label();
-            this.label110 = new System.Windows.Forms.Label();
-            this.label95 = new System.Windows.Forms.Label();
-            this.label107 = new System.Windows.Forms.Label();
-            this.treefall_checkbox = new System.Windows.Forms.CheckBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.depressions_output_checkbox = new System.Windows.Forms.CheckBox();
             label6 = new System.Windows.Forms.Label();
             label76 = new System.Windows.Forms.Label();
             label75 = new System.Windows.Forms.Label();
@@ -1553,9 +1553,9 @@ namespace LORICA4
             this.tabControl4.SuspendLayout();
             this.blocks.SuspendLayout();
             this.Hydro.SuspendLayout();
+            this.treefall.SuspendLayout();
             this.Options.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            this.treefall.SuspendLayout();
             this.SuspendLayout();
             // 
             // label6
@@ -5085,6 +5085,121 @@ namespace LORICA4
             this.dailyP.TabIndex = 48;
             this.dailyP.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
+            // treefall
+            // 
+            this.treefall.Controls.Add(this.tf_freq);
+            this.treefall.Controls.Add(this.tf_age);
+            this.treefall.Controls.Add(this.tf_growth);
+            this.treefall.Controls.Add(this.tf_D);
+            this.treefall.Controls.Add(this.tf_W);
+            this.treefall.Controls.Add(this.label112);
+            this.treefall.Controls.Add(this.label111);
+            this.treefall.Controls.Add(this.label110);
+            this.treefall.Controls.Add(this.label95);
+            this.treefall.Controls.Add(this.label107);
+            this.treefall.Controls.Add(this.treefall_checkbox);
+            this.treefall.Location = new System.Drawing.Point(4, 22);
+            this.treefall.Name = "treefall";
+            this.treefall.Size = new System.Drawing.Size(724, 243);
+            this.treefall.TabIndex = 13;
+            this.treefall.Text = "Tree fall";
+            this.treefall.UseVisualStyleBackColor = true;
+            // 
+            // tf_freq
+            // 
+            this.tf_freq.Location = new System.Drawing.Point(25, 162);
+            this.tf_freq.Name = "tf_freq";
+            this.tf_freq.Size = new System.Drawing.Size(53, 20);
+            this.tf_freq.TabIndex = 30;
+            this.tf_freq.Text = "0.00002";
+            // 
+            // tf_age
+            // 
+            this.tf_age.Location = new System.Drawing.Point(25, 131);
+            this.tf_age.Name = "tf_age";
+            this.tf_age.Size = new System.Drawing.Size(53, 20);
+            this.tf_age.TabIndex = 28;
+            this.tf_age.Text = "300";
+            // 
+            // tf_growth
+            // 
+            this.tf_growth.Location = new System.Drawing.Point(25, 103);
+            this.tf_growth.Name = "tf_growth";
+            this.tf_growth.Size = new System.Drawing.Size(53, 20);
+            this.tf_growth.TabIndex = 26;
+            this.tf_growth.Text = "150";
+            // 
+            // tf_D
+            // 
+            this.tf_D.Location = new System.Drawing.Point(25, 77);
+            this.tf_D.Name = "tf_D";
+            this.tf_D.Size = new System.Drawing.Size(53, 20);
+            this.tf_D.TabIndex = 24;
+            this.tf_D.Text = "0.7";
+            // 
+            // tf_W
+            // 
+            this.tf_W.Location = new System.Drawing.Point(25, 51);
+            this.tf_W.Name = "tf_W";
+            this.tf_W.Size = new System.Drawing.Size(53, 20);
+            this.tf_W.TabIndex = 21;
+            this.tf_W.Text = "4";
+            // 
+            // label112
+            // 
+            this.label112.AutoSize = true;
+            this.label112.Location = new System.Drawing.Point(100, 165);
+            this.label112.Name = "label112";
+            this.label112.Size = new System.Drawing.Size(132, 13);
+            this.label112.TabIndex = 29;
+            this.label112.Text = "fall frequency [trees/m2/a]";
+            // 
+            // label111
+            // 
+            this.label111.AutoSize = true;
+            this.label111.Location = new System.Drawing.Point(100, 134);
+            this.label111.Name = "label111";
+            this.label111.Size = new System.Drawing.Size(119, 13);
+            this.label111.TabIndex = 27;
+            this.label111.Text = "maximum age of tree [a]";
+            // 
+            // label110
+            // 
+            this.label110.AutoSize = true;
+            this.label110.Location = new System.Drawing.Point(100, 106);
+            this.label110.Name = "label110";
+            this.label110.Size = new System.Drawing.Size(204, 13);
+            this.label110.TabIndex = 25;
+            this.label110.Text = "time it takes to reach these dimensions [a]";
+            // 
+            // label95
+            // 
+            this.label95.AutoSize = true;
+            this.label95.Location = new System.Drawing.Point(100, 80);
+            this.label95.Name = "label95";
+            this.label95.Size = new System.Drawing.Size(145, 13);
+            this.label95.TabIndex = 23;
+            this.label95.Text = "maximum depth root mass [m]";
+            // 
+            // label107
+            // 
+            this.label107.AutoSize = true;
+            this.label107.Location = new System.Drawing.Point(100, 54);
+            this.label107.Name = "label107";
+            this.label107.Size = new System.Drawing.Size(158, 13);
+            this.label107.TabIndex = 22;
+            this.label107.Text = "maximum diameter root mass [m]";
+            // 
+            // treefall_checkbox
+            // 
+            this.treefall_checkbox.AutoSize = true;
+            this.treefall_checkbox.Location = new System.Drawing.Point(25, 16);
+            this.treefall_checkbox.Name = "treefall_checkbox";
+            this.treefall_checkbox.Size = new System.Drawing.Size(124, 17);
+            this.treefall_checkbox.TabIndex = 0;
+            this.treefall_checkbox.Text = "Activate this process";
+            this.treefall_checkbox.UseVisualStyleBackColor = true;
+            // 
             // Options
             // 
             this.Options.Controls.Add(this.depressions_output_checkbox);
@@ -5102,6 +5217,17 @@ namespace LORICA4
             this.Options.TabIndex = 12;
             this.Options.Text = "Options";
             this.Options.UseVisualStyleBackColor = true;
+            // 
+            // depressions_output_checkbox
+            // 
+            this.depressions_output_checkbox.AutoSize = true;
+            this.depressions_output_checkbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.depressions_output_checkbox.Location = new System.Drawing.Point(13, 42);
+            this.depressions_output_checkbox.Name = "depressions_output_checkbox";
+            this.depressions_output_checkbox.Size = new System.Drawing.Size(143, 17);
+            this.depressions_output_checkbox.TabIndex = 227;
+            this.depressions_output_checkbox.Text = "Write depression outputs";
+            this.depressions_output_checkbox.UseVisualStyleBackColor = true;
             // 
             // luxlitter_checkbox
             // 
@@ -5316,132 +5442,6 @@ namespace LORICA4
             this.dtm_iterate_checkbox.Text = "iterate comparable DEMs";
             this.dtm_iterate_checkbox.UseVisualStyleBackColor = true;
             // 
-            // treefall
-            // 
-            this.treefall.Controls.Add(this.tf_freq);
-            this.treefall.Controls.Add(this.tf_age);
-            this.treefall.Controls.Add(this.tf_growth);
-            this.treefall.Controls.Add(this.tf_D);
-            this.treefall.Controls.Add(this.tf_W);
-            this.treefall.Controls.Add(this.label112);
-            this.treefall.Controls.Add(this.label111);
-            this.treefall.Controls.Add(this.label110);
-            this.treefall.Controls.Add(this.label95);
-            this.treefall.Controls.Add(this.label107);
-            this.treefall.Controls.Add(this.treefall_checkbox);
-            this.treefall.Location = new System.Drawing.Point(4, 22);
-            this.treefall.Name = "treefall";
-            this.treefall.Size = new System.Drawing.Size(724, 243);
-            this.treefall.TabIndex = 13;
-            this.treefall.Text = "Tree fall";
-            this.treefall.UseVisualStyleBackColor = true;
-            // 
-            // tf_freq
-            // 
-            this.tf_freq.Location = new System.Drawing.Point(25, 162);
-            this.tf_freq.Name = "tf_freq";
-            this.tf_freq.Size = new System.Drawing.Size(53, 20);
-            this.tf_freq.TabIndex = 30;
-            this.tf_freq.Text = "0.00002";
-            // 
-            // tf_age
-            // 
-            this.tf_age.Location = new System.Drawing.Point(25, 131);
-            this.tf_age.Name = "tf_age";
-            this.tf_age.Size = new System.Drawing.Size(53, 20);
-            this.tf_age.TabIndex = 28;
-            this.tf_age.Text = "300";
-            // 
-            // tf_growth
-            // 
-            this.tf_growth.Location = new System.Drawing.Point(25, 103);
-            this.tf_growth.Name = "tf_growth";
-            this.tf_growth.Size = new System.Drawing.Size(53, 20);
-            this.tf_growth.TabIndex = 26;
-            this.tf_growth.Text = "150";
-            // 
-            // tf_D
-            // 
-            this.tf_D.Location = new System.Drawing.Point(25, 77);
-            this.tf_D.Name = "tf_D";
-            this.tf_D.Size = new System.Drawing.Size(53, 20);
-            this.tf_D.TabIndex = 24;
-            this.tf_D.Text = "0.7";
-            // 
-            // tf_W
-            // 
-            this.tf_W.Location = new System.Drawing.Point(25, 51);
-            this.tf_W.Name = "tf_W";
-            this.tf_W.Size = new System.Drawing.Size(53, 20);
-            this.tf_W.TabIndex = 21;
-            this.tf_W.Text = "4";
-            // 
-            // label112
-            // 
-            this.label112.AutoSize = true;
-            this.label112.Location = new System.Drawing.Point(100, 165);
-            this.label112.Name = "label112";
-            this.label112.Size = new System.Drawing.Size(132, 13);
-            this.label112.TabIndex = 29;
-            this.label112.Text = "fall frequency [trees/m2/a]";
-            // 
-            // label111
-            // 
-            this.label111.AutoSize = true;
-            this.label111.Location = new System.Drawing.Point(100, 134);
-            this.label111.Name = "label111";
-            this.label111.Size = new System.Drawing.Size(119, 13);
-            this.label111.TabIndex = 27;
-            this.label111.Text = "maximum age of tree [a]";
-            // 
-            // label110
-            // 
-            this.label110.AutoSize = true;
-            this.label110.Location = new System.Drawing.Point(100, 106);
-            this.label110.Name = "label110";
-            this.label110.Size = new System.Drawing.Size(204, 13);
-            this.label110.TabIndex = 25;
-            this.label110.Text = "time it takes to reach these dimensions [a]";
-            // 
-            // label95
-            // 
-            this.label95.AutoSize = true;
-            this.label95.Location = new System.Drawing.Point(100, 80);
-            this.label95.Name = "label95";
-            this.label95.Size = new System.Drawing.Size(145, 13);
-            this.label95.TabIndex = 23;
-            this.label95.Text = "maximum depth root mass [m]";
-            // 
-            // label107
-            // 
-            this.label107.AutoSize = true;
-            this.label107.Location = new System.Drawing.Point(100, 54);
-            this.label107.Name = "label107";
-            this.label107.Size = new System.Drawing.Size(158, 13);
-            this.label107.TabIndex = 22;
-            this.label107.Text = "maximum diameter root mass [m]";
-            // 
-            // treefall_checkbox
-            // 
-            this.treefall_checkbox.AutoSize = true;
-            this.treefall_checkbox.Location = new System.Drawing.Point(25, 16);
-            this.treefall_checkbox.Name = "treefall_checkbox";
-            this.treefall_checkbox.Size = new System.Drawing.Size(124, 17);
-            this.treefall_checkbox.TabIndex = 0;
-            this.treefall_checkbox.Text = "Activate this process";
-            this.treefall_checkbox.UseVisualStyleBackColor = true;
-            // 
-            // depressions_output_checkbox
-            // 
-            this.depressions_output_checkbox.AutoSize = true;
-            this.depressions_output_checkbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.depressions_output_checkbox.Location = new System.Drawing.Point(13, 42);
-            this.depressions_output_checkbox.Name = "depressions_output_checkbox";
-            this.depressions_output_checkbox.Size = new System.Drawing.Size(143, 17);
-            this.depressions_output_checkbox.TabIndex = 227;
-            this.depressions_output_checkbox.Text = "Write depression outputs";
-            this.depressions_output_checkbox.UseVisualStyleBackColor = true;
-            // 
             // Mother_form
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -5533,12 +5533,12 @@ namespace LORICA4
             this.blocks.PerformLayout();
             this.Hydro.ResumeLayout(false);
             this.Hydro.PerformLayout();
+            this.treefall.ResumeLayout(false);
+            this.treefall.PerformLayout();
             this.Options.ResumeLayout(false);
             this.Options.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            this.treefall.ResumeLayout(false);
-            this.treefall.PerformLayout();
             this.ResumeLayout(false);
 
         }

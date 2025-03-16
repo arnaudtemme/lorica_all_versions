@@ -17,19 +17,9 @@ namespace LORICA4
             this.Close();
         }
 
-        private void Menu_aboutbox_Click(object sender, EventArgs e)
-        {
-            aboutbox.Visible = true;
-        }
-
-        private void timeseries_button_Click(object sender, EventArgs e)
+         private void timeseries_button_Click(object sender, EventArgs e)
         {
             timeseries.Visible = true;
-        }
-
-        private void profiles_button_Click(object sender, EventArgs e)
-        {
-            profile.Visible = true;
         }
 
         private void landuse_determinator_button_Click(object sender, EventArgs e)
