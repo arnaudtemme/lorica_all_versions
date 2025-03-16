@@ -173,7 +173,7 @@ namespace LORICA4
             {
                 for (col = 0; col < nc; col++)
                 {
-                    if (dtm[row, col] != -9999)
+                    if (dtm[row, col] != nodata_value)
                     {
                         simulated_ero_m3 -= sum_water_erosion[row, col] * dx * dx;
                         total_bulk_density += bulkdensity[row, col, 0];

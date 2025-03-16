@@ -41,7 +41,7 @@ namespace LORICA4
                 {
                     for (col = 0; col < nc; col++)
                     {
-                        if (dtm[row, col] != -9999)
+                        if (dtm[row, col] != nodata_value)
                         {
                             sum_squared_difference = 0;
                             num_nbs = 0;
@@ -51,7 +51,7 @@ namespace LORICA4
                                 {
                                     if (!(i == 0 && j == 0) && (row + i) >= 0 && (col + j) >= 0 && (row + i) < nr && (col + j) < nc)
                                     {
-                                        if (dtm[row + i, col + j] != -9999)
+                                        if (dtm[row + i, col + j] != nodata_value)
                                         {
                                             sum_squared_difference += Math.Pow((dtm[row, col] - dtm[row + i, col + j]), 2);
                                             num_nbs++;
@@ -59,7 +59,7 @@ namespace LORICA4
                                     }
                                 }
                             }
-                            if (num_nbs == 0) { terruggedindex[row, col] = -9999; }
+                            if (num_nbs == 0) { terruggedindex[row, col] = nodata_value; }
                             else { terruggedindex[row, col] = Math.Sqrt(sum_squared_difference) * (8 / num_nbs); }
                         }
                     }
@@ -80,15 +80,15 @@ namespace LORICA4
             {
                 for (col = 0; col < nc; col++)
                 {
-                    ledges[row, col] = -9999;
-                    nedges[row, col] = -9999;
-                    hedges[row, col] = -9999;
-                    hhcliff[row, col] = -9999;
-                    hlcliff[row, col] = -9999;
-                    slhcliff[row, col] = -9999;
-                    sllcliff[row, col] = -9999;
-                    ledgeheight[row, col] = -9999;
-                    if (dtm[row, col] != -9999)
+                    ledges[row, col] = nodata_value;
+                    nedges[row, col] = nodata_value;
+                    hedges[row, col] = nodata_value;
+                    hhcliff[row, col] = nodata_value;  
+                    hlcliff[row, col] = nodata_value;
+                    slhcliff[row, col] = nodata_value;
+                    sllcliff[row, col] = nodata_value;
+                    ledgeheight[row, col] = nodata_value;
+                    if (dtm[row, col] != nodata_value)
                     {
                         ledges[row, col] = 0;
                         nedges[row, col] = 0;
@@ -98,7 +98,7 @@ namespace LORICA4
                         slhcliff[row, col] = 0;
                         sllcliff[row, col] = 0;
                         ledgeheight[row, col] = 0;
-                        if (ledgenames[row, col] != -9999)
+                        if (ledgenames[row, col] != nodata_value)
                         {
                             try
                             {
@@ -109,7 +109,7 @@ namespace LORICA4
                                     {
                                         if (!(i == 0 && j == 0) && row + i >= 0 && col + j >= 0 && row + i < nr && col + j < nc)
                                         {
-                                            if (dtm[row + i, col + j] != -9999)
+                                            if (dtm[row + i, col + j] != nodata_value)
                                             {
                                                 for (ii = (-1); ii <= 1; ii++)
                                                 {
@@ -117,7 +117,7 @@ namespace LORICA4
                                                     {
                                                         if (!(i + ii == 0 && j + jj == 0) && row + i + ii >= 0 && col + j + jj >= 0 && row + i + ii < nr && col + j + jj < nc)
                                                         {
-                                                            if (dtm[row + i + ii, col + j + jj] != -9999)
+                                                            if (dtm[row + i + ii, col + j + jj] != nodata_value)
                                                             {
                                                                 if (Math.Abs(dtm[row + i + ii, col + j + jj] - dtm[row + i, col + j]) > maxcliffheight) { maxcliffheight = Math.Abs(dtm[row + i + ii, col + j + jj] - dtm[row + i, col + j]); }
                                                             }
@@ -141,9 +141,9 @@ namespace LORICA4
             {
                 for (col = 0; col < nc; col++)
                 {
-                    if (dtm[row, col] != -9999)
+                    if (dtm[row, col] != nodata_value)
                     {
-                        if (ledgeheight[row, col] == -9999)
+                        if (ledgeheight[row, col] == nodata_value)
                         {
                             double highestledgeheight = 0;
                             for (i = (-1); i <= 1; i++)
@@ -170,11 +170,11 @@ namespace LORICA4
             comb_sort();
             for (runner = number_of_data_cells - 1; runner >= 0; runner--)
             {     // the index is sorted from low to high values, but flow goes from high to low
-                if (index[runner] != -9999)
+                if (index[runner] != nodata_value)
                 {
                     row = row_index[runner]; col = col_index[runner];
                     //Debug.WriteLine("now at row " + row + " col " + col + " alt " + dtm[row, col]);
-                    if (ledgenames[row, col] != -9999)
+                    if (ledgenames[row, col] != nodata_value)
                     {
                         //we are on a ledge. Setting and resetting time
                         hhcliff[row, col] = ledgeheight[row, col];
@@ -190,7 +190,7 @@ namespace LORICA4
                             {
                                 if (!(i == 0 && j == 0) && (row + i >= 0) && (col + j >= 0) && (row + i < nr) && (col + j < nc))
                                 {
-                                    if (dtm[row + i, col + j] != -9999)
+                                    if (dtm[row + i, col + j] != nodata_value)
                                     {
                                         if (dtm[row + i, col + j] > dtm[row, col])
                                         {
@@ -219,10 +219,10 @@ namespace LORICA4
             //now, we walk the other way (from low to high in the DTM). 
             for (runner = 0; runner < number_of_data_cells; runner++)
             {
-                if (index[runner] != -9999)
+                if (index[runner] != nodata_value)
                 {
                     row = row_index[runner]; col = col_index[runner];
-                    if (ledgenames[row, col] != -9999)
+                    if (ledgenames[row, col] != nodata_value)
                     {
                         //we are on a ledge. Setting and resetting time
                         hlcliff[row, col] = ledgeheight[row, col];
@@ -238,7 +238,7 @@ namespace LORICA4
                             {
                                 if (!(i == 0 && j == 0) && row + i >= 0 && col + j >= 0 && row + i < nr && col + j < nc)
                                 {
-                                    if (dtm[row + i, col + j] != -9999)
+                                    if (dtm[row + i, col + j] != nodata_value)
                                     {
                                         if (dtm[row + i, col + j] < dtm[row, col])
                                         {
@@ -270,7 +270,7 @@ namespace LORICA4
             {
                 for (col = 0; col < nc; col++)
                 {
-                    if (dtm[row, col] != -9999)
+                    if (dtm[row, col] != nodata_value)
                     {
                         nedges[row, col] = ledges[row, col] + hedges[row, col];
                     }
@@ -493,7 +493,7 @@ namespace LORICA4
                             if (lineArray[colcounter] != "" && col < nc) // but just to make sure, col counts only the non-empty strings in LineArrary (handy for instance when files are double-spaced)
                             {
                                 tttt = double.Parse(lineArray[colcounter]);
-                                if (Spitsbergen_case_study.Checked == true) { original_dtm[row, col] = tttt; dtm[row, col] = -9999; }
+                                if (Spitsbergen_case_study.Checked == true) { original_dtm[row, col] = tttt; dtm[row, col] = nodata_value; }
                                 else { dtm[row, col] = tttt; }
                                 col++;
                                 if (double.Parse(lineArray[colcounter]) - Math.Round(double.Parse(lineArray[colcounter])) != 0)
@@ -557,6 +557,8 @@ namespace LORICA4
                 while (lineArray2[sp] == "") sp++;
                 nr = int.Parse(lineArray2[sp]);
 
+                Debug.WriteLine("DEM extent: nr = " + nr + " nc = " + nc);
+
                 lineArray2 = inputheader[2].Split(new char[] { ' ' });
                 sp = 1;
                 while (lineArray2[sp] == "") sp++;
@@ -575,9 +577,22 @@ namespace LORICA4
                 if (dx <= 0.1)  //AleG
                 {
                     MessageBox.Show("Make sure that the DEM cell resolution is in meters");
+                    start_button.Enabled = true;
                 }
 
-                Debug.WriteLine("read DEM: nr = " + nr + " nc = " + nc);
+                lineArray2 = inputheader[5].Split(new char[] { ' ' });
+                sp = 1;
+                while (lineArray2[sp] == "") sp++;
+                try
+                {
+                    nodata_value = int.Parse(lineArray2[sp]);
+                }
+                catch {
+                    MessageBox.Show("The nodata value of the input ascii DEM must be an integer. Please improve and try again");
+                    start_button.Enabled = true;
+                }
+
+                
             }
             catch (Exception ex)
             {
@@ -630,7 +645,7 @@ namespace LORICA4
                         if (lineArray[colcounter] != "" && col < nc) // but just to make sure, col counts only the non-empty strings in LineArrary (handy for instance when files are double-spaced)
                         {
                             tttt = double.Parse(lineArray[colcounter]);
-                            if (Spitsbergen_case_study.Checked == true) { original_dtm[row, col] = tttt; dtm[row, col] = -9999; }
+                            if (Spitsbergen_case_study.Checked == true) { original_dtm[row, col] = tttt; dtm[row, col] = nodata_value; }
                             else { dtm[row, col] = tttt; }
                             col++;
                             if (double.Parse(lineArray[colcounter]) - Math.Round(double.Parse(lineArray[colcounter])) != 0)
@@ -839,7 +854,6 @@ namespace LORICA4
                 for (nn = 2; nn <= 5; nn++)
                 {
                     sw.Write(inputheader[nn]); sw.Write("\r\n");
-                    //MessageBox.Show(inputheader[nn]);
                 }
                 for (row = 0; row < nr; row++)
                 {
@@ -868,7 +882,6 @@ namespace LORICA4
                 for (nn = 2; nn <= 5; nn++)
                 {
                     sw.Write(inputheader[nn]); sw.Write("\r\n");
-                    //MessageBox.Show(inputheader[nn]);
                 }
                 for (row = 0; row < nr; row++)
                 {
@@ -1104,7 +1117,7 @@ namespace LORICA4
                 {
                     for (int col = 0; col < nc; col++)
                     {
-                        if (dtm[row, col] != -9999)
+                        if (dtm[row, col] != nodata_value)
                         {
                             cumthick = 0;
                             midthick = 0;
@@ -1154,7 +1167,7 @@ namespace LORICA4
             while (row - 1 >= 0 && row + 1 < nr && col - 1 >= 0 && col + 1 < nc)
             {   // as long as we have not reached the edge
                 Debug.WriteLine("profile now at row %d col %d, alt %.4f\n", row, col, dtm[row, col]);
-                altidiff = -9999; non_lake_altidiff = 0; maxaltidiff = 0; non_lake_maxi = 0; non_lake_maxj = 0; maxi = 0; maxj = 0;
+                altidiff = large_negative_number; non_lake_altidiff = 0; maxaltidiff = 0; non_lake_maxi = 0; non_lake_maxj = 0; maxi = 0; maxj = 0;
                 for (i = -1; i <= 1; i++)
                 {
                     for (j = -1; j <= 1; j++)

@@ -183,7 +183,7 @@ namespace LORICA4
                 {
                     for (int col = 0; col < nc; col++)
                     {
-                        if (dtm[row, col] != -9999)
+                        if (dtm[row, col] != nodata_value)
                         {
                             update_all_layer_thicknesses(row, col);
                             update_all_layer_thicknesses(row, col);
@@ -222,7 +222,7 @@ namespace LORICA4
                 {
                     for (int col = 0; col < nc; col++)
                     {
-                        if (dtm[row, col] != -9999)
+                        if (dtm[row, col] != nodata_value)
                         {
                             decimal old_soil_mass = total_soil_mass_kg_decimal(row, col), new_soil_mass;
                             // Debug.WriteLine("suscl0" + row + ", " + col + ", " + t + " " + total_soil_mass(row, col));
@@ -406,7 +406,7 @@ namespace LORICA4
                             soildepth_m[row, col] = new_thickness;
                             dtmchange_m[row, col] += new_thickness - old_thickness;
                             dz_soil[row, col] += new_thickness - old_thickness;
-                        }// end dtm!=-9999
+                        }// end dtm!=nodata_value
 
                     } // end col
                 } // end row
@@ -458,7 +458,7 @@ namespace LORICA4
                 {
                     for (col = 0; col < nc; col++)
                     {
-                        if (dtm[row, col] != -9999)
+                        if (dtm[row, col] != nodata_value)
                         {
                             update_all_layer_thicknesses(row, col);
                             update_all_layer_thicknesses(row, col);
@@ -497,7 +497,7 @@ namespace LORICA4
                 {
                     for (col = 0; col < nc; col++)
                     {
-                        if (dtm[row, col] != -9999)
+                        if (dtm[row, col] != nodata_value)
                         {
                             remove_empty_layers(row, col);
                             remove_empty_layers(row, col);
@@ -804,7 +804,7 @@ namespace LORICA4
                             soildepth_m[row, col] = new_thickness;
                             dtmchange_m[row, col] += new_thickness - old_thickness;
                             dz_soil[row, col] += new_thickness - old_thickness;
-                        } // end dtm!=-9999
+                        } // end dtm!=nodata_value
                     } // end col
                 } // end row
 
@@ -1271,7 +1271,7 @@ namespace LORICA4
             {
                 for (int colmass = 0; colmass < nc; colmass++)
                 {
-                    if (dtm[rowmass, colmass] != -9999)
+                    if (dtm[rowmass, colmass] != nodata_value)
                     {
                         tot_elev += dtm[rowmass, colmass];
                     }
@@ -1838,7 +1838,7 @@ namespace LORICA4
                     for (col = 0; col < nc; col++)
                     {
 
-                        if (dtm[row, col] != -9999 & soildepth_m[row, col] > 0)
+                        if (dtm[row, col] != nodata_value & soildepth_m[row, col] > 0)
                         {
                             remove_empty_layers(row, col);
                             update_all_layer_thicknesses(row, col);
@@ -2196,7 +2196,7 @@ namespace LORICA4
                                 // Debugger.Break(); 
                             }
 
-                        } // end dtm!=-9999
+                        } // end dtm!=nodata_value
                     }// for col
                 } // end for row
                   // if (findnegativetexture()) { Debugger.Break(); }
@@ -2244,7 +2244,7 @@ namespace LORICA4
                     for (col = 0; col < nc; col++)
                     {
 
-                        if (dtm[row, col] != -9999 & soildepth_m[row, col] > 0)
+                        if (dtm[row, col] != nodata_value & soildepth_m[row, col] > 0)
                         {
                             remove_empty_layers(row, col);
                             update_all_layer_thicknesses(row, col);
@@ -2365,7 +2365,7 @@ namespace LORICA4
                                 // Debugger.Break(); 
                             }
 
-                        } // end dtm!=-9999
+                        } // end dtm!=nodata_value
                     }// for col
                 } // end for row
                   // if (findnegativetexture()) { Debugger.Break(); }
@@ -2548,7 +2548,7 @@ namespace LORICA4
                 {
                     for (col = 0; col < nc; col++)
                     {
-                        if (dtm[row, col] != -9999)
+                        if (dtm[row, col] != nodata_value)
                         {
                             if (Imin > Iy[row, col]) { Imin = Iy[row, col]; }
                             if (Imax < Iy[row, col]) { Imax = Iy[row, col]; }
@@ -2645,7 +2645,7 @@ namespace LORICA4
                 {
                     for (col = 0; col < nc; col++)
                     {
-                        if (dtm[row, col] != -9999)
+                        if (dtm[row, col] != nodata_value)
                         {
                             if (NA_in_soil(row, col))
                             {
@@ -2802,7 +2802,7 @@ namespace LORICA4
                 {
                     for (col = 0; col < nc; col++)
                     {
-                        if (dtm[row, col] != -9999)
+                        if (dtm[row, col] != nodata_value)
                         {
                             CO3_loss = (205.58 * Iy[row, col] - 12.392) * (dx * dx) * 60.01; // Corrected the equation for cell size (dx*dx) and molar mass (60.01 g mol-1)
                             if (CO3_loss < 0) { CO3_loss = 0; }

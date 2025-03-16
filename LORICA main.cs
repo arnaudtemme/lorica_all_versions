@@ -309,7 +309,7 @@ namespace LORICA4
         double available_for_delta_kg = 0;
         double available_for_delta_m = 0;
 
-        int t, t_intervene, scenario, number_of_data_cells, run_number;
+        int t, t_intervene, scenario, number_of_data_cells, run_number, nodata_value, large_negative_number = -111111;
         bool crashed,
             creep_active,
             water_ero_active,
@@ -2156,7 +2156,7 @@ namespace LORICA4
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(143, 24);
             this.label17.TabIndex = 121;
-            this.label17.Text = "tillage fields [1/-9999]";
+            this.label17.Text = "tillage fields [1/0]";
             this.label17.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.toolTip1.SetToolTip(this.label17, "Hourly rainfall data - in an ascii format");
             // 
@@ -6591,10 +6591,10 @@ namespace LORICA4
                 for (col = 0; col < nc; col++)
                 {
 
-                    if (original_dtm[row, col] != -9999)
+                    if (original_dtm[row, col] != nodata_value)
                     {
 
-                        if (original_dtm[row, col] > minimum_overwater_elevation && dtm[row, col] == -9999)
+                        if (original_dtm[row, col] > minimum_overwater_elevation && dtm[row, col] == nodata_value)
                         {
                             // these cases were not over water, but now will be.
                             dtm[row, col] = original_dtm[row, col];
@@ -6707,7 +6707,6 @@ namespace LORICA4
                 {
                     calculate_tree_fall();
                 }
-
             }
 
             if (bedrock_weathering_active)
@@ -7238,7 +7237,7 @@ namespace LORICA4
                 {
                     for (int col = 0; col < nc; col++)
                     {
-                        if (dtm[row, col] != -9999)
+                        if (dtm[row, col] != nodata_value)
                         {
                             index[i] = dtm[row, col]; row_index[i] = row; col_index[i] = col; rowcol_index[i] = row.ToString() + "." + col.ToString();
                             i++;

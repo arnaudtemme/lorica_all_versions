@@ -23,7 +23,7 @@ namespace LORICA4
                 for (int vcol = 0; vcol < nc; vcol++)
                 {
 
-                    if (dtm[vrow, vcol] != -9999)
+                    if (dtm[vrow, vcol] != nodata_value)
                     {
                         // adjusted Budyko
                         // aridity (water stress) = P/PET. If PET>P, water stress, aridity < 1.
@@ -60,7 +60,7 @@ namespace LORICA4
             {
                 for (int vcol = 0; vcol < nc; vcol++)
                 {
-                    if (dtm[vrow, vcol] != -9999)
+                    if (dtm[vrow, vcol] != nodata_value)
                     {
                         if (aridity_vegetation[vrow, vcol] < 1) { veg_correction_factor[vrow, vcol] = .75; } // all year long, according to FAO report 56
                         else { veg_correction_factor[vrow, vcol] = .85; } // I took the mid-season coefficient (95) of most deciduous crops and decreased it to 85 to account for less vegetation in other times of the year
@@ -83,7 +83,7 @@ namespace LORICA4
                 {
                     for (int col = 0; col < nc; col++)
                     {
-                        if (dtm[row, col] != -9999)
+                        if (dtm[row, col] != nodata_value)
                         {
                             double tpisum = 0;
                             double tpicount = 0;
@@ -95,7 +95,7 @@ namespace LORICA4
                                 {
                                     if (row + rr >= 0 & row + rr < nr & col + cc >= 0 & col + cc < nc) // if cell exists in the DEM, 
                                     {
-                                        if (dtm[row + rr, col + cc] != -9999 & (rr != 0 | cc != 0)) // if cell contains a value and cell isn't the target cell, it's considered in the TPI
+                                        if (dtm[row + rr, col + cc] != nodata_value & (rr != 0 | cc != 0)) // if cell contains a value and cell isn't the target cell, it's considered in the TPI
                                         {
                                             tpisum += dtm[row + rr, col + cc];
                                             tpicount += 1;

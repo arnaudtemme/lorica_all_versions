@@ -80,7 +80,7 @@ namespace LORICA4
             {
                 for (int hcol = 0; hcol < nc; hcol++)
                 {
-                    if (dtm[hrow, hcol] != -9999)
+                    if (dtm[hrow, hcol] != nodata_value)
                     {
                         for (int mo = 0; mo < 12; mo++)
                         {
@@ -200,7 +200,7 @@ namespace LORICA4
                 {
                     for (int col = 0; col < nc; col++)
                     {
-                        if (dtm[row, col] != -9999)
+                        if (dtm[row, col] != nodata_value)
                         {
                             double ET0m_act = ET0_m[mo] * Ra_rcm[row, col, mo] * veg_correction_factor[row, col];
                             // if (row == 0 & col == 0) { Debug.WriteLine(ET0m_act); }
@@ -250,7 +250,7 @@ namespace LORICA4
             {
                 for (int colb = 0; colb < nc; colb++)
                 {
-                    if (dtm[rowb, colb] != -9999)
+                    if (dtm[rowb, colb] != nodata_value)
                     {
                         P_wb += Py.Sum();
                         ETa_wb += ETay[rowb, colb];
@@ -530,7 +530,7 @@ namespace LORICA4
             for (runner = number_of_data_cells - 1; runner >= 0; runner--)
             {
                 //Debug.WriteLine("runner start of run: " + runner);
-                if (index[runner] != -9999)
+                if (index[runner] != nodata_value)
                 {
                     row = row_index[runner]; col = col_index[runner];
 
@@ -546,10 +546,10 @@ namespace LORICA4
                         {
                             for (j = (-1); j <= 1; j++)
                             {
-                                dh = 0; dhtemp = -99999.99; d_x = dx;
+                                dh = 0; dhtemp = large_negative_number; d_x = dx;
                                 if (((row + i) >= 0) && ((row + i) < nr) && ((col + j) >= 0) && ((col + j) < nc) && !((i == 0) && (j == 0)))
                                 {
-                                    if (dtm[row + i, col + j] != -9999)
+                                    if (dtm[row + i, col + j] != nodata_value)
                                     {  //if the cell has no NODATA
 
                                         dh = dtm[row, col] - (dtm[row + i, col + j] + pond_d[row + i, col + j]);
@@ -584,7 +584,7 @@ namespace LORICA4
                                         if (!((i == 0) && (j == 0))) { direction++; }
                                         if (((row + i) >= 0) && ((row + i) < nr) && ((col + j) >= 0) && ((col + j) < nc) && !((i == 0) && (j == 0)))
                                         {
-                                            if (dtm[row + i, col + j] != -9999)
+                                            if (dtm[row + i, col + j] != nodata_value)
                                             {  //if the cell has no NODATA
 
                                                 dh = dtm[row, col] - (dtm[row + i, col + j] + pond_d[row + i, col + j]);
@@ -662,7 +662,7 @@ namespace LORICA4
                         currentflow[row, col] = 0;
                     }
 
-                } // end runner !=-9999
+                } // end runner !=nodata_value
             } // end runner
               // Debug.WriteLine("df4");
 
@@ -766,11 +766,11 @@ namespace LORICA4
                         {
                             if (((rowp + i) >= 0) && ((rowp + i) < nr) && ((colp + j) >= 0) && ((colp + j) < nc) && !((i == 0) && (j == 0)))
                             {
-                                if (dtm[rowp + i, colp + j] != -9999)
+                                if (dtm[rowp + i, colp + j] != nodata_value)
                                 {
                                     dh = (dtm[rowp, colp] + pond_d[rowp, colp]) - (dtm[rowp + i, colp + j] + pond_d[rowp + i, colp + j]);
                                     dh_nb.Add(dh);
-                                } // end dtm != -9999
+                                } // end dtm != nodata_value
                             } // end if
                         } // end j
                     }  // end i
@@ -794,7 +794,7 @@ namespace LORICA4
                             {
                                 if (((rowp + i) >= 0) && ((rowp + i) < nr) && ((colp + j) >= 0) && ((colp + j) < nc) && !((i == 0) && (j == 0)))
                                 {
-                                    if (dtm[rowp + i, colp + j] != -9999)
+                                    if (dtm[rowp + i, colp + j] != nodata_value)
                                     {
                                         // Debug.WriteLine("po3b");
                                         dh = (dtm[rowp, colp] + pond_d[rowp, colp]) - (dtm[rowp + i, colp + j] + pond_d[rowp + i, colp + j]);
@@ -847,7 +847,7 @@ namespace LORICA4
                                             //}
                                             //Debug.Write("\n");
                                         }
-                                    } // end dtm != -9999
+                                    } // end dtm != nodata_value
                                 } // end if
                             } // end j
                         }  // end i
@@ -888,7 +888,7 @@ namespace LORICA4
             {
                 for (int col = 0; col < nc; col++)
                 {
-                    if (dtm[row, col] != -9999)
+                    if (dtm[row, col] != nodata_value)
                     {
                         stag = false;
                         lay = 0;
@@ -919,7 +919,7 @@ namespace LORICA4
                         {
                             if (((row + i) >= 0) && ((row + i) < nr) && ((col + j) >= 0) && ((col + j) < nc) && !((i == 0) && (j == 0)))
                             {
-                                if (dtm[row + i, col + j] != -9999)
+                                if (dtm[row + i, col + j] != nodata_value)
                                 {  //if the cell has no NODATA
 
                                 }
@@ -937,7 +937,7 @@ namespace LORICA4
             {
                 for (col = 0; col < nc; col++)
                 {
-                    if (dtm[row, col] != -9999)
+                    if (dtm[row, col] != nodata_value)
                     {
                         slopemax = 0;
                         slope = 0;
@@ -946,7 +946,7 @@ namespace LORICA4
                         // Do slope analysis and Aspect Calculation first
                         if ((row - 1) >= 0)
                         {
-                            if (dtm[row, col] > dtm[row - 1, col] && dtm[row - 1, col] != -9999) // North 0
+                            if (dtm[row, col] > dtm[row - 1, col] && dtm[row - 1, col] != nodata_value) // North 0
                             {
                                 slope = (dtm[row, col] - dtm[row - 1, col]) / dx;
                                 if (slope > slopemax)
@@ -960,7 +960,7 @@ namespace LORICA4
 
                         if ((row - 1) >= 0 & (col + 1) < nc)
                         {
-                            if (dtm[row, col] > dtm[row - 1, col + 1] && dtm[row - 1, col + 1] != -9999) // Northeast 45
+                            if (dtm[row, col] > dtm[row - 1, col + 1] && dtm[row - 1, col + 1] != nodata_value) // Northeast 45
                             {
                                 slope = (dtm[row, col] - dtm[row - 1, col + 1]) / (dx * Math.Sqrt(2));
                                 if (slope > slopemax)
@@ -974,7 +974,7 @@ namespace LORICA4
 
                         if ((col + 1) < nc)
                         {
-                            if (dtm[row, col] > dtm[row, col + 1] && dtm[row, col + 1] != -9999) // East 90
+                            if (dtm[row, col] > dtm[row, col + 1] && dtm[row, col + 1] != nodata_value) // East 90
                             {
                                 slope = (dtm[row, col] - dtm[row, col + 1]) / dx;
                                 if (slope > slopemax)
@@ -987,7 +987,7 @@ namespace LORICA4
                         }
                         if ((row + 1) < nr & (col + 1) < nc)
                         {
-                            if (dtm[row, col] > dtm[row + 1, col + 1] && dtm[row + 1, col + 1] != -9999) // SouthEast 135
+                            if (dtm[row, col] > dtm[row + 1, col + 1] && dtm[row + 1, col + 1] != nodata_value) // SouthEast 135
                             {
                                 slope = (dtm[row, col] - dtm[row + 1, col + 1]) / (dx * Math.Sqrt(2));
                                 if (slope > slopemax)
@@ -1002,7 +1002,7 @@ namespace LORICA4
 
                         if ((row + 1) < nr)
                         {
-                            if (dtm[row, col] > dtm[row + 1, col] && dtm[row + 1, col] != -9999) // South 180
+                            if (dtm[row, col] > dtm[row + 1, col] && dtm[row + 1, col] != nodata_value) // South 180
                             {
                                 slope = (dtm[row, col] - dtm[row + 1, col]) / dx;
                                 if (slope > slopemax)
@@ -1015,7 +1015,7 @@ namespace LORICA4
                         }
                         if ((row + 1) < nr & (col - 1) >= 0)
                         {
-                            if (dtm[row, col] > dtm[row + 1, col - 1] && dtm[row + 1, col - 1] != -9999) // SouthWest 225
+                            if (dtm[row, col] > dtm[row + 1, col - 1] && dtm[row + 1, col - 1] != nodata_value) // SouthWest 225
                             {
                                 slope = (dtm[row, col] - dtm[row + 1, col - 1]) / (dx * Math.Sqrt(2));
                                 if (slope > slopemax)
@@ -1029,7 +1029,7 @@ namespace LORICA4
 
                         if ((col - 1) >= 0)
                         {
-                            if (dtm[row, col] > dtm[row, col - 1] && dtm[row, col - 1] != -9999) // West 270
+                            if (dtm[row, col] > dtm[row, col - 1] && dtm[row, col - 1] != nodata_value) // West 270
                             {
                                 slope = (dtm[row, col] - dtm[row, col - 1]) / dx;
                                 if (slope > slopemax)
@@ -1043,7 +1043,7 @@ namespace LORICA4
 
                         if ((row - 1) >= 0 & (col - 1) >= 0)
                         {
-                            if (dtm[row, col] > dtm[row - 1, col - 1] && dtm[row - 1, col - 1] != -9999) // Northwest 315
+                            if (dtm[row, col] > dtm[row - 1, col - 1] && dtm[row - 1, col - 1] != nodata_value) // Northwest 315
                             {
                                 slope = (dtm[row, col] - dtm[row - 1, col - 1]) / (dx * Math.Sqrt(2));
                                 if (slope > slopemax)
@@ -1072,7 +1072,7 @@ namespace LORICA4
         double calc_slope_stdesc(int row_s, int col_s)
         {
             double slope_desc = 0, slope_temp = 0;
-            if (dtm[row_s, col_s] != -9999)
+            if (dtm[row_s, col_s] != nodata_value)
             {
                 for (i = (-1); i <= 1; i++)
                 {
@@ -1080,7 +1080,7 @@ namespace LORICA4
                     {
                         if (((row_s + i) >= 0) && ((row_s + i) < nr) && ((col_s + j) >= 0) && ((col_s + j) < nc) && !((i == 0) && (j == 0)))  //to stay within the grid and avoid the row col cell itself
                         {
-                            if (dtm[row_s + i, col_s + j] != -9999) // if neighbour exists
+                            if (dtm[row_s + i, col_s + j] != nodata_value) // if neighbour exists
                             {
                                 if ((row_s != row_s + i) && (col_s != col_s + j)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }
                                 slope_temp = (dtm[row_s, col_s] - dtm[row_s + i, col_s + j]) / d_x;

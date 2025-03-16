@@ -29,7 +29,7 @@ namespace LORICA4
             {        //visit all cells in the DEM and  ...
                 for (col = 0; col < nc; col++)
                 {
-                    if (dtm[row, col] != -9999)
+                    if (dtm[row, col] != nodata_value)
                     {
                         dh = 0.0; high = 0; low = 0; equal = 0; status_map[row, col] = 0; number = 0;
                         for (x = 0; x < 9; x++) { intoutlet[x] = 99; }
@@ -37,7 +37,7 @@ namespace LORICA4
                         {       //make a circle around every cell  ...
                             for (j = (-1); j <= 1; j++)
                             {
-                                if (((row + i) >= 0) && ((row + i) < nr) && ((col + j) >= 0) && ((col + j) < nc) && !((i == 0) && (j == 0)) && dtm[row + i, col + j] != -9999)
+                                if (((row + i) >= 0) && ((row + i) < nr) && ((col + j) >= 0) && ((col + j) < nc) && !((i == 0) && (j == 0)) && dtm[row + i, col + j] != nodata_value)
                                 { //boundaries of grid
                                     number++;
                                     dh = dtm[row, col] - dtm[row + i, col + j];
@@ -158,7 +158,7 @@ namespace LORICA4
                         while (depressionready != 1)
                         {
                             if (depressionnumber == 1153000) { diagnostic_mode = 1; }
-                            minaltidiff = -99999999; int already_lower_than_lakelevel = 0;
+                            minaltidiff = large_negative_number; int already_lower_than_lakelevel = 0;
                             for (i = (-1 * iloradius); i <= iupradius; i++)
                             {       //make a circle around the current cell that is so large that it covers all neighbours of all cells currently in the depression
                                 for (j = (-1 * jloradius); j <= jupradius; j++)
@@ -281,7 +281,7 @@ namespace LORICA4
                                             for (beta = (-1 * jloradius); beta <= jupradius; beta++)
                                             {
                                                 if (((row + alpha) >= 0) && ((row + alpha) < nr) &&   // insofar that the circle is within the boundaries, excluding the centre cell itself
-                                                    ((col + beta) >= 0) && ((col + beta) < nc) && !((alpha == 0) && (beta == 0)) && dtm[row + alpha, col + beta] != -9999)
+                                                    ((col + beta) >= 0) && ((col + beta) < nc) && !((alpha == 0) && (beta == 0)) && dtm[row + alpha, col + beta] != nodata_value)
                                                 {
                                                     if (depression[row + alpha, col + beta] == otherdepression)
                                                     {
@@ -307,7 +307,7 @@ namespace LORICA4
                                             {
                                                 if (((rowlowestnb[lowestneighbourcounter] + alpha) >= 0) && ((rowlowestnb[lowestneighbourcounter] + alpha) < nr) &&
                                                     ((collowestnb[lowestneighbourcounter] + beta) >= 0) && ((collowestnb[lowestneighbourcounter] + beta) < nc) &&
-                                                    !((alpha == 0) && (beta == 0)) && dtm[rowlowestnb[lowestneighbourcounter] + alpha, collowestnb[lowestneighbourcounter] + beta] != -9999)
+                                                    !((alpha == 0) && (beta == 0)) && dtm[rowlowestnb[lowestneighbourcounter] + alpha, collowestnb[lowestneighbourcounter] + beta] != nodata_value)
                                                 {  // insofar that the circle is within the boundaries, excluding the centre cell itself
                                                     if (depression[rowlowestnb[lowestneighbourcounter] + alpha, collowestnb[lowestneighbourcounter] + beta] != depressionnumber)
                                                     {
@@ -373,7 +373,7 @@ namespace LORICA4
                                         {
                                             if (((rowlowestnb[lowestneighbourcounter] + alpha) >= 0) && ((rowlowestnb[lowestneighbourcounter] + alpha) < nr) &&
                                                     ((collowestnb[lowestneighbourcounter] + beta) >= 0) && ((collowestnb[lowestneighbourcounter] + beta) < nc) &&
-                                                    !((alpha == 0) && (beta == 0)) && dtm[rowlowestnb[lowestneighbourcounter] + alpha, collowestnb[lowestneighbourcounter] + beta] != -9999)
+                                                    !((alpha == 0) && (beta == 0)) && dtm[rowlowestnb[lowestneighbourcounter] + alpha, collowestnb[lowestneighbourcounter] + beta] != nodata_value)
                                             {  // insofar that the circle is within the boundaries, excluding the centre cell itself
                                                 if (depression[rowlowestnb[lowestneighbourcounter] + alpha, collowestnb[lowestneighbourcounter] + beta] == depressionnumber)
                                                 {
@@ -521,7 +521,7 @@ namespace LORICA4
                         {
                             for (int col = jloedge[depressiontt]; col <= jupedge[depressiontt]; col++)
                             {
-                                if (((row) >= 0) && ((row) < nr) && ((col) >= 0) && ((col) < nc) && dtm[row, col] != -9999)
+                                if (((row) >= 0) && ((row) < nr) && ((col) >= 0) && ((col) < nc) && dtm[row, col] != nodata_value)
                                 {  //bnd
                                     if (t > 1000000) { diagnostic_mode = 1; } else { diagnostic_mode = 0; }
                                     if (diagnostic_mode == 1) { Debug.WriteLine("dtmfill_A of " + row + " " + col + " = " + dtmfill_A[row, col] + ", checking on behalf of depression " + depressiontt); }
@@ -535,7 +535,7 @@ namespace LORICA4
                                         {      // go and see if it has a depression-nb that does have a dtmfill and that is lower than the previous possible dep-nb's dtmfill
                                             for (int j = -1; j <= 1; j++)
                                             {
-                                                if (((row + i) >= 0) && ((row + i) < nr) && ((col + j) >= 0) && ((col + j) < nc) && !((i == 0) && (j == 0)) && dtm[row + i, col + j] != -9999)
+                                                if (((row + i) >= 0) && ((row + i) < nr) && ((col + j) >= 0) && ((col + j) < nc) && !((i == 0) && (j == 0)) && dtm[row + i, col + j] != nodata_value)
                                                 {  //bnd
                                                     if (depression[row + i, col + j] == depressiontt && dtmfill_A[row + i, col + j] > 0.0)
                                                     { // if it IS a depression-nb and DOES have a dtmfill
@@ -612,7 +612,7 @@ namespace LORICA4
             {
                 for (ucol = jloedge[depressionnumber]; ucol <= jupedge[depressionnumber]; ucol++)
                 {
-                    if (((urow) >= 0) && ((urow) < nr) && ((ucol) >= 0) && ((ucol) < nc) && dtm[urow, ucol] != -9999)
+                    if (((urow) >= 0) && ((urow) < nr) && ((ucol) >= 0) && ((ucol) < nc) && dtm[urow, ucol] != nodata_value)
                     {  //bnd
                         if (depression[urow, ucol] == depressionnumber)
                         {
@@ -655,7 +655,7 @@ namespace LORICA4
                 {
                     for (ucol = jloedge[depressionnumber] - 1; ucol <= jupedge[depressionnumber] + 1; ucol++)
                     {
-                        if (((urow) >= 0) && ((urow) < nr) && ((ucol) >= 0) && ((ucol) < nc) && dtm[urow, ucol] != -9999)
+                        if (((urow) >= 0) && ((urow) < nr) && ((ucol) >= 0) && ((ucol) < nc) && dtm[urow, ucol] != nodata_value)
                         {  //bnd
                             if (depression[urow, ucol] != depressionnumber && dtm[urow, ucol] > depressionlevel[depressionnumber]) // the second part of the condition should ensure that no cells on the downstream side of outlets are added. 
                             {
@@ -665,7 +665,7 @@ namespace LORICA4
                                 {
                                     for (beta = -1; beta <= 1; beta++)
                                     {
-                                        if ((urow + alpha) >= 0 && (urow + alpha) < nr && (ucol + beta) >= 0 && (ucol + beta) < nc && !((alpha) == 0 && (beta) == 0) && dtm[urow + alpha, ucol + beta] != -9999)
+                                        if ((urow + alpha) >= 0 && (urow + alpha) < nr && (ucol + beta) >= 0 && (ucol + beta) < nc && !((alpha) == 0 && (beta) == 0) && dtm[urow + alpha, ucol + beta] != nodata_value)
                                         {
                                             if ((urow != urow + alpha) && (ucol != ucol + beta)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }
                                             if (only_waterflow_checkbox.Checked == false)
@@ -741,7 +741,7 @@ namespace LORICA4
             {
                 for (fillcol = jloedge[this_depression]; fillcol <= jupedge[this_depression]; fillcol++)
                 {
-                    if (((fillrow) >= 0) && ((fillrow) < nr) && ((fillcol) >= 0) && ((fillcol) < nc) && dtm[fillrow, fillcol] != -9999)
+                    if (((fillrow) >= 0) && ((fillrow) < nr) && ((fillcol) >= 0) && ((fillcol) < nc) && dtm[fillrow, fillcol] != nodata_value)
                     {  //bnd
                         if (depression[fillrow, fillcol] == this_depression)
                         {
@@ -797,7 +797,7 @@ namespace LORICA4
             {
                 for (leavecol = jloedge[this_depression]; leavecol <= jupedge[this_depression]; leavecol++)
                 {
-                    if (((leaverow) >= 0) && ((leaverow) < nr) && ((leavecol) >= 0) && ((leavecol) < nc) && dtm[leaverow, leavecol] != -9999)
+                    if (((leaverow) >= 0) && ((leaverow) < nr) && ((leavecol) >= 0) && ((leavecol) < nc) && dtm[leaverow, leavecol] != nodata_value)
                     {  //bnd
                         if (depression[leaverow, leavecol] == this_depression)
                         {
@@ -837,7 +837,7 @@ namespace LORICA4
             {
                 for (int startcol = jloedge[active_depression]; startcol <= jupedge[active_depression]; startcol++)
                 {
-                    if (((startrow) >= 0) && ((startrow) < nr) && ((startcol) >= 0) && ((startcol) < nc) && dtm[startrow, startcol] != -9999)
+                    if (((startrow) >= 0) && ((startrow) < nr) && ((startcol) >= 0) && ((startcol) < nc) && dtm[startrow, startcol] != nodata_value)
                     {  //bnd
                         if (depression[startrow, startcol] == active_depression)
                         {
@@ -874,7 +874,7 @@ namespace LORICA4
             {
                 for (int startcol = jloedge[active_depression]; startcol <= jupedge[active_depression]; startcol++)
                 {
-                    if (((startrow) >= 0) && ((startrow) < nr) && ((startcol) >= 0) && ((startcol) < nc) && dtm[startrow, startcol] != -9999)
+                    if (((startrow) >= 0) && ((startrow) < nr) && ((startcol) >= 0) && ((startcol) < nc) && dtm[startrow, startcol] != nodata_value)
                     {  //bnd
                         if (depression[startrow, startcol] == active_depression)
                         {
@@ -930,7 +930,7 @@ namespace LORICA4
             {
                 for (startcol = jloedge[active_depression]; startcol <= jupedge[active_depression]; startcol++)
                 {
-                    if (((startrow) >= 0) && ((startrow) < nr) && ((startcol) >= 0) && ((startcol) < nc) && dtm[startrow, startcol] != -9999)
+                    if (((startrow) >= 0) && ((startrow) < nr) && ((startcol) >= 0) && ((startcol) < nc) && dtm[startrow, startcol] != nodata_value)
                     {  //bnd
                         int sediment_present = 0;
                         for (size = 0; size < n_texture_classes; size++)
@@ -1057,7 +1057,7 @@ namespace LORICA4
                 {
                     for (j = -jloradius2; j <= jupradius2; j++)
                     {
-                        if ((startrow + i >= 0) && (startrow + i < nr) && (startcol + j >= 0) && (startcol + j < nc) && !((i == 0) && (j == 0)) && dtm[startrow + i, startcol + j] != -9999) //&& !((startrow + i == row) && (startcol + j == col))
+                        if ((startrow + i >= 0) && (startrow + i < nr) && (startcol + j >= 0) && (startcol + j < nc) && !((i == 0) && (j == 0)) && dtm[startrow + i, startcol + j] != nodata_value) //&& !((startrow + i == row) && (startcol + j == col))
                         { // boundary check while looking around startrow startcol for the neighbours of the entire current delta
                             if (diagnostic_mode == 1) { Debug.WriteLine(" oblique neighbour now " + (startrow + i) + " " + (startcol + j) + ", depression " + depression[startrow + i, startcol + j] + " dtm " + (dtm[startrow + i, startcol + j] + dz_ero_m[startrow + i, startcol + j] + dz_sed_m[startrow + i, startcol + j])); }
                             if (depression[startrow + i, startcol + j] == this_depression || depression[startrow + i, startcol + j] == -this_depression)
@@ -1176,7 +1176,7 @@ namespace LORICA4
             {
                 for (j = -1 * jloradius3; j <= jupradius3; j++)
                 {
-                    if (((rowlowestobnb + i) >= 0) && ((rowlowestobnb + i) < nr) && ((collowestobnb + j) >= 0) && ((collowestobnb + j) < nc) && !(rowlowestobnb + i == row && collowestobnb + j == col) && dtm[rowlowestobnb + i, collowestobnb + j] != -9999)
+                    if (((rowlowestobnb + i) >= 0) && ((rowlowestobnb + i) < nr) && ((collowestobnb + j) >= 0) && ((collowestobnb + j) < nc) && !(rowlowestobnb + i == row && collowestobnb + j == col) && dtm[rowlowestobnb + i, collowestobnb + j] != nodata_value)
                     { // boundaries, note that i==0 && j==0 is allowed  ;we can raise rowlowestobnb,colloewsobnb when it is part of the delta.
                         if (depression[rowlowestobnb + i, collowestobnb + j] == -this_depression) // i.e. if cell is part of present delta
                         {
@@ -1253,7 +1253,7 @@ namespace LORICA4
             {
                 for (j = -1 * jloradius3; j <= jupradius3; j++)
                 {
-                    if (((tempx + i) >= 0) && ((tempx + i) < nr) && ((tempy + j) >= 0) && ((tempy + j) < nc) && !(tempx + i == row && tempy + j == col) && dtm[tempx + i, tempy + j] != -9999)
+                    if (((tempx + i) >= 0) && ((tempx + i) < nr) && ((tempy + j) >= 0) && ((tempy + j) < nc) && !(tempx + i == row && tempy + j == col) && dtm[tempx + i, tempy + j] != nodata_value)
                     { // boundaries
                         if (depression[tempx + i, tempy + j] == -this_depression)
                         {
@@ -1341,13 +1341,13 @@ namespace LORICA4
                             minimaps(row, col);
                         }
                         bool found_a_delta_starter = false;
-                        int tprowlowestobnb = -9999;
-                        int tpcollowestobnb = -9999;
+                        int tprowlowestobnb = large_negative_number;
+                        int tpcollowestobnb = large_negative_number;
                         for (i = -1 * iloradius3; i <= iupradius3; i++)
                         {
                             for (j = -1 * jloradius3; j <= jupradius3; j++)
                             {
-                                if (((tempx + i) >= 0) && ((tempx + i) < nr) && ((tempy + j) >= 0) && ((tempy + j) < nc) && !(tempx + i == row && tempy + j == col) && dtm[tempx + i, tempy + j] != -9999)
+                                if (((tempx + i) >= 0) && ((tempx + i) < nr) && ((tempy + j) >= 0) && ((tempy + j) < nc) && !(tempx + i == row && tempy + j == col) && dtm[tempx + i, tempy + j] != nodata_value)
                                 { // boundaries
                                     if (depression[tempx + i, tempy + j] == this_depression)
                                     {

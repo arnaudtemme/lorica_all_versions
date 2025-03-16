@@ -178,7 +178,7 @@ namespace LORICA4
                         if (Frost_weathering_checkbox.Checked) { sum_frost_weathering[row, col] = 0; }
                         if (Tillage_checkbox.Checked) { sum_tillage[row, col] = 0; total_sum_tillage = 0; dz_till_bd[row, col] = 0; }
                         if (Landslide_checkbox.Checked) { sum_landsliding[row, col] = 0; total_sum_tillage = 0; }
-                        if (soildepth_m[row, col] < 0.0 && soildepth_m[row, col] != -9999) { soildepth_error += soildepth_m[row, col]; soildepth_m[row, col] = 0; }
+                        if (soildepth_m[row, col] < 0.0 && soildepth_m[row, col] != nodata_value) { soildepth_error += soildepth_m[row, col]; soildepth_m[row, col] = 0; }
                         if (uplift_active_checkbox.Checked) { sum_uplift[row, col] = 0; total_sum_uplift = 0; }
                         if (tilting_active_checkbox.Checked) { sum_tilting[row, col] = 0; total_sum_tilting = 0; }
                         if (check_space_soildepth.Checked != true) { soildepth_m[row, col] = soildepth_value; }
@@ -298,7 +298,7 @@ namespace LORICA4
                         {
                             for (int col = 0; col < nc; col++)
                             {
-                                if (dtm[row, col] < dtmfill_A[row, col] && dtm[row, col] != -9999)
+                                if (dtm[row, col] < dtmfill_A[row, col] && dtm[row, col] != nodata_value)
                                 {
                                     dtm[row, col] = dtmfill_A[row, col];
                                 }
@@ -536,7 +536,7 @@ namespace LORICA4
                         if (Frost_weathering_checkbox.Checked) { sum_frost_weathering[row, col] = 0; }
                         if (Tillage_checkbox.Checked) { sum_tillage[row, col] = 0; total_sum_tillage = 0; dz_till_bd[row, col] = 0; }
                         if (Landslide_checkbox.Checked) { sum_landsliding[row, col] = 0; total_sum_tillage = 0; }
-                        if (soildepth_m[row, col] < 0.0 && soildepth_m[row, col] != -9999) { soildepth_error += soildepth_m[row, col]; soildepth_m[row, col] = 0; }
+                        if (soildepth_m[row, col] < 0.0 && soildepth_m[row, col] != nodata_value) { soildepth_error += soildepth_m[row, col]; soildepth_m[row, col] = 0; }
                         if (uplift_active_checkbox.Checked) { sum_uplift[row, col] = 0; total_sum_uplift = 0; }
                         if (tilting_active_checkbox.Checked) { sum_tilting[row, col] = 0; total_sum_tilting = 0; }
                         if (check_space_soildepth.Checked != true) { soildepth_m[row, col] = soildepth_value; }
@@ -659,7 +659,7 @@ namespace LORICA4
                         {
                             for (int col = 0; col < nc; col++)
                             {
-                                if (dtm[row, col] < dtmfill_A[row, col] && dtm[row, col] != -9999)
+                                if (dtm[row, col] < dtmfill_A[row, col] && dtm[row, col] != nodata_value)
                                 {
                                     dtm[row, col] = dtmfill_A[row, col];
                                 }
@@ -1219,7 +1219,7 @@ namespace LORICA4
                     {
                         for (int col = 0; col < nc; col++)
                         {
-                            if (dtm[row, col] < dtmfill_A[row, col] && dtm[row, col] != -9999)
+                            if (dtm[row, col] < dtmfill_A[row, col] && dtm[row, col] != nodata_value)
                             {
                                 dtmchange_m[row, col] += dtmfill_A[row, col] - dtm[row, col];
                                 dtm[row, col] = dtmfill_A[row, col];

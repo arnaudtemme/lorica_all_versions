@@ -26,7 +26,7 @@ namespace LORICA4
                 {
                     for (int col = 0; col < nc; col++)
                     {
-                        if (dtm[row, col] != -9999)
+                        if (dtm[row, col] != nodata_value)
                         {
                             if (hardlayer_near_surface(row, col) == true)
                             {
@@ -74,14 +74,14 @@ namespace LORICA4
             //development possible to account for presence of blocks in downslope cells
             //Debug.WriteLineIf(nowrow == 0 && nowcol == 88,"x");
             //Debug.WriteLineIf(nowrow == 0 && nowcol == 88,  "dtm" + dtm[nowrow, nowcol]);
-            if (nowrow > 0 && nowcol > 0) { if (dtm[nowrow - 1, nowcol - 1] != -9999) { if ((dtm[nowrow, nowcol] - dtm[nowrow - 1, nowcol - 1]) > max_dz_m) { max_dz_m = Convert.ToSingle(dtm[nowrow, nowcol] - dtm[nowrow - 1, nowcol - 1]); n_to_s = 1; e_to_w = -1; } } }
-            if (nowrow > 0) { if (dtm[nowrow - 1, nowcol] != -9999) { if ((dtm[nowrow, nowcol] - dtm[nowrow - 1, nowcol]) > max_dz_m) { max_dz_m = Convert.ToSingle(dtm[nowrow, nowcol] - dtm[nowrow - 1, nowcol]); n_to_s = 1; e_to_w = 0; } } }
-            if (nowrow > 0 && (nowcol + 1) < nc) { if (dtm[nowrow - 1, nowcol + 1] != -9999) { if ((dtm[nowrow, nowcol] - dtm[nowrow - 1, nowcol + 1]) > max_dz_m) { max_dz_m = Convert.ToSingle(dtm[nowrow, nowcol] - dtm[nowrow - 1, nowcol + 1]); n_to_s = 1; e_to_w = 1; } } }
-            if (nowcol > 0) { if (dtm[nowrow, nowcol - 1] != -9999) { if ((dtm[nowrow, nowcol] - dtm[nowrow, nowcol - 1]) > max_dz_m) { max_dz_m = Convert.ToSingle(dtm[nowrow, nowcol] - dtm[nowrow, nowcol - 1]); n_to_s = 0; e_to_w = -1; } } }
-            if ((nowcol + 1) < nc) { if (dtm[nowrow, nowcol + 1] != -9999) { if ((dtm[nowrow, nowcol] - dtm[nowrow, nowcol + 1]) > max_dz_m) { max_dz_m = Convert.ToSingle(dtm[nowrow, nowcol] - dtm[nowrow, nowcol + 1]); n_to_s = 0; e_to_w = 1; } } }
-            if ((nowrow + 1) < nr && nowcol > 0) { if (dtm[nowrow + 1, nowcol - 1] != -9999) { if ((dtm[nowrow, nowcol] - dtm[nowrow + 1, nowcol - 1]) > max_dz_m) { max_dz_m = Convert.ToSingle(dtm[nowrow, nowcol] - dtm[nowrow + 1, nowcol - 1]); n_to_s = -1; e_to_w = -1; } } }
-            if ((nowrow + 1) < nr) { if (dtm[nowrow + 1, nowcol] != -9999) { if ((dtm[nowrow, nowcol] - dtm[nowrow + 1, nowcol]) > max_dz_m) { max_dz_m = Convert.ToSingle(dtm[nowrow, nowcol] - dtm[nowrow + 1, nowcol]); n_to_s = -1; e_to_w = 0; } } }
-            if ((nowrow + 1) < nr && (nowcol + 1) < nc) { if (dtm[nowrow + 1, nowcol + 1] != -9999) { if ((dtm[nowrow, nowcol] - dtm[nowrow + 1, nowcol + 1]) > max_dz_m) { max_dz_m = Convert.ToSingle(dtm[nowrow, nowcol] - dtm[nowrow + 1, nowcol + 1]); n_to_s = -1; e_to_w = 1; } } }
+            if (nowrow > 0 && nowcol > 0) { if (dtm[nowrow - 1, nowcol - 1] != nodata_value) { if ((dtm[nowrow, nowcol] - dtm[nowrow - 1, nowcol - 1]) > max_dz_m) { max_dz_m = Convert.ToSingle(dtm[nowrow, nowcol] - dtm[nowrow - 1, nowcol - 1]); n_to_s = 1; e_to_w = -1; } } }
+            if (nowrow > 0) { if (dtm[nowrow - 1, nowcol] != nodata_value) { if ((dtm[nowrow, nowcol] - dtm[nowrow - 1, nowcol]) > max_dz_m) { max_dz_m = Convert.ToSingle(dtm[nowrow, nowcol] - dtm[nowrow - 1, nowcol]); n_to_s = 1; e_to_w = 0; } } }
+            if (nowrow > 0 && (nowcol + 1) < nc) { if (dtm[nowrow - 1, nowcol + 1] != nodata_value) { if ((dtm[nowrow, nowcol] - dtm[nowrow - 1, nowcol + 1]) > max_dz_m) { max_dz_m = Convert.ToSingle(dtm[nowrow, nowcol] - dtm[nowrow - 1, nowcol + 1]); n_to_s = 1; e_to_w = 1; } } }
+            if (nowcol > 0) { if (dtm[nowrow, nowcol - 1] != nodata_value) { if ((dtm[nowrow, nowcol] - dtm[nowrow, nowcol - 1]) > max_dz_m) { max_dz_m = Convert.ToSingle(dtm[nowrow, nowcol] - dtm[nowrow, nowcol - 1]); n_to_s = 0; e_to_w = -1; } } }
+            if ((nowcol + 1) < nc) { if (dtm[nowrow, nowcol + 1] != nodata_value) { if ((dtm[nowrow, nowcol] - dtm[nowrow, nowcol + 1]) > max_dz_m) { max_dz_m = Convert.ToSingle(dtm[nowrow, nowcol] - dtm[nowrow, nowcol + 1]); n_to_s = 0; e_to_w = 1; } } }
+            if ((nowrow + 1) < nr && nowcol > 0) { if (dtm[nowrow + 1, nowcol - 1] != nodata_value) { if ((dtm[nowrow, nowcol] - dtm[nowrow + 1, nowcol - 1]) > max_dz_m) { max_dz_m = Convert.ToSingle(dtm[nowrow, nowcol] - dtm[nowrow + 1, nowcol - 1]); n_to_s = -1; e_to_w = -1; } } }
+            if ((nowrow + 1) < nr) { if (dtm[nowrow + 1, nowcol] != nodata_value) { if ((dtm[nowrow, nowcol] - dtm[nowrow + 1, nowcol]) > max_dz_m) { max_dz_m = Convert.ToSingle(dtm[nowrow, nowcol] - dtm[nowrow + 1, nowcol]); n_to_s = -1; e_to_w = 0; } } }
+            if ((nowrow + 1) < nr && (nowcol + 1) < nc) { if (dtm[nowrow + 1, nowcol + 1] != nodata_value) { if ((dtm[nowrow, nowcol] - dtm[nowrow + 1, nowcol + 1]) > max_dz_m) { max_dz_m = Convert.ToSingle(dtm[nowrow, nowcol] - dtm[nowrow + 1, nowcol + 1]); n_to_s = -1; e_to_w = 1; } } }
             return max_dz_m;
         }
 
@@ -158,7 +158,7 @@ namespace LORICA4
                         removelist.Add(Block);
                         //Debug.WriteLine(" added to remove list ");
                     }
-                    else if (dtm[row, col] != -9999)
+                    else if (dtm[row, col] != nodata_value)
                     {
                         // we calculate for four possible directions whether the block should roll:
                         bool block_has_rolled = false;

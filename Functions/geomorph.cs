@@ -536,7 +536,7 @@ namespace LORICA4
             for (runner = number_of_data_cells - 1; runner >= 0; runner--)
             {
 
-                if (index[runner] != -9999)
+                if (index[runner] != nodata_value)
                 {
                     //if (row == 40 & col == 31) { displaysoil(40, 31); Debugger.Break(); }
 
@@ -568,7 +568,7 @@ namespace LORICA4
 
                                 if (((row + i) >= 0) && ((row + i) < nr) && ((col + j) >= 0) && ((col + j) < nc) && !((i == 0) && (j == 0)))
                                 {
-                                    if (dtm[row + i, col + j] != -9999)
+                                    if (dtm[row + i, col + j] != nodata_value)
                                     {
                                         // Debug.WriteLine("row = {0}, col = {1}, dir = {2}, i = {3}, j = {4}",row,col,dir,i,j);
                                         dh = dtm[row, col] - dtm[row + i, col + j];
@@ -589,7 +589,7 @@ namespace LORICA4
                                             calculate_sediment_dynamics(row, col, i, j, flow_between_cells_m3_per_m, fraction, fracsum);
                                             fracsum += fraction;
                                         } // end dh > 0
-                                    } // end dtm!=-9999
+                                    } // end dtm!=nodata_value
                                 }
                             } // end j
                         } // end i
@@ -621,7 +621,7 @@ namespace LORICA4
                                     {
                                         bool_outflow = true;
                                     }
-                                    else if (dtm[row + i, col + j] == -9999)
+                                    else if (dtm[row + i, col + j] == nodata_value)
                                     {
                                         bool_outflow = true;
                                     }
@@ -679,7 +679,7 @@ namespace LORICA4
                 {
                     for (int col = 0; col < nc; col++)
                     {
-                        if (dtm[row, col] != -9999)
+                        if (dtm[row, col] != nodata_value)
                         {
                             if (only_waterflow_checkbox.Checked == false)
                             {
@@ -738,7 +738,7 @@ namespace LORICA4
             nb_ok = 0;  // nb_ok is 1 als er uberhaupt buren zijn, dus 0 als er alleen maar NODATA is
             nb_check = 0; all_grids = 0;
             dz_bal = 0; sediment_exported_m = 0; erocnt = 0; sedcnt = 0;
-            sedbal = 0; erobal = 0; maximum_allowed_deposition = -9999.0; dh_tol = 0.00025;
+            sedbal = 0; erobal = 0; maximum_allowed_deposition = large_negative_number; dh_tol = 0.00025;
             sedbal2 = 0; erobal2 = 0;
             tel1 = 0; tel2 = 0; tel3 = 0; tel4 = 0;
             depressions_filled = 0; depressions_delta = 0; depressions_alone = 0; sediment_delta_m = 0; sediment_filled_m = 0; depressionvolume_filled_m = 0; crashed = false;
@@ -769,7 +769,7 @@ namespace LORICA4
                 for (col = 0; col < nc; col++)
                 {
                     // if(row==50 & col == 99) { Debugger.Break(); }
-                    if (dtm[row, col] != -9999)
+                    if (dtm[row, col] != nodata_value)
                     {
                         // First, we apply rainwater to our landscape (in a two step approach - first normal cells and lake outlets)
                         if (depression[row, col] == 0 ||
@@ -844,7 +844,7 @@ namespace LORICA4
             if (NA_anywhere_in_soil() == true) { Debug.WriteLine("NA found before sorted row col loop in water erosed"); }
             for (runner = number_of_data_cells - 1; runner >= 0; runner--)
             {     // the index is sorted from low to high values, but flow goes from high to low
-                if (index[runner] != -9999)
+                if (index[runner] != nodata_value)
                 {
 
                     int row = row_index[runner]; int col = col_index[runner];
@@ -854,8 +854,8 @@ namespace LORICA4
 
                     else { diagnostic_mode = 0; }
 
-                    powered_slope_sum = 0; max_allowed_erosion = 0; dz_min = -9999.99;
-                    direction = 20; dz_max = -10; dhtemp = -99999.99; maximum_allowed_deposition = -9999.99;
+                    powered_slope_sum = 0; max_allowed_erosion = 0; dz_min = large_negative_number;
+                    direction = 20; dz_max = -10; dhtemp = -8888; maximum_allowed_deposition = large_negative_number;
                     if (depression[row, col] < 0) { depression[row, col] = 0; }
                     if ((drainingoutlet_row[depression[row, col], 0] == row && drainingoutlet_col[depression[row, col], 0] == col) ||
                         (drainingoutlet_row[depression[row, col], 1] == row && drainingoutlet_col[depression[row, col], 1] == col) ||
@@ -897,7 +897,7 @@ namespace LORICA4
                         {
                             for (sbyte j = (-1); j <= 1; j++)
                             {
-                                dh = 0; dhtemp = -99999.99; d_x = dx;
+                                dh = 0; dhtemp = -8888; d_x = dx;
                                 if (((row + i) >= 0) && ((row + i) < nr) && ((col + j) >= 0) && ((col + j) < nc) && !((i == 0) && (j == 0)))  //to stay within the grid and avoid the row col cell itself
                                 {
                                     // below, we calculate slope_sum for all cells either not in a depression, or being a outlet
@@ -905,7 +905,7 @@ namespace LORICA4
                                     // if (diagnostic_mode == 1) { Debug.WriteLine("checking " + (row + i) + " " + (col + j) + " from cell " + row + " " + col); }
                                     if (depression[row, col] == 0)
                                     {    // if the cell is not in a depression (it could be in a depression as an outlet)
-                                        if (dtm[row + i, col + j] != -9999)
+                                        if (dtm[row + i, col + j] != nodata_value)
                                         {  //if the cell has no NODATA
                                             if (only_waterflow_checkbox.Checked)
                                             {
@@ -953,7 +953,7 @@ namespace LORICA4
                             }//end for j
                         }//end for i, we now know slope sum for this cell. We have included cells that are in a lake in this calculation. //ArT should we replace their altitude with depressionlevel?
                          // (row == 24 && col == 81) { Debug.WriteLine("passed"); }
-                        if (maximum_allowed_deposition == -9999.99) { maximum_allowed_deposition = 0; } else { maximum_allowed_deposition = -maximum_allowed_deposition; }
+                        if (maximum_allowed_deposition == large_negative_number) { maximum_allowed_deposition = 0; } else { maximum_allowed_deposition = -maximum_allowed_deposition; }
                         if (max_allowed_erosion < 0) { max_allowed_erosion = -dh_tol; } else { max_allowed_erosion = -max_allowed_erosion; }
                         //if (diagnostic_mode == 1) { Debug.WriteLine(" slopesum = " + slope_sum + " maximum deposition " + maximum_allowed_deposition + " maximum erosion " + max_allowed_erosion); }
 
@@ -985,7 +985,7 @@ namespace LORICA4
                                     if (((row + i) >= 0) && ((row + i) < nr) && ((col + j) >= 0) && ((col + j) < nc) && !((i == 0) && (j == 0)))
                                     {  //boundaries
                                        //if (row == 24 && col == 81) { Debug.WriteLine("entered" + i + j); }
-                                        if (dtm[row + i, col + j] != -9999)
+                                        if (dtm[row + i, col + j] != nodata_value)
                                         {
                                             if (only_waterflow_checkbox.Checked)
                                             {
@@ -1069,7 +1069,7 @@ namespace LORICA4
             {
                 for (int col = 0; col < nc; col++)
                 {
-                    if (dtm[row, col] != -9999)
+                    if (dtm[row, col] != nodata_value)
                     {
                         if (only_waterflow_checkbox.Checked == false)
                         {
@@ -1262,11 +1262,11 @@ namespace LORICA4
                 for (col = 0; col < nc; col++)
                 {
                     //currently spatially uniform
-                    T_fac[row, col] = -9999;
-                    Cohesion_factor[row, col] = -9999;
-                    sat_bd_kg_m3[row, col] = -9999;
-                    peak_friction_angle_radians[row, col] = -9999;
-                    resid_friction_angle_radians[row, col] = -9999;
+                    T_fac[row, col] = nodata_value;
+                    Cohesion_factor[row, col] = nodata_value;
+                    sat_bd_kg_m3[row, col] = nodata_value;
+                    peak_friction_angle_radians[row, col] = nodata_value;
+                    resid_friction_angle_radians[row, col] = nodata_value;
                 } //for
             } //for
             for (int ls = 0; ls < 100000; ls++)
@@ -1291,7 +1291,7 @@ namespace LORICA4
             {
                 for (int col = 0; col < nc; col++)
                 {
-                    if (dtm[row, col] != -9999)
+                    if (dtm[row, col] != nodata_value)
                     {//note that specific surface areas from the interface are in m2/kg, we need m2/g:
                         fcoarse = texture_kg[row, col, 0, 0] / total_layer_mass_kg(row, col, 0);
                         fsand = texture_kg[row, col, 0, 1] / total_layer_mass_kg(row, col, 0);
@@ -1313,8 +1313,8 @@ namespace LORICA4
                     }
                     else
                     {
-                        peak_friction_angle_radians[row, col] = -9999;
-                        resid_friction_angle_radians[row, col] = -9999;
+                        peak_friction_angle_radians[row, col] = nodata_value;
+                        resid_friction_angle_radians[row, col] = nodata_value;
                     }
                 }
             }
@@ -1333,7 +1333,7 @@ namespace LORICA4
             {
                 for (int col = 0; col < nc; col++)
                 {
-                    if (dtm[row, col] != -9999)
+                    if (dtm[row, col] != nodata_value)
                     {
                         clay_perc = 100 * (texture_kg[row, col, 0, 3] + texture_kg[row, col, 0, 4]) / (texture_kg[row, col, 0, 0] + texture_kg[row, col, 0, 1] + texture_kg[row, col, 0, 2] + texture_kg[row, col, 0, 3] + texture_kg[row, col, 0, 4]); // of the entire soil
                         soil_cohesion_kPa = 1.33 + 0.33 * clay_perc; // Khaboushan et al 2018, Soil Tillage Research (R2 0.75 - P < 0.01)
@@ -1341,7 +1341,7 @@ namespace LORICA4
                     }
                     else
                     {
-                        Cohesion_factor[row, col] = -9999;
+                        Cohesion_factor[row, col] = nodata_value;
                     }
                 }
             }
@@ -1359,7 +1359,7 @@ namespace LORICA4
             {
                 for (int col = 0; col < nc; col++)
                 {
-                    if (dtm[row, col] != -9999)
+                    if (dtm[row, col] != nodata_value)
                     {
                         transmissivity_m2_hr = 0;
                         currentdepth_m = 0;
@@ -1391,7 +1391,7 @@ namespace LORICA4
                     }
                     else
                     {
-                        T_fac[row, col] = -9999;
+                        T_fac[row, col] = nodata_value;
                     }
 
                 }
@@ -1412,7 +1412,7 @@ namespace LORICA4
             {
                 for (int col = 0; col < nc; col++)
                 {
-                    if (dtm[row, col] != -9999)
+                    if (dtm[row, col] != nodata_value)
                     {
                         localdepth_m = soildepth_m[row, col];
                         localmass_kg = 0;
@@ -1432,7 +1432,7 @@ namespace LORICA4
                             Debug.WriteLine(" Saturated BD is NaN at " + row + " " + col);            
                         }*/
                     }
-                    else { sat_bd_kg_m3[row, col] = -9999; }
+                    else { sat_bd_kg_m3[row, col] = nodata_value; }
                 }
             }
         }
@@ -1578,14 +1578,14 @@ namespace LORICA4
 
             double beta;
             nb_ok = 0; nb_check = 0; all_grids = 0;
-            maximum_allowed_deposition = -9999; dh_tol = 0.00025;
+            maximum_allowed_deposition = large_negative_number; dh_tol = 0.00025;
             for (int row = 0; row < nr; row++)
             {
                 for (int col = 0; col < nc; col++)
                 {
                     camf[row, col] = 1;    // contributing area multiple flow matrix = 1
                     stslope_radians[row, col] = 0;
-                    crrain_m_d[row, col] = -9999;
+                    crrain_m_d[row, col] = nodata_value;
                 }
             }
             int runner;
@@ -1594,8 +1594,8 @@ namespace LORICA4
                 row = row_index[runner]; col = col_index[runner];
                 // into loop for surounding grids of certain grid
                 // Start first the slope_sum loop for all lower neighbour grids
-                powered_slope_sum = 0; max_allowed_erosion = 0; dz_min = -9999.99;
-                direction = 20; dz_max = -1; dhtemp = -99999.99; maximum_allowed_deposition = (-9999.99);
+                powered_slope_sum = 0; max_allowed_erosion = 0; dz_min = large_negative_number;
+                direction = 20; dz_max = -1; dhtemp = -8888; maximum_allowed_deposition = (large_negative_number);
 
                 // Repeat the loop to determine flow if all draining neighbours are known
                 // but do this only once
@@ -1603,7 +1603,7 @@ namespace LORICA4
                 {
                     for (j = (-1); j <= 1; j++)
                     {
-                        dh = 000000; dh1 = 000; dhtemp = -99999.99; d_x = dx;
+                        dh = 000000; dh1 = 000; dhtemp = large_negative_number; d_x = dx;
                         if (((row + i) >= 0) && ((row + i) < nr) &&   // boundaries
                         ((col + j) >= 0) && ((col + j) < nc) &&
                        !((i == 0) && (j == 0)))
@@ -1632,7 +1632,7 @@ namespace LORICA4
                         }//end if
                     }//end for
                 }//end for
-                if (maximum_allowed_deposition == -9999.99) { maximum_allowed_deposition = 0; } else { maximum_allowed_deposition = -maximum_allowed_deposition; }
+                if (maximum_allowed_deposition == large_negative_number) { maximum_allowed_deposition = 0; } else { maximum_allowed_deposition = -maximum_allowed_deposition; }
                 if (max_allowed_erosion == 0.0) { max_allowed_erosion = -dh_tol; } else { max_allowed_erosion = -max_allowed_erosion; }
                 for (i = (-1); i <= 1; i++)
                 {
@@ -1666,7 +1666,7 @@ namespace LORICA4
             {
                 for (col = 0; col < nc; col++)
                 {
-                    if (dtm[row, col] != -9999)
+                    if (dtm[row, col] != nodata_value)
                     {
                         direction = 20; dz_max = -1;
                         for (i = (-1); i <= 1; i++)
@@ -1696,7 +1696,7 @@ namespace LORICA4
                                 dh = 000000;
                                 if (((row + i) >= 0) && ((row + i) < nr) && ((col + j) >= 0) && ((col + j) < nc) && !((i == 0) && (j == 0)))
                                 {
-                                    if (dtm[row + i, col + j] != -9999)
+                                    if (dtm[row + i, col + j] != nodata_value)
                                     {
                                         dh = (dtm[row, col] - dtm[row + i, col + j]);
                                         if ((row != row + i) && (col != col + j)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }
@@ -1764,12 +1764,12 @@ namespace LORICA4
                 {
                     for (j = (-1); j <= 1; j++)
                     {
-                        dh = 0; sloper = 0; dh1 = 000; dhtemp = -99999.99; d_x = dx;
+                        dh = 0; sloper = 0; dh1 = 000; dhtemp = large_negative_number; d_x = dx;
                         if (((trow + i) >= 0) && ((trow + i) < nr) &&   // boundaries
                             ((tcol + j) >= 0) && ((tcol + j) < nc) &&
                             !((i == 0) && (j == 0)))
                         {
-                            if (dtm[trow + i, tcol + j] != -9999)
+                            if (dtm[trow + i, tcol + j] != nodata_value)
                             {
                                 dh = (dtm[trow, tcol] - dtm[trow + i, tcol + j]);
                                 if ((trow != trow + i) && (tcol != tcol + j)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }
@@ -1797,7 +1797,7 @@ namespace LORICA4
                         }//end if
                     }//end for
                 }//end for
-                if (maximum_allowed_deposition == -9999.99) { maximum_allowed_deposition = 0; } else { maximum_allowed_deposition = (maximum_allowed_deposition * (-1)); }
+                if (maximum_allowed_deposition == large_negative_number) { maximum_allowed_deposition = 0; } else { maximum_allowed_deposition = (maximum_allowed_deposition * (-1)); }
                 if (max_allowed_erosion == 0) { max_allowed_erosion = dh_tol * -1; } else { max_allowed_erosion = (max_allowed_erosion * (-1)); }
             }
             catch { Debug.WriteLine("failed during search for steepest descent neighbour"); }
@@ -1821,12 +1821,12 @@ namespace LORICA4
                     this.InfoStatusPanel.Text = "new landslide calculation";
                 }, CancellationToken.None, TaskCreationOptions.None, guiThread);
                 nb_ok = 0; nb_check = 0; all_grids = 0.0;
-                maximum_allowed_deposition = -9999.0; dh_tol = 0.00025; erotot_m = 0.0;
+                maximum_allowed_deposition = large_negative_number; dh_tol = 0.00025; erotot_m = 0.0;
                 for (row = 0; row < nr; row++)
                 {
                     for (col = 0; col < nc; col++)
                     {
-                        if (dtm[row, col] != -9999)
+                        if (dtm[row, col] != nodata_value)
                         {
                             ero_slid_m[row, col] = 0;
                             sed_slid_m[row, col] = 0;
@@ -1851,8 +1851,8 @@ namespace LORICA4
                 {           // the list of cells (index) is sorted from low to high values, but flow goes from high to low
                             //so, we will now walk from highest cell to next lower cell, etc, not necessarily to a direct neighbour.
                     row = row_index[runner]; col = col_index[runner];
-                    powered_slope_sum = 0.0; max_allowed_erosion = 0.0; dz_min = -9999.99; d_x = dx;
-                    dz_max = -1.0; dhtemp = -99999.99; maximum_allowed_deposition = -9999.99;
+                    powered_slope_sum = 0.0; max_allowed_erosion = 0.0; dz_min = large_negative_number; d_x = dx;
+                    dz_max = -1.0; dhtemp = large_negative_number; maximum_allowed_deposition = large_negative_number;
                     bool situation_A = false, situation_B = false, situation_C = false, situation_D = false;
 
                     //first, calculating steepest local slope:
@@ -1938,7 +1938,7 @@ namespace LORICA4
                                 if (((row + i) >= 0) && ((row + i) < nr) && ((col + j) >= 0) && ((col + j) < nc) && !((i == 0) && (j == 0)))
                                 {
                                     dh = 0;
-                                    if (dtm[row + i, col + j] != -9999)
+                                    if (dtm[row + i, col + j] != nodata_value)
                                     {
                                         dh = dtm[row, col] - dtm[row + i, col + j];
                                         if (dh > 0)
@@ -1964,7 +1964,7 @@ namespace LORICA4
                                 dh = 0;
                                 if (((row + i) >= 0) && ((row + i) < nr) && ((col + j) >= 0) && ((col + j) < nc) && !((i == 0) && (j == 0)))
                                 {
-                                    if (dtm[row + i, col + j] != -9999)
+                                    if (dtm[row + i, col + j] != nodata_value)
                                     {
                                         dh = dtm[row, col] - dtm[row + i, col + j];
                                         if (dh > 0)
@@ -2050,7 +2050,7 @@ namespace LORICA4
                                 dh = 0; dh1 = 0;
                                 if (((row + i) >= 0) && ((row + i) < nr) && ((col + j) >= 0) && ((col + j) < nc) && !((i == 0) && (j == 0)))
                                 {
-                                    if (dtm[row + i, col + j] != -9999)
+                                    if (dtm[row + i, col + j] != nodata_value)
                                     {
                                         dh = dtm[row, col] - dtm[row + i, col + j];
                                         if (dh <= 0)
@@ -2100,7 +2100,7 @@ namespace LORICA4
                                     dh = 0; dh1 = 0;
                                     if (((row + i) >= 0) && ((row + i) < nr) && ((col + j) >= 0) && ((col + j) < nc) && !((i == 0) && (j == 0)))
                                     {
-                                        if (dtm[row + i, col + j] != -9999)
+                                        if (dtm[row + i, col + j] != nodata_value)
                                         {
                                             dh = dtm[row, col] + sed_slid_m[row, col] - dtm[row + i, col + j];
                                             if (dh > 0)
@@ -2123,7 +2123,7 @@ namespace LORICA4
                                     {
                                         if (((row + i) >= 0) && ((row + i) < nr) && ((col + j) >= 0) && ((col + j) < nc) && !((i == 0) && (j == 0)))
                                         {
-                                            if (dtm[row + i, col + j] != -9999)
+                                            if (dtm[row + i, col + j] != nodata_value)
                                             {
                                                 dh = dtm[row, col] + sed_slid_m[row, col] - dtm[row + i, col + j];
                                                 if (dh > 0)
@@ -2181,7 +2181,7 @@ namespace LORICA4
                 {
                     for (col = 0; col < nc; col++)
                     {
-                        if (dtm[row, col] != -9999)
+                        if (dtm[row, col] != nodata_value)
                         {
                             dtm[row, col] += ero_slid_m[row, col] + sed_slid_m[row, col];
                             dtmchange_m[row, col] += ero_slid_m[row, col] + sed_slid_m[row, col];
@@ -2256,7 +2256,7 @@ namespace LORICA4
                     for (col = 0; col < nc; col++)
                     {
                         till_result[row, col] = 0;
-                        // if (dtm[row, col] < -9900 && dtm[row, col] != -9999) { Debug.WriteLine(" Cell " + row + " " + col + " has altitude " + dtm[row, col] + " till " + till_result[row, col]); }
+                        // if (dtm[row, col] < -9900 && dtm[row, col] != nodata_value) { Debug.WriteLine(" Cell " + row + " " + col + " has altitude " + dtm[row, col] + " till " + till_result[row, col]); }
                     }
                 }
 
@@ -2445,15 +2445,15 @@ namespace LORICA4
                         // Debug.WriteLine("till5");
                         // 2. Calculate redistribution of material
                         // 2.a First calculate slope_sum for multiple flow, and remember how much lower the !currently! lowest lower neighbour is
-                        slope_sum = 0; d_x = dx; dhtemp = -99999.99; nb_ok = 1; dz_max = 0; dz_min = -9999;
+                        slope_sum = 0; d_x = dx; dhtemp = large_negative_number; nb_ok = 1; dz_max = 0; dz_min = large_negative_number;
                         for (i = (-1); i <= 1; i++)
                         {
                             for (j = (-1); j <= 1; j++)
                             {
-                                dh = 0; dhtemp = -99999.99; d_x = dx;
+                                dh = 0; dhtemp = large_negative_number; d_x = dx;
                                 if (((row + i) >= 0) && ((row + i) < nr) && ((col + j) >= 0) && ((col + j) < nc) && !((i == 0) && (j == 0)))
                                 {    // boundaries
-                                    if (dtm[row + i, col + j] != -9999)
+                                    if (dtm[row + i, col + j] != nodata_value)
                                     {
                                         dh = (dtm[row, col] + till_result[row, col] - dtm[row + i, col + j] + till_result[row + i, col + j]);
                                         if ((row != row + i) && (col != col + j)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }
@@ -2484,7 +2484,7 @@ namespace LORICA4
                                 d_x = dx;
                                 if (((row + i) >= 0) && ((row + i) < nr) && ((col + j) >= 0) && ((col + j) < nc) && !((i == 0) && (j == 0))) // boundaries
                                 {
-                                    if ((dtm)[row + i, col + j] != (-9999))
+                                    if ((dtm)[row + i, col + j] != (nodata_value))
                                     {
                                         dh = (dtm[row, col] + till_result[row, col] - dtm[row + i, col + j] + till_result[row + i, col + j]);
                                         if (dh > 0.000000) // i j is a lower neighbour to which we would like to till a certain amount.
@@ -2510,7 +2510,7 @@ namespace LORICA4
                                                 {
                                                     if (((row + i + alpha) >= 0) && ((row + i + alpha) < nr) && ((col + j + beta) >= 0) && ((col + j + beta) < nc) && !((alpha == 0) && (beta == 0))) // boundaries
                                                     {
-                                                        if (dtm[row + i + alpha, col + j + beta] != -9999)
+                                                        if (dtm[row + i + alpha, col + j + beta] != nodata_value)
                                                         {
                                                             if (dtm[row + i + alpha, col + j + beta] + till_result[row + i + alpha, col + j + beta] > (dtm[row + i, col + j] + till_result[row + i, col + j]))
                                                             { // we are looking at a higher neighbour of the receiver cell
@@ -2636,7 +2636,7 @@ namespace LORICA4
                 {
                     for (col = 0; col < nc; col++)
                     {
-                        if (dtm[row, col] != -9999)
+                        if (dtm[row, col] != nodata_value)
                         {
                             double old_soil_thickness = soildepth_m[row, col];
                             update_all_layer_thicknesses(row, col);
@@ -2705,7 +2705,7 @@ namespace LORICA4
                             local_creep_kg = 0;
 
                 nb_ok = 0; nb_check = 0; all_grids = 0;
-                dhmin = -9999; dhe_tol = 0.00000; dhs_tol = 0.00000;
+                dhmin = large_negative_number; dhe_tol = 0.00000; dhs_tol = 0.00000;
 
                 //NA_dem = NA_in_DEM();
                 //if (NA_dem != NA_in_DEM()) { Debugger.Break(); }
@@ -2715,13 +2715,13 @@ namespace LORICA4
                 for (runner = number_of_data_cells - 1; runner >= 0; runner--)
                 {           // the index is sorted from low to high values, but flow goes from high to low
                     row = row_index[runner]; col = col_index[runner];
-                    if (dtm[row, col] != -9999)
+                    if (dtm[row, col] != nodata_value)
                     {
                         //Debug.WriteLine("cr1");
                         // into loop for surrounding grids of certain grid
                         // Start first the slope_sum loop for all lower neighbour grids
-                        slope_sum = 0; dhmax = 0; dz_min = -9999.99; d_x = dx;
-                        dz_max = -1; dhtemp = -99999.99; dhmin = (-9999.99);
+                        slope_sum = 0; dhmax = 0; dz_min = large_negative_number; d_x = dx;
+                        dz_max = -1; dhtemp = large_negative_number; dhmin = (large_negative_number);
                         // if(row == 31 && col == 12) { Debug.WriteLine("creep1"); displaysoil(row, col); }
                         if (thickness_calc(row, col, 0) < 0)
                         {
@@ -2732,10 +2732,10 @@ namespace LORICA4
                         {
                             for (j = (-1); j <= 1; j++)
                             {
-                                dh = 000000; dh1 = 000; dhtemp = -99999.99; d_x = dx;
+                                dh = 000000; dh1 = 000; dhtemp = large_negative_number; d_x = dx;
                                 if (((row + i) >= 0) && ((row + i) < nr) && ((col + j) >= 0) && ((col + j) < nc) && !((i == 0) && (j == 0)))
                                 {    // boundaries
-                                    if ((dtm)[row + i, col + j] != (-9999))
+                                    if (dtm[row + i, col + j] != nodata_value);
                                     {
                                         dh = ((dtm)[row, col] - (dtm)[row + i, col + j]);
                                         if ((row != row + i) && (col != col + j)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }
@@ -2790,7 +2790,7 @@ namespace LORICA4
                         if (local_creep_kg > 0)
                         {
 
-                            if (dhmin == -9999.99) { dhmin = 0; } else { dhmin = -dhmin; }
+                            if (dhmin == large_negative_number) { dhmin = 0; } else { dhmin = -dhmin; }
                             if (dhmax <= 0.0) { dhmax = 0.0; } else { dhmax = -dhmax; }
                             for (i = (-1); i <= 1; i++)
                             {
@@ -2809,7 +2809,7 @@ namespace LORICA4
                                             displaysoil(row, col); Debug.WriteLine("err_cr5");
                                         }
 
-                                        if ((dtm)[row + i, col + j] != (-9999.0))
+                                        if (dtm[row + i, col + j] != nodata_value)
                                         {
                                             dh = (dtm[row, col] - dtm[row + i, col + j]);
                                             temp = dtm[row + i, col + j];
@@ -3307,7 +3307,7 @@ namespace LORICA4
                 {
                     for (col = 0; col < nc; col++)
                     {
-                        if (dtm[row, col] != -9999 & aridity_vegetation[row, col] > 1) // if cell exists, and if there is no grass growing
+                        if (dtm[row, col] != nodata_value & aridity_vegetation[row, col] > 1) // if cell exists, and if there is no grass growing
                         {
                             int chance = rand.Next(0, P_fall);
                             // Debug.WriteLine("tf2");
@@ -3344,7 +3344,7 @@ namespace LORICA4
 
                                 if ((row + i_tf) >= 0 & (row + i_tf) < nr & (col + j_tf) >= 0 & (col + j_tf) < nc)
                                 {
-                                    if (dtm[row + i_tf, col + j_tf] != -9999)
+                                    if (dtm[row + i_tf, col + j_tf] != nodata_value)
                                     {
                                         dh = (dtm[row, col] - dtm[row + i_tf, col + j_tf]) / d_x; // if receiving cell is in catchment, calculate slope
                                     }
@@ -3427,7 +3427,7 @@ namespace LORICA4
                                         tree_fall_frac[(n_affected_cells - 1) / 2 + ii, (n_affected_cells - 1) / 2 + jj] = tf_frac_dx;
                                         tree_fall_frac_sum += tf_frac_dx;
 
-                                        if (((row + ii) >= 0) && ((row + ii) < nr) && ((col + jj) >= 0) && ((col + jj) < nc) && dtm[row + ii, col + jj] != -9999)
+                                        if (((row + ii) >= 0) && ((row + ii) < nr) && ((col + jj) >= 0) && ((col + jj) < nc) && dtm[row + ii, col + jj] != nodata_value)
                                         {
                                             // Debug.WriteLine("tf10b");
 
@@ -3481,7 +3481,6 @@ namespace LORICA4
                                                 // calculations of fraction have to be corrected
                                                 // redistribution to a next cell, with the right distance etc 
                                                 // solve mass loss tree fall
-                                                // dtm output has a lot of -9999 instead of no data, check that in R
 
                                                 // update depth and reference layer
                                                 depth += layerthickness_m[row + ii, col + jj, lay];
@@ -3553,7 +3552,7 @@ namespace LORICA4
                                         // Debug.WriteLine("tf16");
 
                                         tf_frac_dx = tree_fall_frac[(n_affected_cells - 1) / 2 + ii, (n_affected_cells - 1) / 2 + jj] / tree_fall_frac_sum;
-                                        if (((rowsink + ii) >= 0) && ((rowsink + ii) < nr) && ((colsink + jj) >= 0) && ((colsink + jj) < nc) && dtm[rowsink + ii, colsink + jj] != -9999)
+                                        if (((rowsink + ii) >= 0) && ((rowsink + ii) < nr) && ((colsink + jj) >= 0) && ((colsink + jj) < nc) && dtm[rowsink + ii, colsink + jj] != nodata_value)
                                         {
                                             // Debug.WriteLine("tf17");
 
@@ -3596,7 +3595,7 @@ namespace LORICA4
                                             dtmchange_m[rowsink + ii, colsink + jj] += soildepth_m[rowsink + ii, colsink + jj] - old_soil_depth_m;
                                             //Debug.WriteLine("deposition by tree fall = {0}", soildepth_m[row + ndist_cells * i, col + ndist_cells * j] - old_soil_depth_m);
 
-                                        } // end_time if dtm[,] = -9999
+                                        } // end_time if dtm[,] = nodata_value
                                         else
                                         {
                                             for (int tex = 0; tex < 5; tex++)
@@ -3611,7 +3610,7 @@ namespace LORICA4
                                   // minimaps(row, col); // After deposition
 
                             } // end chance ==1 (tree is falling)
-                        } // end dtm != -9999
+                        } // end dtm != nodata_value
                     } // end col
                 } // end row
                   // double mass_after_tf = total_catchment_mass_decimal() + exported_mass_tf;
@@ -3684,7 +3683,7 @@ namespace LORICA4
                 {
                     for (col = 0; col < nc; col++)
                     {
-                        if (dtm[row, col] != -9999)
+                        if (dtm[row, col] != nodata_value)
                         {
                             if (Imin > Iy[row, col]) { Imin = Iy[row, col]; }
                             if (Imax < Iy[row, col]) { Imax = Iy[row, col]; }
@@ -3700,7 +3699,7 @@ namespace LORICA4
             {
                 for (col = 0; col < nc; col++)
                 {
-                    if (dtm[row, col] != -9999)
+                    if (dtm[row, col] != nodata_value)
                     {
                         double weatheringdepth = 0;
                         //Debug.WriteLine(" bedrock weathering at r " + row + " c " + col);
