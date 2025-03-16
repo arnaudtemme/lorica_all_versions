@@ -1,11 +1,12 @@
 - visualization : Marijn finishes, we add case study + data (runfile) --> towards publication
 
 KEY TASKS AND THEIR ORDER:
-1. M - transport functions + apply everywhere, remove restart inside the code after crashing
-1. FINISHED Ale - separate branch - improve temporally changing root cohesion, OM input, tillage, bioturbation rate, as a function of landuse
+2. FINISHED Ale - separate branch - improve temporally changing root cohesion, OM input, tillage, bioturbation rate, as a function of landuse
 2. FINISHED A - landslide inside
 3a. FINISHED A - splitting into different files 
 3b. FINISHED A - setting NA value as a variable
+1. MvdM - transport functions + apply everywhere, 
+1b. MvdM -remove restart inside the code after crashing
 4a. MvdM : 
 	-- layer thickness: 1. top layer thickness, 2. traingular or a fixed factor, 3. max number of layers, 4. calculate layers. 
 	-- default number soil layers = 20
@@ -13,12 +14,11 @@ KEY TASKS AND THEIR ORDER:
 4b. Ale - all interface changes
 5. ArT + MvdM : model testing, checking functions, good error messaging (also xml reading writing), factor 100. Arnaud: geom, sinks, Marijn: soil mostly
 6. ArT - check Lorica for loose, unitless, parameters and warnings 
-7 separate branch Alessia; - proglacial code merge Alessia
+7 from separate branch Alessia; - proglacial code merge 
 
 
 INTERFACE RELATED:
 For Alessia:
-move things into experimental:
 -- FINISHED remove solifluction tab
 -- FINISHED tree fall to expe
 -- FINISHED blocks to experimental
