@@ -12,7 +12,8 @@ KEY TASKS AND THEIR ORDER:
 	-- default number soil layers = 20
 	-- split only the top layer when it gets too thick, and then immediately and always merge the bottom two layers if we need it. Remove/deactivate more complex options 
 4b. Ale - all interface changes
-5. ArT + MvdM : model testing, checking functions, good error messaging (also xml reading writing), factor 100. Arnaud: geom, sinks, Marijn: soil mostly
+5. ArT + MvdM : model testing, checking functions, good error messaging (also xml reading writing), factor 100. 
+5b. Check functions, w/ literature, add DOI: Arnaud: geom, sinks, Marijn: soil mostly
 6. ArT - check Lorica for loose, unitless, parameters and warnings 
 7 from separate branch Alessia; - proglacial code merge 
 
@@ -25,7 +26,6 @@ For Alessia:
 -- FINISHED rock weathering to soil as spoil production
 -- FINISHED pohys weath particle size to soil specifier
 -- FINISHED chem weath surface area to soil specifier
--- change Jagercikova cm units
 -- FINISHED carbon cyclke -> organic matter
 -- FINISHED TWI decay constant remove
 -- FINISHED remove decalcification
@@ -57,6 +57,7 @@ For Arnaud:
 
 For Marijn:
 -- Two OM models next to each other
--- bioturbation upheaval to treefaal
+-- bioturbation upheaval to treefall
 -- split mounding and mxing in bioturbation
 -- check clay dynbamics versus chemical weathering
+-- change Jagercikova cm units
