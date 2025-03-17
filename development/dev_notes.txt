@@ -12,7 +12,7 @@ KEY TASKS AND THEIR ORDER:
 	-- default number soil layers = 20
 	-- split only the top layer when it gets too thick, and then immediately and always merge the bottom two layers if we need it. Remove/deactivate more complex options 
 4b. Ale - all interface changes
-5. ArT + MvdM : model testing, checking functions, good error messaging (also xml reading writing), factor 100. 
+5a. ArT + MvdM : model testing, checking functions, good error messaging (also xml reading writing), factor 100. 
 5b. Check functions, w/ literature, add DOI: Arnaud: geom, sinks, Marijn: soil mostly
 6. ArT - check Lorica for loose, unitless, parameters and warnings 
 7 from separate branch Alessia; - proglacial code merge 
@@ -32,7 +32,6 @@ For Alessia:
 -- EXISTS geochron tracers stays
 -- FINISHED particle ages --> luminescence
 -- FINISHED hydrological to experimental (and remove default values)
-=- clean up input section
 -- FINISHED allow to read in OM in soil specifier
 -- FINISHED iterate DEMs to experiemental; 
 -- FINISHED remove sinks and flats before, after ruinning cleaner
@@ -51,6 +50,9 @@ For Alessia:
 -- FINISHED fix the soil specifier open after clicking X
 -- check that the mnodel really does not run when wrong decimal separator
 -- update the xml reading and writing with removed and added parameters (esp. landuse and soil specifier variables)
+-- start button re-activate when better inputs needed
+=- clean up input section
+-- fixing button thingy landuse popup
 
 For Arnaud:
 -- steps already done
@@ -61,3 +63,4 @@ For Marijn:
 -- split mounding and mxing in bioturbation
 -- check clay dynbamics versus chemical weathering
 -- change Jagercikova cm units
+--check tillage 0,1,2 or nodata 
