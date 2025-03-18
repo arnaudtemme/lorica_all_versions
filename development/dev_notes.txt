@@ -64,3 +64,7 @@ For Marijn:
 -- check clay dynbamics versus chemical weathering
 -- change Jagercikova cm units
 --check tillage 0,1,2 or nodata 
+
+
+WISHLIST
+- possibility to set fixed BD value in interfae instead of PTF

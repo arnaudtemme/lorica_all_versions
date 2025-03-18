@@ -6364,7 +6364,6 @@ namespace LORICA4
                                     {
                                         som_cycle_algorithm = som_cycle_algorithm_selection.SelectedIndex;
                                     }));
-                                    // Now use selectedIndex safely
                                 }
                                 else
                                 {
