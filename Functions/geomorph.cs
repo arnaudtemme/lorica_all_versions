@@ -2237,9 +2237,6 @@ namespace LORICA4
 
         private void calculate_tillage()
         {
-            double CN_before = 0, CN_after = 0;
-            //if (CN_checkbox.Checked) { CN_before = total_CNs(); }
-
             try
             {
                 Decimal mass_before = total_catchment_mass_decimal();
@@ -2256,7 +2253,6 @@ namespace LORICA4
                     for (col = 0; col < nc; col++)
                     {
                         till_result[row, col] = 0;
-                        // if (dtm[row, col] < -9900 && dtm[row, col] != nodata_value) { Debug.WriteLine(" Cell " + row + " " + col + " has altitude " + dtm[row, col] + " till " + till_result[row, col]); }
                     }
                 }
 
@@ -2270,178 +2266,11 @@ namespace LORICA4
                     {
                         if (check_negative_weight(row, col) == true) { MessageBox.Show("negative weight in t " + t + ", row " + row + ", col " + col + ", step 1"); }
 
-                        // 1. Mixing of the topsoil. 
-                        double mixeddepth = 0, completelayerdepth = 0, newdepth = 0;
-                        int completelayers = -1;
+                        // 1. Mixing of the topsoil. We use the code for upheaval for this
+                        soil_bioturbation_upheaval(1, plough_depth);
 
-                        while (mixeddepth <= plough_depth & completelayers < (max_soil_layers - 1))
-                        {
-                            completelayers++;
-                            mixeddepth += layerthickness_m[row, col, completelayers];
-                            // OSL_age[row, col, completelayers] = 0;
 
-                        }// this will lead to incorporation of the (partial) layer below tillage horizon in completelayers parameter. So the highest number indicates the partial layer 
-                         // Debug.WriteLine("till2");
-                        double[] tilled_text = new double[5]; // includes soil 
-                        double[] tilled_om = new double[2]; // includes OM
-                        double[] alldepths = new double[completelayers + 1]; // contains thicknesses of all layers
-                        double[] tilled_mass = new double[completelayers + 1];
-                        double[] fraction_mixed = new double[completelayers + 1];
-                        double[] tilled_cosmo_nuclides = new double[n_cosmo]; // includes cosmogenic nuclides
 
-                        // take material from layers to mix
-                        decimal mass_soil_before = total_soil_mass_kg_decimal(row, col);
-                        double fraction_mixed_layer;
-                        for (int lay = 0; lay <= completelayers; lay++) // Includes partial layer, will be selective taken up
-                        {
-                            if ((completelayerdepth + layerthickness_m[row, col, lay]) < plough_depth)
-                            {
-                                fraction_mixed_layer = 1;
-                                fraction_mixed[lay] = 1;
-                                alldepths[lay] = layerthickness_m[row, col, lay];
-                            }
-                            else
-                            {
-                                fraction_mixed_layer = (plough_depth - completelayerdepth) / layerthickness_m[row, col, lay];
-                                fraction_mixed[lay] = fraction_mixed_layer; // fraction of layer that is mixed
-                                alldepths[lay] = layerthickness_m[row, col, lay] * fraction_mixed_layer; // part of layer [m] that is considered
-                            }
-                            completelayerdepth += layerthickness_m[row, col, lay];
-                            for (int tex = 0; tex < 5; tex++)
-                            {
-                                tilled_text[tex] += texture_kg[row, col, lay, tex] * fraction_mixed_layer;
-                                tilled_mass[lay] += texture_kg[row, col, lay, tex] * fraction_mixed_layer;
-                                texture_kg[row, col, lay, tex] *= (1 - fraction_mixed_layer);
-
-                            }
-                            tilled_om[0] += old_SOM_kg[row, col, lay] * fraction_mixed_layer;
-                            tilled_om[1] += young_SOM_kg[row, col, lay] * fraction_mixed_layer;
-                            tilled_mass[lay] += (old_SOM_kg[row, col, lay] * fraction_mixed_layer + young_SOM_kg[row, col, lay] * fraction_mixed_layer);
-                            old_SOM_kg[row, col, lay] *= (1 - fraction_mixed_layer);
-                            young_SOM_kg[row, col, lay] *= (1 - fraction_mixed_layer);
-                            if (CN_checkbox.Checked)
-                            {
-                                for (int cosmo = 0; cosmo < n_cosmo; cosmo++)
-                                {
-                                    double transport = CN_atoms_cm2[row, col, lay, cosmo] * fraction_mixed_layer;
-                                    tilled_cosmo_nuclides[cosmo] += transport;
-                                    CN_atoms_cm2[row, col, lay, cosmo] -= transport;
-                                }
-                            }
-                        }
-                        // Give material back to layers, based on their given mass to mixture and total mixed mass
-                        for (int lay = 0; lay <= completelayers; lay++)
-                        {
-
-                            for (int tex = 0; tex < 5; tex++)
-                            {
-                                texture_kg[row, col, lay, tex] += tilled_text[tex] * tilled_mass[lay] / tilled_mass.Sum();
-
-                            }
-                            old_SOM_kg[row, col, lay] += tilled_om[0] * tilled_mass[lay] / tilled_mass.Sum();
-                            young_SOM_kg[row, col, lay] += tilled_om[1] * tilled_mass[lay] / tilled_mass.Sum();
-
-                            if (CN_checkbox.Checked)
-                            {
-                                for (int cosmo = 0; cosmo < n_cosmo; cosmo++)
-                                {
-                                    CN_atoms_cm2[row, col, lay, cosmo] += tilled_cosmo_nuclides[cosmo] * tilled_mass[lay] / tilled_mass.Sum();
-                                }
-                            }
-
-                            layerthickness_m[row, col, lay] = thickness_calc(row, col, lay);
-                            layerthickness_m[row, col, lay] = thickness_calc(row, col, lay);
-                            newdepth += layerthickness_m[row, col, lay];
-                        }
-                        // MvdM Develop: link mixing of OSL grains to sand or silt fraction, or is that not necessary in this case of complete mixing?
-                        if (OSL_checkbox.Checked) // Mix grains from the top layers
-                        {
-                            int totalgrains_start = 0;
-                            for (int lay = 0; lay < max_soil_layers; lay++) { totalgrains_start += OSL_grainages[row, col, lay].Length; }
-                            int[] grains_from_layer = new int[alldepths.Length]; // number of donor grains from each layer
-                            var mixedgrains = new List<Int32>();
-                            var mixedgrains_da = new List<Int32>(); // for deposition ages
-                            var mixedgrains_su = new List<Int32>(); // for surfaced count
-
-                            // add grains from complete and partial layers
-                            for (int lay = 0; lay <= completelayers; lay++)
-                            {
-                                var grains_staying_behind = new List<Int32>();
-                                var grains_staying_behind_da = new List<Int32>();
-                                var grains_staying_behind_su = new List<Int32>();
-                                int P_mixing = Convert.ToInt32(Math.Round(10000 * fraction_mixed[lay]));
-                                if (OSL_grainages[row, col, lay].Length > 0)
-                                {
-                                    for (int ind = 0; ind < OSL_grainages[row, col, lay].Length; ind++)
-                                    {
-                                        if ((randOslLayerMixing.Next(0, 10000) < P_mixing ? 1 : 0) == 1)
-                                        {
-                                            mixedgrains.Add(OSL_grainages[row, col, lay][ind]);
-                                            mixedgrains_da.Add(OSL_depositionages[row, col, lay][ind]);
-                                            mixedgrains_su.Add(OSL_surfacedcount[row, col, lay][ind]);
-                                            grains_from_layer[lay] += 1;
-                                        }
-                                        else
-                                        {
-                                            grains_staying_behind.Add(OSL_grainages[row, col, lay][ind]);
-                                            grains_staying_behind_da.Add(OSL_depositionages[row, col, lay][ind]);
-                                            grains_staying_behind_su.Add(OSL_surfacedcount[row, col, lay][ind]);
-                                        }
-                                    }
-                                }
-                                OSL_grainages[row, col, lay] = grains_staying_behind.ToArray(); // Preserve the grains that stay behind
-                                OSL_depositionages[row, col, lay] = grains_staying_behind_da.ToArray(); // 
-                                OSL_surfacedcount[row, col, lay] = grains_staying_behind_su.ToArray(); // 
-                            }
-
-                            // Shuffle the array
-                            // make indices based on list lengths
-                            int[] indices = new int[mixedgrains.ToArray().Length];
-                            for (int ii = 0; ii < indices.Length; ii++) { indices[ii] = ii; }
-                            indices = indices.OrderBy(x => randOslLayerMixing.Next()).ToArray();
-                            int[] indices_da = new int[indices.Length];
-                            int[] indices_su = new int[indices.Length];
-                            for (int ii = 0; ii < indices.Length; ii++) { indices_da[ii] = indices[ii]; indices_su[ii] = indices[ii]; }
-
-                            int[] ages_array = mixedgrains.ToArray();
-                            Array.Sort(indices, ages_array);
-                            mixedgrains = ages_array.ToList();
-
-                            ages_array = mixedgrains_da.ToArray();
-                            Array.Sort(indices_da, ages_array);
-                            mixedgrains_da = ages_array.ToList();
-
-                            ages_array = mixedgrains_su.ToArray();
-                            Array.Sort(indices_su, ages_array);
-                            mixedgrains_su = ages_array.ToList();
-
-                            // add back random grains from grain pool
-                            int count = 0;
-                            for (int lay = 0; lay <= completelayers; lay++)// add grains to complete layers
-                            {
-                                var newgrains = new List<Int32>();
-                                newgrains = mixedgrains.GetRange(count, grains_from_layer[lay]);
-                                newgrains.AddRange(OSL_grainages[row, col, lay]);
-                                OSL_grainages[row, col, lay] = newgrains.ToArray();
-                                newgrains = mixedgrains_da.GetRange(count, grains_from_layer[lay]);
-                                newgrains.AddRange(OSL_depositionages[row, col, lay]);
-                                OSL_depositionages[row, col, lay] = newgrains.ToArray();
-
-                                newgrains = mixedgrains_su.GetRange(count, grains_from_layer[lay]);
-                                newgrains.AddRange(OSL_surfacedcount[row, col, lay]);
-                                OSL_surfacedcount[row, col, lay] = newgrains.ToArray();
-                                count += grains_from_layer[lay];
-                            }
-                            int totalgrains_end = 0;
-                            for (int lay = 0; lay < max_soil_layers; lay++) { totalgrains_end += OSL_grainages[row, col, lay].Length; }
-                            if (totalgrains_start != totalgrains_end) { Debugger.Break(); }
-                        }
-
-                        decimal mass_soil_after = total_soil_mass_kg_decimal(row, col);
-                        if (Math.Abs(mass_soil_before - mass_soil_after) > Convert.ToDecimal(0.0001))
-                        {
-                            Debug.WriteLine("err_ti2");
-                        }
                         // Debug.WriteLine("till5");
                         // 2. Calculate redistribution of material
                         // 2.a First calculate slope_sum for multiple flow, and remember how much lower the !currently! lowest lower neighbour is
@@ -2555,67 +2384,31 @@ namespace LORICA4
 
                                             while (temptill >= layerthickness_m[row, col, layero] | layero >= max_soil_layers) // hele laag wordt verwijderd, al het materiaal naar de volgende cel
                                             {
-                                                for (int tex = 0; tex < 5; tex++)
-                                                {
-                                                    texture_kg[row + i, col + j, 0, tex] += texture_kg[row, col, layero, tex];
-                                                    texture_kg[row, col, layero, tex] = 0;
-                                                }
-
-                                                young_SOM_kg[row + i, col + j, 0] += young_SOM_kg[row, col, layero];
-                                                young_SOM_kg[row, col, layero] = 0;
-                                                old_SOM_kg[row + i, col + j, 0] += old_SOM_kg[row, col, layero];
-                                                old_SOM_kg[row, col, layero] = 0;
-
+                                                // These layers are completely eroded. All material is transported to the top layer in the next cell
+                                                transfer_material_between_layers(row, col, layero, row + i, col + j, 0, 1);
                                                 temptill -= layerthickness_m[row, col, layero];
 
-                                                if (CN_checkbox.Checked) // complete transfer of cosmogenic nuclides
-                                                {
-                                                    for (int cosmo = 0; cosmo < n_cosmo; cosmo++)
-                                                    {
-                                                        CN_atoms_cm2[row + i, col + j, layero, cosmo] += CN_atoms_cm2[row, col, layero, cosmo];
-                                                        CN_atoms_cm2[row, col, layero, cosmo] = 0;
-                                                    }
-                                                }
+                                                layerthickness_m[row, col, layero] = 0;
+                                                layerthickness_m[row + i, col + j, 0] = thickness_calc(row + i, col + j, 0);
 
-                                                if (OSL_checkbox.Checked)
-                                                {
-                                                    transfer_OSL_grains(row, col, layero, row + i, col + j, 0, 1, 0, true); // transfer all grains
-                                                }
-
-                                                // layerthickness_m[row, col, layero] = 0;
                                                 layero++;
                                             }
                                             // Debug.WriteLine("till8");
 
-                                            // transport eroded fraction
+                                            // The remaining layer is partly eroded, based on the volume fraction, or is the last soil layer that gets completely eroded
                                             frac_eroded = temptill / layerthickness_m[row, col, layero];
-                                            // mass fraction eroded
-                                            for (int tex = 0; tex < 5; tex++)
-                                            {
-                                                texture_kg[row + i, col + j, 0, tex] += texture_kg[row, col, layero, tex] * frac_eroded;
-                                                texture_kg[row, col, layero, tex] -= texture_kg[row, col, layero, tex] * frac_eroded;
-                                            }
-                                            young_SOM_kg[row + i, col + j, 0] += young_SOM_kg[row, col, layero] * frac_eroded;
-                                            young_SOM_kg[row, col, layero] -= young_SOM_kg[row, col, layero] * frac_eroded;
-                                            old_SOM_kg[row + i, col + j, 0] += old_SOM_kg[row, col, layero] * frac_eroded;
-                                            old_SOM_kg[row, col, layero] -= old_SOM_kg[row, col, layero] * frac_eroded;
-
-                                            if (CN_checkbox.Checked) // every texture is transported with the same fraction, so there is no need to couple the nuclide stocks to different texture fractions
-                                            {
-                                                for (int cosmo = 0; cosmo < n_cosmo; cosmo++)
-                                                {
-                                                    CN_atoms_cm2[row + i, col + j, layero, cosmo] += CN_atoms_cm2[row, col, layero, cosmo] * frac_eroded;
-                                                    CN_atoms_cm2[row, col, layero, cosmo] -= CN_atoms_cm2[row, col, layero, cosmo] * frac_eroded;
-                                                }
-                                            }
-
-                                            if (OSL_checkbox.Checked)
-                                            {
-                                                transfer_OSL_grains(row, col, layero, row + i, col + j, 0, frac_eroded, 0, true);
-                                            }
+                                            if (frac_eroded > 1) { frac_eroded = 1; }
+                                            transfer_material_between_layers(row, col, layero, row + i, col + j, 0, frac_eroded);
 
                                             layerthickness_m[row, col, layero] = thickness_calc(row, col, layero);
-                                            layerthickness_m[row + i, col + j, 0] = thickness_calc(row, col, layero);
+                                            layerthickness_m[row + i, col + j, 0] = thickness_calc(row + i, col + j, 0);
+
+                                            //if necessary, i.e. an entire layer removed, shift cells up
+                                            if (layero > 0)
+                                            {
+                                                try { remove_empty_layers(row, col); update_all_layer_thicknesses(row, col); }
+                                                catch { Debug.WriteLine("Error in removing empty layers after tillage"); }
+                                            }
 
                                             //if necessary, i.e. an entire layer removed, shift cells up
                                             if (layero > 0)
@@ -2658,9 +2451,6 @@ namespace LORICA4
                 {
                     Debug.WriteLine("err_ti3");
                 }
-
-                //if (CN_checkbox.Checked) { CN_after = total_CNs(); 
-                //    if (CN_after > 0 & ((CN_before - CN_after)/(CN_after+1)) > 1E-6) { Debugger.Break(); } } // MvdM check for loss of atoms. There is some loss due to rounding, so I built in the check that loss shouldn't be greater than 1E-6. Added +1 to the divider, to prevent dividing by zero in the first time step when there are no CNs added yet
 
             }
             catch
@@ -2996,7 +2786,7 @@ namespace LORICA4
                 //Debug.WriteLine("Cr3.1, dtm = {0}", dtm[row1, col1]);
                 //displaysoil(row1, col1);
                 int layerreceiver = 0;
-                double creep_depth_decay_constant = Convert.ToDouble(bioturbation_depth_decay_textbox.Text);
+                double creep_depth_decay_constant = Convert.ToDouble(bt_depth_decay_textbox.Text);
 
                 double frac_overlap_lay, upperdepthdonor = 0, lowerdepthdonor = 0, upperdepthreceiver = 0, lowerdepthreceiver = 0, dsoil = 0, upp_z_lay = 0, int_curve_total, int_curve_lay, mass_export_lay_kg;
                 bool C_done = false, lastlayer = false;
@@ -3237,30 +3027,7 @@ namespace LORICA4
                     Debug.WriteLine("type " + exchangetype + " err_cr13c - tried to transport more material via creep than present in donor layer");
                 }
 
-                for (int tex = 0; tex < 5; tex++)
-                {
-                    texture_kg[torow, tocol, tolay, tex] += texture_kg[fromrow, fromcol, fromlay, tex] * fraction_transport;
-                    texture_kg[fromrow, fromcol, fromlay, tex] -= texture_kg[fromrow, fromcol, fromlay, tex] * fraction_transport;
-                }
-                young_SOM_kg[torow, tocol, tolay] += young_SOM_kg[fromrow, fromcol, fromlay] * fraction_transport;
-                young_SOM_kg[fromrow, fromcol, fromlay] -= young_SOM_kg[fromrow, fromcol, fromlay] * fraction_transport;
-                old_SOM_kg[torow, tocol, tolay] += old_SOM_kg[fromrow, fromcol, fromlay] * fraction_transport;
-                old_SOM_kg[fromrow, fromcol, fromlay] -= old_SOM_kg[fromrow, fromcol, fromlay] * fraction_transport;
-
-                if (CN_checkbox.Checked) // every texture class moves with the same fraction, so there is no need to separate CN transport baswed on different texture classes. 
-                {
-                    for (int cosmo = 0; cosmo < n_cosmo; cosmo++)
-                    {
-                        CN_atoms_cm2[torow, tocol, tolay, cosmo] += CN_atoms_cm2[fromrow, fromcol, fromlay, cosmo] * fraction_transport;
-                        CN_atoms_cm2[fromrow, fromcol, fromlay, cosmo] -= CN_atoms_cm2[fromrow, fromcol, fromlay, cosmo] * fraction_transport;
-                    }
-                }
-
-                if (OSL_checkbox.Checked)
-                {
-                    transfer_OSL_grains(fromrow, fromcol, fromlay, torow, tocol, tolay, fraction_transport);
-                }
-
+                transfer_material_between_layers(fromrow, fromcol, fromlay, torow, tocol, tolay, fraction_transport);
                 //Debug.WriteLine("Cr3.1.2, dtm = {0}", dtm[fromrow, fromcol]);
                 //displaysoil(fromrow, fromcol);
                 //if (CN_checkbox.Checked) { 

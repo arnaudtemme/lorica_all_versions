@@ -1438,8 +1438,8 @@ namespace LORICA4
                     {
                         xreader.ReadStartElement("Bioturbation");
                         soil_bioturb_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("bioturbation_active"));
-                        potential_bioturbation_textbox.Text = xreader.ReadElementString("potential_bioturb");
-                        bioturbation_depth_decay_textbox.Text = xreader.ReadElementString("bioturb_depth_decay");
+                        potential_bt_mixing_textbox.Text = xreader.ReadElementString("potential_bioturb");
+                        bt_depth_decay_textbox.Text = xreader.ReadElementString("bioturb_depth_decay");
                         xreader.ReadEndElement();
                     }
                     catch { read_error = 1; Debug.WriteLine("failed reading water ero paras"); }
@@ -1814,8 +1814,8 @@ namespace LORICA4
 
                 xwriter.WriteStartElement("Bioturbation");
                 xwriter.WriteElementString("bioturbation_active", XmlConvert.ToString(soil_bioturb_checkbox.Checked));
-                xwriter.WriteElementString("potential_bioturb", potential_bioturbation_textbox.Text);
-                xwriter.WriteElementString("bioturb_depth_decay", bioturbation_depth_decay_textbox.Text);
+                xwriter.WriteElementString("potential_bioturb", potential_bt_mixing_textbox.Text);
+                xwriter.WriteElementString("bioturb_depth_decay", bt_depth_decay_textbox.Text);
                 xwriter.WriteEndElement();
 
                 xwriter.WriteStartElement("Carboncycle");

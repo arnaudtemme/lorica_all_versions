@@ -519,8 +519,8 @@ namespace LORICA4
         private CheckBox CT_depth_decay_checkbox;
         private CheckBox soil_clay_transloc_checkbox;
         private TabPage bioturbation;
-        private TextBox bioturbation_depth_decay_textbox;
-        private TextBox potential_bioturbation_textbox;
+        private TextBox bt_depth_decay_textbox;
+        private TextBox potential_bt_mixing_textbox;
         private CheckBox soil_bioturb_checkbox;
         private TabPage carbon;
         private TextBox carbon_o_decomp_rate_textbox;
@@ -705,7 +705,9 @@ namespace LORICA4
         private GroupBox groupBox17;
         private Label label37;
         private CheckBox daily_water;
-        private ComboBox som_cycle_algorithm_selection;
+        private ComboBox som_cycle_algorithm_box;
+        private TextBox potential_bt_mounding_textbox;
+        private ComboBox bt_depthfunction_box;
         private CheckBox Spitsbergen_case_study;
 
         private void obsfile_textbox_Click(object sender, EventArgs e)
@@ -875,8 +877,8 @@ namespace LORICA4
         double max_eluviation, Cclay, ct_depthdec;
 
         //Bioturbation parameters
-        double potential_bioturbation_kg_m2_y;
-        double bioturbation_depth_decay_constant;
+        double potential_bt_mixing_kg_m2_y, potential_bt_mounding_kg_m2_y, bioturbation_depth_decay_constant;
+        int bt_depth_function;
 
         //Carbon cycle parameters
         double potential_OM_input,
@@ -1093,8 +1095,8 @@ namespace LORICA4
             System.Windows.Forms.Label label83;
             System.Windows.Forms.Label label84;
             System.Windows.Forms.Label label86;
-            System.Windows.Forms.Label label73;
-            System.Windows.Forms.Label label71;
+            System.Windows.Forms.Label label_bt_mixing_rate;
+            System.Windows.Forms.Label label_bt_depthdecay;
             System.Windows.Forms.Label label68;
             System.Windows.Forms.Label label60;
             System.Windows.Forms.Label label67;
@@ -1116,6 +1118,8 @@ namespace LORICA4
             System.Windows.Forms.TabPage Landsliding;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Mother_form));
             System.Windows.Forms.Label SOM_algorthm_textbox;
+            System.Windows.Forms.Label label_bt_mounding_rate;
+            System.Windows.Forms.Label label_bt_depthfunction;
             this.label36 = new System.Windows.Forms.Label();
             this.radio_ls_fraction = new System.Windows.Forms.RadioButton();
             this.radio_ls_absolute = new System.Windows.Forms.RadioButton();
@@ -1335,11 +1339,13 @@ namespace LORICA4
             this.CT_depth_decay_checkbox = new System.Windows.Forms.CheckBox();
             this.soil_clay_transloc_checkbox = new System.Windows.Forms.CheckBox();
             this.bioturbation = new System.Windows.Forms.TabPage();
-            this.bioturbation_depth_decay_textbox = new System.Windows.Forms.TextBox();
-            this.potential_bioturbation_textbox = new System.Windows.Forms.TextBox();
+            this.bt_depthfunction_box = new System.Windows.Forms.ComboBox();
+            this.potential_bt_mounding_textbox = new System.Windows.Forms.TextBox();
+            this.bt_depth_decay_textbox = new System.Windows.Forms.TextBox();
+            this.potential_bt_mixing_textbox = new System.Windows.Forms.TextBox();
             this.soil_bioturb_checkbox = new System.Windows.Forms.CheckBox();
             this.carbon = new System.Windows.Forms.TabPage();
-            this.som_cycle_algorithm_selection = new System.Windows.Forms.ComboBox();
+            this.som_cycle_algorithm_box = new System.Windows.Forms.ComboBox();
             this.carbon_o_decomp_rate_textbox = new System.Windows.Forms.TextBox();
             this.carbon_y_decomp_rate_textbox = new System.Windows.Forms.TextBox();
             this.carbon_o_depth_decay_textbox = new System.Windows.Forms.TextBox();
@@ -1481,8 +1487,8 @@ namespace LORICA4
             label83 = new System.Windows.Forms.Label();
             label84 = new System.Windows.Forms.Label();
             label86 = new System.Windows.Forms.Label();
-            label73 = new System.Windows.Forms.Label();
-            label71 = new System.Windows.Forms.Label();
+            label_bt_mixing_rate = new System.Windows.Forms.Label();
+            label_bt_depthdecay = new System.Windows.Forms.Label();
             label68 = new System.Windows.Forms.Label();
             label60 = new System.Windows.Forms.Label();
             label67 = new System.Windows.Forms.Label();
@@ -1503,6 +1509,8 @@ namespace LORICA4
             label43 = new System.Windows.Forms.Label();
             Landsliding = new System.Windows.Forms.TabPage();
             SOM_algorthm_textbox = new System.Windows.Forms.Label();
+            label_bt_mounding_rate = new System.Windows.Forms.Label();
+            label_bt_depthfunction = new System.Windows.Forms.Label();
             Landsliding.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.InfoStatusPanel)).BeginInit();
@@ -1657,23 +1665,23 @@ namespace LORICA4
             label86.TabIndex = 80;
             label86.Text = "decomposition rate [/y]";
             // 
-            // label73
+            // label_bt_mixing_rate
             // 
-            label73.AutoSize = true;
-            label73.Location = new System.Drawing.Point(133, 48);
-            label73.Name = "label73";
-            label73.Size = new System.Drawing.Size(202, 16);
-            label73.TabIndex = 57;
-            label73.Text = "potential bioturbation [kg / m2 / y]";
+            label_bt_mixing_rate.AutoSize = true;
+            label_bt_mixing_rate.Location = new System.Drawing.Point(133, 48);
+            label_bt_mixing_rate.Name = "label_bt_mixing_rate";
+            label_bt_mixing_rate.Size = new System.Drawing.Size(265, 16);
+            label_bt_mixing_rate.TabIndex = 57;
+            label_bt_mixing_rate.Text = "potential subsurface mixing rate [kg / m2 / y]";
             // 
-            // label71
+            // label_bt_depthdecay
             // 
-            label71.AutoSize = true;
-            label71.Location = new System.Drawing.Point(133, 77);
-            label71.Name = "label71";
-            label71.Size = new System.Drawing.Size(123, 16);
-            label71.TabIndex = 58;
-            label71.Text = "depth decay rate [-]";
+            label_bt_depthdecay.AutoSize = true;
+            label_bt_depthdecay.Location = new System.Drawing.Point(133, 104);
+            label_bt_depthdecay.Name = "label_bt_depthdecay";
+            label_bt_depthdecay.Size = new System.Drawing.Size(123, 16);
+            label_bt_depthdecay.TabIndex = 58;
+            label_bt_depthdecay.Text = "depth decay rate [-]";
             // 
             // label68
             // 
@@ -2029,6 +2037,24 @@ namespace LORICA4
             SOM_algorthm_textbox.Size = new System.Drawing.Size(130, 16);
             SOM_algorthm_textbox.TabIndex = 83;
             SOM_algorthm_textbox.Text = "SOM cycle algorithm";
+            // 
+            // label_bt_mounding_rate
+            // 
+            label_bt_mounding_rate.AutoSize = true;
+            label_bt_mounding_rate.Location = new System.Drawing.Point(134, 74);
+            label_bt_mounding_rate.Name = "label_bt_mounding_rate";
+            label_bt_mounding_rate.Size = new System.Drawing.Size(217, 16);
+            label_bt_mounding_rate.TabIndex = 61;
+            label_bt_mounding_rate.Text = "potential mounding rate [kg / m2 / y]";
+            // 
+            // label_bt_depthfunction
+            // 
+            label_bt_depthfunction.AutoSize = true;
+            label_bt_depthfunction.Location = new System.Drawing.Point(134, 132);
+            label_bt_depthfunction.Name = "label_bt_depthfunction";
+            label_bt_depthfunction.Size = new System.Drawing.Size(162, 16);
+            label_bt_depthfunction.TabIndex = 63;
+            label_bt_depthfunction.Text = "bioturbation depth function";
             // 
             // mainMenu1
             // 
@@ -4093,11 +4119,15 @@ namespace LORICA4
             // 
             // bioturbation
             // 
+            this.bioturbation.Controls.Add(label_bt_depthfunction);
+            this.bioturbation.Controls.Add(this.bt_depthfunction_box);
+            this.bioturbation.Controls.Add(label_bt_mounding_rate);
+            this.bioturbation.Controls.Add(this.potential_bt_mounding_textbox);
             this.bioturbation.Controls.Add(label68);
-            this.bioturbation.Controls.Add(label71);
-            this.bioturbation.Controls.Add(label73);
-            this.bioturbation.Controls.Add(this.bioturbation_depth_decay_textbox);
-            this.bioturbation.Controls.Add(this.potential_bioturbation_textbox);
+            this.bioturbation.Controls.Add(label_bt_depthdecay);
+            this.bioturbation.Controls.Add(label_bt_mixing_rate);
+            this.bioturbation.Controls.Add(this.bt_depth_decay_textbox);
+            this.bioturbation.Controls.Add(this.potential_bt_mixing_textbox);
             this.bioturbation.Controls.Add(this.soil_bioturb_checkbox);
             this.bioturbation.Location = new System.Drawing.Point(4, 25);
             this.bioturbation.Name = "bioturbation";
@@ -4106,21 +4136,42 @@ namespace LORICA4
             this.bioturbation.Text = "Bioturbation";
             this.bioturbation.UseVisualStyleBackColor = true;
             // 
-            // bioturbation_depth_decay_textbox
+            // bt_depthfunction_box
             // 
-            this.bioturbation_depth_decay_textbox.Location = new System.Drawing.Point(26, 74);
-            this.bioturbation_depth_decay_textbox.Name = "bioturbation_depth_decay_textbox";
-            this.bioturbation_depth_decay_textbox.Size = new System.Drawing.Size(100, 22);
-            this.bioturbation_depth_decay_textbox.TabIndex = 56;
-            this.bioturbation_depth_decay_textbox.Text = "2.5";
+            this.bt_depthfunction_box.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.bt_depthfunction_box.FormattingEnabled = true;
+            this.bt_depthfunction_box.Items.AddRange(new object[] {
+            "Exponential",
+            "Linear",
+            "Abrupt"});
+            this.bt_depthfunction_box.Location = new System.Drawing.Point(27, 129);
+            this.bt_depthfunction_box.Name = "bt_depthfunction_box";
+            this.bt_depthfunction_box.Size = new System.Drawing.Size(99, 24);
+            this.bt_depthfunction_box.TabIndex = 62;
             // 
-            // potential_bioturbation_textbox
+            // potential_bt_mounding_textbox
             // 
-            this.potential_bioturbation_textbox.Location = new System.Drawing.Point(26, 48);
-            this.potential_bioturbation_textbox.Name = "potential_bioturbation_textbox";
-            this.potential_bioturbation_textbox.Size = new System.Drawing.Size(100, 22);
-            this.potential_bioturbation_textbox.TabIndex = 55;
-            this.potential_bioturbation_textbox.Text = "4.3";
+            this.potential_bt_mounding_textbox.Location = new System.Drawing.Point(27, 74);
+            this.potential_bt_mounding_textbox.Name = "potential_bt_mounding_textbox";
+            this.potential_bt_mounding_textbox.Size = new System.Drawing.Size(100, 22);
+            this.potential_bt_mounding_textbox.TabIndex = 60;
+            this.potential_bt_mounding_textbox.Text = "2";
+            // 
+            // bt_depth_decay_textbox
+            // 
+            this.bt_depth_decay_textbox.Location = new System.Drawing.Point(26, 101);
+            this.bt_depth_decay_textbox.Name = "bt_depth_decay_textbox";
+            this.bt_depth_decay_textbox.Size = new System.Drawing.Size(100, 22);
+            this.bt_depth_decay_textbox.TabIndex = 56;
+            this.bt_depth_decay_textbox.Text = "2.5";
+            // 
+            // potential_bt_mixing_textbox
+            // 
+            this.potential_bt_mixing_textbox.Location = new System.Drawing.Point(26, 48);
+            this.potential_bt_mixing_textbox.Name = "potential_bt_mixing_textbox";
+            this.potential_bt_mixing_textbox.Size = new System.Drawing.Size(100, 22);
+            this.potential_bt_mixing_textbox.TabIndex = 55;
+            this.potential_bt_mixing_textbox.Text = "2";
             // 
             // soil_bioturb_checkbox
             // 
@@ -4137,7 +4188,7 @@ namespace LORICA4
             // carbon
             // 
             this.carbon.Controls.Add(SOM_algorthm_textbox);
-            this.carbon.Controls.Add(this.som_cycle_algorithm_selection);
+            this.carbon.Controls.Add(this.som_cycle_algorithm_box);
             this.carbon.Controls.Add(this.carbon_o_decomp_rate_textbox);
             this.carbon.Controls.Add(this.carbon_y_decomp_rate_textbox);
             this.carbon.Controls.Add(this.carbon_o_depth_decay_textbox);
@@ -4163,19 +4214,18 @@ namespace LORICA4
             this.carbon.Text = "Organic Matter";
             this.carbon.UseVisualStyleBackColor = true;
             // 
-            // som_cycle_algorithm_selection
+            // som_cycle_algorithm_box
             // 
-            this.som_cycle_algorithm_selection.DisplayMember = "ICBM";
-            this.som_cycle_algorithm_selection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.som_cycle_algorithm_selection.FormattingEnabled = true;
-            this.som_cycle_algorithm_selection.Items.AddRange(new object[] {
+            this.som_cycle_algorithm_box.DisplayMember = "ICBM";
+            this.som_cycle_algorithm_box.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.som_cycle_algorithm_box.FormattingEnabled = true;
+            this.som_cycle_algorithm_box.Items.AddRange(new object[] {
             "Yoo et al., 2006",
             "ICBM (Introductory Carbon Balance Model)"});
-            this.som_cycle_algorithm_selection.Location = new System.Drawing.Point(24, 69);
-            this.som_cycle_algorithm_selection.Name = "som_cycle_algorithm_selection";
-            this.som_cycle_algorithm_selection.Size = new System.Drawing.Size(121, 24);
-            this.som_cycle_algorithm_selection.TabIndex = 82;
-            this.som_cycle_algorithm_selection.SelectedIndex = 0;
+            this.som_cycle_algorithm_box.Location = new System.Drawing.Point(24, 69);
+            this.som_cycle_algorithm_box.Name = "som_cycle_algorithm_box";
+            this.som_cycle_algorithm_box.Size = new System.Drawing.Size(121, 24);
+            this.som_cycle_algorithm_box.TabIndex = 82;
             // 
             // carbon_o_decomp_rate_textbox
             // 
@@ -6190,7 +6240,7 @@ namespace LORICA4
                         {
                             try { potential_creep_kg_m2_y = double.Parse(parameter_diffusivity_textbox.Text); }
                             catch { input_data_error = true; MessageBox.Show("value for parameter potential_creep_kg_m2_y is not valid"); }
-                            try { bioturbation_depth_decay_constant = Convert.ToDouble(bioturbation_depth_decay_textbox.Text); }
+                            try { bioturbation_depth_decay_constant = Convert.ToDouble(bt_depth_decay_textbox.Text); }
                             catch { input_data_error = true; MessageBox.Show("value for creep depth dependence (from BIOTURBATION) is not valid"); }
                         }
 
@@ -6342,8 +6392,11 @@ namespace LORICA4
                         {
                             try
                             {
-                                potential_bioturbation_kg_m2_y = Convert.ToDouble(potential_bioturbation_textbox.Text); // MvdM changed name to match parameter in BT process
-                                bioturbation_depth_decay_constant = Convert.ToDouble(bioturbation_depth_decay_textbox.Text);
+                                potential_bt_mixing_kg_m2_y = Convert.ToDouble(potential_bt_mixing_textbox.Text); // MvdM changed name to match parameter in BT process
+                                potential_bt_mounding_kg_m2_y = Convert.ToDouble(potential_bt_mounding_textbox.Text);
+                                bioturbation_depth_decay_constant = Convert.ToDouble(bt_depth_decay_textbox.Text);
+                                this.Invoke(new MethodInvoker(delegate () { bt_depth_function = bt_depthfunction_box.SelectedIndex; }));
+
                             }
                             catch
                             {
@@ -6357,18 +6410,8 @@ namespace LORICA4
                             try
                             {
                                 potential_OM_input = Convert.ToDouble(carbon_input_textbox.Text);
-                                if (som_cycle_algorithm_selection.InvokeRequired) 
-                                {
-                                    som_cycle_algorithm = -1;
-                                    som_cycle_algorithm_selection.Invoke(new Action(() =>
-                                    {
-                                        som_cycle_algorithm = som_cycle_algorithm_selection.SelectedIndex;
-                                    }));
-                                }
-                                else
-                                {
-                                    som_cycle_algorithm = som_cycle_algorithm_selection.SelectedIndex;
-                                }
+
+                                this.Invoke(new MethodInvoker(delegate () { som_cycle_algorithm = som_cycle_algorithm_box.SelectedIndex; }));
                                 OM_input_depth_decay_constant = Convert.ToDouble(carbon_depth_decay_textbox.Text);
                                 humification_fraction = Convert.ToDouble(carbon_humification_fraction_textbox.Text);
                                 potential_young_decomp_rate = Convert.ToDouble(carbon_y_decomp_rate_textbox.Text);

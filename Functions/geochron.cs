@@ -31,44 +31,6 @@ namespace LORICA4
             return (9999); // this cannot happen. Probability is always <= 1, which is the last value in [probabilities]
         }
 
-        void transfer_material_between_layers(int row1, int col1, int lay1, int row2, int col2, int lay2, double fraction_transport)
-        {
-            double transport_betw_layers;
-            int transport_betw_layers_int;
-            if (fraction_transport > 0)
-            {
-                for (int tex = 0; tex < n_texture_classes; tex++)
-                {
-                    transport_betw_layers = texture_kg[row1, col1, lay1, tex] * fraction_transport;
-                    texture_kg[row1, col1, lay1, tex] -= transport_betw_layers;
-                    texture_kg[row2, col2, lay2, tex] += transport_betw_layers;
-                }
-                transport_betw_layers = young_SOM_kg[row1, col1, lay1] * fraction_transport;
-                young_SOM_kg[row1, col1, lay1] -= transport_betw_layers;
-                young_SOM_kg[row2, col2, lay2] += transport_betw_layers;
-
-                transport_betw_layers = old_SOM_kg[row1, col1, lay1] * fraction_transport;
-                old_SOM_kg[row1, col1, lay1] -= transport_betw_layers;
-                old_SOM_kg[row2, col2, lay2] += transport_betw_layers;
-
-                if (CN_checkbox.Checked)
-                {
-                    for (int cn = 0; cn < n_cosmo; cn++)
-                    {
-                        transport_betw_layers = CN_atoms_cm2[row1, col1, lay1, cn] * fraction_transport;
-                        CN_atoms_cm2[row1, col1, lay1, cn] -= transport_betw_layers;
-                        CN_atoms_cm2[row2, col2, lay2, cn] += transport_betw_layers;
-                    }
-                }
-            }
-
-            if (OSL_checkbox.Checked)
-            {
-                transfer_OSL_grains(row1, col1, lay1, row2, col2, lay2, fraction_transport, 0);
-            }
-            update_all_layer_thicknesses(row1, col1);
-            update_all_layer_thicknesses(row2, col2);
-        }
         void update_and_bleach_OSL_ages()
         {
             int P_bleaching_int;
