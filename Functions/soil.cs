@@ -2421,35 +2421,19 @@ namespace LORICA4
             catch { Debug.WriteLine(" Crash in litter cycle "); }
         }
 
-        void soil_carbon_cycle()
+        void soil_SOM_cycle()
         {
             try
             {
                 double local_OM_input_kg, layer_OM_input_kg;
                 double young_decomposition_rate, old_decomposition_rate;
-                //Debug.WriteLine("succesfully read parameters for soil carbon");
+                //Debug.WriteLine("succesfully read parameters for soil SOM");
                 double depth;
                 double total_soil_thickness;
                 double layer_OM_input_index, total_OM_input_index;
                 int layer;
                 total_OM_input_kg = 0;
-                if (version_lux_checkbox.Checked)
-                {
-                    calculate_TPI(7);
-                    double a = -0.33;
-                    double b = 28.33;
-                    for (row = 0; row < nr; row++)
-                    {
-                        for (col = 0; col < nc; col++)
-                        {
-                            //calculating hornbeam fraction
-                            hornbeam_cover_fraction[row, col] = 1 - Math.Exp(a + b * tpi[row, col]) / (1 + Math.Exp(a + b * tpi[row, col]));
-                        }
-                    }
-                    //this line keeps young (hornbeam) OM completely gone from the surface every second year (reflecting that,
-                    //in reality, part of the year is unprotected). MvdM I added the else to rest the decomposition rate
-                    if (t % 2 == 0) { potential_young_decomp_rate = 1; } else { potential_young_decomp_rate = Convert.ToDouble(carbon_y_decomp_rate_textbox.Text); }
-                }
+               
 
                 if (NA_in_map(dtm) > 0 | NA_in_map(soildepth_m) > 0)
                 {
@@ -2460,13 +2444,7 @@ namespace LORICA4
                     //Parallel.For(0, nc, i =>                    //we parallelize over cols
                     for (col = 0; col < nc; col++)
                     {
-                        if (daily_water.Checked)
-                        {
-                            if (aridity_vegetation[row, col] < 1) { potential_OM_input = 0.67; } // grassland
-                            else { potential_OM_input = 0.62; } // forest
-                            if (t > (end_time - 300)) { potential_OM_input = 0.42; } // arable land
-                            if (t > (end_time - 100)) { potential_OM_input = 0.42 * 1.004; } // arable land // MM_soil2 4permille higher input. Does that work?
-                        }
+                        // update soil thickni
                         total_soil_thickness = 0;
                         for (layer = 0; layer < max_soil_layers; layer++)
                         {
@@ -2488,22 +2466,29 @@ namespace LORICA4
                                 total_OM_input_index = -1 / OM_input_depth_decay_constant * (Math.Exp(-OM_input_depth_decay_constant * (total_soil_thickness)) - 1);
                                 layer_OM_input_kg = (layer_OM_input_index / total_OM_input_index) * local_OM_input_kg;
 
-                                if (version_lux_checkbox.Checked)
+                                //decomposition gets lost as CO2 to the air (and soil water)
+                                depth += layerthickness_m[row, col, layer] / 2;
+
+                                if (som_cycle_algorithm == 0) 
                                 {
-                                    young_SOM_kg[row, col, layer] += layer_OM_input_kg * (hornbeam_cover_fraction[row, col]);
-                                    old_SOM_kg[row, col, layer] += layer_OM_input_kg * (1 - hornbeam_cover_fraction[row, col]);
-                                }
-                                else
-                                {
+                                    // standard implementation
+                                    // Yoo et al. 2006: https://doi.org/10.1016/j.geoderma.2005.01.008
+                                    // Minansy et al. 2008: https://doi.org/10.1016/j.geoderma.2007.12.013
                                     young_SOM_kg[row, col, layer] += layer_OM_input_kg * (1 - humification_fraction);
                                     old_SOM_kg[row, col, layer] += layer_OM_input_kg * (humification_fraction);
+                                }
+                                if (som_cycle_algorithm == 1)
+                                {
+                                    // ICBM model
+                                    // Andrén & Kätterer 1997: https://doi.org/10.2307/2641210
+                                    young_SOM_kg[row, col, layer] += layer_OM_input_kg;
+                                    old_SOM_kg[row, col, layer] += humification_fraction * (young_SOM_kg[row, col, layer] * potential_young_decomp_rate * 1 * Math.Exp(-young_depth_decay_constant * depth));
                                 }
                                 if (double.IsNaN(young_SOM_kg[row, col, layer]))
                                 {
                                     Debug.WriteLine("err_cc2");
                                 }
-                                //decomposition gets lost as CO2 to the air (and soil water)
-                                depth += layerthickness_m[row, col, layer] / 2;
+
                                 //young_decomposition_rate = potential_young_decomp_rate * Math.Exp(-young_CTI_decay_constant * dynamic_TWI) * Math.Exp(-young_depth_decay_constant * depth);
                                 //old_decomposition_rate = potential_old_decomp_rate * Math.Exp(-old_CTI_decay_constant * dynamic_TWI) * Math.Exp(-old_depth_decay_constant * depth);
                                 young_decomposition_rate = potential_young_decomp_rate * 1 * Math.Exp(-young_depth_decay_constant * depth);
@@ -2532,7 +2517,7 @@ namespace LORICA4
                 }
 
             }
-            catch { Debug.WriteLine(" Crash in soil carbon cycle "); }
+            catch { Debug.WriteLine(" Crash in soil SOM cycle "); }
 
         }
 
