@@ -864,7 +864,7 @@ namespace LORICA4
 
         void initialise_soil()
         {
-            double depth_m;
+            double depth_m, z_layer_m;
             //Debug.WriteLine("initialising soil");
             // At this point, we know the input soildepth at every location (may be zero). 
             // We do not yet know how many layers that corresponds to.
@@ -897,7 +897,7 @@ namespace LORICA4
                         fclayfrac = 0;
 
                     }
-
+                    // one algorithm for layer thickness. Increasing layer thickness possible through the layer_z_increase factor MvdM
                     if (soildepth_m[row, col] == 0)
                     {
 
@@ -919,207 +919,105 @@ namespace LORICA4
                         double available_soildepth = soildepth_m[row, col];
                         soil_layer = 0;
 
-                        if (checkbox_layer_thickness.Checked) // MvdM if layer thickness is fixed
+                        while (available_soildepth > 0)
                         {
-                            while (available_soildepth > 0)
+                            if (soil_layer == max_soil_layers - 1)
                             {
-                                if (soil_layer == max_soil_layers - 1)
+                                layerthickness_m[row, col, soil_layer] = available_soildepth;
+                                available_soildepth = 0;
+                            }
+                            else
+                            {
+                                // calculate and assign layer thickness
+                                z_layer_m = layer_z_surface * Math.Pow(layer_z_increase, soil_layer);
+
+                                if (OSL_checkbox.Checked & soil_layer == 0)
                                 {
-                                    layerthickness_m[row, col, soil_layer] = available_soildepth;
-                                    available_soildepth = 0;
+                                    // set first layer thickness to bleaching depth, when OSl particles are traced
+                                    z_layer_m = bleaching_depth_m;
+                                }
+
+                                if (available_soildepth > z_layer_m)
+                                {
+                                    layerthickness_m[row, col, soil_layer] = z_layer_m;
+                                    available_soildepth -= z_layer_m;
                                 }
                                 else
                                 {
-                                    if (available_soildepth > dz_standard)
-                                    {
-                                        layerthickness_m[row, col, soil_layer] = dz_standard;
-                                        available_soildepth -= dz_standard;
-                                    }
-                                    else
-                                    {
-                                        layerthickness_m[row, col, soil_layer] = available_soildepth;
-                                        available_soildepth = 0;
-                                    }
-                                }
-
-                                //now limit layerthicknes to hardlayer limitations if needed
-                                if (blocks_active == 1)
-                                {
-                                    if (dtm[row, col] >= hardlayerelevation_m)
-                                    {
-                                        double currentdepth = (dtm[row, col] - depth_m - layerthickness_m[row, col, soil_layer]);
-                                        if (currentdepth < hardlayerelevation_m && currentdepth > (hardlayerelevation_m - hardlayerthickness_m))
-                                        {
-                                            layerthickness_m[row, col, soil_layer] = (dtm[row, col] - depth_m) - hardlayerelevation_m;
-                                            //Debug.WriteLine(" limited layerthickness and soildepth to account for proximity of hardlayer  in " + row + " " + col);
-                                            //Debug.WriteLine(" hardlayerelevation_m " + hardlayerelevation_m + ", " + ((dtm[row, col] - depth_m) - hardlayerelevation_m) + " under the top of this layer");
-                                            //Debug.WriteLine(" dtm " + dtm[row, col] + " currentdepth " + currentdepth + " available_soildepth " + available_soildepth + " depth_m " + depth_m);
-                                            //Debug.WriteLine(" adapted layerthickness is " + layerthickness_m[row, col, soil_layer]);
-                                            available_soildepth = 0;
-
-                                            //this ensures that soils stay thinner on top of hardlayers, and don't continue under them.
-                                        }
-                                    }
-                                }
-                                if (layerthickness_m[row, col, soil_layer] != 0)
-                                {
-                                    depth_m += layerthickness_m[row, col, soil_layer] / 2;
-                                    location_bd = bulk_density_calc_kg_m3(coarsefrac, sandfrac, siltfrac, clayfrac, fclayfrac, 0, 0, depth_m);
-                                    depth_m += layerthickness_m[row, col, soil_layer] / 2;
-                                    texture_kg[row, col, soil_layer, 0] = location_bd * layerthickness_m[row, col, soil_layer] * coarsefrac * dx * dx;   //  kg = kg/m3 * m * kg/kg * m * m
-                                    texture_kg[row, col, soil_layer, 1] = location_bd * layerthickness_m[row, col, soil_layer] * sandfrac * dx * dx;
-                                    texture_kg[row, col, soil_layer, 2] = location_bd * layerthickness_m[row, col, soil_layer] * siltfrac * dx * dx;
-                                    texture_kg[row, col, soil_layer, 3] = location_bd * layerthickness_m[row, col, soil_layer] * clayfrac * dx * dx;
-                                    texture_kg[row, col, soil_layer, 4] = location_bd * layerthickness_m[row, col, soil_layer] * fclayfrac * dx * dx;
-                                    bulkdensity[row, col, soil_layer] = location_bd;
-
-                                }
-                                if (creep_testing.Checked)
-                                {
-                                    //bool change_creep_testing = true;
-                                    //if(max_soil_layers>10 & soil_layer<10)
-                                    //{
-                                    //    change_creep_testing = false;
-                                    //}
-                                    //if (change_creep_testing) 
-                                    //{
-                                    //    sandfrac = 0;
-                                    //    clayfrac = 1;
-                                    //}
-                                    sandfrac -= 1.0 / max_soil_layers;
-                                    clayfrac += 1.0 / max_soil_layers;
-                                    sandfrac = Math.Max(sandfrac, 0);
-                                    clayfrac = Math.Min(clayfrac, 1);
-                                }
-                                soil_layer++;
-                            } // end available soil depth > 0
-                        } // end if fixed layer thickness
-                        else
-                        { // start variable layer thickness
-                            while (available_soildepth > 0)
-                            {
-                                // 0-50 cm    min 2.5   insteek 5    maximum 10 cm       n=10    bovenste laag geen minimum (sediment HOEFT niet meteen weggemiddeld te worden - pas als nodig)
-                                // 50-200 cm  min 10    insteek 15    maximum 50 cm      n=10
-                                // daarna     min 50    insteek 100  geen max            n=5
-                                // If max_soil_layers is smaller than the sum of the perfect layers in each of the three ' packages' , then we simply make the lowest layer very thick.
-                                //if (soil_layer < 10 && soil_layer < max_soil_layers - 1)
-                                /*
-                                if (soil_layer < 40 && soil_layer < max_soil_layers - 1)
-                                {
-                                    if (available_soildepth > 0.05)
-                                    {
-                                        layerthickness_m[row, col, soil_layer] = 0.05;
-                                        available_soildepth -= 0.05;
-                                    }
-                                    else
-                                    {
-                                        layerthickness_m[row, col, soil_layer] = available_soildepth;
-                                        available_soildepth = 0;
-                                    }
-                                }
-                                */
-                                if (soil_layer < 10 && soil_layer < max_soil_layers - 1)
-                                {
-                                    if (available_soildepth > 0.05) //
-                                    {
-                                        layerthickness_m[row, col, soil_layer] = 0.05; // 
-                                        available_soildepth -= 0.05;
-                                    }
-                                    else
-                                    {
-                                        layerthickness_m[row, col, soil_layer] = available_soildepth;
-                                        available_soildepth = 0;
-                                    }
-                                }
-                                if (soil_layer > 9 && soil_layer < 20 && soil_layer < max_soil_layers - 1)
-                                {
-                                    if (available_soildepth > 0.15) // was 0.25
-                                    {
-                                        layerthickness_m[row, col, soil_layer] = 0.15; // was 0.15
-                                        available_soildepth -= 0.15;
-                                    }
-                                    else
-                                    {
-                                        layerthickness_m[row, col, soil_layer] = available_soildepth;
-                                        available_soildepth = 0;
-                                    }
-                                }
-                                if (soil_layer > 19 && soil_layer < max_soil_layers && soil_layer < max_soil_layers - 1) // Rest
-                                {
-                                    if (available_soildepth > 0.5) // was 1
-                                    {
-                                        layerthickness_m[row, col, soil_layer] = 0.5; // was 1
-                                        available_soildepth -= 0.5; // was 1
-                                    }
-                                    else
-                                    {
-                                        layerthickness_m[row, col, soil_layer] = available_soildepth;
-                                        available_soildepth = 0;
-                                    }
-                                }
-
-                                if (soil_layer == max_soil_layers - 1)
-                                {
                                     layerthickness_m[row, col, soil_layer] = available_soildepth;
                                     available_soildepth = 0;
                                 }
+                            }
 
-                                if (layerthickness_m[row, col, soil_layer] != 0)
+                            //now limit layerthicknes to hardlayer limitations if needed
+                            if (blocks_active == 1)
+                            {
+                                if (dtm[row, col] >= hardlayerelevation_m)
                                 {
-                                    depth_m += layerthickness_m[row, col, soil_layer] / 2;
-                                    location_bd = bulk_density_calc_kg_m3(coarsefrac, sandfrac, siltfrac, clayfrac, fclayfrac, 0, 0, depth_m);
-                                    depth_m += layerthickness_m[row, col, soil_layer] / 2;
-                                    texture_kg[row, col, soil_layer, 0] = location_bd * layerthickness_m[row, col, soil_layer] * coarsefrac * dx * dx;   //  kg = kg/m3 * m * kg/kg * m * m
-                                    texture_kg[row, col, soil_layer, 1] = location_bd * layerthickness_m[row, col, soil_layer] * sandfrac * dx * dx;
-                                    texture_kg[row, col, soil_layer, 2] = location_bd * layerthickness_m[row, col, soil_layer] * siltfrac * dx * dx;
-                                    texture_kg[row, col, soil_layer, 3] = location_bd * layerthickness_m[row, col, soil_layer] * clayfrac * dx * dx;
-                                    texture_kg[row, col, soil_layer, 4] = location_bd * layerthickness_m[row, col, soil_layer] * fclayfrac * dx * dx;
-                                    bulkdensity[row, col, soil_layer] = location_bd;
+                                    double currentdepth = (dtm[row, col] - depth_m - layerthickness_m[row, col, soil_layer]);
+                                    if (currentdepth < hardlayerelevation_m && currentdepth > (hardlayerelevation_m - hardlayerthickness_m))
+                                    {
+                                        layerthickness_m[row, col, soil_layer] = (dtm[row, col] - depth_m) - hardlayerelevation_m;
+                                        //Debug.WriteLine(" limited layerthickness and soildepth to account for proximity of hardlayer  in " + row + " " + col);
+                                        //Debug.WriteLine(" hardlayerelevation_m " + hardlayerelevation_m + ", " + ((dtm[row, col] - depth_m) - hardlayerelevation_m) + " under the top of this layer");
+                                        //Debug.WriteLine(" dtm " + dtm[row, col] + " currentdepth " + currentdepth + " available_soildepth " + available_soildepth + " depth_m " + depth_m);
+                                        //Debug.WriteLine(" adapted layerthickness is " + layerthickness_m[row, col, soil_layer]);
+                                        available_soildepth = 0;
 
+                                        //this ensures that soils stay thinner on top of hardlayers, and don't continue under them.
+                                    }
                                 }
-                                if (creep_testing.Checked)
+                            }
+                            if (layerthickness_m[row, col, soil_layer] > 0)
+                            {
+                                depth_m += layerthickness_m[row, col, soil_layer] / 2;
+                                location_bd = bulk_density_calc_kg_m3(coarsefrac, sandfrac, siltfrac, clayfrac, fclayfrac, 0, 0, depth_m);
+                                depth_m += layerthickness_m[row, col, soil_layer] / 2;
+                                texture_kg[row, col, soil_layer, 0] = location_bd * layerthickness_m[row, col, soil_layer] * coarsefrac * dx * dx;   //  kg = kg/m3 * m * kg/kg * m * m
+                                texture_kg[row, col, soil_layer, 1] = location_bd * layerthickness_m[row, col, soil_layer] * sandfrac * dx * dx;
+                                texture_kg[row, col, soil_layer, 2] = location_bd * layerthickness_m[row, col, soil_layer] * siltfrac * dx * dx;
+                                texture_kg[row, col, soil_layer, 3] = location_bd * layerthickness_m[row, col, soil_layer] * clayfrac * dx * dx;
+                                texture_kg[row, col, soil_layer, 4] = location_bd * layerthickness_m[row, col, soil_layer] * fclayfrac * dx * dx;
+                                bulkdensity[row, col, soil_layer] = location_bd;
+
+                            }
+                            if (creep_testing.Checked)
+                            {
+                                sandfrac -= 1.0 / max_soil_layers;
+                                clayfrac += 1.0 / max_soil_layers;
+                                sandfrac = Math.Max(sandfrac, 0);
+                                clayfrac = Math.Min(clayfrac, 1);
+                            }
+
+                            if (OSL_checkbox.Checked)
+                            {
+                                int ngrains_layer = Convert.ToInt32(Math.Round(ngrains_kgsand_m2 * texture_kg[row, col, soil_layer, 1])); // grains per kg/m2 of sand
+                                OSL_grainages[row, col, soil_layer] = new int[ngrains_layer];
+                                OSL_depositionages[row, col, soil_layer] = new int[ngrains_layer];
+                                OSL_surfacedcount[row, col, soil_layer] = new int[ngrains_layer];
+
+                                for (int grain = 0; grain < ngrains_layer; grain++)
                                 {
-                                    sandfrac -= 0.05;
-                                    clayfrac += 0.05;
-
-                                    sandfrac = Math.Max(sandfrac, 0);
-                                    clayfrac = Math.Min(clayfrac, 1);
+                                    OSL_grainages[row, col, soil_layer][grain] = start_age;
+                                    OSL_depositionages[row, col, soil_layer][grain] = start_age;
                                 }
-
-                                soil_layer++;
-
-                            } // end availabke soil depth > 0
-                        }    // end variable layer thickness              
+                            }
+                            if (CN_checkbox.Checked)
+                            {
+                                CN_atoms_cm2[row, col, soil_layer, 0] = met10Be_inherited * met_10Be_clayfraction;
+                                CN_atoms_cm2[row, col, soil_layer, 1] = met10Be_inherited * (1 - met_10Be_clayfraction);
+                                CN_atoms_cm2[row, col, soil_layer, 2] = is10Be_inherited;
+                                CN_atoms_cm2[row, col, soil_layer, 3] = isC14_inherited;
+                            }
+                            soil_layer++;
+                        } // end available soil depth > 0
                     } // end else 
                     soildepth_m[row, col] = total_soil_thickness(row, col);
 
                 } // end col
             } // end row
               //Debug.WriteLine("initialised soil");
-            if (OSL_checkbox.Checked)
-            {
-                for (int row = 0; row < nr; row++)
-                {
-                    for (int col = 0; col < nc; col++)
-                    {
-                        for (int lay = 0; lay < max_soil_layers; lay++)
-                        {
-                            int ngrains_layer = Convert.ToInt32(Math.Round(ngrains_kgsand_m2 * texture_kg[row, col, lay, 1])); // grains per kg/m2 of sand
-                            OSL_grainages[row, col, lay] = new int[ngrains_layer];
-                            OSL_depositionages[row, col, lay] = new int[ngrains_layer];
-                            OSL_surfacedcount[row, col, lay] = new int[ngrains_layer];
-
-                            for (int grain = 0; grain < ngrains_layer; grain++)
-                            {
-                                OSL_grainages[row, col, lay][grain] = start_age;
-                                OSL_depositionages[row, col, lay][grain] = start_age;
-                            }
-                        }
-                    }
-                }
-            }
-
-        } // adapted for standard thickness
+        }
 
         void initialise_every_till()
         {

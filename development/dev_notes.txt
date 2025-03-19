@@ -5,7 +5,7 @@ KEY TASKS AND THEIR ORDER:
 2. FINISHED A - landslide inside
 3a. FINISHED A - splitting into different files 
 3b. FINISHED A - setting NA value as a variable
-1. MvdM - transport functions + apply everywhere, 
+1. FINISHED MvdM - transport functions + apply everywhere, 
 1b. MvdM -remove restart inside the code after crashing
 4a. MvdM : 
 	-- layer thickness: 1. top layer thickness, 2. traingular or a fixed factor, 3. max number of layers, 4. calculate layers. 
@@ -58,7 +58,7 @@ For Arnaud:
 -- steps already done
 
 For Marijn:
--- Two OM models next to each other
+-- FINISHED Two OM models next to each other
 -- bioturbation upheaval to treefall
 -- split mounding and mxing in bioturbation
 -- check clay dynbamics versus chemical weathering
@@ -67,4 +67,15 @@ For Marijn:
 
 
 WISHLIST
-- possibility to set fixed BD value in interfae instead of PTF
+- possibility to set fixed BD value in interfae instead of PTF MvdM
+- collective transfer function for transport into pools which is later redistributed (bt_mixing, tillage mixing / upheaval, treefall, water erosion?) MvdM
+
+
+ERRORS & DEVELOPMENT
+- initial soil properties
+	- YOM and OOM fractions are included in the total sum of mass fractions
+	- Error when a cell is emptied before a new value is entered
+	- YOM and OOM fractions are not considered in initialise_soil(). 
+	- should be included in initial BD calculations as well
+	- However, does it make sense to specify initial SOM? We don't want constant SOM throughout the soil profiles. Maybe specify topsoil SOM and use SOM parameters to create a depth curve
+- difference initialize_once and initialize_once_testing, and which one should be used?

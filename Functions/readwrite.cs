@@ -1544,7 +1544,6 @@ namespace LORICA4
                         rainfall_constant_value_box.Text = xreader.ReadElementString("rain_constant_value");
                         infil_constant_value_box.Text = xreader.ReadElementString("infil_constant_value");
                         evap_constant_value_box.Text = xreader.ReadElementString("evap_constant_value");
-                        checkbox_layer_thickness.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("checkbox_layer_thickness"));
                         textbox_max_soil_layers.Text = xreader.ReadElementString("max_soil_layers");
                         textbox_layer_thickness.Text = xreader.ReadElementString("layer_thickness");
                         fill_sinks_before_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("check_fill_sinks_before"));
@@ -1897,7 +1896,6 @@ namespace LORICA4
                 xwriter.WriteElementString("rain_constant_value", rainfall_constant_value_box.Text);
                 xwriter.WriteElementString("infil_constant_value", infil_constant_value_box.Text);
                 xwriter.WriteElementString("evap_constant_value", evap_constant_value_box.Text);
-                xwriter.WriteElementString("checkbox_layer_thickness", XmlConvert.ToString(checkbox_layer_thickness.Checked));
                 xwriter.WriteElementString("max_soil_layers", textbox_max_soil_layers.Text);
                 xwriter.WriteElementString("layer_thickness", textbox_layer_thickness.Text);
                 xwriter.WriteElementString("check_fill_sinks_before", XmlConvert.ToString(fill_sinks_before_checkbox.Checked));
