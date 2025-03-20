@@ -191,6 +191,333 @@ namespace LORICA4
 
         }
 
+
+        private double calib_objective_function_CarboZALF()
+        {
+            //this code calculates the value of the objective function during calibration and is user-specified. 
+            //calibration looks to minimize the value of the objective function by varying parameter values
+            //CALIB_USER
+            //example for Luxembourg: we want to simulate the correct amount of erosion, over the entire slope
+            //Xia, number needs to be adapted
+            bool calib_erodep = false;
+            bool calib_OSL = true;
+            bool calib_CN = false;
+            bool calib_stabages = false;
+            if (CarboZALF_calib_stabilizationages_checkbox.Checked) { calib_stabages = true; }
+            double sim_ero_m = 0, obs_ero_m, sim_depo_m = 0, obs_depo_m, error_CZ = 0;
+            int obj_fun_cells_ero = 0, obj_fun_cells_depo = 0;
+
+            if (calib_erodep)
+            {
+                // calibration values derived from Van der Meij et al., 2017, approach 2c
+                obs_ero_m = -0.30; // average for all eroding positions
+                obs_depo_m = 0.51; // average  colluvium thickness
+                for (row = 0; row < nr; row++)
+                {
+                    for (col = 0; col < nc; col++)
+                    {
+                        if (dtm[row, col] != -9999 & dtmchange_m[row, col] < 0)
+                        {
+                            sim_ero_m += dtmchange_m[row, col];
+                            obj_fun_cells_ero++;
+                        }
+                        if (dtm[row, col] != -9999 & dtmchange_m[row, col] > 0)
+                        {
+                            sim_depo_m += dtmchange_m[row, col];
+                            obj_fun_cells_depo++;
+                        }
+                    }
+                }
+                sim_ero_m /= obj_fun_cells_ero; // average elevation change in eroding locations
+                sim_depo_m /= obj_fun_cells_depo; // average elevation change in deposition locations
+                error_CZ = Math.Abs(((obs_ero_m - sim_ero_m) + (obs_depo_m - sim_depo_m)) / 2); // average error of erosion and deposition
+            }
+            if (calib_OSL)
+            {
+                double cum_age_error = 0;
+
+                // Calculate reference depths from the former soil surface, not from the top of the colluvium, to prevent colluvial samples ending up in the former soil.
+                // The selected methoid can result in measured sample located above the simulated colluvium. These will get a large penalty in the calibration 
+                // This approach is better suited for deposition rates, because colluvium builds up from the bottom to the top
+
+                if (calib_stabages) // calibration with mode of stabilization ages
+                {
+                    // calibration old colluvium ( > 300 a)
+                    // Location P2
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.025, 3700); // NCL7317038
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.125, 3301); // NCL7317039
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.225, 2227); // NCL7317040
+
+                    // Location P3
+                    cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.055, 1898); // NCL7317069
+                    cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.155, 1731); // NCL7317145
+                    cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.255, 1048); // NCL7317146
+
+
+                    // calibration young colluvium (<= 300 a)
+                    // Location P2
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.325, 120); // NCL7317041
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.425, 27); // NCL7317042
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.605, 18); // NCL7317068
+
+                    // Location P3
+                    cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.355, 44); // NCL7317147
+                    cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.455, 40); // NCL7317070
+
+                    // Location BP5
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.075, 159); // NCL7317062
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.175, 135); // NCL7317063
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.275, 99); // NCL7317064
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.375, 87); // NCL7317065
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.475, 73); // NCL7317066
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.575, 37); // NCL7317067
+
+                    // Location BP6
+                    cum_age_error += calib_function_CarboZALF_OSL(17, 20, 0.045, 160); // NCL7317152
+                    cum_age_error += calib_function_CarboZALF_OSL(17, 20, 0.175, 136); // NCL7317153
+                    cum_age_error += calib_function_CarboZALF_OSL(17, 20, 0.305, 121); // NCL7317154
+                    cum_age_error += calib_function_CarboZALF_OSL(17, 20, 0.425, 103); // NCL7317155
+                    cum_age_error += calib_function_CarboZALF_OSL(17, 20, 0.545, 92); // NCL7317156
+
+                    // Location BP8
+                    cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.045, 258); // NCL7317142
+                    cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.145, 227); // NCL7317148
+                    cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.245, 197); // NCL7317143
+                    cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.345, 139); // NCL7317149
+                    cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.445, 117); // NCL7317150
+
+                }
+                else // calibration with mode of measured ages
+                {
+                    // calibration old colluvium ( > 300 a)
+                    // Location P2
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.025, 3832); // NCL7317038
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.125, 3606); // NCL7317039
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.225, 3895); // NCL7317040
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.325, 2170); // NCL7317041
+
+                    // Location P3
+                    cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.055, 3265); // NCL7317069
+                    cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.155, 2650); // NCL7317145
+                    cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.255, 1425); // NCL7317146
+
+
+                    // calibration young colluvium (<= 300 a)
+                    // Location P2
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.425, 66); // NCL7317042
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 17, 0.605, 46); // NCL7317068
+
+                    // Location P3
+                    cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.355, 41); // NCL7317147
+                    cum_age_error += calib_function_CarboZALF_OSL(27, 17, 0.455, 44); // NCL7317070
+
+                    // Location BP5
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.075, 170); // NCL7317062
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.175, 127); // NCL7317063
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.275, 87); // NCL7317064
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.375, 89); // NCL7317065
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.475, 75); // NCL7317066
+                    cum_age_error += calib_function_CarboZALF_OSL(14, 23, 0.575, 58); // NCL7317067
+
+                    // Location BP6
+                    cum_age_error += calib_function_CarboZALF_OSL(17, 20, 0.045, 201); // NCL7317152
+                    cum_age_error += calib_function_CarboZALF_OSL(17, 20, 0.175, 137); // NCL7317153
+                    cum_age_error += calib_function_CarboZALF_OSL(17, 20, 0.305, 136); // NCL7317154
+                    cum_age_error += calib_function_CarboZALF_OSL(17, 20, 0.425, 107); // NCL7317155
+                    cum_age_error += calib_function_CarboZALF_OSL(17, 20, 0.545, 76); // NCL7317156
+
+                    // Location BP8
+                    cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.045, 458); // NCL7317142
+                    cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.145, 282); // NCL7317148
+                    cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.245, 232); // NCL7317143
+                    cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.345, 146); // NCL7317149
+                    cum_age_error += calib_function_CarboZALF_OSL(18, 22, 0.445, 126); // NCL7317150 
+                }
+                error_CZ = cum_age_error;
+            }
+            Debug.WriteLine(" calib tst - calib_objective_function - error is " + error_CZ + " a in total");
+            return Math.Abs(error_CZ);
+        }
+
+        private double calib_function_CarboZALF_OSL(int row_cal, int col_cal, double sample_depth_from_fAh, double age_ref)
+        {
+            double depth_z, refdepth, penalty, age_model;
+            int lay_cal;
+
+            refdepth = dtm[row_cal, col_cal] - dtmchange_m[row_cal, col_cal] + sample_depth_from_fAh;
+            depth_z = dtm[row_cal, col_cal];
+            lay_cal = -1;
+            age_model = end_time * 2; // dummy age for when colluvium is simulated too thin. 1*end_time not suitable, because it can be closer to the older ages than younger modelled ages
+            //dummy_penalty = age_ref / (end_time - age_ref + 1); // Penalty for samples where colluvium is simulated too thin
+            //                                                     // Calculate penalty based on measured age relative to simulation time.
+            //                                                     // The older, the higher the penalty. Penalties are generally higher than the ones calculated below.
+            //                                                     // Penalty never below 1, made sure by adding 1 to the reference age
+
+            // Select the layer that corresponds to the measured sample depth. 
+            if (refdepth < depth_z) // if measured sample is  present in the simulated colluvium
+            {
+                lay_cal = 0;
+                //while (!(refdepth < depth_z & (refdepth >= (z - layerthickness_m[row_cal, col_cal, lay_cal])))) // determine the layer in which the sample should be located
+                while (refdepth < depth_z) // while the depth of the sample is located above the upper depth of the layer, move to the next layer
+                {
+                    lay_cal++;
+                    depth_z -= layerthickness_m[row_cal, col_cal, lay_cal];
+                }
+                try                 // calculate simulated age mode
+                {
+                    int[] ages_cal = OSL_grainages[row_cal, col_cal, lay_cal];
+                    ages_cal = ages_cal.Where(e => e < start_age).ToArray(); // remove old grains from the selection, Focus on the younger grains. younger age is never larger than start_age, so it's a good reference point
+                    double[] ages_cal_d = ages_cal.Select(x => (double)x).ToArray();
+
+                    if (ages_cal_d.Length > 1)
+                    {
+                        double[,] density = KernelDensityEstimation(ages_cal_d);
+
+                        double[] density_prob = new double[density.GetLength(0)];
+                        double[] density_value = new double[density.GetLength(0)]; ;
+
+                        for (int it = 0; it < density.GetLength(0); it++)
+                        {
+                            density_value[it] = density[it, 0];
+                            density_prob[it] = density[it, 1];
+                        }
+                        int[] indices_prob = new int[density_value.Length];
+                        for (int ii = 0; ii < density_value.Length; ii++) { indices_prob[ii] = ii; }
+                        Array.Sort(density_prob, indices_prob);
+
+                        age_model = density_value[indices_prob[indices_prob.Length - 1]];
+                    }
+                    else
+                    {
+                        if (ages_cal_d.Length == 1)
+                        { // only one rejuvenated grain. Use that age as reference
+                            age_model = ages_cal_d[0];
+                        }
+                        else
+                        {
+                            // no grains present for this sample. This means the sample is too close to the surface (layer = 0), or there are no young grains (poor bleaching, non-eroded layer). So penalty is based on the dummy age
+                        }
+                    }
+                }
+
+                catch
+                {
+                    Debug.WriteLine("Error in calculating age densities");
+                }
+            }
+            else // sample is located outside of simulated colluvium, use runtime as age estimate for a high penalty
+            {
+
+            }
+            // penalty = Math.Pow((age_model - age_ref),2); // calculate squared error
+            penalty = Math.Abs((age_model - age_ref)); // calculate absolute error
+
+            return (penalty);
+        }
+
+
+        private double calib_objective_function_bioturbation()
+        {
+            double cum_age_error = 0;
+
+            // Termites
+            cum_age_error += calib_function_bioturbation_OSL(0.02, 16);
+            cum_age_error += calib_function_bioturbation_OSL(0.17, 85);
+            cum_age_error += calib_function_bioturbation_OSL(0.27, 546);
+            cum_age_error += calib_function_bioturbation_OSL(0.39, 1135);
+            cum_age_error += calib_function_bioturbation_OSL(0.49, 1218);
+            cum_age_error += calib_function_bioturbation_OSL(0.59, 1504);
+            cum_age_error += calib_function_bioturbation_OSL(0.73, 2055);
+            cum_age_error += calib_function_bioturbation_OSL(0.83, 2899);
+            cum_age_error += calib_function_bioturbation_OSL(0.92, 2525);
+            cum_age_error += calib_function_bioturbation_OSL(1.02, 3237);
+
+
+            // Develop for other processes and datasets
+
+            Debug.WriteLine(" calib tst - calib_objective_function - error is " + cum_age_error + " a in total");
+            return cum_age_error;
+        }
+
+        private double calib_function_bioturbation_OSL(double depth, double age_ref)
+        {
+            int row_cal = 0, col_cal = 0;
+            // Calculate rerpesentative depth for layer
+            int lay_cal = 0;
+            double depth_ref = 0;
+            double depth_dist = 999;
+            double penalty = -1;
+
+            bool stop_it = false;
+            while (!stop_it)
+            {
+                depth_ref += layerthickness_m[row_cal, col_cal, lay_cal] / 2;
+                if (Math.Abs(depth - depth_ref) < depth_dist) // if distance between layers is decreasing
+                {
+                    depth_dist = Math.Abs(depth - depth_ref);
+                    lay_cal++;
+                }
+                else // if distance between layers in increasing again
+                {
+                    stop_it = true;
+                }
+                depth_ref += layerthickness_m[row_cal, col_cal, lay_cal] / 2;
+            }
+
+            // calculate age penalty
+            try
+            {
+                int iii = 0;
+                int[] ages_cal = OSL_grainages[row_cal, col_cal, lay_cal];
+                ages_cal = ages_cal.Where(e => e < end_time).ToArray(); // Remove grains that equal run time, focus on the younger ages
+                double[] ages_cal_d = ages_cal.Select(x => (double)x).ToArray();
+                //for (iii = 0; iii < ages_cal_d.Length; iii++)
+                //{
+                //    Debug.Write(ages_cal_d[iii] + ",");
+                //}
+                //Debug.WriteLine("");
+                if (ages_cal_d.Length > 1)
+                {
+                    double[,] density = KernelDensityEstimation(ages_cal_d);
+
+                    double[] density_prob = new double[density.GetLength(0)];
+                    double[] density_value = new double[density.GetLength(0)]; ;
+
+                    for (int it = 0; it < density.GetLength(0); it++)
+                    {
+                        density_value[it] = density[it, 0];
+                        density_prob[it] = density[it, 1];
+                    }
+                    int[] indices_prob = new int[density_value.Length];
+                    for (int ii = 0; ii < density_value.Length; ii++) { indices_prob[ii] = ii; }
+                    Array.Sort(density_prob, indices_prob);
+
+                    double ages_mode = density_value[indices_prob[indices_prob.Length - 1]];
+
+                    penalty = Math.Abs(ages_mode - age_ref) / age_ref;
+                }
+                else
+                {
+                    if (ages_cal_d.Length == 1)
+                    { // only one rejuvenated grain. Use that age as reference
+                        penalty = Math.Abs(ages_cal_d[0] - age_ref) / age_ref;
+                    }
+                    else
+                    {
+                        // no grains present for this sample. This means the sample is too close to the surface (layer = 0), or there are no young grains (poor bleaching, non-eroded layer). So penalty is based on measured age
+                        // Debugger.Break();
+                        penalty = end_time / (end_time - age_ref + 1);
+                    }
+                }
+            }
+            catch
+            {
+                Debug.WriteLine("Error in calculating age densities");
+                penalty = 999;
+            }
+            return (penalty);
+
+        }
         private double domain_sum(string properties)
         {
             //Debug.WriteLine(properties);
@@ -533,6 +860,164 @@ namespace LORICA4
                 best_parameters[4] = k2;
             }
             Debug.WriteLine(" updated parameter set for best scored run");
+        }
+
+        void lessivage_calibration(int row, int col, int cal)
+        {
+            //Debug.Write(Cclay + " " + max_eluviation + " " + ct_depthdec + " ");
+            //double[] lp4 = new double[,]{0.09, 0.09,0.09, 0.10, 0.16, 0.16, 0.19, 0.19, 0.19, 0.16, 0.16, 0.16, 0.16, 0.13, 0.13, 0.13, 0.13, 0.13, 0.13, 0.13};
+
+            double[,] lp4 = new double[6, 2] { { .31, .09 }, { .45, .10 }, { .62, .16 }, { .90, .19 }, { 1.35, .16 }, { 2.0, .13 } };
+            double depth, err, rmse_ct, me_ct, lp4_clay;
+            int lp4_row = 0;
+            int layercount = 0;
+            rmse_ct = 0;
+            me_ct = 0;
+            depth = 0;
+            Debug.WriteLine(rmse_ct + ", " + me_ct);
+            for (int layer = 0; layer < max_soil_layers; layer++)
+            {
+                if (layerthickness_m[row, col, layer] > 0)
+                {
+                    depth += layerthickness_m[row, col, layer] / 2;
+                    if (depth <= lp4[5, 0])
+                    {
+                        double totalweight = texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4]; // calibrate on fine soil fraction only
+                        while (depth > lp4[lp4_row, 0])
+                        {
+                            lp4_row++;
+                        }
+                        lp4_clay = lp4[lp4_row, 1];
+
+                        err = ((texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4]) / totalweight) - lp4_clay;
+                        rmse_ct += err * err;
+                        me_ct += err;
+                        layercount += 1;
+                    }
+
+                    depth += layerthickness_m[row, col, layer] / 2;
+                }
+
+            }
+            Debug.WriteLine(layercount);
+            rmse_ct = Math.Pow(rmse_ct / layercount, .5);
+            me_ct = me_ct / layercount;
+            //Debug.Write(rmse_ct + " " + me_ct);
+            //Debug.WriteLine("");//start on new line
+            lessivage_errors[cal, 0] = Cclay;
+            lessivage_errors[cal, 1] = max_eluviation;
+            lessivage_errors[cal, 2] = ct_depthdec;
+            lessivage_errors[cal, 3] = rmse_ct;
+            lessivage_errors[cal, 4] = me_ct;
+        }
+
+        public static double[,] KernelDensityEstimation(double[] data)
+        {
+            // from: https://gist.github.com/ksandric/e91860143f1dd378645c01d518ddf013 
+
+            // probability density function (PDF) signal analysis
+            // Works like ksdensity in mathlab. 
+            // KDE performs kernel density estimation (KDE)on one - dimensional data
+            // http://en.wikipedia.org/wiki/Kernel_density_estimation
+
+            // Input:	-data: input data, one-dimensional
+            //          -sigma: bandwidth(sometimes called "h")
+            //          -nsteps: optional number of abscis points.If nsteps is an
+            //          array, the abscis points will be taken directly from it. (default 100)
+            // Output:	-x: equispaced abscis points
+            //          -y: estimates of p(x)
+
+            // This function is part of the Kernel Methods Toolbox(KMBOX) for MATLAB. 
+            // http://sourceforge.net/p/kmbox
+            // Converted to C# code by ksandric
+
+            // edit MvdM. Calculate bandwidth (sigma), based on Silverman's rule of thumb (R's standard setting), instead of a given parameter
+            double avg = data.Average();
+            double stdev = Math.Sqrt(data.Average(v => Math.Pow(v - avg, 2)));
+            double q1 = QUARTILE(data, 25);
+            double q3 = QUARTILE(data, 75);
+
+            double sigma = 0.9 * Math.Min(stdev, ((q3 - q1) / 1.34)) * Math.Pow(data.Length, -0.2);
+
+            double MAX = Double.MinValue, MIN = Double.MaxValue;
+            int N = data.Length; // number of data points
+            // Find MIN MAX values in data
+            for (int i = 0; i < N; i++)
+            {
+                if (MAX < data[i])
+                {
+                    MAX = data[i];
+                }
+                if (MIN > data[i])
+                {
+                    MIN = data[i];
+                }
+            }
+            MIN = Math.Floor(MIN);
+            MAX = Math.Ceiling(MAX);
+            int nsteps = Convert.ToInt32(Math.Round(MAX)) - Convert.ToInt32(Math.Round(MIN)); // Calculate number of steps (yearly
+
+            double[,] result = new double[nsteps, 2];
+            double[] x = new double[nsteps], y = new double[nsteps];
+
+
+            // Like MATLAB linspace(MIN, MAX, nsteps);
+            x[0] = MIN;
+            for (int i = 1; i < nsteps; i++)
+            {
+                x[i] = x[i - 1] + ((MAX - MIN) / nsteps);
+            }
+
+            // kernel density estimation
+            double c = 1.0 / (Math.Sqrt(2 * Math.PI * sigma * sigma));
+            for (int i = 0; i < N; i++)
+            {
+                for (int j = 0; j < nsteps; j++)
+                {
+                    y[j] = y[j] + 1.0 / N * c * Math.Exp(-(data[i] - x[j]) * (data[i] - x[j]) / (2 * sigma * sigma));
+                }
+            }
+
+            // compilation of the X,Y to result. Good for creating plot(x, y)
+            for (int i = 0; i < nsteps; i++)
+            {
+                result[i, 0] = x[i];
+                result[i, 1] = y[i];
+            }
+            return result;
+        }
+
+        internal static double QUARTILE(double[] array, double quantile)
+        {
+            // from https://stackoverflow.com/questions/31451446/worksheetfunction-quartile-equivalent-in-c-sharp
+            Array.Sort(array);
+
+
+            if (quantile >= 100.0d) return array[array.Length - 1];
+
+            double position = (double)(array.Length + 1) * quantile / 100.0;
+            double leftNumber = 0.0d, rightNumber = 0.0d;
+
+            double n = quantile / 100.0d * (array.Length - 1) + 1.0d;
+
+            if (position >= 1)
+            {
+                leftNumber = array[(int)System.Math.Floor(n) - 1];
+                rightNumber = array[(int)System.Math.Floor(n)];
+            }
+            else
+            {
+                leftNumber = array[0]; // first data
+                rightNumber = array[1]; // first data
+            }
+
+            if (leftNumber == rightNumber)
+                return leftNumber;
+            else
+            {
+                double part = n - System.Math.Floor(n);
+                return leftNumber + part * (rightNumber - leftNumber);
+            }
         }
 
         #endregion

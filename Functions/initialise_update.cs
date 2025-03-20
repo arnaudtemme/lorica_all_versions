@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace LORICA4
 {
@@ -1107,5 +1108,571 @@ namespace LORICA4
         }
 
         #endregion
+
+        #region update code
+        void update_all_layer_thicknesses(int row_update, int col_update)
+        {
+            for (int layer_update = 0; layer_update < max_soil_layers; layer_update++)
+            {
+                layerthickness_m[row_update, col_update, layer_update] = thickness_calc(row_update, col_update, layer_update);
+                layerthickness_m[row_update, col_update, layer_update] = thickness_calc(row_update, col_update, layer_update);
+            }
+
+        }
+
+        void remove_empty_layers(int row2, int col2)
+        {
+            // mainly after tree fall, there can be empty soil layers at the surface. This module shifts the layers up.
+            // displaysoil(row_to, col_to);
+            //Debug.WriteLine("rel1");
+            // DEVELOP after shifting cells up the script runs through the lower empty cells, moving them up also. with some booleans, this should be prevented. there is no error now, only longer simulation time.  
+            try
+            {
+                //int diagnostic_mode = 1;
+                int totalgrains_start = 0;
+                if (OSL_checkbox.Checked) { for (int lay = 0; lay < max_soil_layers; lay++) { totalgrains_start += OSL_grainages[row2, col2, lay].Length; } }
+
+                //if (diagnostic_mode == 1) { Debug.WriteLine("entered removing empty layers"); }
+                int empty_layers = 0;
+                bool shift_layers = false;
+
+                int n_shifts = 0;
+                Decimal mass_before = total_soil_mass_kg_decimal(row2, col2);
+                //Debug.WriteLine("rel2");
+                for (int lay2 = 0; lay2 < max_soil_layers; lay2++)
+                {
+                    bool full_layer_shift = false;
+                    double layer_mass = total_layer_mass_kg(row2, col2, lay2);
+                    if (layer_mass < 0.000000000001) // empty layer
+                                                     // mind for empty layers at the bottom
+                    {
+                        shift_layers = true;
+                        // if(n_shifts == 0) { displaysoil(row_to, col_to); }
+                        // n_shifts += 1;
+
+                        empty_layers++;
+                        for (int layert = lay2; layert < max_soil_layers - 1; layert++) // for all underlying layers, shift one up (since there is space anyway)
+                        {
+
+                            if (total_layer_mass_kg(row2, col2, layert + 1) > 0) { full_layer_shift = true; }
+                            //Debug.WriteLine(layert);
+                            for (i = 0; i < 5; i++)
+                            {
+                                texture_kg[row2, col2, layert, i] = texture_kg[row2, col2, layert + 1, i];
+                            }
+                            old_SOM_kg[row2, col2, layert] = old_SOM_kg[row2, col2, layert + 1];
+                            young_SOM_kg[row2, col2, layert] = young_SOM_kg[row2, col2, layert + 1];
+
+                            if (CN_checkbox.Checked)
+                            {
+                                for (int cosmo = 0; cosmo < n_cosmo; cosmo++)
+                                {
+                                    CN_atoms_cm2[row2, col2, layert, cosmo] = CN_atoms_cm2[row2, col2, layert + 1, cosmo];
+                                }
+                            }
+
+                            if (OSL_checkbox.Checked)
+                            {
+                                transfer_OSL_grains(row2, col2, layert + 1, row2, col2, layert, 1, 0); // transfer all grains from layert + 1 to layers
+                            }
+
+                        }
+                        for (i = 0; i < 5; i++)
+                        {
+                            texture_kg[row2, col2, max_soil_layers - 1, i] = 0;
+                        }
+                        old_SOM_kg[row2, col2, max_soil_layers - 1] = 0;
+                        young_SOM_kg[row2, col2, max_soil_layers - 1] = 0;
+                        layerthickness_m[row2, col2, max_soil_layers - 1] = 0;
+
+                        if (CN_checkbox.Checked)
+                        {
+                            for (int cosmo = 0; cosmo < n_cosmo; cosmo++)
+                            {
+                                CN_atoms_cm2[row2, col2, max_soil_layers - 1, cosmo] = 0;
+                            }
+                        }
+
+                        if (OSL_checkbox.Checked)
+                        {
+
+                            //// OSL matrix
+                            //for (int osl_i = 0; osl_i < OSL_age.GetLength(0); osl_i++) // loop over all rows
+                            //{
+                            //    if (OSL_age[osl_i, 0] == row_to & OSL_age[osl_i, 1] == col_to)
+                            //    {
+                            //        if (OSL_age[osl_i, 2] == lay_to) { Debugger.Break(); } // should not happen. This layer has been eroded completely
+                            //        if (OSL_age[osl_i, 2] > lay_to)
+                            //        {
+                            //            OSL_age[osl_i, 2] -= 1; // MvdM no need to account here for multiple empty layer removal, because this is included by the repeated loop over layer numbers 
+                            //        } // reduce layer number by 1
+                            //    }
+                            //}
+                        }
+
+                        if (full_layer_shift == true) { lay2--; }
+                        //Debug.WriteLine("-");
+                        //displaysoil(row_to, col_to);
+                    }
+                }
+                // Debug.WriteLine("rel3");
+                if (shift_layers == true)
+                {
+                    Decimal mass_after = total_soil_mass_kg_decimal(row2, col2);
+                    if (Math.Round(mass_before - mass_after) > Convert.ToDecimal(0.0000001))
+                    {
+                        Debug.WriteLine("Loss of soil data during removal of empty layers");
+                        displaysoil(row2, col2);
+                    }
+
+                }
+
+                if (diagnostic_mode == 1) { if (n_shifts > 0) { displaysoil(row2, col2); Debug.WriteLine("n layers shifted: {0} in row {1}, col {2}", n_shifts, row2, col2); } }
+                update_all_layer_thicknesses(row2, col2);
+
+                int totalgrains_end = 0;
+                if (OSL_checkbox.Checked) { for (int lay = 0; lay < max_soil_layers; lay++) { totalgrains_end += OSL_grainages[row2, col2, lay].Length; } if (totalgrains_end != totalgrains_start) { Debugger.Break(); } }
+
+            } // end try
+
+            catch
+            {
+                Debug.WriteLine("Error in removing empty layers");
+                Debug.WriteLine(" at end of remove_empty_layers: "); displaysoil(row2, col2);
+
+            }
+        }
+
+        void soil_update_split_and_combine_layers()
+        {
+            try
+            {
+                int layer;
+                double depth_m, z_layer_ref_m, old_thickness, new_thickness;
+                bool boolsplit, boolcombine;
+
+                total_average_soilthickness_m = 0;
+                number_soil_thicker_than = 0;
+                number_soil_coarser_than = 0;
+                local_soil_depth_m = 0;
+                local_soil_mass_kg = 0;
+
+                for (row = 0; row < nr; row++)
+                {
+                    for (col = 0; col < nc; col++)
+                    {
+                        if (dtm[row, col] != nodata_value)
+                        {
+                            remove_empty_layers(row, col);
+                            update_all_layer_thicknesses(row, col);
+
+                            depth_m = 0;
+                            // loop over all layers, except the last one
+                            for (layer = 0; layer < (max_soil_layers - 1); layer++)
+                            {
+                                z_layer_ref_m = layer_z_surface * Math.Pow(layer_z_increase, layer);
+
+                                if (OSL_checkbox.Checked & layer == 0)
+                                {
+                                    z_layer_ref_m = bleaching_depth_m;
+                                }
+
+                                // update surface layer
+                                if (layer == 0)
+                                {
+                                    if (layerthickness_m[row, col, layer] < 0.001)
+                                    {
+                                        // smaller than one mm, merge with layer below, to avoid numerical problems when always a fraction leaves the profile
+                                        combine_layers(row, col, layer, layer + 1);
+                                        boolcombine = true;
+                                    }
+                                    while (layerthickness_m[row, col, layer] > z_layer_ref_m * (1 + tolerance))
+                                    {
+                                        // too thick, split layer
+                                        split_layer(row, col, layer, z_layer_ref_m);
+                                        update_all_layer_thicknesses(row, col);
+                                        boolsplit = true;
+                                    }
+                                }
+                                else
+                                {
+                                    if (layerthickness_m[row, col, layer] < (z_layer_ref_m * (1 - tolerance))) // Lower end, combine
+                                    {
+                                        // always merge with lower neighbour, to keep as much resolution towards the surface, and to avoid infinite splitting and merging of the same layer
+                                        combine_layers(row, col, layer, layer + 1);
+                                        boolcombine = true;
+                                    }
+                                    if (layerthickness_m[row, col, layer] > (z_layer_ref_m * (1 + tolerance))) // Higher end, split
+                                    {
+                                        split_layer(row, col, layer, z_layer_ref_m);
+                                        boolsplit = true;
+                                    }
+                                }
+                                depth_m += layerthickness_m[row, col, layer];
+
+                            } // end layer
+
+                            // update time series and matrices
+                            if (timeseries.timeseries_number_soil_thicker_checkbox.Checked && System.Convert.ToDouble(timeseries.timeseries_soil_thicker_textbox.Text) < depth_m) { number_soil_thicker_than++; }
+                            if (timeseries.total_average_soilthickness_checkbox.Checked) { total_average_soilthickness_m += depth_m; }
+                            if (timeseries.timeseries_soil_depth_checkbox.Checked && System.Convert.ToInt32(timeseries.timeseries_soil_cell_row.Text) == row && System.Convert.ToInt32(timeseries.timeseries_soil_cell_col.Text) == col)
+                            {
+                                local_soil_depth_m = depth_m;
+                            }
+
+                            // update dtm and soil thickness map
+                            update_all_layer_thicknesses(row, col);
+                            old_thickness = soildepth_m[row, col];
+                            new_thickness = total_soil_thickness(row, col);
+                            dtm[row, col] += new_thickness - old_thickness;
+                            soildepth_m[row, col] = new_thickness;
+                            dtmchange_m[row, col] += new_thickness - old_thickness;
+                            dz_soil[row, col] += new_thickness - old_thickness;
+                        } // end dtm != nodata_value
+                    } // end col
+                } // end row
+            }
+            catch
+            {
+                Debug.WriteLine("error in splitting and combining");
+            }
+        }
+
+        void split_layer(int rowwer, int coller, int lay_split, double z_lay_ref_m)
+        {
+
+            try
+            {
+                int totalgrains_start = 0;
+                int grains_splitlayer = 0;
+                int laynum;
+                double div;
+                int[] grains_before = new int[max_soil_layers];
+                int[] grains_after = new int[max_soil_layers];
+                if (OSL_checkbox.Checked)
+                {
+                    for (int lay_OSL = 0; lay_OSL < max_soil_layers; lay_OSL++)
+                    {
+                        totalgrains_start += OSL_grainages[rowwer, coller, lay_OSL].Length;
+                        grains_before[lay_OSL] = OSL_grainages[rowwer, coller, lay_OSL].Length;
+                    }
+                    grains_splitlayer = OSL_grainages[rowwer, coller, lay_split].Length;
+                }
+                Decimal old_mass_soil, new_mass_soil;
+                old_mass_soil = total_soil_mass_kg_decimal(rowwer, coller);
+
+                //splitting will increase the number of layers. If this splits beyond the max number of layers, then combine the bottom two layers
+                // This is not a problem when the second last layer will be split, as it will give a part of its material to the bottom layer without creating a new layer
+                // so only for the other layers, we need to merge bottom two layers to create space for the split
+
+                if (lay_split < (max_soil_layers - 2)) // if we're not dealing with the second last layer
+                {
+                    if (total_layer_mass_kg(rowwer, coller, max_soil_layers - 1) > 0) // and, if we are using the lowest possible layer already:
+                    {
+                        //this breaks now because the lowest layer can be empty due to its encountering a hard layer ArT
+
+                        // merge bottom two layers to free up one layer
+                        try { combine_layers(rowwer, coller, max_soil_layers - 2, max_soil_layers - 1); }
+                        catch { Debug.WriteLine(" failed to combine layers to prepare for splitting "); }
+                    }
+
+                    if (Math.Abs(old_mass_soil - total_soil_mass_kg_decimal(rowwer, coller)) > Convert.ToDecimal(0.0001))
+                    {
+                        Debug.WriteLine("err_spl_1 {0}", total_soil_mass_kg_decimal(rowwer, coller));
+                    }
+
+                    // now we can move all layers down below the one we want to split
+                    for (laynum = max_soil_layers - 1; laynum >= lay_split + 2; laynum--)
+                    {
+                        transfer_material_between_layers(rowwer, coller, laynum - 1, rowwer, coller, laynum, 1);
+                    }
+
+                    if (Math.Abs(old_mass_soil - total_soil_mass_kg_decimal(rowwer, coller)) > Convert.ToDecimal(0.00001))
+                    {
+                        Debug.WriteLine("err_spl_2 {0}", total_soil_mass_kg_decimal(rowwer, coller));
+                        // Debugger.Break();
+                        // old_mass_soil = total_soil_mass(rowwer, coller);
+                    }
+                }
+
+                // determine splitting ratio based on variable layer thickness. div is the fraction that stays behind
+                // checkbox dat lagen niet te dik of te dun worden MvdM
+                div = 1 / (Math.Pow(layer_z_increase, 0) + Math.Pow(layer_z_increase, 1));
+
+                // Two checks:
+                // if remaining layer thickness exceeds the tolerated layer thickness. Can happen with big pulses of sediment (landsliding, tree fall)
+                // if splitted layer is the second last layer
+                // in those cases, div will be based on the reference thickness to avoid too thick layers 
+                if ((div * layerthickness_m[rowwer, coller, lay_split]) > (z_lay_ref_m * (1 + tolerance)) |
+                    (lay_split) == (max_soil_layers - 2))
+                {
+                    div = z_lay_ref_m / (layerthickness_m[rowwer, coller, lay_split]);
+                }
+
+                if (div > 1) { div = 1; }
+                if (div < 0) { div = 0; }
+                transfer_material_between_layers(rowwer, coller, lay_split, rowwer, coller, lay_split + 1, 1 - div);
+
+                int totalgrains_end = 0;
+                int splitlayers_end = 0;
+                if (OSL_checkbox.Checked)
+                {
+                    for (int lay_OSL = 0; lay_OSL < max_soil_layers; lay_OSL++)
+                    {
+                        totalgrains_end += OSL_grainages[rowwer, coller, lay_OSL].Length;
+                        grains_after[lay_OSL] = OSL_grainages[rowwer, coller, lay_OSL].Length;
+                    }
+                    if (totalgrains_end != totalgrains_start)
+                    {
+                        Debug.WriteLine("Grains before: {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}", grains_before[0], grains_before[1], grains_before[2], grains_before[3], grains_before[4], grains_before[5], grains_before[6], grains_before[7], grains_before[8], grains_before[9]);
+                        Debug.WriteLine("Grains after: {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}", grains_after[0], grains_after[1], grains_after[2], grains_after[3], grains_after[4], grains_after[5], grains_after[6], grains_after[7], grains_after[8], grains_after[9]);
+
+                        Debugger.Break();
+                    }
+                    splitlayers_end = OSL_grainages[rowwer, coller, lay_split].Length + OSL_grainages[rowwer, coller, lay_split + 1].Length;
+                    if (grains_splitlayer != splitlayers_end)
+                    {
+                        Debug.WriteLine("Grains before: {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}", grains_before[0], grains_before[1], grains_before[2], grains_before[3], grains_before[4], grains_before[5], grains_before[6], grains_before[7], grains_before[8], grains_before[9]);
+                        Debug.WriteLine("Grains after: {0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}", grains_after[0], grains_after[1], grains_after[2], grains_after[3], grains_after[4], grains_after[5], grains_after[6], grains_after[7], grains_after[8], grains_after[9]);
+                        // Debugger.Break();
+                        displaysoil(rowwer, coller);
+                        // Debugger.Break();
+                    }
+                }
+            }
+            catch
+            {
+                Debug.WriteLine("Failed at splitting layer at row {0}, col {1} at time {2}", row, col, t);
+            }
+
+        }
+
+        void combine_layers(int rowwer, int coller, int lay1, int lay2)  // combines two soil layers into the first, recalculates their new thickness and shifts underlying layers up
+        {
+            double CN_before = 0, CN_after = 0;
+            //if (CN_checkbox.Checked) { CN_before = total_CNs(); }
+            double mass_before = total_layer_mass_kg(rowwer, coller, lay1) + total_layer_mass_kg(rowwer, coller, lay2);
+            try
+            {
+                int totalgrains_start = 0;
+                if (OSL_checkbox.Checked) { for (int lay_OSL = 0; lay_OSL < max_soil_layers; lay_OSL++) { totalgrains_start += OSL_grainages[rowwer, coller, lay_OSL].Length; } }
+
+                decimal old_soil_mass1 = total_soil_mass_kg_decimal(rowwer, coller);
+
+                // transport all material from lay_to to lay_from
+                transfer_material_between_layers(rowwer, coller, lay2, rowwer, coller, lay1, 1);
+                layerthickness_m[rowwer, coller, lay1] = thickness_calc(rowwer, coller, lay1);
+
+                // move all other layers one layer up, since there is space. layert (lay_to) should be empty and replaced with contents of layert + 1
+                for (int layert = lay2; layert < max_soil_layers - 1; layert++)
+                {
+                    transfer_material_between_layers(rowwer, coller, layert + 1, rowwer, coller, layert, 1);
+                }
+                //Debug.WriteLine("cl2");
+
+                //now set the last layer to sentinel value of 0
+                for (int i = 0; i < 5; i++)
+                {
+                    texture_kg[rowwer, coller, max_soil_layers - 1, i] = 0;
+                }
+                old_SOM_kg[rowwer, coller, max_soil_layers - 1] = 0;
+                young_SOM_kg[rowwer, coller, max_soil_layers - 1] = 0;
+                layerthickness_m[rowwer, coller, max_soil_layers - 1] = 0;
+                bulkdensity[rowwer, coller, max_soil_layers - 1] = 0;
+
+                if (CN_checkbox.Checked)
+                {
+                    for (int cosmo = 0; cosmo < n_cosmo; cosmo++)
+                    {
+                        CN_atoms_cm2[rowwer, coller, max_soil_layers - 1, cosmo] = 0;
+                    }
+                    //CN_after = total_CNs();
+                    //if (((CN_before - CN_after) / (CN_after + 1)) > 1E-6) { Debugger.Break(); }
+                }
+                //Debug.WriteLine("cl4");
+
+                decimal new_soil_mass1 = total_soil_mass_kg_decimal(rowwer, coller);
+                //if (Math.Abs(old_soil_mass1 - new_soil_mass1) > 0.00000001) { displaysoil(rowwer, coller); Debugger.Break(); }
+                double mass_after = total_layer_mass_kg(rowwer, coller, lay1);
+                if (Math.Abs(mass_before - mass_after) > 0.0001)
+                {
+                    Debug.WriteLine("err_cl1");
+                }
+
+                int totalgrains_end = 0;
+                if (OSL_checkbox.Checked) { for (int lay_OSL = 0; lay_OSL < max_soil_layers; lay_OSL++) { totalgrains_end += OSL_grainages[rowwer, coller, lay_OSL].Length; } if (totalgrains_end != totalgrains_start) { Debugger.Break(); } }
+            }
+            catch
+            {
+                Debug.WriteLine("Failed at combining layers {0} {1} at row {2}, col {3} at time {4}", lay1, lay2, rowwer, coller, t);
+                Debugger.Break();
+            }
+        }
+
+        void transfer_material_between_layers(int row_from, int col_from, int lay_from, int row_to, int col_to, int lay_to, double fraction_transport, bool transport_coarse = true)
+        {
+            double transport_betw_layers;
+            // determine whether coarse material gets transported as well. Standard is yes, but some cases it doesn't happen, such as bioturbation by soil fauna
+            int tex_start = 0;
+            if (!transport_coarse) { tex_start = 1; }
+            if (fraction_transport > 0)
+            {
+                for (int tex = tex_start; tex < n_texture_classes; tex++)
+                {
+                    transport_betw_layers = texture_kg[row_from, col_from, lay_from, tex] * fraction_transport;
+                    texture_kg[row_from, col_from, lay_from, tex] -= transport_betw_layers;
+                    texture_kg[row_to, col_to, lay_to, tex] += transport_betw_layers;
+                }
+                transport_betw_layers = young_SOM_kg[row_from, col_from, lay_from] * fraction_transport;
+                young_SOM_kg[row_from, col_from, lay_from] -= transport_betw_layers;
+                young_SOM_kg[row_to, col_to, lay_to] += transport_betw_layers;
+
+                transport_betw_layers = old_SOM_kg[row_from, col_from, lay_from] * fraction_transport;
+                old_SOM_kg[row_from, col_from, lay_from] -= transport_betw_layers;
+                old_SOM_kg[row_to, col_to, lay_to] += transport_betw_layers;
+
+                if (CN_checkbox.Checked)
+                {
+                    for (int cn = 0; cn < n_cosmo; cn++)
+                    {
+                        transport_betw_layers = CN_atoms_cm2[row_from, col_from, lay_from, cn] * fraction_transport;
+                        CN_atoms_cm2[row_from, col_from, lay_from, cn] -= transport_betw_layers;
+                        CN_atoms_cm2[row_to, col_to, lay_to, cn] += transport_betw_layers;
+                    }
+                }
+                if (OSL_checkbox.Checked)
+                {
+                    transfer_OSL_grains(row_from, col_from, lay_from, row_to, col_to, lay_to, fraction_transport, 0);
+                }
+            }
+            update_all_layer_thicknesses(row_from, col_from);
+        }
+
+        double layer_difference(int rowwer, int coller, int lay1, int lay2)   //calculates a simple measure of difference between two soil layers based on the sum of relative differences in a set of properties
+        {
+            double average_property_value = 0, property_difference = 0, sum_property_difference = 0;
+
+            try
+            {
+                // double average_property_value = 0, property_difference = 0, sum_property_difference = 0;
+                for (int i = 0; i < 5; i++)
+                {
+                    //account for total soil mass
+                    average_property_value = (texture_kg[rowwer, coller, lay1, i] + texture_kg[rowwer, coller, lay2, i]) / 2;
+                    property_difference = Math.Abs(texture_kg[rowwer, coller, lay1, i] - texture_kg[rowwer, coller, lay2, i]);
+                    sum_property_difference += property_difference / average_property_value;
+                }
+                average_property_value = (old_SOM_kg[rowwer, coller, lay1] + old_SOM_kg[rowwer, coller, lay2]) / 2;
+                property_difference = Math.Abs(old_SOM_kg[rowwer, coller, lay1] - old_SOM_kg[rowwer, coller, lay2]);
+                sum_property_difference += property_difference / average_property_value;
+                average_property_value = (young_SOM_kg[rowwer, coller, lay1] + young_SOM_kg[rowwer, coller, lay2]) / 2;
+                property_difference = Math.Abs(young_SOM_kg[rowwer, coller, lay1] - young_SOM_kg[rowwer, coller, lay2]);
+                sum_property_difference += property_difference / average_property_value;
+                sum_property_difference /= 7;
+                return sum_property_difference;
+            }
+            catch
+            {
+                MessageBox.Show("error in calculating layer difference");
+            }
+            return sum_property_difference;
+        }
+
+        double bulk_density_calc_kg_m3(double coarse_mass, double sand_mass, double silt_mass, double clay_mass, double fine_clay_mass, double OMo_mass, double OMy_mass, double depth)
+        {
+            if (depth == 0) { depth = 0.001; } // reset values of 0 to a thickness of 1 micrometer, to avoid infinite numbers in the calculation of BD
+            double bd = 2700, combined_frac, m_finesoil;
+            m_finesoil = sand_mass + silt_mass + clay_mass + fine_clay_mass;
+            if (m_finesoil > 0)
+            {
+                combined_frac = sand_mass / m_finesoil + 0.76 * silt_mass / m_finesoil;
+
+                bd = 1000 * (1.35 + 0.00452 * 100 * combined_frac + Math.Pow(44.65 - 100 * combined_frac, 2) * -0.0000614 + 0.06 * Math.Log10(depth));  // in kg/m3
+
+                //now coarse fragment and SOM correction
+                bd = (coarse_mass + m_finesoil + OMo_mass + OMy_mass) / ((m_finesoil / bd) + (coarse_mass / 2700) + (OMo_mass + OMy_mass) / 224); // ooit through interface    
+            }
+            else
+            {
+                bd = 2700;
+            }
+
+            return bd; // in kg/m3
+
+        }
+
+        double thickness_calc(int rowwer, int coller, int lay1)
+        {
+            // Debug.WriteLine("tc1");
+            double thickness, soil_mass = 0;
+
+            // calculate current depth of layer, for bulk density calculations, using current thickness. 
+            double depth_m = 0;
+            for (int lay_temp = 0; lay_temp < lay1; lay_temp++)
+            {
+                depth_m += layerthickness_m[rowwer, coller, lay_temp];
+            }
+            depth_m += layerthickness_m[rowwer, coller, lay1] / 2;
+            // Debug.WriteLine("tc2");
+            int i;
+            //first calculate total soil mass to calculate mass percentages for the size fractions
+            for (i = 1; i < 5; i++)
+            {
+                soil_mass += texture_kg[rowwer, coller, lay1, i];
+            }
+            soil_mass += old_SOM_kg[rowwer, coller, lay1] + young_SOM_kg[rowwer, coller, lay1];
+            // Debug.WriteLine("tc3");
+            if (soil_mass > 0)
+            {
+                bulkdensity[rowwer, coller, lay1] = bulk_density_calc_kg_m3(texture_kg[rowwer, coller, lay1, 0], texture_kg[rowwer, coller, lay1, 1], texture_kg[rowwer, coller, lay1, 2], texture_kg[rowwer, coller, lay1, 3], texture_kg[rowwer, coller, lay1, 4], old_SOM_kg[rowwer, coller, lay1], young_SOM_kg[rowwer, coller, lay1], depth_m);
+            }
+            else
+            {
+                //either there is no soil at all, or there is only coarse material
+                if (texture_kg[rowwer, coller, lay1, 0] > 0)
+                {
+                    bulkdensity[rowwer, coller, lay1] = 2700;   //kg/m3
+                }
+                // Debug.WriteLine("tc5");
+
+            }
+            // Debug.WriteLine("tc5");
+            soil_mass += texture_kg[rowwer, coller, lay1, 0];
+            if (soil_mass == 0)
+            {
+                thickness = 0;
+            }
+            else
+            {
+                thickness = (soil_mass) / (dx * dx * bulkdensity[rowwer, coller, lay1]);  // thickness in m per unit area
+            }
+            // Debug.WriteLine("tc6");
+            if (double.IsNaN(thickness)) { thickness = 0.00000000001; }
+            return thickness;
+        }
+
+        double calc_thickness_from_mass(double[] textures_kg, double yom_kg, double oom_kg)
+        {
+            //pdf goes here
+            double thickness_m = 0, soil_mass_kg = 0;
+            double sand_fraction, silt_fraction, bulk_density;
+            //first calculate total soil mass to calculate mass percentages for the fine earth fractions (excluding coarse)
+            for (int ir = 1; ir < 5; ir++)
+            {
+                soil_mass_kg += textures_kg[ir];
+            }
+            soil_mass_kg += oom_kg + yom_kg;
+            sand_fraction = textures_kg[1] / soil_mass_kg;
+            silt_fraction = textures_kg[2] / soil_mass_kg;
+
+            //calculate bulk density
+            bulk_density = bulk_density_calc_kg_m3(textures_kg[0], textures_kg[1], textures_kg[2], textures_kg[3], textures_kg[4], oom_kg, yom_kg, 0.001); // MM depth of 1 micrometer, because a depth of 0 will result in infinite numbers 
+
+            thickness_m = (soil_mass_kg + textures_kg[0]) / (dx * dx * bulk_density);  // thickness in m per unit area
+
+            return thickness_m;
+        }
+        #endregion
+
     }
 }

@@ -83,7 +83,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Functions\cailbrate.cs">
+    <Compile Include="Functions\calibrate.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Functions\debugging.cs">
@@ -92,7 +92,7 @@
     <Compile Include="Functions\depression.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Functions\initialize.cs">
+    <Compile Include="Functions\initialise_update.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Functions\interface_behaviour.cs">

@@ -185,5 +185,224 @@ namespace LORICA4
             return (check);
         }
 
+        decimal total_soil_mass_kg_decimal(int rowmass, int colmass)
+        {
+            decimal tot_mass = 0;
+            for (int lay = 0; lay < max_soil_layers; lay++)
+            {
+                for (int ii = 0; ii < n_texture_classes; ii++)
+                {
+                    tot_mass += Convert.ToDecimal(texture_kg[rowmass, colmass, lay, ii]);
+                }
+                tot_mass += Convert.ToDecimal(old_SOM_kg[rowmass, colmass, lay]);
+                tot_mass += Convert.ToDecimal(young_SOM_kg[rowmass, colmass, lay]);
+            }
+            return (tot_mass);
+        }
+
+        double total_layer_mass_kg(int rowmass, int colmass, int laymass)
+        {
+            double tot_mass = 0;
+
+            for (int ii = 0; ii < 5; ii++)
+            {
+                tot_mass += texture_kg[rowmass, colmass, laymass, ii];
+            }
+            tot_mass += old_SOM_kg[rowmass, colmass, laymass];
+            tot_mass += young_SOM_kg[rowmass, colmass, laymass];
+
+            return (tot_mass);
+        }
+
+        double total_layer_fine_earth_mass_kg(int rowmass, int colmass, int laymass)
+        {
+            double tot_mass = 0;
+
+            for (int ii = 1; ii < 5; ii++)
+            {
+                tot_mass += texture_kg[rowmass, colmass, laymass, ii];
+            }
+            tot_mass += old_SOM_kg[rowmass, colmass, laymass];
+            tot_mass += young_SOM_kg[rowmass, colmass, laymass];
+
+            return (tot_mass);
+        }
+
+        double total_layer_mineral_earth_mass_kg(int rowmass, int colmass, int laymass) //MMS
+        {
+            double tot_mass = 0;
+
+            for (int ii = 0; ii < 5; ii++)
+            {
+                tot_mass += texture_kg[rowmass, colmass, laymass, ii];
+            }
+            //tot_mass += old_SOM_kg[rowmass, colmass, laymass];
+            //tot_mass += young_SOM_kg[rowmass, colmass, laymass];
+
+            return (tot_mass);
+        }
+
+        double total_layer_fine_earth_om_mass_kg(int rowmass, int colmass, int laymass) //MMS
+        {
+            double tot_mass = 0;
+
+            for (int ii = 1; ii < 5; ii++)
+            {
+                tot_mass += texture_kg[rowmass, colmass, laymass, ii];
+            }
+            tot_mass += old_SOM_kg[rowmass, colmass, laymass];
+            tot_mass += young_SOM_kg[rowmass, colmass, laymass];
+
+            return (tot_mass);
+        }
+
+        bool findnegativetexture()
+        {
+            bool neg = false;
+
+            try
+            {
+                for (int row = 0; row < nr; row++)
+                {
+                    for (int col = 0; col < nc; col++)
+                    {
+                        for (int lay = 0; lay < max_soil_layers; lay++)
+                        {
+                            for (int tex = 0; tex < n_texture_classes; tex++)
+                            {
+                                if (texture_kg[row, col, lay, tex] < 0) { neg = true; }
+                            }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                Debug.WriteLine("err_nt2");
+
+            }
+
+            return neg;
+        }
+
+        double total_mass_in_transport()
+        {
+            double tot_mass = 0;
+            for (int rowmass = 0; rowmass < nr; rowmass++)
+            {
+                for (int colmass = 0; colmass < nc; colmass++)
+                {
+                    for (ii = 0; ii < 5; ii++)
+                    {
+                        tot_mass += sediment_in_transport_kg[rowmass, colmass, ii];
+                    }
+
+                    tot_mass += old_SOM_in_transport_kg[rowmass, colmass];
+                    tot_mass += young_SOM_in_transport_kg[rowmass, colmass];
+                }
+            }
+            return (tot_mass);
+        }
+
+        double mass_in_transport_row_col(int row1, int col1)
+        {
+            double tot_mass = 0;
+            for (ii = 0; ii < 5; ii++)
+            {
+                tot_mass += sediment_in_transport_kg[row1, col1, ii];
+            }
+
+            tot_mass += old_SOM_in_transport_kg[row1, col1];
+            tot_mass += young_SOM_in_transport_kg[row1, col1];
+
+            return (tot_mass);
+        }
+
+        decimal total_catchment_mass_decimal()
+        {
+            decimal tot_mass = 0;
+            for (int rowmass = 0; rowmass < nr; rowmass++)
+            {
+                for (int colmass = 0; colmass < nc; colmass++)
+                {
+                    for (int lay = 0; lay < max_soil_layers; lay++)
+                    {
+                        for (ii = 0; ii < 5; ii++)
+                        {
+                            tot_mass += Convert.ToDecimal(texture_kg[rowmass, colmass, lay, ii]);
+                        }
+                        tot_mass += Convert.ToDecimal(old_SOM_kg[rowmass, colmass, lay]);
+                        tot_mass += Convert.ToDecimal(young_SOM_kg[rowmass, colmass, lay]);
+                    }
+                }
+            }
+
+            return (tot_mass);
+        }
+
+        double total_catchment_elevation()
+        {
+            double tot_elev = 0;
+            for (int rowmass = 0; rowmass < nr; rowmass++)
+            {
+                for (int colmass = 0; colmass < nc; colmass++)
+                {
+                    if (dtm[rowmass, colmass] != nodata_value)
+                    {
+                        tot_elev += dtm[rowmass, colmass];
+                    }
+
+                }
+            }
+
+            return (tot_elev);
+        }
+
+        double total_soil_thickness(int rowthick, int colthick)
+        {
+            update_all_layer_thicknesses(rowthick, colthick);
+            double tot_thick = 0;
+            for (int lay = 0; lay < max_soil_layers; lay++)
+            {
+                tot_thick += layerthickness_m[rowthick, colthick, lay];
+            }
+            return (tot_thick);
+        }
+
+        bool search_nodataneighbour(int row, int col)
+        {
+            bool ndn = false;
+            for (i = (-1); i <= 1; i++)
+            {
+                for (j = (-1); j <= 1; j++)
+                {
+                    if ((((row + i) < 0) | ((row + i) >= nr)) | (((col + j) < 0) | ((col + j) >= nc)))
+                    {
+                        ndn = true;
+                    }
+                }
+            }
+            return (ndn);
+        }
+
+        private void find_negative_texture()
+        {
+            for (int rr = 0; rr < nr; rr++)
+            {
+                for (int cc = 0; cc < nc; cc++)
+                {
+                    for (int ll = 0; ll < max_soil_layers; ll++)
+                    {
+                        for (int tt = 0; tt < 5; tt++)
+                        {
+                            if (texture_kg[rr, cc, ll, tt] < 0)
+                            {
+                                Debug.WriteLine("err_nt1");
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
