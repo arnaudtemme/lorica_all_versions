@@ -1135,6 +1135,7 @@ namespace LORICA4
                 //if (diagnostic_mode == 1) { Debug.WriteLine("entered removing empty layers"); }
                 int empty_layers = 0;
                 bool shift_layers = false;
+                bool top_of_profile = true;
 
                 int n_shifts = 0;
                 Decimal mass_before = total_soil_mass_kg_decimal(row2, col2);
@@ -1143,7 +1144,7 @@ namespace LORICA4
                 {
                     bool full_layer_shift = false;
                     double layer_mass = total_layer_mass_kg(row2, col2, lay2);
-                    if (layer_mass < 0.000000000001) // empty layer
+                    if (layer_mass < 0.000000000001 & top_of_profile) // empty layer
                                                      // mind for empty layers at the bottom
                     {
                         shift_layers = true;
@@ -1156,63 +1157,16 @@ namespace LORICA4
 
                             if (total_layer_mass_kg(row2, col2, layert + 1) > 0) { full_layer_shift = true; }
                             //Debug.WriteLine(layert);
-                            for (i = 0; i < 5; i++)
-                            {
-                                texture_kg[row2, col2, layert, i] = texture_kg[row2, col2, layert + 1, i];
-                            }
-                            old_SOM_kg[row2, col2, layert] = old_SOM_kg[row2, col2, layert + 1];
-                            young_SOM_kg[row2, col2, layert] = young_SOM_kg[row2, col2, layert + 1];
-
-                            if (CN_checkbox.Checked)
-                            {
-                                for (int cosmo = 0; cosmo < n_cosmo; cosmo++)
-                                {
-                                    CN_atoms_cm2[row2, col2, layert, cosmo] = CN_atoms_cm2[row2, col2, layert + 1, cosmo];
-                                }
-                            }
-
-                            if (OSL_checkbox.Checked)
-                            {
-                                transfer_OSL_grains(row2, col2, layert + 1, row2, col2, layert, 1, 0); // transfer all grains from layert + 1 to layers
-                            }
-
+                            transfer_material_between_layers(row2, col2, layert + 1, row2, col2, layert, 1);
                         }
-                        for (i = 0; i < 5; i++)
-                        {
-                            texture_kg[row2, col2, max_soil_layers - 1, i] = 0;
-                        }
-                        old_SOM_kg[row2, col2, max_soil_layers - 1] = 0;
-                        young_SOM_kg[row2, col2, max_soil_layers - 1] = 0;
-                        layerthickness_m[row2, col2, max_soil_layers - 1] = 0;
-
-                        if (CN_checkbox.Checked)
-                        {
-                            for (int cosmo = 0; cosmo < n_cosmo; cosmo++)
-                            {
-                                CN_atoms_cm2[row2, col2, max_soil_layers - 1, cosmo] = 0;
-                            }
-                        }
-
-                        if (OSL_checkbox.Checked)
-                        {
-
-                            //// OSL matrix
-                            //for (int osl_i = 0; osl_i < OSL_age.GetLength(0); osl_i++) // loop over all rows
-                            //{
-                            //    if (OSL_age[osl_i, 0] == row_to & OSL_age[osl_i, 1] == col_to)
-                            //    {
-                            //        if (OSL_age[osl_i, 2] == lay_to) { Debugger.Break(); } // should not happen. This layer has been eroded completely
-                            //        if (OSL_age[osl_i, 2] > lay_to)
-                            //        {
-                            //            OSL_age[osl_i, 2] -= 1; // MvdM no need to account here for multiple empty layer removal, because this is included by the repeated loop over layer numbers 
-                            //        } // reduce layer number by 1
-                            //    }
-                            //}
-                        }
-
+                        
+                        // check old layer again, in case multiple layers were empty
                         if (full_layer_shift == true) { lay2--; }
-                        //Debug.WriteLine("-");
-                        //displaysoil(row_to, col_to);
+                    }
+                    else
+                    {
+                        // we're past layers with mass, so we're reaching the bottom of the profile. No need to shift empty layers up
+                        top_of_profile = false;
                     }
                 }
                 // Debug.WriteLine("rel3");

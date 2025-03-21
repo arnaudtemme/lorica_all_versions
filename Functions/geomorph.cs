@@ -2284,13 +2284,13 @@ namespace LORICA4
                                 {    // boundaries
                                     if (dtm[row + i, col + j] != nodata_value)
                                     {
-                                        dh = (dtm[row, col] + till_result[row, col] - dtm[row + i, col + j] + till_result[row + i, col + j]);
+                                        dh = ((dtm[row, col] + till_result[row, col]) - (dtm[row + i, col + j] + till_result[row + i, col + j]));
                                         if ((row != row + i) && (col != col + j)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }
                                         if (dh > 0)
                                         {           // i j is a lower neighbour
                                             if (dh > dz_max) { dz_max = dh; }
                                             dh = dh / d_x;
-                                            dh = Math.Pow(dh, conv_fac);
+                                            // dh = Math.Pow(dh, conv_fac); MvdM tillage always with normal divergence, not accentuated by convergence factor
                                             slope_sum = slope_sum + dh;
                                         }//end if
                                     }//end if novalues
@@ -2315,18 +2315,27 @@ namespace LORICA4
                                 {
                                     if ((dtm)[row + i, col + j] != (nodata_value))
                                     {
-                                        dh = (dtm[row, col] + till_result[row, col] - dtm[row + i, col + j] + till_result[row + i, col + j]);
+                                        dh = ((dtm[row, col] + till_result[row, col]) - (dtm[row + i, col + j] + till_result[row + i, col + j]));
+
+                                        if (col == 108 & t == 0)
+                                        {
+                                            // Debugger.Break();
+                                        }
                                         if (dh > 0.000000) // i j is a lower neighbour to which we would like to till a certain amount.
                                         {
                                             // Calculate fraction of discharge into this cell
                                             if ((row != row + i) && (col != col + j)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }
                                             slope = dh / d_x;
                                             dh = dh / d_x;
-                                            dh = Math.Pow(dh, conv_fac);
+                                            // dh = Math.Pow(dh, conv_fac); MvdM tillage always with normal divergence, not accentuated by convergence factor
                                             fraction = (dh / slope_sum);
                                             // Tillage erosion calculation
                                             temptill = fraction * (tilc * slope * plough_depth) * dt;    // temptill is what we would like to till from r,c to r+i,c+j
                                                                                                          // Tillage erosion correction through calculating maximum tillage: tempdep
+                                           if(temptill > 0.5)
+                                            {
+                                                // Debugger.Break();
+                                            }
                                             tempdep = soildepth_m[row, col];
                                             //if there is more soil than the difference between the donor cell and its lowest lower nb, limit tillage to that difference.
                                             if (tempdep > dz_max) { tempdep = dz_max; }
@@ -2341,11 +2350,11 @@ namespace LORICA4
                                                     {
                                                         if (dtm[row + i + alpha, col + j + beta] != nodata_value)
                                                         {
-                                                            if (dtm[row + i + alpha, col + j + beta] + till_result[row + i + alpha, col + j + beta] > (dtm[row + i, col + j] + till_result[row + i, col + j]))
+                                                            if ((dtm[row + i + alpha, col + j + beta] + till_result[row + i + alpha, col + j + beta]) > (dtm[row + i, col + j] + till_result[row + i, col + j]))
                                                             { // we are looking at a higher neighbour of the receiver cell
-                                                                if (dtm[row + i + alpha, col + j + beta] + till_result[row + i + alpha, col + j + beta] - dtm[row + i, col + j] + till_result[row + i, col + j] < dz_min)
+                                                                if (((dtm[row + i + alpha, col + j + beta] + till_result[row + i + alpha, col + j + beta]) - (dtm[row + i, col + j] + till_result[row + i, col + j])) < dz_min)
                                                                 {
-                                                                    dz_min = dtm[row + i + alpha, col + j + beta] + till_result[row + i + alpha, col + j + beta] - dtm[row + i, col + j] + till_result[row + i, col + j];
+                                                                    dz_min = (dtm[row + i + alpha, col + j + beta] + till_result[row + i + alpha, col + j + beta]) - (dtm[row + i, col + j] + till_result[row + i, col + j]);
                                                                 }
                                                             }
                                                         }
@@ -2355,18 +2364,13 @@ namespace LORICA4
                                             // knowing the maximum tillage that the receiver cell can receive without blocking its own higher nbs, we limit the maximum tillage to that amount
                                             if (tempdep > dz_min) { tempdep = dz_min; }
                                             if (dz_min == 9999) { tempdep = 0.0; }     // if the receiver cell does not have higher nbs, we cannot till at all.
-                                            if (tempdep < 0.0) tempdep = 0.0;
+                                            if (tempdep < 0.0) { tempdep = 0.0; }
                                             if (tempdep > epsilon) { tempdep -= epsilon; }  // finally, always till just a bit less than the max allowed to prevent flat areas
                                             if (temptill > tempdep) { temptill = tempdep; } // if we want to till more than the maximum possible, we only till the maximum possible.
-                                                                                            // update the corresponding grids 
 
                                             till_result[row, col] -= temptill;
                                             till_result[row + i, col + j] += temptill;
-                                            //soildepth_m[row, col] -= temptill;
-                                            //soildepth_m[row + i, col + j] += temptill;
-                                            //if (soildepth_m[row, col] < 0) { soildepth_m[row, col] = 0; }
-                                            //if (soildepth_m[row + i, col + j] < 0) { soildepth_m[row + i, col + j] = 0; }
-
+                                           
                                             if (check_negative_weight(row, col) == true) { MessageBox.Show("negative weight in t " + t + ", row " + row + ", col " + col + ", step 2"); }
 
                                             //double dz_till_m = temptill;
@@ -2382,16 +2386,23 @@ namespace LORICA4
                                             int layero = 0;
                                             double temptill0 = temptill;
 
-                                            while (temptill >= layerthickness_m[row, col, layero] | layero >= max_soil_layers) // hele laag wordt verwijderd, al het materiaal naar de volgende cel
+                                            while (layero < max_soil_layers & temptill >= layerthickness_m[row, col, layero]) // hele laag wordt verwijderd, al het materiaal naar de volgende cel
                                             {
                                                 // These layers are completely eroded. All material is transported to the top layer in the next cell
-                                                transfer_material_between_layers(row, col, layero, row + i, col + j, 0, 1);
                                                 temptill -= layerthickness_m[row, col, layero];
 
-                                                layerthickness_m[row, col, layero] = 0;
-                                                layerthickness_m[row + i, col + j, 0] = thickness_calc(row + i, col + j, 0);
+                                                transfer_material_between_layers(row, col, layero, row + i, col + j, 0, 1);
+                                                
+
+                                                //layerthickness_m[row, col, layero] = 0;
+                                                //layerthickness_m[row + i, col + j, 0] = thickness_calc(row + i, col + j, 0);
 
                                                 layero++;
+                                                // escape when last soil layer is reached
+                                                if (layero == (max_soil_layers - 1)) ;
+                                                {
+                                                    break;
+                                                }
                                             }
                                             // Debug.WriteLine("till8");
 
@@ -2410,12 +2421,6 @@ namespace LORICA4
                                                 catch { Debug.WriteLine("Error in removing empty layers after tillage"); }
                                             }
 
-                                            //if necessary, i.e. an entire layer removed, shift cells up
-                                            if (layero > 0)
-                                            {
-                                                try { remove_empty_layers(row, col); update_all_layer_thicknesses(row, col); }
-                                                catch { Debug.WriteLine("Error in removing empty layers after tillage"); }
-                                            }
                                         }//end if
                                     }//end if novalues
                                 }//end if borders

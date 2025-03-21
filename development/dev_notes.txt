@@ -48,11 +48,12 @@ For Alessia:
 -- FINISHED runfile --> settings
 -- FINISHED deactivate the start button once clicked
 -- FINISHED fix the soil specifier open after clicking X
+-- write output at t = 0 before simulations
 -- check that the model really does not run when wrong decimal separator
 	-- Marijn: I have my computer set to dutch region, but overwritten the decimal separator to point. This also produced an error. So we need to mention in the manual which exact regional setting works for the model
 -- update the xml reading and writing with removed and added parameters (esp. landuse and soil specifier variables)
    -- figure out how we can keep updating this without giving issues in the future when other parameters are added
-   -- new parameters from Marijn: from bioturbation and SOM cycling
+   -- new parameters from Marijn: in bioturbation, SOM cycling, layering
 -- start button re-activate when better inputs needed
 =- clean up input section
 -- fixing button thingy landuse popup
@@ -73,6 +74,7 @@ WISHLIST
 - possibility to set fixed BD value in interfae instead of PTF MvdM
 - collective transfer function for transport into pools which is later redistributed (bt_mixing, tillage mixing / upheaval, treefall, water erosion?) MvdM
 - put all case studies / calibration studies in popup window
+- empty output folder before simulations, to avoid old and new files in one directory. Give warning or popup window if there are files present
 
 ERRORS & DEVELOPMENT
 - initial soil properties

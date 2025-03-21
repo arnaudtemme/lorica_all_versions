@@ -4152,6 +4152,7 @@ namespace LORICA4
             "Exponential",
             "Linear",
             "Abrupt"});
+            this.bt_depthfunction_box.SelectedIndex = 0;
             this.bt_depthfunction_box.Location = new System.Drawing.Point(27, 129);
             this.bt_depthfunction_box.Name = "bt_depthfunction_box";
             this.bt_depthfunction_box.Size = new System.Drawing.Size(99, 21);
@@ -7025,6 +7026,129 @@ namespace LORICA4
                 // displaysoil(31, 12);
                 // Debug.WriteLine("Total catchment mass = " + total_catchment_mass_decimal());
 
+                try
+                {
+                    //Debug.WriteLine("writing all soils");
+                    writeallsoils(workdir + "\\" + run_number + "_" + t_out + "_out_allsoils.csv");
+                }
+                catch
+                {
+                    Debug.WriteLine("Failed during writing of soils");
+                }
+
+                if (Altitude_output_checkbox.Checked)
+                {
+
+                    try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_dtm.asc", dtm); }
+                    catch { MessageBox.Show("dtm has not been written"); }
+
+                    try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_dz_soil.asc", dz_soil); }
+                    catch { MessageBox.Show("dz_soil has not been written"); }
+
+                    //try { out_double(workdir + "\\" + run_number + "_" + t + "_out_dzero.asc", dz_ero_m); }
+                    //catch { MessageBox.Show("dzero has not been written"); }
+                    //try { out_double(workdir + "\\" + run_number + "_" + t + "_out_dzsed.asc", dz_sed_m); }
+                    //catch { MessageBox.Show("dzsed has not been written"); }
+                }
+                if (treefall_checkbox.Checked)
+                {
+                    try
+                    {
+                        out_double(workdir + "\\" + run_number + "_" + t_out + "_out_dz_treefall.asc", dz_treefall);
+                        out_integer(workdir + "\\" + run_number + "_" + t_out + "_out_treefallcount.asc", treefall_count);
+
+                    }
+                    catch { MessageBox.Show("treefall has not been written"); }
+                }
+                if (Soildepth_output_checkbox.Checked)
+                {
+                    try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_soildepth.asc", soildepth_m); }
+                    catch { MessageBox.Show("soildepth has not been written"); }
+                }
+                if (Alt_change_output_checkbox.Checked)
+                {
+                    try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_change.asc", dtmchange_m); }
+                    catch { MessageBox.Show("change has not been written"); }
+                }
+
+                if (water_output_checkbox.Checked & Water_ero_checkbox.Checked)
+                {
+                    // Debug.WriteLine("before writing water flow");
+
+                    try
+                    {
+                        if (daily_water.Checked)
+                        {
+                            for (int roww = 0; roww < nr; roww++)
+                            {
+                                for (int colw = 0; colw < nc; colw++)
+                                {
+                                    waterflow_m3[roww, colw] = OFy_m[roww, colw, 0];
+                                }
+                            }
+                        }
+                        out_double(workdir + "\\" + run_number + "_" + t_out + "_out_water.asc", waterflow_m3);
+                    }
+                    catch { MessageBox.Show("water has not been written"); }
+                }
+                if (depressions_output_checkbox.Checked)
+                {
+                    try { out_integer(workdir + "\\" + run_number + "_" + t_out + "_out_depress.asc", depression); }
+                    catch { MessageBox.Show("depressions have not been written"); }
+                    try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_dtmfillA.asc", dtmfill_A); }
+                    catch { MessageBox.Show("dfmfill has not been written"); }
+                }
+                if (Water_ero_checkbox.Checked)
+                {
+                    // Debug.WriteLine("before writing water erosion");
+
+                    if (all_process_output_checkbox.Checked)
+                    {
+                        try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_water_erosion.asc", sum_water_erosion); }
+                        catch { MessageBox.Show("water erosion has not been written"); }
+                    }
+                }
+                if (creep_active_checkbox.Checked)
+                {
+                    // Debug.WriteLine("before writing creep");
+
+                    try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_creep.asc", creep); }
+                    catch { MessageBox.Show("creep has not been written"); }
+
+                }
+
+                if (Tillage_checkbox.Checked)
+                {
+                    // Debug.WriteLine("before writing tillage erosion");
+
+                    if (all_process_output_checkbox.Checked)
+                    {
+                        try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_tillage.asc", sum_tillage); }
+                        catch { MessageBox.Show("tillage has not been written"); }
+                    }
+                }
+
+                if (OSL_checkbox.Checked)
+                {
+                    try
+                    {
+                        //writeOSLages();
+                        writeOSLages_jaggedArray();
+                    }
+                    catch
+                    {
+                        Debug.WriteLine("OSl ages have not been written");
+                    }
+                }
+                if (Landslide_checkbox.Checked)
+                {
+                    try { out_double(workdir + "\\" + run_number + "_" + t_out + "_crrain.asc", crrain_m_d); }
+                    catch { MessageBox.Show("crrain has not been written"); }
+                    try { out_double(workdir + "\\" + run_number + "_" + t_out + "_ca.asc", camf); }
+                    catch { MessageBox.Show("ca has not been written"); }
+                }
+                //Debug.WriteLine("after outputs");
+
                 if (daily_water.Checked)
                 {
                     Debug.WriteLine("writing daily water");
@@ -7176,129 +7300,7 @@ namespace LORICA4
                     }
                 }
 
-                try
-                {
-                    //Debug.WriteLine("writing all soils");
-                    //writeallsoils();
-                }
-                catch
-                {
-                    Debug.WriteLine("Failed during writing of soils");
-                }
-
-                if (Altitude_output_checkbox.Checked)
-                {
-
-                    try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_dtm.asc", dtm); }
-                    catch { MessageBox.Show("dtm has not been written"); }
-
-                    try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_dz_soil.asc", dz_soil); }
-                    catch { MessageBox.Show("dz_soil has not been written"); }
-
-                    //try { out_double(workdir + "\\" + run_number + "_" + t + "_out_dzero.asc", dz_ero_m); }
-                    //catch { MessageBox.Show("dzero has not been written"); }
-                    //try { out_double(workdir + "\\" + run_number + "_" + t + "_out_dzsed.asc", dz_sed_m); }
-                    //catch { MessageBox.Show("dzsed has not been written"); }
-                }
-                if (treefall_checkbox.Checked)
-                {
-                    try
-                    {
-                        out_double(workdir + "\\" + run_number + "_" + t_out + "_out_dz_treefall.asc", dz_treefall);
-                        out_integer(workdir + "\\" + run_number + "_" + t_out + "_out_treefallcount.asc", treefall_count);
-
-                    }
-                    catch { MessageBox.Show("treefall has not been written"); }
-                }
-                if (Soildepth_output_checkbox.Checked)
-                {
-                    try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_soildepth.asc", soildepth_m); }
-                    catch { MessageBox.Show("soildepth has not been written"); }
-                }
-                if (Alt_change_output_checkbox.Checked)
-                {
-                    try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_change.asc", dtmchange_m); }
-                    catch { MessageBox.Show("change has not been written"); }
-                }
-
-                if (water_output_checkbox.Checked & Water_ero_checkbox.Checked)
-                {
-                    // Debug.WriteLine("before writing water flow");
-
-                    try
-                    {
-                        if (daily_water.Checked)
-                        {
-                            for (int roww = 0; roww < nr; roww++)
-                            {
-                                for (int colw = 0; colw < nc; colw++)
-                                {
-                                    waterflow_m3[roww, colw] = OFy_m[roww, colw, 0];
-                                }
-                            }
-                        }
-                        out_double(workdir + "\\" + run_number + "_" + t_out + "_out_water.asc", waterflow_m3);
-                    }
-                    catch { MessageBox.Show("water has not been written"); }
-                }
-                if (depressions_output_checkbox.Checked)
-                {
-                    try { out_integer(workdir + "\\" + run_number + "_" + t_out + "_out_depress.asc", depression); }
-                    catch { MessageBox.Show("depressions have not been written"); }
-                    try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_dtmfillA.asc", dtmfill_A); }
-                    catch { MessageBox.Show("dfmfill has not been written"); }
-                }
-                if (Water_ero_checkbox.Checked)
-                {
-                    // Debug.WriteLine("before writing water erosion");
-
-                    if (all_process_output_checkbox.Checked)
-                    {
-                        try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_water_erosion.asc", sum_water_erosion); }
-                        catch { MessageBox.Show("water erosion has not been written"); }
-                    }
-                }
-                if (creep_active_checkbox.Checked)
-                {
-                    // Debug.WriteLine("before writing creep");
-
-                    try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_creep.asc", creep); }
-                    catch { MessageBox.Show("creep has not been written"); }
-
-                }
-
-                if (Tillage_checkbox.Checked)
-                {
-                    // Debug.WriteLine("before writing tillage erosion");
-
-                    if (all_process_output_checkbox.Checked)
-                    {
-                        try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_tillage.asc", sum_tillage); }
-                        catch { MessageBox.Show("tillage has not been written"); }
-                    }
-                }
-
-                if (OSL_checkbox.Checked)
-                {
-                    try
-                    {
-                        //writeOSLages();
-                        writeOSLages_jaggedArray();
-                    }
-                    catch
-                    {
-                        Debug.WriteLine("OSl ages have not been written");
-                    }
-                }
-                if (Landslide_checkbox.Checked)
-                {
-                    try { out_double(workdir + "\\" + run_number + "_" + t_out + "_crrain.asc", crrain_m_d); }
-                    catch { MessageBox.Show("crrain has not been written"); }
-                    try { out_double(workdir + "\\" + run_number + "_" + t_out + "_ca.asc", camf); }
-                    catch { MessageBox.Show("ca has not been written"); }
-                }
-                //Debug.WriteLine("after outputs");
-
+               
             }
 
             if (t == end_time - 1)

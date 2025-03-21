@@ -1101,11 +1101,11 @@ namespace LORICA4
                 sw.Close();
             }
         }
-        void writeallsoils()
+        void writeallsoils(string FILENAME)
         {
             int layer;
             double cumthick, midthick, z_layer;
-            string FILENAME = string.Format("{0}\\t{1}_out_allsoils.csv", workdir, t + 1);
+
             using (StreamWriter sw = new StreamWriter(FILENAME))
             {
                 sw.Write("row,col,t,nlayer,cumth_m,thick_m,midthick_m,z,coarse_kg,sand_kg,silt_kg,clay_kg,fine_kg,YOM_kg,OOM_kg,YOM/OOM,f_coarse,f_sand,f_silt,f_clay,f_fineclay,ftotal_clay,f_OM,BD");

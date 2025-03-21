@@ -740,7 +740,6 @@ namespace LORICA4
                     {
                         if (dtm[row, col] != -9999 & soildepth_m[row, col] > 0)
                         {
-                            remove_empty_layers(row, col);
                             update_all_layer_thicknesses(row, col);
 
                             double mixeddepth = 0, completelayerdepth = 0, newdepth = 0;
