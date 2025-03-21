@@ -48,7 +48,7 @@ For Alessia:
 -- FINISHED runfile --> settings
 -- FINISHED deactivate the start button once clicked
 -- FINISHED fix the soil specifier open after clicking X
--- write output at t = 0 before simulations
+-- write output at t = 0 before 
 -- check that the model really does not run when wrong decimal separator
 	-- Marijn: I have my computer set to dutch region, but overwritten the decimal separator to point. This also produced an error. So we need to mention in the manual which exact regional setting works for the model
 -- update the xml reading and writing with removed and added parameters (esp. landuse and soil specifier variables)
@@ -84,6 +84,11 @@ ERRORS & DEVELOPMENT
 	- should be included in initial BD calculations as well
 	- However, does it make sense to specify initial SOM? We don't want constant SOM throughout the soil profiles. Maybe specify topsoil SOM and use SOM parameters to create a depth curve
 - difference initialize_once and initialize_once_testing, and which one should be used?
-- FINSHED upheaval: build check for limiting mixing depth to available soil depth
+- FINISHED upheaval: build check for limiting mixing depth to available soil depth
+- bulk_density_calc: when a layer is split, the total thickness of the two new layers is larger than of the original layer, due to differences in bulk density calculations. 
+   - Approach to solve this: integrate over top and bottom elevation of layer
+   - Calculate average of the integral and calculate back which depth corresponds to this value
+   - use that value in BD calculations instead of the depth of the midpoint of the layer
+   - check if this solves the problem
 - one code for initialize_once(_testing)
 - integrate initialise_every_till into initialise_every
