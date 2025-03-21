@@ -7,10 +7,7 @@ KEY TASKS AND THEIR ORDER:
 3b. FINISHED A - setting NA value as a variable
 1. FINISHED MvdM - transport functions + apply everywhere, 
 1b. FINISHED MvdM -remove restart inside the code after crashing
-4a. MvdM : 
-	-- layer thickness: 1. top layer thickness, 2. traingular or a fixed factor, 3. max number of layers, 4. calculate layers. 
-	-- default number soil layers = 20
-	-- split only the top layer when it gets too thick, and then immediately and always merge the bottom two layers if we need it. Remove/deactivate more complex options 
+4a. FINISHED MvdM : update layering
 4b. Ale - all interface changes
 5a. ArT + MvdM : model testing, checking functions, good error messaging (also xml reading writing), factor 100. 
 5b. Check functions, w/ literature, add DOI: Arnaud: geom, sinks, Marijn: soil mostly
@@ -48,9 +45,9 @@ For Alessia:
 -- FINISHED runfile --> settings
 -- FINISHED deactivate the start button once clicked
 -- FINISHED fix the soil specifier open after clicking X
--- write output at t = 0 before 
+-- write output at t = 0 before simulations
 -- check that the model really does not run when wrong decimal separator
-	-- Marijn: I have my computer set to dutch region, but overwritten the decimal separator to point. This also produced an error. So we need to mention in the manual which exact regional setting works for the model
+	-- Marijn: I have my computer set to dutch regional settings, but overwritten the decimal separator to point. This also produced an error. So we need to mention in the manual which exact regional setting works for the model
 -- update the xml reading and writing with removed and added parameters (esp. landuse and soil specifier variables)
    -- figure out how we can keep updating this without giving issues in the future when other parameters are added
    -- new parameters from Marijn: in bioturbation, SOM cycling, layering
@@ -63,7 +60,7 @@ For Arnaud:
 
 For Marijn:
 -- FINISHED Two OM models next to each other
--- bioturbation upheaval to treefall
+-- NOT NEEDED bioturbation upheaval to treefall
 -- FINISHED split mounding and mxing in bioturbation
 -- check clay dynbamics versus chemical weathering
 -- change Jagercikova cm units
