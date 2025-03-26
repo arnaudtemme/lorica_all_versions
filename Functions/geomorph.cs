@@ -3014,15 +3014,12 @@ namespace LORICA4
                         //Debug.WriteLine(" soildepth now " + dsoil );
                     }
                 }
-
-                int_curve_total = 1 / (-creep_depth_decay_constant) * Math.Exp(-creep_depth_decay_constant * 0) - 1 / (-creep_depth_decay_constant) * Math.Exp(-creep_depth_decay_constant * dsoil); // integral over depth decay function, from depth 0 to total soil depth
                 upperdepthdonor = 0; //  dtm[row1, col1]; using 0 leads to a continuous landscapes, instead of a step-wise pattern
                 upperdepthreceiver = 0; // dtm[row1 + iiii, col1 + jjjj];
                 lowerdepthreceiver = upperdepthreceiver - layerthickness_m[row1 + iiii, col1 + jjjj, layerreceiver];
 
                 for (int lay = 0; lay < max_soil_layers; lay++) // loop over receiving layers
                 {
-
                     double laythick_m = layerthickness_m[row1, col1, lay];
                     if (laythick_m > 0)
                     {
@@ -3047,10 +3044,11 @@ namespace LORICA4
                                 }
                             }
                         }
-                        int_curve_lay = 1 / (-creep_depth_decay_constant) * Math.Exp(-creep_depth_decay_constant * upp_z_lay) - 1 / (-creep_depth_decay_constant) * Math.Exp(-creep_depth_decay_constant * (upp_z_lay + laythick_m));//integral over depth decay function, from top of layer to bottom of layer
-                        upp_z_lay += laythick_m;
+   
                         lowerdepthdonor = upperdepthdonor - laythick_m; // elevation range donor layer  
-                        mass_export_lay_kg = mass_export_soil_kg * (int_curve_lay / int_curve_total); // mass to be removed from layer in kg 
+                        double curve_fraction = activity_fraction(creep_depth_decay_constant, dsoil, upp_z_lay, upp_z_lay + laythick_m);
+                        mass_export_lay_kg = mass_export_soil_kg * curve_fraction; // mass to be removed from layer in kg 
+                        upp_z_lay += laythick_m;
 
                         if (mass_export_lay_kg < 0)
                         {
@@ -3667,98 +3665,6 @@ namespace LORICA4
             {
                 Debug.WriteLine("err_tf7");
 
-            }
-
-        }
-
-        private void calculate_bedrock_weathering()
-        {
-            // as function of infiltration?
-            //Debug.WriteLine("Entered bedrock weathering");												
-            double Iavg = 0, Imin = 10000000, Imax = 0;
-            if (daily_water.Checked)
-            {
-                int Icount = 0;
-                for (row = 0; row < nr; row++)
-                {
-                    for (col = 0; col < nc; col++)
-                    {
-                        if (dtm[row, col] != nodata_value)
-                        {
-                            if (Imin > Iy[row, col]) { Imin = Iy[row, col]; }
-                            if (Imax < Iy[row, col]) { Imax = Iy[row, col]; }
-                            Iavg += Iy[row, col];
-                            Icount++;
-                        }
-                    }
-                }
-                Iavg /= Icount;
-            }
-            int soil_layer, lowest_soil_layer;
-            for (row = 0; row < nr; row++)
-            {
-                for (col = 0; col < nc; col++)
-                {
-                    if (dtm[row, col] != nodata_value)
-                    {
-                        double weatheringdepth = 0;
-                        //Debug.WriteLine(" bedrock weathering at r " + row + " c " + col);
-                        //if the first occurrence of bedrock is the hardlayer, then no weathering should occur.
-                        //if more weathering is calculated than needed to get to the hardlayer, then it should be thus limited. 
-
-                        weatheringdepth = soildepth_m[row, col];
-
-                        // humped
-                        if (rockweath_method.SelectedIndex == 0)
-                        {
-                            bedrock_weathering_m[row, col] = P0 * (Math.Exp(-k1 * weatheringdepth) - Math.Exp(-k2 * weatheringdepth)) + Pa;
-
-                        }
-                        if (rockweath_method.SelectedIndex == 1)
-                        {
-                            // exponential (Heimsath, Chappell et al., 2000)
-                            bedrock_weathering_m[row, col] = P0 * (Math.Exp(-k1 * weatheringdepth));
-                        }
-
-                        if (rockweath_method.SelectedIndex == 2)
-                        {
-                            if (daily_water.Checked)
-                            {
-                                bedrock_weathering_m[row, col] = P0 * -k1 * (Iy[row, col] - Imin) / (Imax - Imin);
-                            }
-                        }
-                        //we now know how deep we would weather into normal bedrock
-                        if (blocks_active == 1)
-                        {
-                            double newlowestelevsoil = dtm[row, col] - soildepth_m[row, col] - bedrock_weathering_m[row, col];
-                            double oldlowestelevsoil = dtm[row, col] - soildepth_m[row, col];
-                            if (newlowestelevsoil < hardlayerelevation_m && oldlowestelevsoil >= hardlayerelevation_m)
-                            {
-                                //we limit bedrock weathering to the part of the bedrock above hardlayer:
-                                bedrock_weathering_m[row, col] = (dtm[row, col] - soildepth_m[row, col]) - hardlayerelevation_m;
-                                Debug.WriteLine(" limited bedrock weathering to stop at hardlayer r " + row + " c " + col + " dtm " + dtm[row, col]);
-                                //and apply the rest of the weathering to increasing openness of the hardlayer:
-                                hardlayeropenness_fraction[row, col] += Convert.ToSingle((hardlayerelevation_m - newlowestelevsoil) * hardlayer_weath_contrast);
-                                Debug.WriteLine(" increased openness of hardlayer to " + hardlayeropenness_fraction[row, col]);
-                                if (hardlayeropenness_fraction[row, col] > 0.5) { hardlayeropenness_fraction[row, col] = 0.5f; }
-                            }
-                        }
-
-                        soildepth_m[row, col] += bedrock_weathering_m[row, col]; // this will really be updated at the end of this timestep, but this is a good approximation for the moment
-
-                        //we also add this amount of coarse material to the lowest layer of our soil
-                        soil_layer = 0; lowest_soil_layer = 0;
-                        while (layerthickness_m[row, col, soil_layer] > 0 & soil_layer < max_soil_layers) // MvdM added second conditional for when all layers are already filled
-                        {
-                            lowest_soil_layer = soil_layer;
-                            soil_layer++;
-                            //Debug.WriteLine(" lowest soil layer now " + soil_layer);
-                            if (lowest_soil_layer == max_soil_layers - 1) { break; }
-                        }
-                        texture_kg[row, col, lowest_soil_layer, 0] += bedrock_weathering_m[row, col] * 2700 * dx * dx;   // to go from m (=m3/m2) to kg, we multiply by m2 and by kg/m3
-                    }
-
-                }
             }
 
         }

@@ -12,6 +12,13 @@ namespace LORICA4
     public partial class Mother_form 
     {
 
+        public double activity_fraction(double characteristic_depth_m, double soildepth_m, double layertop_m, double layerbottom_m)
+        {
+            double c = characteristic_depth_m;
+            double activity_fraction = (Math.Exp(-layertop_m/c) - Math.Exp(-layerbottom_m/c)) / (Math.Exp(-0/c) - Math.Exp(-soildepth_m/c));
+            return activity_fraction;
+        }
+
         void update_all_layer_thicknesses(int row_update, int col_update)
         {
             for (int layer_update = 0; layer_update < max_soil_layers; layer_update++)
@@ -1567,6 +1574,98 @@ namespace LORICA4
             return (ndn);
         }
 
+        private void calculate_soil_production()
+        {
+            // as function of infiltration?
+            //Debug.WriteLine("Entered bedrock weathering");												
+            double Iavg = 0, Imin = 10000000, Imax = 0;
+            if (daily_water.Checked)
+            {
+                int Icount = 0;
+                for (row = 0; row < nr; row++)
+                {
+                    for (col = 0; col < nc; col++)
+                    {
+                        if (dtm[row, col] != nodata_value)
+                        {
+                            if (Imin > Iy[row, col]) { Imin = Iy[row, col]; }
+                            if (Imax < Iy[row, col]) { Imax = Iy[row, col]; }
+                            Iavg += Iy[row, col];
+                            Icount++;
+                        }
+                    }
+                }
+                Iavg /= Icount;
+            }
+            int soil_layer, lowest_soil_layer;
+            for (row = 0; row < nr; row++)
+            {
+                for (col = 0; col < nc; col++)
+                {
+                    if (dtm[row, col] != nodata_value)
+                    {
+                        double weatheringdepth = 0;
+                        //Debug.WriteLine(" bedrock weathering at r " + row + " c " + col);
+                        //if the first occurrence of bedrock is the hardlayer, then no weathering should occur.
+                        //if more weathering is calculated than needed to get to the hardlayer, then it should be thus limited. 
+
+                        weatheringdepth = soildepth_m[row, col];
+
+                        // humped
+                        if (rockweath_method.SelectedIndex == 0)
+                        {
+                            bedrock_weathering_m[row, col] = P0 * (Math.Exp(-k1 * weatheringdepth) - Math.Exp(-k2 * weatheringdepth)) + Pa;
+
+                        }
+                        if (rockweath_method.SelectedIndex == 1)
+                        {
+                            // exponential (Heimsath, Chappell et al., 2000)
+                            bedrock_weathering_m[row, col] = P0 * (Math.Exp(-k1 * weatheringdepth));
+                        }
+
+                        if (rockweath_method.SelectedIndex == 2)
+                        {
+                            if (daily_water.Checked)
+                            {
+                                bedrock_weathering_m[row, col] = P0 * -k1 * (Iy[row, col] - Imin) / (Imax - Imin);
+                            }
+                        }
+                        //we now know how deep we would weather into normal bedrock
+                        if (blocks_active == 1)
+                        {
+                            double newlowestelevsoil = dtm[row, col] - soildepth_m[row, col] - bedrock_weathering_m[row, col];
+                            double oldlowestelevsoil = dtm[row, col] - soildepth_m[row, col];
+                            if (newlowestelevsoil < hardlayerelevation_m && oldlowestelevsoil >= hardlayerelevation_m)
+                            {
+                                //we limit bedrock weathering to the part of the bedrock above hardlayer:
+                                bedrock_weathering_m[row, col] = (dtm[row, col] - soildepth_m[row, col]) - hardlayerelevation_m;
+                                Debug.WriteLine(" limited bedrock weathering to stop at hardlayer r " + row + " c " + col + " dtm " + dtm[row, col]);
+                                //and apply the rest of the weathering to increasing openness of the hardlayer:
+                                hardlayeropenness_fraction[row, col] += Convert.ToSingle((hardlayerelevation_m - newlowestelevsoil) * hardlayer_weath_contrast);
+                                Debug.WriteLine(" increased openness of hardlayer to " + hardlayeropenness_fraction[row, col]);
+                                if (hardlayeropenness_fraction[row, col] > 0.5) { hardlayeropenness_fraction[row, col] = 0.5f; }
+                            }
+                        }
+
+                        soildepth_m[row, col] += bedrock_weathering_m[row, col]; // this will really be updated at the end of this timestep, but this is a good approximation for the moment
+
+                        //we also add this amount of coarse material to the lowest layer of our soil
+                        soil_layer = 0; lowest_soil_layer = 0;
+                        while (layerthickness_m[row, col, soil_layer] > 0 & soil_layer < max_soil_layers) // MvdM added second conditional for when all layers are already filled
+                        {
+                            lowest_soil_layer = soil_layer;
+                            soil_layer++;
+                            //Debug.WriteLine(" lowest soil layer now " + soil_layer);
+                            if (lowest_soil_layer == max_soil_layers - 1) { break; }
+                        }
+                        texture_kg[row, col, lowest_soil_layer, 0] += bedrock_weathering_m[row, col] * 2700 * dx * dx;   // to go from m (=m3/m2) to kg, we multiply by m2 and by kg/m3
+                    }
+
+                }
+            }
+
+        }
+
         void soil_physical_weathering()  //calculate physical weathering
         {
             decimal old_mass_kg = 0;
@@ -1587,12 +1686,13 @@ namespace LORICA4
                             if (layerthickness_m[row, tempcol, layer] > 0)
                             {
                                 int templayer = layer;
-                                depth += layerthickness_m[row, tempcol, templayer] / 2;
+                                //depth += layerthickness_m[row, tempcol, templayer] / 2;
                                 for (tex_class = 0; tex_class <= 2; tex_class++)   //we only physically weather the coarse, sand and silt fractions.
                                 {
                                     int tempclass = tex_class;
                                     // calculate the mass involved in physical weathering
-                                    weathered_mass_kg = texture_kg[row, tempcol, templayer, tempclass] * physical_weathering_constant * Math.Exp(-Cone * depth) * -Ctwo / Math.Log10(upper_particle_size[tempclass]) * dt;
+                                    double layer_fraction = activity_fraction(Cone, soildepth_m[row, col], depth, depth + layerthickness_m[row, col, layer]);
+                                    weathered_mass_kg = texture_kg[row, tempcol, templayer, tempclass] * physical_weathering_constant * layer_fraction * -Ctwo / Math.Log10(upper_particle_size[tempclass]) * dt;
                                     total_phys_weathered_mass_kg += weathered_mass_kg;
                                     //Debug.WriteLine(" weathered mass is " + weathered_mass + " for class " + tempclass );
                                     // calculate the products involved
@@ -1612,7 +1712,7 @@ namespace LORICA4
                                     }
                                     texture_kg[row, tempcol, templayer, tempclass] -= weathered_mass_kg;
                                 }
-                                depth += layerthickness_m[row, tempcol, templayer] / 2;
+                                depth += layerthickness_m[row, tempcol, templayer] ;
                             }
                         } //else error handling ArT
                     }  //);
@@ -1658,15 +1758,18 @@ namespace LORICA4
                             if (layerthickness_m[row, tempcol, layer] > 0)
                             {
                                 int templayer = layer;
-                                depth += layerthickness_m[row, tempcol, templayer] / 2;
+                                
                                 tex_class = 0;
                                 int tempclass = tex_class;
                                 // calculate the mass involved in physical weathering
-                                weathered_mass_kg = texture_kg[row, tempcol, templayer, tempclass] * physical_weathering_constant * Math.Exp(-Cone * depth) * -Ctwo / Math.Log10(upper_particle_size[tempclass]) * dt;
+
+                                double layer_fraction = activity_fraction(Cone, soildepth_m[row, col], depth, depth + layerthickness_m[row, col, layer]);
+                                weathered_mass_kg = texture_kg[row, tempcol, templayer, tempclass] * physical_weathering_constant * layer_fraction * -Ctwo / Math.Log10(upper_particle_size[tempclass]) * dt;
                                 //Debug.WriteLine(" weathered mass is " + weathered_mass + " for class " + tempclass );
                                 // calculate the products involved
                                 texture_kg[row, tempcol, templayer, tempclass + 2] += 0.1 * weathered_mass_kg;
                                 texture_kg[row, tempcol, templayer, tempclass] -= weathered_mass_kg;
+                                depth += layerthickness_m[row, tempcol, templayer];
                             }
                         }
                     }  //);
@@ -1714,10 +1817,12 @@ namespace LORICA4
                     {
                         if (layerthickness_m[row, col, layer] > 0)
                         {
-                            depth += layerthickness_m[row, col, layer] / 2;
+                            //depth += layerthickness_m[row, col, layer] / 2;
                             for (tex_class = 1; tex_class <= 4; tex_class++) // only sand, silt, clay and fine clay are chemically weathered
                             {
-                                weathered_mass_kg = texture_kg[row, col, layer, tex_class] * chemical_weathering_constant / 10 * Math.Exp(-Cthree * depth) * Cfour * specific_area[tex_class] * dt;
+                                double layer_fraction = activity_fraction(Cthree, soildepth_m[row, col], depth, depth + layerthickness_m[row, col, layer]);
+                                weathered_mass_kg = texture_kg[row, col, layer, tex_class] * chemical_weathering_constant * layer_fraction * Cfour * specific_area[tex_class] * dt;
+                                //the calculation above was divided by ten for no obvious reason, and I've removed that now. ArT 2025-03-26
 
                                 if (daily_water.Checked) { weathered_mass_kg *= waterfactor[row, col]; }
 
@@ -1774,7 +1879,8 @@ namespace LORICA4
                             }
 
                             // clay neoformation
-                            fraction_neoform = neoform_constant * (Math.Exp(-Cfive * depth) - Math.Exp(-Csix * depth));
+                            //ArT 2025-03-26 : I've changed around C5 and C6 from [m-1] to [m], needs to be changed in the interface and in the defauly value
+                            fraction_neoform = neoform_constant * (Math.Exp(-depth/Cfive) - Math.Exp(-depth/ Csix));
                             if (fraction_neoform >= 1)
                             {
                                 Debug.WriteLine(" Warning: more than 100% of leached mass wants to become fine clay. This may indicate an error. Capping at 100%");
@@ -1784,7 +1890,7 @@ namespace LORICA4
                             texture_kg[row, col, layer, 4] += total_weath_mass * fraction_neoform;
                             total_fine_neoformed_mass_kg += total_weath_mass * fraction_neoform;
                             total_weath_mass -= total_weath_mass * fraction_neoform;
-                            depth += layerthickness_m[row, col, layer] / 2;
+                            depth += layerthickness_m[row, col, layer] ;
                         }
                     }
                 }
@@ -1919,20 +2025,12 @@ namespace LORICA4
 
                                 {
                                     double dd_bt = bioturbation_depth_decay_constant * 2; // possible adjustments to second depth decay for bioturbation are possible here
-
-
-                                    //double total_BT_depth_decay_index = 
-                                    //    -1/dd_bt*(Math.Exp(-dd_bt*(z_toplayer - 0)) - Math.Exp(-dd_bt*(z_toplayer - z_toplayer))) +
-                                    //    -1/dd_bt*(Math.Exp(-dd_bt*(total_soil_thickness_m - z_bottomlayer)) - Math.Exp(-dd_bt*(z_bottomlayer - z_bottomlayer)));                                    
-
-
+     
                                     double check_BT_dd = 0;
                                     //integration over the exponential decay function in JGR 2006 for the entire profile, and for the current layer.
                                     //then calculate the fraction of bioturbation that will happen in this layer, and multiply with total bioturbation in this cell
                                     fine_layer_mass = total_layer_fine_earth_mass_kg(row, col, layer);
-                                    layer_bio_activity_index = Math.Exp(-bioturbation_depth_decay_constant * depth) - (Math.Exp(-bioturbation_depth_decay_constant * (depth + layerthickness_m[row, col, layer])));
-                                    total_bio_activity_index = 1 - (Math.Exp(-bioturbation_depth_decay_constant * total_soil_thickness_m));
-                                    layer_bioturbation_kg = (layer_bio_activity_index / total_bio_activity_index) * local_bioturbation_kg;
+                                    layer_bioturbation_kg = activity_fraction(bioturbation_depth_decay_constant, total_soil_thickness_m, depth, layerthickness_m[row, col, layer]) * local_bioturbation_kg;
                                     mass_distance_sum = 0;
 
                                     depth += layerthickness_m[row, col, layer] / 2;
@@ -1940,7 +2038,6 @@ namespace LORICA4
                                     double total_BT_depth_decay_index =
                                         -1 / dd_bt * (Math.Exp(-dd_bt * (depth - 0)) - 1) + // upper part of the curve
                                         -1 / dd_bt * (Math.Exp(-dd_bt * (total_soil_thickness_m - depth)) - 1); // lower part of the curve
-
 
                                     otherdepth = 0; distance = 0;
 
@@ -1954,7 +2051,6 @@ namespace LORICA4
                                     var depthdecays = new List<double>();
                                     var P_fromto_list = new List<double>();
                                     var P_tofrom_list = new List<double>();
-
 
                                     double check_mass_distance = 0;
 
@@ -2214,7 +2310,6 @@ namespace LORICA4
             catch { Debug.WriteLine(" Error in bioturbation calculations in timestep {)}", t); }
 
         } // nieuwe code van Arnaud
-
 
         void soil_bioturbation_upward()
         {
@@ -2483,10 +2578,7 @@ namespace LORICA4
                         {
                             if (layerthickness_m[row, col, layer] > 0)
                             {
-                                // if (layer == 0) { Debugger.Break(); }
-                                layer_OM_input_index = -1 / OM_input_depth_decay_constant * (Math.Exp(-OM_input_depth_decay_constant * (depth + layerthickness_m[row, col, layer])) - Math.Exp(-OM_input_depth_decay_constant * depth));
-                                total_OM_input_index = -1 / OM_input_depth_decay_constant * (Math.Exp(-OM_input_depth_decay_constant * (total_soil_thickness)) - 1);
-                                layer_OM_input_kg = (layer_OM_input_index / total_OM_input_index) * local_OM_input_kg;
+                                layer_OM_input_kg = activity_fraction(OM_input_depth_decay_constant, total_soil_thickness, depth, depth + layerthickness_m[row, col, layer]) * local_OM_input_kg;
 
                                 if (version_lux_checkbox.Checked)
                                 {
@@ -2503,19 +2595,21 @@ namespace LORICA4
                                     Debug.WriteLine("err_cc2");
                                 }
                                 //decomposition gets lost as CO2 to the air (and soil water)
-                                depth += layerthickness_m[row, col, layer] / 2;
-                                //young_decomposition_rate = potential_young_decomp_rate * Math.Exp(-young_CTI_decay_constant * dynamic_TWI) * Math.Exp(-young_depth_decay_constant * depth);
-                                //old_decomposition_rate = potential_old_decomp_rate * Math.Exp(-old_CTI_decay_constant * dynamic_TWI) * Math.Exp(-old_depth_decay_constant * depth);
-                                young_decomposition_rate = potential_young_decomp_rate * 1 * Math.Exp(-young_depth_decay_constant * depth);
-                                old_decomposition_rate = potential_old_decomp_rate * 1 * Math.Exp(-old_depth_decay_constant * depth);
+
+                                young_decomposition_rate = potential_young_decomp_rate * activity_fraction(young_depth_decay_constant, total_soil_thickness, depth, depth + layerthickness_m[row, col, layer]);
+                                old_decomposition_rate = potential_old_decomp_rate * activity_fraction(old_depth_decay_constant, total_soil_thickness, depth, depth + layerthickness_m[row, col, layer]); ;
                                 young_SOM_kg[row, col, layer] *= (1 - young_decomposition_rate);
                                 old_SOM_kg[row, col, layer] *= (1 - old_decomposition_rate);
                                 //Debug.WriteLine(" cell  " + row + " " + col + " has layer_OM_input of " + layer_OM_input_kg);
-                                depth += layerthickness_m[row, col, layer] / 2;
+                                depth += layerthickness_m[row, col, layer];
                                 if (young_SOM_kg[row, col, layer] < 0 | old_SOM_kg[row, col, layer] < 0)
                                 {
                                     Debug.WriteLine("err_cc3");
                                 }
+                            }
+                            else
+                            {
+                                Debug.WriteLine("err_cc4");
                             }
 
                         }

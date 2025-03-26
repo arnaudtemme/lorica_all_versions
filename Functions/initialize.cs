@@ -148,12 +148,6 @@ namespace LORICA4
                     if (memory_records == false) { makerecords(filename); }
                     read_record(filename, rainfall_record);
                 }
-                if (check_time_T.Checked)
-                {
-                    filename = this.temp_input_filename_textbox.Text;
-                    if (memory_records == false) { makerecords(filename); }
-                    read_record(filename, temp_record);
-                }
                 if (check_time_till_fields.Checked)
                 {
                     filename = this.tillfields_input_filename_textbox.Text;
@@ -506,13 +500,6 @@ namespace LORICA4
                 if (memory_records == false) { makerecords(filename); }
                 read_record(filename, rainfall_record);
             }
-            if (check_time_T.Checked && input_data_error == false)
-            {
-                filename = this.temp_input_filename_textbox.Text;
-                if (memory_records == false) { makerecords(filename); }
-                read_record(filename, temp_record);
-            }
-
             if (check_time_till_fields.Checked && input_data_error == false)
             {
                 filename = this.tillfields_input_filename_textbox.Text;
@@ -1179,18 +1166,6 @@ namespace LORICA4
                         while (corrected_t > evap_record.Length) { corrected_t -= evap_record.Length; }
                         evap_value_m = 0.001 * evap_record[corrected_t];
                     }
-
-                    if (check_time_T.Checked)
-                    {
-                        corrected_t = t;
-                        while (corrected_t > temp_record.Length) { corrected_t -= temp_record.Length; }
-
-                        rain_value_m = 0.001 * temp_record[corrected_t]; //from mm (in record) to m (LORICA)   // mvdm -1 weggehaald van corrected_t, leidde tot OutOfRange errors
-                        temp_value_C = temp_record[corrected_t];
-                        // changed rain[row, col] to rain_value_m, due to errors, this is not spatial, but temporal variation
-                        //this should be improved for when rainfall is not also spatially variable //ArT
-                    }
-
                     if (annual_output_checkbox.Checked)
                     {
                         dz_soil[row, col] = 0;

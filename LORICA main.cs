@@ -1202,18 +1202,12 @@ namespace LORICA4
             this.label16 = new System.Windows.Forms.Label();
             this.Number_runs_textbox = new System.Windows.Forms.TextBox();
             this.Input = new System.Windows.Forms.TabPage();
-            this.textbox_layer_thickness = new System.Windows.Forms.TextBox();
-            this.checkbox_layer_thickness = new System.Windows.Forms.CheckBox();
-            this.label_max_soil_layers = new System.Windows.Forms.Label();
-            this.textbox_max_soil_layers = new System.Windows.Forms.TextBox();
-            this.soil_specify_button = new System.Windows.Forms.Button();
-            this.explain_input_button = new System.Windows.Forms.Button();
+            this.groupBox17 = new System.Windows.Forms.GroupBox();
             this.check_time_evap = new System.Windows.Forms.CheckBox();
             this.check_time_infil = new System.Windows.Forms.CheckBox();
             this.check_time_rain = new System.Windows.Forms.CheckBox();
             this.check_time_till_fields = new System.Windows.Forms.CheckBox();
             this.check_time_landuse = new System.Windows.Forms.CheckBox();
-            this.check_space_DTM = new System.Windows.Forms.CheckBox();
             this.tillfields_constant_textbox = new System.Windows.Forms.TextBox();
             this.tillfields_input_filename_textbox = new System.Windows.Forms.TextBox();
             this.evap_constant_value_box = new System.Windows.Forms.TextBox();
@@ -1222,20 +1216,30 @@ namespace LORICA4
             this.infil_input_filename_textbox = new System.Windows.Forms.TextBox();
             this.rainfall_constant_value_box = new System.Windows.Forms.TextBox();
             this.landuse_constant_value_box = new System.Windows.Forms.TextBox();
-            this.soildepth_constant_value_box = new System.Windows.Forms.TextBox();
             this.landuse_input_filename_textbox = new System.Windows.Forms.TextBox();
-            this.soildepth_input_filename_textbox = new System.Windows.Forms.TextBox();
             this.rain_input_filename_textbox = new System.Windows.Forms.TextBox();
-            this.dtm_input_filename_textbox = new System.Windows.Forms.TextBox();
             this.check_space_evap = new System.Windows.Forms.CheckBox();
             this.check_space_infil = new System.Windows.Forms.CheckBox();
             this.check_space_rain = new System.Windows.Forms.CheckBox();
             this.check_space_till_fields = new System.Windows.Forms.CheckBox();
             this.check_space_landuse = new System.Windows.Forms.CheckBox();
-            this.check_space_soildepth = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.groupBox13 = new System.Windows.Forms.GroupBox();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.label37 = new System.Windows.Forms.Label();
+            this.soil_specify_button = new System.Windows.Forms.Button();
+            this.textbox_layer_thickness = new System.Windows.Forms.TextBox();
+            this.label_max_soil_layers = new System.Windows.Forms.Label();
+            this.checkbox_layer_thickness = new System.Windows.Forms.CheckBox();
+            this.textbox_max_soil_layers = new System.Windows.Forms.TextBox();
+            this.check_space_DTM = new System.Windows.Forms.CheckBox();
+            this.soildepth_constant_value_box = new System.Windows.Forms.TextBox();
+            this.soildepth_input_filename_textbox = new System.Windows.Forms.TextBox();
+            this.dtm_input_filename_textbox = new System.Windows.Forms.TextBox();
+            this.check_space_soildepth = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label23 = new System.Windows.Forms.Label();
+            this.explain_input_button = new System.Windows.Forms.Button();
             this.Geomorph = new System.Windows.Forms.TabPage();
             this.Process_tabs = new System.Windows.Forms.TabControl();
             this.Water = new System.Windows.Forms.TabPage();
@@ -1462,10 +1466,6 @@ namespace LORICA4
             this.Spitsbergen_case_study = new System.Windows.Forms.CheckBox();
             this.dtm_iterate_checkbox = new System.Windows.Forms.CheckBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.groupBox13 = new System.Windows.Forms.GroupBox();
-            this.groupBox17 = new System.Windows.Forms.GroupBox();
-            this.label37 = new System.Windows.Forms.Label();
             label6 = new System.Windows.Forms.Label();
             label76 = new System.Windows.Forms.Label();
             label75 = new System.Windows.Forms.Label();
@@ -1514,6 +1514,9 @@ namespace LORICA4
             this.groupBox8.SuspendLayout();
             this.groupBox7.SuspendLayout();
             this.Input.SuspendLayout();
+            this.groupBox17.SuspendLayout();
+            this.groupBox13.SuspendLayout();
+            this.groupBox5.SuspendLayout();
             this.Geomorph.SuspendLayout();
             this.Process_tabs.SuspendLayout();
             this.Water.SuspendLayout();
@@ -1549,9 +1552,6 @@ namespace LORICA4
             this.treefall.SuspendLayout();
             this.Options.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            this.groupBox5.SuspendLayout();
-            this.groupBox13.SuspendLayout();
-            this.groupBox17.SuspendLayout();
             this.SuspendLayout();
             // 
             // label6
@@ -1578,9 +1578,9 @@ namespace LORICA4
             label75.AutoSize = true;
             label75.Location = new System.Drawing.Point(130, 91);
             label75.Name = "label75";
-            label75.Size = new System.Drawing.Size(124, 13);
+            label75.Size = new System.Drawing.Size(175, 13);
             label75.TabIndex = 63;
-            label75.Text = "depth limitation rate [m-1]";
+            label75.Text = "characteristic input decay depth [m]";
             // 
             // label74
             // 
@@ -1639,9 +1639,9 @@ namespace LORICA4
             label84.AutoSize = true;
             label84.Location = new System.Drawing.Point(558, 140);
             label84.Name = "label84";
-            label84.Size = new System.Drawing.Size(136, 13);
+            label84.Size = new System.Drawing.Size(181, 13);
             label84.TabIndex = 74;
-            label84.Text = "depth decay constant [m-1]";
+            label84.Text = "char. decomposition decay depth [m]";
             // 
             // label86
             // 
@@ -1666,9 +1666,9 @@ namespace LORICA4
             label71.AutoSize = true;
             label71.Location = new System.Drawing.Point(133, 77);
             label71.Name = "label71";
-            label71.Size = new System.Drawing.Size(99, 13);
+            label71.Size = new System.Drawing.Size(149, 13);
             label71.TabIndex = 58;
-            label71.Text = "depth decay rate [-]";
+            label71.Text = "characteristic decay depth [m]";
             // 
             // label68
             // 
@@ -1780,9 +1780,9 @@ namespace LORICA4
             label51.AutoSize = true;
             label51.Location = new System.Drawing.Point(136, 67);
             label51.Name = "label51";
-            label51.Size = new System.Drawing.Size(136, 13);
+            label51.Size = new System.Drawing.Size(152, 13);
             label51.TabIndex = 17;
-            label51.Text = "depth decay constant [m-1]";
+            label51.Text = " characteristic decay depth [m]";
             // 
             // label50
             // 
@@ -1815,9 +1815,9 @@ namespace LORICA4
             label42.AutoSize = true;
             label42.Location = new System.Drawing.Point(142, 72);
             label42.Name = "label42";
-            label42.Size = new System.Drawing.Size(136, 13);
+            label42.Size = new System.Drawing.Size(149, 13);
             label42.TabIndex = 11;
-            label42.Text = "depth decay constant [m-1]";
+            label42.Text = "characteristic decay depth [m]";
             // 
             // label43
             // 
@@ -2713,63 +2713,40 @@ namespace LORICA4
             this.Input.Text = "Inputs";
             this.Input.UseVisualStyleBackColor = true;
             // 
-            // textbox_layer_thickness
+            // groupBox17
             // 
-            this.textbox_layer_thickness.Location = new System.Drawing.Point(148, 43);
-            this.textbox_layer_thickness.Name = "textbox_layer_thickness";
-            this.textbox_layer_thickness.Size = new System.Drawing.Size(38, 20);
-            this.textbox_layer_thickness.TabIndex = 158;
-            this.textbox_layer_thickness.Text = "0.10";
-            // 
-            // checkbox_layer_thickness
-            // 
-            this.checkbox_layer_thickness.AutoSize = true;
-            this.checkbox_layer_thickness.Checked = true;
-            this.checkbox_layer_thickness.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkbox_layer_thickness.Location = new System.Drawing.Point(12, 45);
-            this.checkbox_layer_thickness.Name = "checkbox_layer_thickness";
-            this.checkbox_layer_thickness.Size = new System.Drawing.Size(130, 17);
-            this.checkbox_layer_thickness.TabIndex = 157;
-            this.checkbox_layer_thickness.Text = "Fixed layer thickness?";
-            this.checkbox_layer_thickness.UseVisualStyleBackColor = true;
-            this.checkbox_layer_thickness.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged_3);
-            // 
-            // label_max_soil_layers
-            // 
-            this.label_max_soil_layers.AutoSize = true;
-            this.label_max_soil_layers.Location = new System.Drawing.Point(115, 23);
-            this.label_max_soil_layers.Name = "label_max_soil_layers";
-            this.label_max_soil_layers.Size = new System.Drawing.Size(84, 13);
-            this.label_max_soil_layers.TabIndex = 156;
-            this.label_max_soil_layers.Text = "number of layers";
-            // 
-            // textbox_max_soil_layers
-            // 
-            this.textbox_max_soil_layers.Location = new System.Drawing.Point(202, 20);
-            this.textbox_max_soil_layers.Name = "textbox_max_soil_layers";
-            this.textbox_max_soil_layers.Size = new System.Drawing.Size(26, 20);
-            this.textbox_max_soil_layers.TabIndex = 155;
-            this.textbox_max_soil_layers.Text = "25";
-            // 
-            // soil_specify_button
-            // 
-            this.soil_specify_button.Location = new System.Drawing.Point(6, 19);
-            this.soil_specify_button.Name = "soil_specify_button";
-            this.soil_specify_button.Size = new System.Drawing.Size(97, 20);
-            this.soil_specify_button.TabIndex = 149;
-            this.soil_specify_button.Text = "set properties..";
-            this.soil_specify_button.UseVisualStyleBackColor = true;
-            this.soil_specify_button.Click += new System.EventHandler(this.soil_specify_button_Click);
-            // 
-            // explain_input_button
-            // 
-            this.explain_input_button.Location = new System.Drawing.Point(315, 16);
-            this.explain_input_button.Name = "explain_input_button";
-            this.explain_input_button.Size = new System.Drawing.Size(63, 20);
-            this.explain_input_button.TabIndex = 147;
-            this.explain_input_button.Text = "explain..";
-            this.explain_input_button.UseVisualStyleBackColor = true;
-            this.explain_input_button.Click += new System.EventHandler(this.button8_Click);
+            this.groupBox17.Controls.Add(this.groupBox3);
+            this.groupBox17.Controls.Add(this.check_time_evap);
+            this.groupBox17.Controls.Add(this.check_time_infil);
+            this.groupBox17.Controls.Add(this.check_time_rain);
+            this.groupBox17.Controls.Add(this.check_time_till_fields);
+            this.groupBox17.Controls.Add(this.check_time_landuse);
+            this.groupBox17.Controls.Add(this.tillfields_constant_textbox);
+            this.groupBox17.Controls.Add(this.tillfields_input_filename_textbox);
+            this.groupBox17.Controls.Add(this.evap_constant_value_box);
+            this.groupBox17.Controls.Add(this.evap_input_filename_textbox);
+            this.groupBox17.Controls.Add(this.infil_constant_value_box);
+            this.groupBox17.Controls.Add(this.infil_input_filename_textbox);
+            this.groupBox17.Controls.Add(this.rainfall_constant_value_box);
+            this.groupBox17.Controls.Add(this.landuse_constant_value_box);
+            this.groupBox17.Controls.Add(this.landuse_input_filename_textbox);
+            this.groupBox17.Controls.Add(this.rain_input_filename_textbox);
+            this.groupBox17.Controls.Add(this.check_space_evap);
+            this.groupBox17.Controls.Add(this.check_space_infil);
+            this.groupBox17.Controls.Add(this.check_space_rain);
+            this.groupBox17.Controls.Add(this.check_space_till_fields);
+            this.groupBox17.Controls.Add(this.check_space_landuse);
+            this.groupBox17.Controls.Add(this.label17);
+            this.groupBox17.Controls.Add(this.label15);
+            this.groupBox17.Controls.Add(this.label14);
+            this.groupBox17.Controls.Add(this.label4);
+            this.groupBox17.Controls.Add(this.label25);
+            this.groupBox17.Location = new System.Drawing.Point(7, 135);
+            this.groupBox17.Name = "groupBox17";
+            this.groupBox17.Size = new System.Drawing.Size(747, 155);
+            this.groupBox17.TabIndex = 161;
+            this.groupBox17.TabStop = false;
+            this.groupBox17.Text = "depending on process (optional)";
             // 
             // check_time_evap
             // 
@@ -2820,18 +2797,6 @@ namespace LORICA4
             this.check_time_landuse.TabIndex = 141;
             this.check_time_landuse.UseVisualStyleBackColor = true;
             this.check_time_landuse.CheckedChanged += new System.EventHandler(this.check_time_landuse_CheckedChanged);
-            // 
-            // check_space_DTM
-            // 
-            this.check_space_DTM.AutoSize = true;
-            this.check_space_DTM.Checked = true;
-            this.check_space_DTM.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.check_space_DTM.Enabled = false;
-            this.check_space_DTM.Location = new System.Drawing.Point(182, 22);
-            this.check_space_DTM.Name = "check_space_DTM";
-            this.check_space_DTM.Size = new System.Drawing.Size(15, 14);
-            this.check_space_DTM.TabIndex = 138;
-            this.check_space_DTM.UseVisualStyleBackColor = true;
             // 
             // tillfields_constant_textbox
             // 
@@ -2907,14 +2872,6 @@ namespace LORICA4
             this.landuse_constant_value_box.TabIndex = 113;
             this.landuse_constant_value_box.Text = "1";
             // 
-            // soildepth_constant_value_box
-            // 
-            this.soildepth_constant_value_box.Location = new System.Drawing.Point(404, 47);
-            this.soildepth_constant_value_box.Name = "soildepth_constant_value_box";
-            this.soildepth_constant_value_box.Size = new System.Drawing.Size(80, 20);
-            this.soildepth_constant_value_box.TabIndex = 112;
-            this.soildepth_constant_value_box.Text = "5";
-            // 
             // landuse_input_filename_textbox
             // 
             this.landuse_input_filename_textbox.Location = new System.Drawing.Point(251, 27);
@@ -2924,16 +2881,6 @@ namespace LORICA4
             this.landuse_input_filename_textbox.Text = "..";
             this.landuse_input_filename_textbox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.landuse_input_filename_textbox.Click += new System.EventHandler(this.landuse_input_filename_textbox_TextChanged);
-            // 
-            // soildepth_input_filename_textbox
-            // 
-            this.soildepth_input_filename_textbox.Location = new System.Drawing.Point(252, 47);
-            this.soildepth_input_filename_textbox.Name = "soildepth_input_filename_textbox";
-            this.soildepth_input_filename_textbox.Size = new System.Drawing.Size(120, 20);
-            this.soildepth_input_filename_textbox.TabIndex = 105;
-            this.soildepth_input_filename_textbox.Text = "..";
-            this.soildepth_input_filename_textbox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.soildepth_input_filename_textbox.Click += new System.EventHandler(this.soildepth_input_filename_textbox_TextChanged);
             // 
             // rain_input_filename_textbox
             // 
@@ -2945,16 +2892,6 @@ namespace LORICA4
             this.rain_input_filename_textbox.Text = "..";
             this.rain_input_filename_textbox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.rain_input_filename_textbox.Click += new System.EventHandler(this.rain_input_filename_textbox_TextChanged);
-            // 
-            // dtm_input_filename_textbox
-            // 
-            this.dtm_input_filename_textbox.Location = new System.Drawing.Point(252, 21);
-            this.dtm_input_filename_textbox.Name = "dtm_input_filename_textbox";
-            this.dtm_input_filename_textbox.Size = new System.Drawing.Size(120, 20);
-            this.dtm_input_filename_textbox.TabIndex = 100;
-            this.dtm_input_filename_textbox.Text = "..";
-            this.dtm_input_filename_textbox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.dtm_input_filename_textbox.Click += new System.EventHandler(this.dtm_input_filename_textbox_Click);
             // 
             // check_space_evap
             // 
@@ -3006,6 +2943,144 @@ namespace LORICA4
             this.check_space_landuse.UseVisualStyleBackColor = true;
             this.check_space_landuse.CheckedChanged += new System.EventHandler(this.check_cnst_landuse_CheckedChanged_1);
             // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(12, 25);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(151, 24);
+            this.label4.TabIndex = 106;
+            this.label4.Text = "landuse (classes)";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // groupBox13
+            // 
+            this.groupBox13.Controls.Add(this.groupBox5);
+            this.groupBox13.Controls.Add(this.check_space_DTM);
+            this.groupBox13.Controls.Add(this.soildepth_constant_value_box);
+            this.groupBox13.Controls.Add(this.soildepth_input_filename_textbox);
+            this.groupBox13.Controls.Add(this.dtm_input_filename_textbox);
+            this.groupBox13.Controls.Add(this.check_space_soildepth);
+            this.groupBox13.Controls.Add(this.label3);
+            this.groupBox13.Controls.Add(this.label23);
+            this.groupBox13.Location = new System.Drawing.Point(6, 35);
+            this.groupBox13.Name = "groupBox13";
+            this.groupBox13.Size = new System.Drawing.Size(749, 94);
+            this.groupBox13.TabIndex = 160;
+            this.groupBox13.TabStop = false;
+            this.groupBox13.Text = "required";
+            // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.label37);
+            this.groupBox5.Controls.Add(this.soil_specify_button);
+            this.groupBox5.Controls.Add(this.textbox_layer_thickness);
+            this.groupBox5.Controls.Add(this.label_max_soil_layers);
+            this.groupBox5.Controls.Add(this.checkbox_layer_thickness);
+            this.groupBox5.Controls.Add(this.textbox_max_soil_layers);
+            this.groupBox5.Location = new System.Drawing.Point(499, 16);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(234, 72);
+            this.groupBox5.TabIndex = 159;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "for soils:";
+            // 
+            // label37
+            // 
+            this.label37.AutoSize = true;
+            this.label37.Location = new System.Drawing.Point(192, 46);
+            this.label37.Name = "label37";
+            this.label37.Size = new System.Drawing.Size(21, 13);
+            this.label37.TabIndex = 159;
+            this.label37.Text = "cm";
+            // 
+            // soil_specify_button
+            // 
+            this.soil_specify_button.Location = new System.Drawing.Point(6, 19);
+            this.soil_specify_button.Name = "soil_specify_button";
+            this.soil_specify_button.Size = new System.Drawing.Size(97, 20);
+            this.soil_specify_button.TabIndex = 149;
+            this.soil_specify_button.Text = "set properties..";
+            this.soil_specify_button.UseVisualStyleBackColor = true;
+            this.soil_specify_button.Click += new System.EventHandler(this.soil_specify_button_Click);
+            // 
+            // textbox_layer_thickness
+            // 
+            this.textbox_layer_thickness.Location = new System.Drawing.Point(148, 43);
+            this.textbox_layer_thickness.Name = "textbox_layer_thickness";
+            this.textbox_layer_thickness.Size = new System.Drawing.Size(38, 20);
+            this.textbox_layer_thickness.TabIndex = 158;
+            this.textbox_layer_thickness.Text = "0.10";
+            // 
+            // label_max_soil_layers
+            // 
+            this.label_max_soil_layers.AutoSize = true;
+            this.label_max_soil_layers.Location = new System.Drawing.Point(115, 23);
+            this.label_max_soil_layers.Name = "label_max_soil_layers";
+            this.label_max_soil_layers.Size = new System.Drawing.Size(84, 13);
+            this.label_max_soil_layers.TabIndex = 156;
+            this.label_max_soil_layers.Text = "number of layers";
+            // 
+            // checkbox_layer_thickness
+            // 
+            this.checkbox_layer_thickness.AutoSize = true;
+            this.checkbox_layer_thickness.Checked = true;
+            this.checkbox_layer_thickness.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkbox_layer_thickness.Location = new System.Drawing.Point(12, 45);
+            this.checkbox_layer_thickness.Name = "checkbox_layer_thickness";
+            this.checkbox_layer_thickness.Size = new System.Drawing.Size(130, 17);
+            this.checkbox_layer_thickness.TabIndex = 157;
+            this.checkbox_layer_thickness.Text = "Fixed layer thickness?";
+            this.checkbox_layer_thickness.UseVisualStyleBackColor = true;
+            this.checkbox_layer_thickness.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged_3);
+            // 
+            // textbox_max_soil_layers
+            // 
+            this.textbox_max_soil_layers.Location = new System.Drawing.Point(202, 20);
+            this.textbox_max_soil_layers.Name = "textbox_max_soil_layers";
+            this.textbox_max_soil_layers.Size = new System.Drawing.Size(26, 20);
+            this.textbox_max_soil_layers.TabIndex = 155;
+            this.textbox_max_soil_layers.Text = "25";
+            // 
+            // check_space_DTM
+            // 
+            this.check_space_DTM.AutoSize = true;
+            this.check_space_DTM.Checked = true;
+            this.check_space_DTM.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.check_space_DTM.Enabled = false;
+            this.check_space_DTM.Location = new System.Drawing.Point(182, 22);
+            this.check_space_DTM.Name = "check_space_DTM";
+            this.check_space_DTM.Size = new System.Drawing.Size(15, 14);
+            this.check_space_DTM.TabIndex = 138;
+            this.check_space_DTM.UseVisualStyleBackColor = true;
+            // 
+            // soildepth_constant_value_box
+            // 
+            this.soildepth_constant_value_box.Location = new System.Drawing.Point(404, 47);
+            this.soildepth_constant_value_box.Name = "soildepth_constant_value_box";
+            this.soildepth_constant_value_box.Size = new System.Drawing.Size(80, 20);
+            this.soildepth_constant_value_box.TabIndex = 112;
+            this.soildepth_constant_value_box.Text = "5";
+            // 
+            // soildepth_input_filename_textbox
+            // 
+            this.soildepth_input_filename_textbox.Location = new System.Drawing.Point(252, 47);
+            this.soildepth_input_filename_textbox.Name = "soildepth_input_filename_textbox";
+            this.soildepth_input_filename_textbox.Size = new System.Drawing.Size(120, 20);
+            this.soildepth_input_filename_textbox.TabIndex = 105;
+            this.soildepth_input_filename_textbox.Text = "..";
+            this.soildepth_input_filename_textbox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.soildepth_input_filename_textbox.Click += new System.EventHandler(this.soildepth_input_filename_textbox_TextChanged);
+            // 
+            // dtm_input_filename_textbox
+            // 
+            this.dtm_input_filename_textbox.Location = new System.Drawing.Point(252, 21);
+            this.dtm_input_filename_textbox.Name = "dtm_input_filename_textbox";
+            this.dtm_input_filename_textbox.Size = new System.Drawing.Size(120, 20);
+            this.dtm_input_filename_textbox.TabIndex = 100;
+            this.dtm_input_filename_textbox.Text = "..";
+            this.dtm_input_filename_textbox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.dtm_input_filename_textbox.Click += new System.EventHandler(this.dtm_input_filename_textbox_Click);
+            // 
             // check_space_soildepth
             // 
             this.check_space_soildepth.AutoSize = true;
@@ -3015,15 +3090,6 @@ namespace LORICA4
             this.check_space_soildepth.TabIndex = 125;
             this.check_space_soildepth.UseVisualStyleBackColor = true;
             this.check_space_soildepth.CheckedChanged += new System.EventHandler(this.check_cnst_soildepth_CheckedChanged_1);
-            // 
-            // label4
-            // 
-            this.label4.Location = new System.Drawing.Point(12, 25);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(151, 24);
-            this.label4.TabIndex = 106;
-            this.label4.Text = "landuse (classes)";
-            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // label3
             // 
@@ -3042,6 +3108,16 @@ namespace LORICA4
             this.label23.TabIndex = 56;
             this.label23.Text = "Digital Elevation Model [m]";
             this.label23.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // explain_input_button
+            // 
+            this.explain_input_button.Location = new System.Drawing.Point(315, 16);
+            this.explain_input_button.Name = "explain_input_button";
+            this.explain_input_button.Size = new System.Drawing.Size(63, 20);
+            this.explain_input_button.TabIndex = 147;
+            this.explain_input_button.Text = "explain..";
+            this.explain_input_button.UseVisualStyleBackColor = true;
+            this.explain_input_button.Click += new System.EventHandler(this.button8_Click);
             // 
             // Geomorph
             // 
@@ -3789,7 +3865,7 @@ namespace LORICA4
             this.physical_weath_constant1.Name = "physical_weath_constant1";
             this.physical_weath_constant1.Size = new System.Drawing.Size(100, 20);
             this.physical_weath_constant1.TabIndex = 3;
-            this.physical_weath_constant1.Text = "0.5";
+            this.physical_weath_constant1.Text = "2";
             // 
             // Physical_weath_C1_textbox
             // 
@@ -3843,7 +3919,7 @@ namespace LORICA4
             this.chem_weath_depth_constant_textbox.Name = "chem_weath_depth_constant_textbox";
             this.chem_weath_depth_constant_textbox.Size = new System.Drawing.Size(100, 20);
             this.chem_weath_depth_constant_textbox.TabIndex = 14;
-            this.chem_weath_depth_constant_textbox.Text = "2.5";
+            this.chem_weath_depth_constant_textbox.Text = "0.4";
             // 
             // chem_weath_rate_constant_textbox
             // 
@@ -4034,7 +4110,7 @@ namespace LORICA4
             this.bioturbation_depth_decay_textbox.Name = "bioturbation_depth_decay_textbox";
             this.bioturbation_depth_decay_textbox.Size = new System.Drawing.Size(100, 20);
             this.bioturbation_depth_decay_textbox.TabIndex = 56;
-            this.bioturbation_depth_decay_textbox.Text = "2.5";
+            this.bioturbation_depth_decay_textbox.Text = "0.4";
             // 
             // potential_bioturbation_textbox
             // 
@@ -4105,7 +4181,7 @@ namespace LORICA4
             this.carbon_o_depth_decay_textbox.Name = "carbon_o_depth_decay_textbox";
             this.carbon_o_depth_decay_textbox.Size = new System.Drawing.Size(100, 20);
             this.carbon_o_depth_decay_textbox.TabIndex = 75;
-            this.carbon_o_depth_decay_textbox.Text = "8";
+            this.carbon_o_depth_decay_textbox.Text = "0.125";
             // 
             // carbon_y_depth_decay_textbox
             // 
@@ -4113,7 +4189,7 @@ namespace LORICA4
             this.carbon_y_depth_decay_textbox.Name = "carbon_y_depth_decay_textbox";
             this.carbon_y_depth_decay_textbox.Size = new System.Drawing.Size(100, 20);
             this.carbon_y_depth_decay_textbox.TabIndex = 73;
-            this.carbon_y_depth_decay_textbox.Text = "8";
+            this.carbon_y_depth_decay_textbox.Text = "0.125";
             // 
             // carbon_humification_fraction_textbox
             // 
@@ -4129,7 +4205,7 @@ namespace LORICA4
             this.carbon_depth_decay_textbox.Name = "carbon_depth_decay_textbox";
             this.carbon_depth_decay_textbox.Size = new System.Drawing.Size(100, 20);
             this.carbon_depth_decay_textbox.TabIndex = 61;
-            this.carbon_depth_decay_textbox.Text = "8";
+            this.carbon_depth_decay_textbox.Text = "0.125";
             // 
             // carbon_input_textbox
             // 
@@ -5338,82 +5414,6 @@ namespace LORICA4
             this.dtm_iterate_checkbox.Text = "iterate comparable DEMs";
             this.dtm_iterate_checkbox.UseVisualStyleBackColor = true;
             // 
-            // groupBox5
-            // 
-            this.groupBox5.Controls.Add(this.label37);
-            this.groupBox5.Controls.Add(this.soil_specify_button);
-            this.groupBox5.Controls.Add(this.textbox_layer_thickness);
-            this.groupBox5.Controls.Add(this.label_max_soil_layers);
-            this.groupBox5.Controls.Add(this.checkbox_layer_thickness);
-            this.groupBox5.Controls.Add(this.textbox_max_soil_layers);
-            this.groupBox5.Location = new System.Drawing.Point(499, 16);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(234, 72);
-            this.groupBox5.TabIndex = 159;
-            this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "for soils:";
-            // 
-            // groupBox13
-            // 
-            this.groupBox13.Controls.Add(this.groupBox5);
-            this.groupBox13.Controls.Add(this.check_space_DTM);
-            this.groupBox13.Controls.Add(this.soildepth_constant_value_box);
-            this.groupBox13.Controls.Add(this.soildepth_input_filename_textbox);
-            this.groupBox13.Controls.Add(this.dtm_input_filename_textbox);
-            this.groupBox13.Controls.Add(this.check_space_soildepth);
-            this.groupBox13.Controls.Add(this.label3);
-            this.groupBox13.Controls.Add(this.label23);
-            this.groupBox13.Location = new System.Drawing.Point(6, 35);
-            this.groupBox13.Name = "groupBox13";
-            this.groupBox13.Size = new System.Drawing.Size(749, 94);
-            this.groupBox13.TabIndex = 160;
-            this.groupBox13.TabStop = false;
-            this.groupBox13.Text = "required";
-            // 
-            // groupBox17
-            // 
-            this.groupBox17.Controls.Add(this.groupBox3);
-            this.groupBox17.Controls.Add(this.check_time_evap);
-            this.groupBox17.Controls.Add(this.check_time_infil);
-            this.groupBox17.Controls.Add(this.check_time_rain);
-            this.groupBox17.Controls.Add(this.check_time_till_fields);
-            this.groupBox17.Controls.Add(this.check_time_landuse);
-            this.groupBox17.Controls.Add(this.tillfields_constant_textbox);
-            this.groupBox17.Controls.Add(this.tillfields_input_filename_textbox);
-            this.groupBox17.Controls.Add(this.evap_constant_value_box);
-            this.groupBox17.Controls.Add(this.evap_input_filename_textbox);
-            this.groupBox17.Controls.Add(this.infil_constant_value_box);
-            this.groupBox17.Controls.Add(this.infil_input_filename_textbox);
-            this.groupBox17.Controls.Add(this.rainfall_constant_value_box);
-            this.groupBox17.Controls.Add(this.landuse_constant_value_box);
-            this.groupBox17.Controls.Add(this.landuse_input_filename_textbox);
-            this.groupBox17.Controls.Add(this.rain_input_filename_textbox);
-            this.groupBox17.Controls.Add(this.check_space_evap);
-            this.groupBox17.Controls.Add(this.check_space_infil);
-            this.groupBox17.Controls.Add(this.check_space_rain);
-            this.groupBox17.Controls.Add(this.check_space_till_fields);
-            this.groupBox17.Controls.Add(this.check_space_landuse);
-            this.groupBox17.Controls.Add(this.label17);
-            this.groupBox17.Controls.Add(this.label15);
-            this.groupBox17.Controls.Add(this.label14);
-            this.groupBox17.Controls.Add(this.label4);
-            this.groupBox17.Controls.Add(this.label25);
-            this.groupBox17.Location = new System.Drawing.Point(7, 135);
-            this.groupBox17.Name = "groupBox17";
-            this.groupBox17.Size = new System.Drawing.Size(747, 155);
-            this.groupBox17.TabIndex = 161;
-            this.groupBox17.TabStop = false;
-            this.groupBox17.Text = "depending on process (optional)";
-            // 
-            // label37
-            // 
-            this.label37.AutoSize = true;
-            this.label37.Location = new System.Drawing.Point(192, 46);
-            this.label37.Name = "label37";
-            this.label37.Size = new System.Drawing.Size(21, 13);
-            this.label37.TabIndex = 159;
-            this.label37.Text = "cm";
-            // 
             // Mother_form
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -5455,6 +5455,12 @@ namespace LORICA4
             this.groupBox7.ResumeLayout(false);
             this.groupBox7.PerformLayout();
             this.Input.ResumeLayout(false);
+            this.groupBox17.ResumeLayout(false);
+            this.groupBox17.PerformLayout();
+            this.groupBox13.ResumeLayout(false);
+            this.groupBox13.PerformLayout();
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
             this.Geomorph.ResumeLayout(false);
             this.Process_tabs.ResumeLayout(false);
             this.Water.ResumeLayout(false);
@@ -5510,12 +5516,6 @@ namespace LORICA4
             this.Options.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            this.groupBox5.ResumeLayout(false);
-            this.groupBox5.PerformLayout();
-            this.groupBox13.ResumeLayout(false);
-            this.groupBox13.PerformLayout();
-            this.groupBox17.ResumeLayout(false);
-            this.groupBox17.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -6681,7 +6681,7 @@ namespace LORICA4
 
             if (bedrock_weathering_active)
             {
-                calculate_bedrock_weathering();
+                calculate_soil_production();
                 soil_update_split_and_combine_layers();
             }
 

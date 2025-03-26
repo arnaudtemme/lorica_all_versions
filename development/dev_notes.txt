@@ -54,6 +54,14 @@ For Alessia:
 
 For Arnaud:
 -- steps already done
+-- FINISHED insert separate function for integrating across an exponential decay function for individual layers
+-- homogenize the interface and all functions to use ONLY depth decay factors in METERS
+-- FINISHED carbon (????)
+-- FINISHED top-level bioturb, now rest (????)
+-- FINISHED creep (creep_depth_decay_constant)
+-- FINISHED three kinds of weathering (Cone, Cthree. Cfive, Csix definition)
+-- FINISHED why do we divide the chem weathering constant by 10? That MUST be wrong, and I removed it
+-- why do multiple creep with a factor of 100? Likely wrong
 
 For Marijn:
 -- FINISHED Two OM models next to each other

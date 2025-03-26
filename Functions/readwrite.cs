@@ -409,7 +409,6 @@ namespace LORICA4
             if (check_time_rain.Checked) { rainfall_record = new int[recordsize]; }
             if (check_time_evap.Checked) { evap_record = new int[recordsize]; }
             if (check_time_infil.Checked) { infil_record = new int[recordsize]; }
-            if (check_time_T.Checked) { temp_record = new int[recordsize]; }
             if (check_time_till_fields.Checked) { till_record = new int[recordsize]; }
 
             memory_records = true;
