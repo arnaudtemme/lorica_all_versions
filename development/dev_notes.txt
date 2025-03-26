@@ -56,7 +56,33 @@ For Arnaud:
 -- steps already done
 
 For Marijn:
--- Two OM models next to each other
--- bioturbation upheaval to treefaal
--- split mounding and mxing in bioturbation
+-- FINISHED Two OM models next to each other
+-- NOT NEEDED bioturbation upheaval to treefall
+-- FINISHED split mounding and mxing in bioturbation
 -- check clay dynbamics versus chemical weathering
+-- change Jagercikova cm units
+-- check tillage fields 0,1,2 or nodata 
+
+
+WISHLIST
+- possibility to set fixed BD value in interfae instead of PTF MvdM
+- collective transfer function for transport into pools which is later redistributed (bt_mixing, tillage mixing / upheaval, treefall, water erosion?) MvdM
+- put all case studies / calibration studies in popup window
+- empty output folder before simulations, to avoid old and new files in one directory. Give warning or popup window if there are files present
+
+ERRORS & DEVELOPMENT
+- initial soil properties
+	- YOM and OOM fractions are included in the total sum of mass fractions
+	- Error when a cell is emptied before a new value is entered
+	- YOM and OOM fractions are not considered in initialise_soil(). 
+	- should be included in initial BD calculations as well
+	- However, does it make sense to specify initial SOM? We don't want constant SOM throughout the soil profiles. Maybe specify topsoil SOM and use SOM parameters to create a depth curve
+- difference initialize_once and initialize_once_testing, and which one should be used?
+- FINISHED upheaval: build check for limiting mixing depth to available soil depth
+- bulk_density_calc: when a layer is split, the total thickness of the two new layers is larger than of the original layer, due to differences in bulk density calculations. 
+   - Approach to solve this: integrate over top and bottom elevation of layer
+   - Calculate average of the integral and calculate back which depth corresponds to this value
+   - use that value in BD calculations instead of the depth of the midpoint of the layer
+   - check if this solves the problem
+- one code for initialize_once(_testing)
+- integrate initialise_every_till into initialise_every
