@@ -865,29 +865,29 @@ namespace LORICA4
         int growth_a_max, age_a_max;
 
         //Soil physical weathering parameters
-        double physical_weathering_constant, weathered_mass_kg, Cone, Ctwo;
+        double physical_weathering_constant, weathered_mass_kg, phys_weath_decay_depth_m, Ctwo;
         double[] upper_particle_size = new double[5];
 
         //Soil chemical weathering parameters
-        double chemical_weathering_constant, Cthree, Cfour, Cfive, Csix, neoform_constant;
+        double chemical_weathering_constant, chem_weath_decay_depth_m, Cfour, Cfive, Csix, neoform_constant;
         double[] specific_area = new double[5];
 
         //Clay translocation parameters
         double max_eluviation, Cclay, ct_depthdec;
 
         //Bioturbation parameters
-        double potential_bt_mixing_kg_m2_y, potential_bt_mounding_kg_m2_y, bioturbation_depth_decay_constant;
+        double potential_bt_mixing_kg_m2_y, potential_bt_mounding_kg_m2_y, bioturbation_decay_depth_m;
         int bt_depth_function;
 
         //Carbon cycle parameters
         double potential_OM_input,
-               OM_input_depth_decay_constant,
+               OM_input_decay_depth_m,
                humification_fraction,
                potential_young_decomp_rate,
                potential_old_decomp_rate,
-               young_depth_decay_constant,
+               young_OM_decomp_char_decay_depth_m,
                old_CTI_decay_constant,
-               old_depth_decay_constant,
+               old_OM_decomp_char_decay_depth_m,
                young_CTI_decay_constant;
         int som_cycle_algorithm;
 
@@ -6248,7 +6248,7 @@ namespace LORICA4
                         {
                             try { potential_creep_kg_m2_y = double.Parse(parameter_diffusivity_textbox.Text); }
                             catch { input_data_error = true; MessageBox.Show("value for parameter potential_creep_kg_m2_y is not valid"); }
-                            try { bioturbation_depth_decay_constant = Convert.ToDouble(bt_depth_decay_textbox.Text); }
+                            try { bioturbation_decay_depth_m = Convert.ToDouble(bt_depth_decay_textbox.Text); }
                             catch { input_data_error = true; MessageBox.Show("value for creep depth dependence (from BIOTURBATION) is not valid"); }
                         }
 
@@ -6334,7 +6334,7 @@ namespace LORICA4
                             try
                             {
                                 physical_weathering_constant = Convert.ToDouble(Physical_weath_C1_textbox.Text);
-                                Cone = Convert.ToDouble(physical_weath_constant1.Text);
+                                phys_weath_decay_depth_m = Convert.ToDouble(physical_weath_constant1.Text);
                                 Ctwo = Convert.ToDouble(physical_weath_constant2.Text);
                                 //the upper sizes of particle for the different fractions are declared in initialise_soil because they are always needed
                                 // Debug.WriteLine("succesfully read parameters for pysical weathering");
@@ -6351,7 +6351,7 @@ namespace LORICA4
                             try
                             {
                                 chemical_weathering_constant = Convert.ToDouble(chem_weath_rate_constant_textbox.Text);
-                                Cthree = Convert.ToDouble(chem_weath_depth_constant_textbox.Text);
+                                chem_weath_decay_depth_m = Convert.ToDouble(chem_weath_depth_constant_textbox.Text);
                                 Cfour = Convert.ToDouble(chem_weath_specific_coefficient_textbox.Text);
                                 specific_area[0] = Convert.ToDouble(soildata.specific_area_coarse_textbox.Text);
                                 specific_area[1] = Convert.ToDouble(soildata.specific_area_sand_textbox.Text);
@@ -6402,7 +6402,7 @@ namespace LORICA4
                             {
                                 potential_bt_mixing_kg_m2_y = Convert.ToDouble(potential_bt_mixing_textbox.Text); // MvdM changed name to match parameter in BT process
                                 potential_bt_mounding_kg_m2_y = Convert.ToDouble(potential_bt_mounding_textbox.Text);
-                                bioturbation_depth_decay_constant = Convert.ToDouble(bt_depth_decay_textbox.Text);
+                                bioturbation_decay_depth_m = Convert.ToDouble(bt_depth_decay_textbox.Text);
                                 this.Invoke(new MethodInvoker(delegate () { bt_depth_function = bt_depthfunction_box.SelectedIndex; }));
 
                             }
@@ -6420,12 +6420,12 @@ namespace LORICA4
                                 potential_OM_input = Convert.ToDouble(carbon_input_textbox.Text);
 
                                 this.Invoke(new MethodInvoker(delegate () { som_cycle_algorithm = som_cycle_algorithm_box.SelectedIndex; }));
-                                OM_input_depth_decay_constant = Convert.ToDouble(carbon_depth_decay_textbox.Text);
+                                OM_input_decay_depth_m = Convert.ToDouble(carbon_depth_decay_textbox.Text);
                                 humification_fraction = Convert.ToDouble(carbon_humification_fraction_textbox.Text);
                                 potential_young_decomp_rate = Convert.ToDouble(carbon_y_decomp_rate_textbox.Text);
                                 potential_old_decomp_rate = Convert.ToDouble(carbon_o_decomp_rate_textbox.Text);
-                                young_depth_decay_constant = Convert.ToDouble(carbon_y_depth_decay_textbox.Text);
-                                old_depth_decay_constant = Convert.ToDouble(carbon_o_depth_decay_textbox.Text);
+                                young_OM_decomp_char_decay_depth_m = Convert.ToDouble(carbon_y_depth_decay_textbox.Text);
+                                old_OM_decomp_char_decay_depth_m = Convert.ToDouble(carbon_o_depth_decay_textbox.Text);
                             }
                             catch
                             {

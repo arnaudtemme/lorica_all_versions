@@ -43,7 +43,7 @@ namespace LORICA4
                                 {
                                     int tempclass = tex_class;
                                     // calculate the mass involved in physical weathering
-                                    double layer_fraction = activity_fraction(Cone, soildepth_m[row, col], depth, depth + layerthickness_m[row, col, layer]);
+                                    double layer_fraction = activity_fraction(phys_weath_decay_depth_m, soildepth_m[row, col], depth, depth + layerthickness_m[row, col, layer]);
                                     weathered_mass_kg = texture_kg[row, tempcol, templayer, tempclass] * physical_weathering_constant * layer_fraction * -Ctwo / Math.Log10(upper_particle_size[tempclass]) * dt;
                                     total_phys_weathered_mass_kg += weathered_mass_kg;
                                     //Debug.WriteLine(" weathered mass is " + weathered_mass + " for class " + tempclass );
@@ -113,7 +113,7 @@ namespace LORICA4
                                 tex_class = 0;
                                 int tempclass = tex_class;
                                 // calculate the mass involved in physical weathering
-                                double layer_fraction = activity_fraction(Cone, soildepth_m[row, col], depth, depth + layerthickness_m[row, col, layer]);
+                                double layer_fraction = activity_fraction(phys_weath_decay_depth_m, soildepth_m[row, col], depth, depth + layerthickness_m[row, col, layer]);
                                 weathered_mass_kg = texture_kg[row, tempcol, templayer, tempclass] * physical_weathering_constant * layer_fraction  * -Ctwo / Math.Log10(upper_particle_size[tempclass]) * dt;
                                 //Debug.WriteLine(" weathered mass is " + weathered_mass + " for class " + tempclass );
                                 // calculate the products involved
@@ -167,7 +167,7 @@ namespace LORICA4
                     {
                         if (layerthickness_m[row, col, layer] > 0)
                         {
-                            double layer_fraction = activity_fraction(Cthree, soildepth_m[row, col], depth, depth + layerthickness_m[row, col, layer]);
+                            double layer_fraction = activity_fraction(chem_weath_decay_depth_m, soildepth_m[row, col], depth, depth + layerthickness_m[row, col, layer]);
                             for (tex_class = 1; tex_class <= 4; tex_class++) // only sand, silt, clay and fine clay are chemically weathered
                             {
                                 
@@ -322,7 +322,7 @@ namespace LORICA4
                             }
                            
                             //here we calculate the first quantity: how much bioturbation kg needs to happen in this location
-                            local_bioturbation_kg = potential_bt_mixing_kg_m2_y * (1 - Math.Exp(-bioturbation_depth_decay_constant * total_soil_thickness_m)) * dx * dx * dt;
+                            local_bioturbation_kg = potential_bt_mixing_kg_m2_y * (1 - Math.Exp(-bioturbation_decay_depth_m * total_soil_thickness_m)) * dx * dx * dt;
                             if (local_bioturbation_kg < 0) // local_bt == 0 happens when soil is absent
                             {
                                 Debug.WriteLine(" error in local_bioturbation calculation : zero mass");
@@ -340,7 +340,7 @@ namespace LORICA4
                                 if (total_layer_fine_earth_mass_kg(row, col, layer) > 0)  //this says: if the layer actually exists
 
                                 {
-                                    double dd_bt = bioturbation_depth_decay_constant * 2; // possible adjustments to second depth decay for bioturbation are possible here
+                                    double dd_bt = bioturbation_decay_depth_m * 2; // possible adjustments to second depth decay for bioturbation are possible here
 
 
                                     //double total_BT_depth_decay_index = 
@@ -354,7 +354,7 @@ namespace LORICA4
                                     //then calculate the fraction of bioturbation that will happen in this layer, and multiply with total bioturbation in this cell
                                     fine_layer_mass = total_layer_fine_earth_mass_kg(row, col, layer);
 
-                                    layer_bioturbation_kg = activity_fraction(bioturbation_depth_decay_constant, total_soil_thickness_m, depth, layerthickness_m[row, col, layer]) * local_bioturbation_kg;
+                                    layer_bioturbation_kg = activity_fraction(bioturbation_decay_depth_m, total_soil_thickness_m, depth, layerthickness_m[row, col, layer]) * local_bioturbation_kg;
                                     mass_distance_sum = 0;
 
                                     depth += layerthickness_m[row, col, layer] /2;  ///ArT development needed
@@ -675,7 +675,7 @@ namespace LORICA4
                             total_soil_thickness_m = total_soil_thickness(row, col);
 
                             //here we calculate the first quantity: how much bioturbation kg needs to happen in this location
-                            local_bioturbation_kg = potential_bt_mounding_kg_m2_y * (1 - Math.Exp(-bioturbation_depth_decay_constant * total_soil_thickness_m)) * dx * dx * dt;
+                            local_bioturbation_kg = potential_bt_mounding_kg_m2_y * (1 - Math.Exp(-bioturbation_decay_depth_m * total_soil_thickness_m)) * dx * dx * dt;
                             if (local_bioturbation_kg < 0) // local_bt == 0 happens when soil is absent
                             {
                                 Debug.WriteLine(" error in local_bioturbation calculation : zero mass");
@@ -691,7 +691,7 @@ namespace LORICA4
 
                                 if (total_layer_fine_earth_mass_kg(row, col, layer) > 0)  //this says: if the layer actually exists
                                 {
-                                    double dd_bt = bioturbation_depth_decay_constant; // possible adjustments to second depth decay for bioturbation are possible here
+                                    double dd_bt = bioturbation_decay_depth_m; // possible adjustments to second depth decay for bioturbation are possible here
 
                                     // determine fraction bioturbation from this layer using the function soil_bioturbation_layer_activity. Then calculate bioturbated fraction of source layer
                                     fine_layer_mass = total_layer_fine_earth_mass_kg(row, col, layer);
@@ -939,8 +939,8 @@ namespace LORICA4
                 {
                     // Exponential
                     // bioturbation_depth_decay_constant = 6;
-                    layer_bio_activity_index = Math.Exp(-bioturbation_depth_decay_constant * depth) - (Math.Exp(-bioturbation_depth_decay_constant * (depth + layerthickness_m[row, col, layer])));
-                    total_bio_activity_index = 1 - (Math.Exp(-bioturbation_depth_decay_constant * total_soil_thickness_m));
+                    layer_bio_activity_index = Math.Exp(-bioturbation_decay_depth_m * depth) - (Math.Exp(-bioturbation_decay_depth_m * (depth + layerthickness_m[row, col, layer])));
+                    total_bio_activity_index = 1 - (Math.Exp(-bioturbation_decay_depth_m * total_soil_thickness_m));
                 }
 
                 if (bt_depth_function == 1) 
@@ -949,14 +949,14 @@ namespace LORICA4
                     // bioturbation_depth_decay_constant = 1;
                     depth_upp = depth;
                     depth_low = depth + layerthickness_m[row, col, layer];
-                    if (depth_upp < 1 / bioturbation_depth_decay_constant) // Is the upper part of the layer still under the mixing limit?
+                    if (depth_upp < 1 / bioturbation_decay_depth_m) // Is the upper part of the layer still under the mixing limit?
                     {
-                        if (depth_low > (1 / bioturbation_depth_decay_constant))
+                        if (depth_low > (1 / bioturbation_decay_depth_m))
                         {
-                            depth_low = 1 / bioturbation_depth_decay_constant; // if the lower boundary is below the mixing limit, reset it to the mixing limit
+                            depth_low = 1 / bioturbation_decay_depth_m; // if the lower boundary is below the mixing limit, reset it to the mixing limit
                         }
-                        layer_bio_activity_index = -bioturbation_depth_decay_constant / 2 * (Math.Pow(depth_low, 2) - Math.Pow(depth_upp, 2)) + ((depth_low) - depth_upp);
-                        total_bio_activity_index = -bioturbation_depth_decay_constant / 2 * Math.Pow(1 / bioturbation_depth_decay_constant, 2) + 1 / bioturbation_depth_decay_constant;
+                        layer_bio_activity_index = -bioturbation_decay_depth_m / 2 * (Math.Pow(depth_low, 2) - Math.Pow(depth_upp, 2)) + ((depth_low) - depth_upp);
+                        total_bio_activity_index = -bioturbation_decay_depth_m / 2 * Math.Pow(1 / bioturbation_decay_depth_m, 2) + 1 / bioturbation_decay_depth_m;
                     }
                     else
                     { // if top of the layer is below the mixing limit, there is no BT
@@ -971,14 +971,14 @@ namespace LORICA4
                     //bioturbation_depth_decay_constant = 1;
                     depth_upp = depth;
                     depth_low = depth + layerthickness_m[row, col, layer];
-                    if (depth_upp < bioturbation_depth_decay_constant) // Is the upper part of the layer still under the mixing limit?
+                    if (depth_upp < bioturbation_decay_depth_m) // Is the upper part of the layer still under the mixing limit?
                     {
-                        if (depth_low > bioturbation_depth_decay_constant)
+                        if (depth_low > bioturbation_decay_depth_m)
                         {
-                            depth_low = bioturbation_depth_decay_constant; // if the lower boundary is below the mixing limit, reset it to the mixing limit
+                            depth_low = bioturbation_decay_depth_m; // if the lower boundary is below the mixing limit, reset it to the mixing limit
                         }
                         layer_bio_activity_index = depth_low - depth_upp;
-                        total_bio_activity_index = bioturbation_depth_decay_constant;
+                        total_bio_activity_index = bioturbation_decay_depth_m;
                     }
                     else
                     { // if top of the layer is below the mixing limit, there is no BT
@@ -1066,7 +1066,7 @@ namespace LORICA4
                                 total_soil_thickness += layerthickness_m[row, col, layer];
                             }
                         }
-                        local_OM_input_kg = potential_OM_input * (1 - Math.Exp(-OM_input_depth_decay_constant * total_soil_thickness)) * dx * dx * dt;
+                        local_OM_input_kg = potential_OM_input * (1 - Math.Exp(-OM_input_decay_depth_m * total_soil_thickness)) * dx * dx * dt;
                         total_OM_input_kg += local_OM_input_kg;
                         depth = 0;
 
@@ -1075,7 +1075,7 @@ namespace LORICA4
                             if (layerthickness_m[row, col, layer] > 0)
                             {
                                 // if (layer == 0) { Debugger.Break(); }
-                                layer_OM_input_kg = activity_fraction(OM_input_depth_decay_constant, total_soil_thickness, depth, depth + layerthickness_m[row, col, layer]) * local_OM_input_kg;
+                                layer_OM_input_kg = activity_fraction(OM_input_decay_depth_m, total_soil_thickness, depth, depth + layerthickness_m[row, col, layer]) * local_OM_input_kg;
 
                                 //decomposition gets lost as CO2 to the air (and soil water)
 
@@ -1092,7 +1092,7 @@ namespace LORICA4
                                     // ICBM model
                                     // Andrén & Kätterer 1997: https://doi.org/10.2307/2641210
                                     young_SOM_kg[row, col, layer] += layer_OM_input_kg;
-                                    old_SOM_kg[row, col, layer] += humification_fraction * (young_SOM_kg[row, col, layer] * potential_young_decomp_rate * 1 * Math.Exp(-young_depth_decay_constant * depth));
+                                    old_SOM_kg[row, col, layer] += humification_fraction * (young_SOM_kg[row, col, layer] * potential_young_decomp_rate * 1 * Math.Exp(-young_OM_decomp_char_decay_depth_m * depth));
                                 }
                                 if (double.IsNaN(young_SOM_kg[row, col, layer]))
                                 {
@@ -1101,8 +1101,8 @@ namespace LORICA4
 
                                 //young_decomposition_rate = potential_young_decomp_rate * Math.Exp(-young_CTI_decay_constant * dynamic_TWI) * Math.Exp(-young_depth_decay_constant * depth);
                                 //old_decomposition_rate = potential_old_decomp_rate * Math.Exp(-old_CTI_decay_constant * dynamic_TWI) * Math.Exp(-old_depth_decay_constant * depth);
-                                young_decomposition_rate = potential_young_decomp_rate * activity_fraction(young_depth_decay_constant, total_soil_thickness, depth, depth + layerthickness_m[row, col, layer]);
-                                old_decomposition_rate = potential_old_decomp_rate * activity_fraction(old_depth_decay_constant, total_soil_thickness, depth, depth + layerthickness_m[row, col, layer]);
+                                young_decomposition_rate = potential_young_decomp_rate * activity_fraction(young_OM_decomp_char_decay_depth_m, total_soil_thickness, depth, depth + layerthickness_m[row, col, layer]);
+                                old_decomposition_rate = potential_old_decomp_rate * activity_fraction(old_OM_decomp_char_decay_depth_m, total_soil_thickness, depth, depth + layerthickness_m[row, col, layer]);
                                 young_SOM_kg[row, col, layer] *= (1 - young_decomposition_rate);
                                 old_SOM_kg[row, col, layer] *= (1 - old_decomposition_rate);
                                 //Debug.WriteLine(" cell  " + row + " " + col + " has layer_OM_input of " + layer_OM_input_kg);

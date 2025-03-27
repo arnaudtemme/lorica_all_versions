@@ -2579,7 +2579,7 @@ namespace LORICA4
                         {
                             total_soil_thickness_m += layerthickness_m[row, col, layer];
                         }
-                        local_creep_kg = potential_creep_kg_m2_y * (1 - Math.Exp(-bioturbation_depth_decay_constant * total_soil_thickness_m)) * dx * dx * dt;
+                        local_creep_kg = potential_creep_kg_m2_y * (1 - Math.Exp(-bioturbation_decay_depth_m * total_soil_thickness_m)) * dx * dx * dt;
                         //Debug.WriteLine("cr3");
 
                         if (local_creep_kg > 0)
@@ -2791,7 +2791,7 @@ namespace LORICA4
                 //Debug.WriteLine("Cr3.1, dtm = {0}", dtm[row1, col1]);
                 //displaysoil(row1, col1);
                 int layerreceiver = 0;
-                double creep_depth_decay_constant = Convert.ToDouble(bt_depth_decay_textbox.Text);
+                double creep_decay_depth_m = Convert.ToDouble(bt_depth_decay_textbox.Text);
 
                 double frac_overlap_lay, upperdepthdonor = 0, lowerdepthdonor = 0, upperdepthreceiver = 0, lowerdepthreceiver = 0, dsoil = 0, upp_z_lay = 0, int_curve_total, int_curve_lay, mass_export_lay_kg;
                 bool C_done = false, lastlayer = false;
@@ -2844,7 +2844,7 @@ namespace LORICA4
                         }
                         // int_curve_lay = 1 / (-creep_depth_decay_constant) * Math.Exp(-creep_depth_decay_constant * upp_z_lay) - 1 / (-creep_depth_decay_constant) * Math.Exp(-creep_depth_decay_constant * (upp_z_lay + laythick_m));//integral over depth decay function, from top of layer to bottom of layer                        
                         //lowerdepthdonor = upperdepthdonor - laythick_m; // elevation range donor layer
-                        double curve_fraction = activity_fraction(creep_depth_decay_constant, dsoil, upp_z_lay, upp_z_lay + laythick_m);
+                        double curve_fraction = activity_fraction(creep_decay_depth_m, dsoil, upp_z_lay, upp_z_lay + laythick_m);
                         mass_export_lay_kg = mass_export_soil_kg * (curve_fraction); // mass to be removed from layer in kg 
                         upp_z_lay += laythick_m;
 
