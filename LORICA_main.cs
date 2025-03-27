@@ -1594,9 +1594,9 @@ namespace LORICA4
             label75.AutoSize = true;
             label75.Location = new System.Drawing.Point(130, 145);
             label75.Name = "label75";
-            label75.Size = new System.Drawing.Size(124, 13);
+            label75.Size = new System.Drawing.Size(83, 13);
             label75.TabIndex = 63;
-            label75.Text = "depth limitation rate [m-1]";
+            label75.Text = "decay depth [m]";
             // 
             // label74
             // 
@@ -1655,9 +1655,9 @@ namespace LORICA4
             label84.AutoSize = true;
             label84.Location = new System.Drawing.Point(558, 140);
             label84.Name = "label84";
-            label84.Size = new System.Drawing.Size(136, 13);
+            label84.Size = new System.Drawing.Size(88, 13);
             label84.TabIndex = 74;
-            label84.Text = "depth decay constant [m-1]";
+            label84.Text = "decay depths [m]";
             // 
             // label86
             // 
@@ -1682,9 +1682,9 @@ namespace LORICA4
             label_bt_depthdecay.AutoSize = true;
             label_bt_depthdecay.Location = new System.Drawing.Point(133, 104);
             label_bt_depthdecay.Name = "label_bt_depthdecay";
-            label_bt_depthdecay.Size = new System.Drawing.Size(99, 13);
+            label_bt_depthdecay.Size = new System.Drawing.Size(83, 13);
             label_bt_depthdecay.TabIndex = 58;
-            label_bt_depthdecay.Text = "depth decay rate [-]";
+            label_bt_depthdecay.Text = "decay depth [m]";
             // 
             // label68
             // 
@@ -1796,9 +1796,9 @@ namespace LORICA4
             label51.AutoSize = true;
             label51.Location = new System.Drawing.Point(136, 67);
             label51.Name = "label51";
-            label51.Size = new System.Drawing.Size(136, 13);
+            label51.Size = new System.Drawing.Size(83, 13);
             label51.TabIndex = 17;
-            label51.Text = "depth decay constant [m-1]";
+            label51.Text = "decay depth [m]";
             // 
             // label50
             // 
@@ -1831,9 +1831,9 @@ namespace LORICA4
             label42.AutoSize = true;
             label42.Location = new System.Drawing.Point(142, 72);
             label42.Name = "label42";
-            label42.Size = new System.Drawing.Size(136, 13);
+            label42.Size = new System.Drawing.Size(83, 13);
             label42.TabIndex = 11;
-            label42.Text = "depth decay constant [m-1]";
+            label42.Text = "decay depth [m]";
             // 
             // label43
             // 
@@ -3897,11 +3897,12 @@ namespace LORICA4
             // 
             // physical_weath_constant1
             // 
+            this.physical_weath_constant1.ImeMode = System.Windows.Forms.ImeMode.Off;
             this.physical_weath_constant1.Location = new System.Drawing.Point(35, 69);
             this.physical_weath_constant1.Name = "physical_weath_constant1";
             this.physical_weath_constant1.Size = new System.Drawing.Size(100, 20);
             this.physical_weath_constant1.TabIndex = 3;
-            this.physical_weath_constant1.Text = "0.5";
+            this.physical_weath_constant1.Text = "2";
             // 
             // Physical_weath_C1_textbox
             // 
@@ -3955,7 +3956,7 @@ namespace LORICA4
             this.chem_weath_depth_constant_textbox.Name = "chem_weath_depth_constant_textbox";
             this.chem_weath_depth_constant_textbox.Size = new System.Drawing.Size(100, 20);
             this.chem_weath_depth_constant_textbox.TabIndex = 14;
-            this.chem_weath_depth_constant_textbox.Text = "2.5";
+            this.chem_weath_depth_constant_textbox.Text = "0.4";
             // 
             // chem_weath_rate_constant_textbox
             // 
@@ -4152,7 +4153,6 @@ namespace LORICA4
             "Exponential",
             "Linear",
             "Abrupt"});
-            this.bt_depthfunction_box.SelectedIndex = 0;
             this.bt_depthfunction_box.Location = new System.Drawing.Point(27, 129);
             this.bt_depthfunction_box.Name = "bt_depthfunction_box";
             this.bt_depthfunction_box.Size = new System.Drawing.Size(99, 21);
@@ -4172,7 +4172,7 @@ namespace LORICA4
             this.bt_depth_decay_textbox.Name = "bt_depth_decay_textbox";
             this.bt_depth_decay_textbox.Size = new System.Drawing.Size(100, 20);
             this.bt_depth_decay_textbox.TabIndex = 56;
-            this.bt_depth_decay_textbox.Text = "2.5";
+            this.bt_depth_decay_textbox.Text = "0.4";
             // 
             // potential_bt_mixing_textbox
             // 
@@ -4230,7 +4230,6 @@ namespace LORICA4
             this.som_cycle_algorithm_box.Items.AddRange(new object[] {
             "Yoo et al., 2006",
             "ICBM (Introductory Carbon Balance Model)"});
-            this.som_cycle_algorithm_box.SelectedIndex = 0;
             this.som_cycle_algorithm_box.Location = new System.Drawing.Point(24, 69);
             this.som_cycle_algorithm_box.Name = "som_cycle_algorithm_box";
             this.som_cycle_algorithm_box.Size = new System.Drawing.Size(121, 21);
@@ -4258,7 +4257,7 @@ namespace LORICA4
             this.carbon_o_depth_decay_textbox.Name = "carbon_o_depth_decay_textbox";
             this.carbon_o_depth_decay_textbox.Size = new System.Drawing.Size(100, 20);
             this.carbon_o_depth_decay_textbox.TabIndex = 75;
-            this.carbon_o_depth_decay_textbox.Text = "8";
+            this.carbon_o_depth_decay_textbox.Text = "0.125";
             // 
             // carbon_y_depth_decay_textbox
             // 
@@ -4266,7 +4265,7 @@ namespace LORICA4
             this.carbon_y_depth_decay_textbox.Name = "carbon_y_depth_decay_textbox";
             this.carbon_y_depth_decay_textbox.Size = new System.Drawing.Size(100, 20);
             this.carbon_y_depth_decay_textbox.TabIndex = 73;
-            this.carbon_y_depth_decay_textbox.Text = "8";
+            this.carbon_y_depth_decay_textbox.Text = "0.125";
             // 
             // carbon_humification_fraction_textbox
             // 
@@ -4282,7 +4281,7 @@ namespace LORICA4
             this.carbon_depth_decay_textbox.Name = "carbon_depth_decay_textbox";
             this.carbon_depth_decay_textbox.Size = new System.Drawing.Size(100, 20);
             this.carbon_depth_decay_textbox.TabIndex = 61;
-            this.carbon_depth_decay_textbox.Text = "8";
+            this.carbon_depth_decay_textbox.Text = "0.125";
             // 
             // carbon_input_textbox
             // 

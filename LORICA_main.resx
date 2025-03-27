@@ -1294,6 +1294,9 @@
   <metadata name="mainMenu1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>109, 17</value>
   </metadata>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
   <data name="label5.ToolTip" xml:space="preserve">
     <value>Input filenames are not available when both f(x,y) and f(t) are unchecked. In that case, 
 only single values are input
@@ -4543,6 +4546,9 @@ Reference: Temme et al, 1996. Computers and Geosciences
         ew4+fPJZeEzOd/Kr0eP06dP/D644/B+exioGAAAAAElFTkSuQmCC
 </value>
   </data>
+  <metadata name="rockweath_method.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
   <metadata name="rockweath_method.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
