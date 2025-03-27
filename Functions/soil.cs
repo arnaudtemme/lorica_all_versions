@@ -11,7 +11,14 @@ using System.Windows.Forms;
 namespace LORICA4
 {
     public partial class Mother_form 
-    {   
+    {
+
+        public double activity_fraction(double characteristic_depth_m, double soildepth_m, double layertop_m, double layerbottom_m)
+        {
+            double c = characteristic_depth_m;
+            double activity_fraction = (Math.Exp(-layertop_m / c) - Math.Exp(-layerbottom_m / c)) / (Math.Exp(-0 / c) - Math.Exp(-soildepth_m / c));
+            return activity_fraction;
+        }
         void soil_physical_weathering()  //calculate physical weathering
         {
             decimal old_mass_kg = 0;
