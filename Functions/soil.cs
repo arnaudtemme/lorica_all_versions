@@ -39,12 +39,12 @@ namespace LORICA4
                             if (layerthickness_m[row, tempcol, layer] > 0)
                             {
                                 int templayer = layer;
-                                depth += layerthickness_m[row, tempcol, templayer] / 2;
                                 for (tex_class = 0; tex_class <= 2; tex_class++)   //we only physically weather the coarse, sand and silt fractions.
                                 {
                                     int tempclass = tex_class;
                                     // calculate the mass involved in physical weathering
-                                    weathered_mass_kg = texture_kg[row, tempcol, templayer, tempclass] * physical_weathering_constant * Math.Exp(-Cone * depth) * -Ctwo / Math.Log10(upper_particle_size[tempclass]) * dt;
+                                    double layer_fraction = activity_fraction(Cone, soildepth_m[row, col], depth, depth + layerthickness_m[row, col, layer]);
+                                    weathered_mass_kg = texture_kg[row, tempcol, templayer, tempclass] * physical_weathering_constant * layer_fraction * -Ctwo / Math.Log10(upper_particle_size[tempclass]) * dt;
                                     total_phys_weathered_mass_kg += weathered_mass_kg;
                                     //Debug.WriteLine(" weathered mass is " + weathered_mass + " for class " + tempclass );
                                     // calculate the products involved
@@ -64,7 +64,7 @@ namespace LORICA4
                                     }
                                     texture_kg[row, tempcol, templayer, tempclass] -= weathered_mass_kg;
                                 }
-                                depth += layerthickness_m[row, tempcol, templayer] / 2;
+                                depth += layerthickness_m[row, tempcol, templayer] ;
                             }
                         } //else error handling ArT
                     }  //);
@@ -110,15 +110,16 @@ namespace LORICA4
                             if (layerthickness_m[row, tempcol, layer] > 0)
                             {
                                 int templayer = layer;
-                                depth += layerthickness_m[row, tempcol, templayer] / 2;
                                 tex_class = 0;
                                 int tempclass = tex_class;
                                 // calculate the mass involved in physical weathering
-                                weathered_mass_kg = texture_kg[row, tempcol, templayer, tempclass] * physical_weathering_constant * Math.Exp(-Cone * depth) * -Ctwo / Math.Log10(upper_particle_size[tempclass]) * dt;
+                                double layer_fraction = activity_fraction(Cone, soildepth_m[row, col], depth, depth + layerthickness_m[row, col, layer]);
+                                weathered_mass_kg = texture_kg[row, tempcol, templayer, tempclass] * physical_weathering_constant * layer_fraction  * -Ctwo / Math.Log10(upper_particle_size[tempclass]) * dt;
                                 //Debug.WriteLine(" weathered mass is " + weathered_mass + " for class " + tempclass );
                                 // calculate the products involved
                                 texture_kg[row, tempcol, templayer, tempclass + 2] += 0.1 * weathered_mass_kg;
                                 texture_kg[row, tempcol, templayer, tempclass] -= weathered_mass_kg;
+                                depth += layerthickness_m[row, tempcol, templayer] ;
                             }
                         }
                     }  //);
@@ -166,10 +167,11 @@ namespace LORICA4
                     {
                         if (layerthickness_m[row, col, layer] > 0)
                         {
-                            depth += layerthickness_m[row, col, layer] / 2;
+                            double layer_fraction = activity_fraction(Cthree, soildepth_m[row, col], depth, depth + layerthickness_m[row, col, layer]);
                             for (tex_class = 1; tex_class <= 4; tex_class++) // only sand, silt, clay and fine clay are chemically weathered
                             {
-                                weathered_mass_kg = texture_kg[row, col, layer, tex_class] * chemical_weathering_constant / 10 * Math.Exp(-Cthree * depth) * Cfour * specific_area[tex_class] * dt;
+                                
+                                weathered_mass_kg = texture_kg[row, col, layer, tex_class] * chemical_weathering_constant / 10 * layer_fraction * Cfour * specific_area[tex_class] * dt;
 
                                 if (daily_water.Checked) { weathered_mass_kg *= waterfactor[row, col]; }
 
@@ -236,7 +238,7 @@ namespace LORICA4
                             texture_kg[row, col, layer, 4] += total_weath_mass * fraction_neoform;
                             total_fine_neoformed_mass_kg += total_weath_mass * fraction_neoform;
                             total_weath_mass -= total_weath_mass * fraction_neoform;
-                            depth += layerthickness_m[row, col, layer] / 2;
+                            depth += layerthickness_m[row, col, layer] ;
                         }
                     }
                 }
@@ -352,10 +354,10 @@ namespace LORICA4
                                     //then calculate the fraction of bioturbation that will happen in this layer, and multiply with total bioturbation in this cell
                                     fine_layer_mass = total_layer_fine_earth_mass_kg(row, col, layer);
 
-                                    layer_bioturbation_kg = soil_bioturbation_layer_activity(row, col, layer, depth, total_soil_thickness_m) * local_bioturbation_kg;
+                                    layer_bioturbation_kg = activity_fraction(bioturbation_depth_decay_constant, total_soil_thickness_m, depth, layerthickness_m[row, col, layer]) * local_bioturbation_kg;
                                     mass_distance_sum = 0;
 
-                                    depth += layerthickness_m[row, col, layer] / 2;
+                                    depth += layerthickness_m[row, col, layer] /2;  ///ArT development needed
 
                                     double total_BT_depth_decay_index =
                                         -1 / dd_bt * (Math.Exp(-dd_bt * (depth - 0)) - 1) + // upper part of the curve
@@ -1032,7 +1034,7 @@ namespace LORICA4
             catch { Debug.WriteLine(" Crash in litter cycle "); }
         }
 
-        void soil_SOM_cycle()
+        void soil_carbon_cycle()
         {
             try
             {
@@ -1073,12 +1075,9 @@ namespace LORICA4
                             if (layerthickness_m[row, col, layer] > 0)
                             {
                                 // if (layer == 0) { Debugger.Break(); }
-                                layer_OM_input_index = -1 / OM_input_depth_decay_constant * (Math.Exp(-OM_input_depth_decay_constant * (depth + layerthickness_m[row, col, layer])) - Math.Exp(-OM_input_depth_decay_constant * depth));
-                                total_OM_input_index = -1 / OM_input_depth_decay_constant * (Math.Exp(-OM_input_depth_decay_constant * (total_soil_thickness)) - 1);
-                                layer_OM_input_kg = (layer_OM_input_index / total_OM_input_index) * local_OM_input_kg;
+                                layer_OM_input_kg = activity_fraction(OM_input_depth_decay_constant, total_soil_thickness, depth, depth + layerthickness_m[row, col, layer]) * local_OM_input_kg;
 
                                 //decomposition gets lost as CO2 to the air (and soil water)
-                                depth += layerthickness_m[row, col, layer] / 2;
 
                                 if (som_cycle_algorithm == 0) 
                                 {
@@ -1102,12 +1101,12 @@ namespace LORICA4
 
                                 //young_decomposition_rate = potential_young_decomp_rate * Math.Exp(-young_CTI_decay_constant * dynamic_TWI) * Math.Exp(-young_depth_decay_constant * depth);
                                 //old_decomposition_rate = potential_old_decomp_rate * Math.Exp(-old_CTI_decay_constant * dynamic_TWI) * Math.Exp(-old_depth_decay_constant * depth);
-                                young_decomposition_rate = potential_young_decomp_rate * 1 * Math.Exp(-young_depth_decay_constant * depth);
-                                old_decomposition_rate = potential_old_decomp_rate * 1 * Math.Exp(-old_depth_decay_constant * depth);
+                                young_decomposition_rate = potential_young_decomp_rate * activity_fraction(young_depth_decay_constant, total_soil_thickness, depth, depth + layerthickness_m[row, col, layer]);
+                                old_decomposition_rate = potential_old_decomp_rate * activity_fraction(old_depth_decay_constant, total_soil_thickness, depth, depth + layerthickness_m[row, col, layer]);
                                 young_SOM_kg[row, col, layer] *= (1 - young_decomposition_rate);
                                 old_SOM_kg[row, col, layer] *= (1 - old_decomposition_rate);
                                 //Debug.WriteLine(" cell  " + row + " " + col + " has layer_OM_input of " + layer_OM_input_kg);
-                                depth += layerthickness_m[row, col, layer] / 2;
+                                depth += layerthickness_m[row, col, layer];
                                 if (young_SOM_kg[row, col, layer] < 0 | old_SOM_kg[row, col, layer] < 0)
                                 {
                                     Debug.WriteLine("err_cc3");

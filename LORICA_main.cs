@@ -6977,7 +6977,7 @@ namespace LORICA4
             {
                 // Debug.WriteLine("calculating carbon dynamics ");
 
-                soil_SOM_cycle();
+                soil_carbon_cycle();
                 soil_update_split_and_combine_layers();
 
             }

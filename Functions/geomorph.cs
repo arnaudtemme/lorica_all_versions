@@ -2810,7 +2810,7 @@ namespace LORICA4
                     }
                 }
 
-                int_curve_total = 1 / (-creep_depth_decay_constant) * Math.Exp(-creep_depth_decay_constant * 0) - 1 / (-creep_depth_decay_constant) * Math.Exp(-creep_depth_decay_constant * dsoil); // integral over depth decay function, from depth 0 to total soil depth
+                //int_curve_total = 1 / (-creep_depth_decay_constant) * Math.Exp(-creep_depth_decay_constant * 0) - 1 / (-creep_depth_decay_constant) * Math.Exp(-creep_depth_decay_constant * dsoil); // integral over depth decay function, from depth 0 to total soil depth
                 upperdepthdonor = 0; //  dtm[row1, col1]; using 0 leads to a continuous landscapes, instead of a step-wise pattern
                 upperdepthreceiver = 0; // dtm[row1 + iiii, col1 + jjjj];
                 lowerdepthreceiver = upperdepthreceiver - layerthickness_m[row1 + iiii, col1 + jjjj, layerreceiver];
@@ -2842,10 +2842,11 @@ namespace LORICA4
                                 }
                             }
                         }
-                        int_curve_lay = 1 / (-creep_depth_decay_constant) * Math.Exp(-creep_depth_decay_constant * upp_z_lay) - 1 / (-creep_depth_decay_constant) * Math.Exp(-creep_depth_decay_constant * (upp_z_lay + laythick_m));//integral over depth decay function, from top of layer to bottom of layer
+                        // int_curve_lay = 1 / (-creep_depth_decay_constant) * Math.Exp(-creep_depth_decay_constant * upp_z_lay) - 1 / (-creep_depth_decay_constant) * Math.Exp(-creep_depth_decay_constant * (upp_z_lay + laythick_m));//integral over depth decay function, from top of layer to bottom of layer                        
+                        //lowerdepthdonor = upperdepthdonor - laythick_m; // elevation range donor layer
+                        double curve_fraction = activity_fraction(creep_depth_decay_constant, dsoil, upp_z_lay, upp_z_lay + laythick_m);
+                        mass_export_lay_kg = mass_export_soil_kg * (curve_fraction); // mass to be removed from layer in kg 
                         upp_z_lay += laythick_m;
-                        lowerdepthdonor = upperdepthdonor - laythick_m; // elevation range donor layer  
-                        mass_export_lay_kg = mass_export_soil_kg * (int_curve_lay / int_curve_total); // mass to be removed from layer in kg 
 
                         if (mass_export_lay_kg < 0)
                         {
