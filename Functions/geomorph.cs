@@ -749,6 +749,22 @@ namespace LORICA4
             domain_OOM_export_kg = 0;
             domain_YOM_export_kg = 0;
 
+            if (Proglacial_checkbox.Checked == true)  //AleG
+            {
+
+                if (t == 0)
+                {
+                    dtm_WE = og_dtm;
+                }
+                else
+                {
+                    dtm_WE = filled_dtm;
+                }
+            }
+            else
+            {
+                dtm_WE = dtm;
+            }
 
             double powered_slope_sum, flow_between_cells_m3_per_m;
             int size;
@@ -769,75 +785,151 @@ namespace LORICA4
                 for (col = 0; col < nc; col++)
                 {
                     // if(row==50 & col == 99) { Debugger.Break(); }
-                    if (dtm[row, col] != nodata_value)
+                    
+                    if (Proglacial_checkbox.Checked)  //Proglacial
                     {
-                        // First, we apply rainwater to our landscape (in a two step approach - first normal cells and lake outlets)
-                        if (depression[row, col] == 0 ||
-                            (drainingoutlet_row[depression[row, col], 0] == row && drainingoutlet_col[depression[row, col], 0] == col) ||
-                            (drainingoutlet_row[depression[row, col], 1] == row && drainingoutlet_col[depression[row, col], 1] == col) ||
-                            (drainingoutlet_row[depression[row, col], 2] == row && drainingoutlet_col[depression[row, col], 2] == col) ||
-                            (drainingoutlet_row[depression[row, col], 3] == row && drainingoutlet_col[depression[row, col], 3] == col) ||
-                            (drainingoutlet_row[depression[row, col], 4] == row && drainingoutlet_col[depression[row, col], 4] == col))
+                        if (og_dtm[row, col] != -9999)
                         {
-                            if (check_space_evap.Checked == true) { evap_value_m = evapotranspiration[row, col]; }
-                            if (check_space_rain.Checked == true) { rain_value_m = rain_m[row, col]; }
-                            if (check_space_infil.Checked == true) { infil_value_m = infil[row, col]; }
-                            //ArT // development required to account for f(t) situations
-                            waterflow_m3[row, col] += (rain_value_m - infil_value_m - evap_value_m) * dx * dx;
-                            if (waterflow_m3[row, col] < 0) { waterflow_m3[row, col] = 0; }
-                            if (waterflow_m3[row, col] < -0.001) { Debug.WriteLine(" Negative waterflow at " + row + " " + col + ": " + waterflow_m3[row, col] + ". rain " + rain_value_m + " infil " + infil_value_m + " evap " + evap_value_m + " use " + landuse[row, col]); }
-                        }
-                        else  // and then, second step, for other lake cells
-                        { // for other lakecells, we send the rainwater directly (equally distributed) to that lake's outlet(s) (infiltration is not zero in the lake at the moment)
-                          //Debug.WriteLine(" B at " + row + " col " + col + " alt " + dtm[row, col] + " dep " + depression[row, col]);
-                            int outletcounter = 0; ;
-                            while (drainingoutlet_col[depression[row, col], outletcounter] != -1)
+                            // First, we apply rainwater to our landscape (in a two step approach - first normal cells and lake outlets)
+                            if (depression[row, col] == 0 ||
+                                (drainingoutlet_row[depression[row, col], 0] == row && drainingoutlet_col[depression[row, col], 0] == col) ||
+                                (drainingoutlet_row[depression[row, col], 1] == row && drainingoutlet_col[depression[row, col], 1] == col) ||
+                                (drainingoutlet_row[depression[row, col], 2] == row && drainingoutlet_col[depression[row, col], 2] == col) ||
+                                (drainingoutlet_row[depression[row, col], 3] == row && drainingoutlet_col[depression[row, col], 3] == col) ||
+                                (drainingoutlet_row[depression[row, col], 4] == row && drainingoutlet_col[depression[row, col], 4] == col))
                             {
-                                outletcounter++;
-                                if (outletcounter == 5) { break; }
-                            }
-                            for (i = 0; i < outletcounter; i++)
-                            {
-
                                 if (check_space_evap.Checked == true) { evap_value_m = evapotranspiration[row, col]; }
                                 if (check_space_rain.Checked == true) { rain_value_m = rain_m[row, col]; }
                                 if (check_space_infil.Checked == true) { infil_value_m = infil[row, col]; }
                                 //ArT // development required to account for f(t) situations
-                                //ArT remember to check for negative lake outflow once it happens
-                                waterflow_m3[drainingoutlet_row[depression[row, col], i], drainingoutlet_col[depression[row, col], i]] += dx * dx * (rain_value_m - infil_value_m - evap_value_m) / outletcounter;
+                                waterflow_m3[row, col] += (rain_value_m - infil_value_m - evap_value_m) * dx * dx;
+                                if (waterflow_m3[row, col] < 0) { waterflow_m3[row, col] = 0; }
+                                if (waterflow_m3[row, col] < -0.001) { Debug.WriteLine(" Negative waterflow at " + row + " " + col + ": " + waterflow_m3[row, col] + ". rain " + rain_value_m + " infil " + infil_value_m + " evap " + evap_value_m + " use " + landuse[row, col]); }
                             }
-                        }
-                        if (only_waterflow_checkbox.Checked == false)
-                        {
-                            for (size = 0; size < n_texture_classes; size++)
-                            {
-                                sediment_in_transport_kg[row, col, size] = 0;
-                            }
-                            old_SOM_in_transport_kg[row, col] = 0;
-                            young_SOM_in_transport_kg[row, col] = 0;
-                            dz_ero_m[row, col] = 0;
-                            dz_sed_m[row, col] = 0;
-                            lake_sed_m[row, col] = 0;
-
-                            if (OSL_checkbox.Checked)
-                            {
-                                OSL_grainages_in_transport[row, col] = new int[] { };
-                                OSL_depositionages_in_transport[row, col] = new int[] { };
-                                OSL_surfacedcount_in_transport[row, col] = new int[] { };
-                            }
-                            if (CN_checkbox.Checked)
-                            {
-                                for (int i_cn = 0; i_cn < n_cosmo; i_cn++)
+                            else  // and then, second step, for other lake cells
+                            { // for other lakecells, we send the rainwater directly (equally distributed) to that lake's outlet(s) (infiltration is not zero in the lake at the moment)
+                              //Debug.WriteLine(" B at " + row + " col " + col + " alt " + dtm[row, col] + " dep " + depression[row, col]);
+                                int outletcounter = 0; ;
+                                while (drainingoutlet_col[depression[row, col], outletcounter] != -1)
                                 {
-                                    CN_in_transport[row, col, i_cn] = 0;
+                                    outletcounter++;
+                                    if (outletcounter == 5) { break; }
+                                }
+                                for (i = 0; i < outletcounter; i++)
+                                {
+
+                                    if (check_space_evap.Checked == true) { evap_value_m = evapotranspiration[row, col]; }
+                                    if (check_space_rain.Checked == true) { rain_value_m = rain_m[row, col]; }
+                                    if (check_space_infil.Checked == true) { infil_value_m = infil[row, col]; }
+                                    //ArT // development required to account for f(t) situations
+                                    //ArT remember to check for negative lake outflow once it happens
+                                    waterflow_m3[drainingoutlet_row[depression[row, col], i], drainingoutlet_col[depression[row, col], i]] += dx * dx * (rain_value_m - infil_value_m - evap_value_m) / outletcounter;
                                 }
                             }
+                            if (only_waterflow_checkbox.Checked == false)
+                            {
+                                for (size = 0; size < n_texture_classes; size++)
+                                {
+                                    sediment_in_transport_kg[row, col, size] = 0;
+                                }
+                                old_SOM_in_transport_kg[row, col] = 0;
+                                young_SOM_in_transport_kg[row, col] = 0;
+                                dz_ero_m[row, col] = 0;
+                                dz_sed_m[row, col] = 0;
+                                lake_sed_m[row, col] = 0;
 
+                                if (OSL_checkbox.Checked)
+                                {
+                                    OSL_grainages_in_transport[row, col] = new int[] { };
+                                    OSL_depositionages_in_transport[row, col] = new int[] { };
+                                    OSL_surfacedcount_in_transport[row, col] = new int[] { };
+                                }
+                                if (CN_checkbox.Checked)
+                                {
+                                    for (int i_cn = 0; i_cn < n_cosmo; i_cn++)
+                                    {
+                                        CN_in_transport[row, col, i_cn] = 0;
+                                    }
+                                }
+
+                            }
                         }
                     }
+
+                    else
+                    {
+                        if (dtm[row, col] != -9999)
+                        {
+                            // First, we apply rainwater to our landscape (in a two step approach - first normal cells and lake outlets)
+                            if (depression[row, col] == 0 ||
+                                (drainingoutlet_row[depression[row, col], 0] == row && drainingoutlet_col[depression[row, col], 0] == col) ||
+                                (drainingoutlet_row[depression[row, col], 1] == row && drainingoutlet_col[depression[row, col], 1] == col) ||
+                                (drainingoutlet_row[depression[row, col], 2] == row && drainingoutlet_col[depression[row, col], 2] == col) ||
+                                (drainingoutlet_row[depression[row, col], 3] == row && drainingoutlet_col[depression[row, col], 3] == col) ||
+                                (drainingoutlet_row[depression[row, col], 4] == row && drainingoutlet_col[depression[row, col], 4] == col))
+                            {
+                                if (check_space_evap.Checked == true) { evap_value_m = evapotranspiration[row, col]; }
+                                if (check_space_rain.Checked == true) { rain_value_m = rain_m[row, col]; }
+                                if (check_space_infil.Checked == true) { infil_value_m = infil[row, col]; }
+                                //ArT // development required to account for f(t) situations
+                                waterflow_m3[row, col] += (rain_value_m - infil_value_m - evap_value_m) * dx * dx;
+                                if (waterflow_m3[row, col] < 0) { waterflow_m3[row, col] = 0; }
+                                if (waterflow_m3[row, col] < -0.001) { Debug.WriteLine(" Negative waterflow at " + row + " " + col + ": " + waterflow_m3[row, col] + ". rain " + rain_value_m + " infil " + infil_value_m + " evap " + evap_value_m + " use " + landuse[row, col]); }
+                            }
+                            else  // and then, second step, for other lake cells
+                            { // for other lakecells, we send the rainwater directly (equally distributed) to that lake's outlet(s) (infiltration is not zero in the lake at the moment)
+                              //Debug.WriteLine(" B at " + row + " col " + col + " alt " + dtm[row, col] + " dep " + depression[row, col]);
+                                int outletcounter = 0; ;
+                                while (drainingoutlet_col[depression[row, col], outletcounter] != -1)
+                                {
+                                    outletcounter++;
+                                    if (outletcounter == 5) { break; }
+                                }
+                                for (i = 0; i < outletcounter; i++)
+                                {
+
+                                    if (check_space_evap.Checked == true) { evap_value_m = evapotranspiration[row, col]; }
+                                    if (check_space_rain.Checked == true) { rain_value_m = rain_m[row, col]; }
+                                    if (check_space_infil.Checked == true) { infil_value_m = infil[row, col]; }
+                                    //ArT // development required to account for f(t) situations
+                                    //ArT remember to check for negative lake outflow once it happens
+                                    waterflow_m3[drainingoutlet_row[depression[row, col], i], drainingoutlet_col[depression[row, col], i]] += dx * dx * (rain_value_m - infil_value_m - evap_value_m) / outletcounter;
+                                }
+                            }
+                            if (only_waterflow_checkbox.Checked == false)
+                            {
+                                for (size = 0; size < n_texture_classes; size++)
+                                {
+                                    sediment_in_transport_kg[row, col, size] = 0;
+                                }
+                                old_SOM_in_transport_kg[row, col] = 0;
+                                young_SOM_in_transport_kg[row, col] = 0;
+                                dz_ero_m[row, col] = 0;
+                                dz_sed_m[row, col] = 0;
+                                lake_sed_m[row, col] = 0;
+
+                                if (OSL_checkbox.Checked)
+                                {
+                                    OSL_grainages_in_transport[row, col] = new int[] { };
+                                    OSL_depositionages_in_transport[row, col] = new int[] { };
+                                    OSL_surfacedcount_in_transport[row, col] = new int[] { };
+                                }
+                                if (CN_checkbox.Checked)
+                                {
+                                    for (int i_cn = 0; i_cn < n_cosmo; i_cn++)
+                                    {
+                                        CN_in_transport[row, col, i_cn] = 0;
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+
                 }  // end for col
             }  //end for row
                //Debug.WriteLine(" prepared water. Ready to route for erosion and deposition");
+
             all_grids = (nr) * (nc);
             memberdepressionnotconsidered = 0;
             int runner = 0;
@@ -905,30 +997,75 @@ namespace LORICA4
                                     // if (diagnostic_mode == 1) { Debug.WriteLine("checking " + (row + i) + " " + (col + j) + " from cell " + row + " " + col); }
                                     if (depression[row, col] == 0)
                                     {    // if the cell is not in a depression (it could be in a depression as an outlet)
-                                        if (dtm[row + i, col + j] != nodata_value)
-                                        {  //if the cell has no NODATA
-                                            if (only_waterflow_checkbox.Checked)
-                                            {
-                                                dh = dtm[row, col] - dtm[row + i, col + j]; // in the case that we are not interested in erosion and deposition, then there is no ero and sed to query                                            }
-                                            }
-                                            else
-                                            {
-                                                dh = (dtm[row, col] + dz_ero_m[row, col] + dz_sed_m[row, col]) - (dtm[row + i, col + j] + dz_ero_m[row + i, col + j] + dz_sed_m[row + i, col + j]);    // diff @ this moment 
-                                            }
-                                            if (dh < 0)  // we are looking at a higher neighbour
-                                            {
-                                                if (dh > maximum_allowed_deposition) { maximum_allowed_deposition = dh; }   // we keep track of the minimum difference in altitude between this cell and its lowest higher neighbour - we will not raise it more, even if we would like to when the Courant criterion is violated
-                                            } // end if dh
-                                            if ((row != row + i) && (col != col + j)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }   // for non-cardinal neighbours, we use the adapted length
-                                            if (dh > 0)
-                                            {  // i j is a lower neighbour
-                                                if (dh > max_allowed_erosion - dh_tol) { max_allowed_erosion = (dh - dh_tol); }  // we keep track of the minimum difference in current altitude between this cell and its highest lower neighbour - we will not erode it more, even if we would like to
 
-                                                dh = dh / d_x;
-                                                dh = Math.Pow(dh, conv_fac);
-                                                powered_slope_sum = powered_slope_sum + dh;
-                                            }//end if dh  
-                                        }//end if novalues
+                                        if (Proglacial_checkbox.Checked) //Proglacial
+                                        {
+                                            if (og_dtm[row + i, col + j] != -9999)
+                                            {  //if the cell has no NODATA
+                                                if (only_waterflow_checkbox.Checked)
+                                                {
+                                                    dh = dtm[row, col] - dtm[row + i, col + j]; // in the case that we are not interested in erosion and deposition, then there is no ero and sed to query                                            }
+                                                }
+                                                else
+                                                {
+                                                    if (dtm[row, col] == -9999)  //Glacier areas
+                                                    {
+                                                        dh = og_dtm[row, col] - og_dtm[row + i, col + j];
+                                                    }
+                                                    else
+                                                    {
+                                                        dh = dtm[row, col] + dz_ero_m[row, col] + dz_sed_m[row, col] - (dtm[row + i, col + j] + dz_ero_m[row + i, col + j] + dz_sed_m[row + i, col + j]);    // diff @ this moment 
+                                                    }
+
+                                                }
+                                                if (dh < 0)  // we are looking at a higher neighbour
+                                                {
+                                                    if (dh > maximum_allowed_deposition) { maximum_allowed_deposition = dh; }   // we keep track of the minimum difference in altitude between this cell and its lowest higher neighbour - we will not raise it more, even if we would like to when the Courant criterion is violated
+                                                } // end if dh
+                                                if ((row != row + i) && (col != col + j)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }   // for non-cardinal neighbours, we use the adapted length
+                                                if (dh > 0)
+                                                {  // i j is a lower neighbour
+                                                    if (dh > max_allowed_erosion - dh_tol) { max_allowed_erosion = dh - dh_tol; }  // we keep track of the minimum difference in current altitude between this cell and its highest lower neighbour - we will not erode it more, even if we would like to
+
+                                                    dh = dh / d_x;
+                                                    dh = Math.Pow(dh, conv_fac);
+                                                    powered_slope_sum = powered_slope_sum + dh;
+                                                }//end if dh  
+                                            }//end if novalues
+
+                                        }
+
+                                        else
+                                        {
+                                            if (dtm[row + i, col + j] != -9999)
+                                            {  //if the cell has no NODATA
+                                                if (only_waterflow_checkbox.Checked)
+                                                {
+                                                    dh = dtm[row, col] - dtm[row + i, col + j]; // in the case that we are not interested in erosion and deposition, then there is no ero and sed to query                                            }
+                                                }
+                                                else
+                                                {
+                                                    dh = dtm[row, col] + dz_ero_m[row, col] + dz_sed_m[row, col] - (dtm[row + i, col + j] + dz_ero_m[row + i, col + j] + dz_sed_m[row + i, col + j]);    // diff @ this moment 
+
+                                                }
+                                                if (dh < 0)  // we are looking at a higher neighbour
+                                                {
+                                                    if (dh > maximum_allowed_deposition) { maximum_allowed_deposition = dh; }   // we keep track of the minimum difference in altitude between this cell and its lowest higher neighbour - we will not raise it more, even if we would like to when the Courant criterion is violated
+                                                } // end if dh
+                                                if ((row != row + i) && (col != col + j)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }   // for non-cardinal neighbours, we use the adapted length
+                                                if (dh > 0)
+                                                {  // i j is a lower neighbour
+                                                    if (dh > max_allowed_erosion - dh_tol) { max_allowed_erosion = dh - dh_tol; }  // we keep track of the minimum difference in current altitude between this cell and its highest lower neighbour - we will not erode it more, even if we would like to
+
+                                                    dh = dh / d_x;
+                                                    dh = Math.Pow(dh, conv_fac);
+                                                    powered_slope_sum = powered_slope_sum + dh;
+                                                }//end if dh  
+                                            }//end if novalues
+
+                                        }
+
+
                                     }  // end if not in depression
                                     if ((drainingoutlet_row[depression[row, col], 0] == row && drainingoutlet_col[depression[row, col], 0] == col)
                                         || (drainingoutlet_row[depression[row, col], 1] == row && drainingoutlet_col[depression[row, col], 1] == col)
@@ -940,6 +1077,8 @@ namespace LORICA4
                                         if (depression[row + i, col + j] != depression[row, col])
                                         {
                                             if ((row != row + i) && (col != col + j)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }
+                                            if (Proglacial_checkbox.Checked == false) { dh = dtm[row, col] - dtm[row + i, col + j]; }
+                                            if (Proglacial_checkbox.Checked) { dh = og_dtm[row, col] - og_dtm[row + i, col + j]; } //Proglacial
                                             dh = dtm[row, col] - dtm[row + i, col + j];
                                             if (dh > 0)
                                             {// i j is a lower neighbour

@@ -840,6 +840,20 @@ namespace LORICA4
             sr.Close();
 
         }
+
+        public void Proglacial_Error() //Proglacial 
+        {
+            bool is_ProCheckboxChecked = Proglacial_checkbox.Checked;
+            string uploaded_Age_Raster = proglacial_input_filename_textbox.Text;
+
+            // If checkbox is not checked but an age raster was uploaded
+            if (!is_ProCheckboxChecked && !string.IsNullOrEmpty(uploaded_Age_Raster))
+            {
+                MessageBox.Show("Age raster uploaded but Proglacial mode not active");
+
+            }
+        }
+
         void out_double(string name4, double[,] output)
         {
             int nn, row, col;
@@ -1101,6 +1115,62 @@ namespace LORICA4
                 sw.Close();
             }
         }
+
+        void writeinputsoils()  
+        {
+            int layer;
+            double cumthick, midthick, z_layer;
+            string FILENAME = string.Format("{0}\\t{1}_out_allsoils.csv", workdir, t);
+            using (StreamWriter sw = new StreamWriter(FILENAME))
+            {
+                sw.Write("row,col,t,nlayer,cumth_m,thick_m,midthick_m,z,coarse_kg,sand_kg,silt_kg,clay_kg,fine_kg,YOM_kg,OOM_kg,YOM/OOM,f_coarse,f_sand,f_silt,f_clay,f_fineclay,ftotal_clay,f_OM,BD"); 
+                if (CN_checkbox.Checked) { sw.Write(",Be-10_meteoric_clay,Be-10_meteoric_silt,Be-10_meteoric_total,Be-10_insitu,C-14_insitu"); }
+                sw.Write("\r\n");
+                //int t_out = t + 1;
+
+                
+
+                for (int row = 0; row < nr; row++)
+                {
+                    for (int col = 0; col < nc; col++)
+                    {
+                        if (dtm[row, col] != -9999)
+                        {
+                            cumthick = 0;
+                            midthick = 0;
+                            z_layer = dtm[row, col];
+                            for (layer = 0; layer < max_soil_layers; layer++) // only the top layer
+                            {
+                                if (layerthickness_m[row, col, layer] > 0)
+                                {
+                                    cumthick += layerthickness_m[row, col, layer];
+                                    midthick += layerthickness_m[row, col, layer] / 2;
+                                    double totalweight = texture_kg[row, col, layer, 0] + texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4] + young_SOM_kg[row, col, layer] + old_SOM_kg[row, col, layer];
+                                    double totalweight_tex = texture_kg[row, col, layer, 0] + texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4];
+                                    sw.Write(row + "," + col + "," + t + "," + layer + "," + cumthick + "," + layerthickness_m[row, col, layer] + "," + midthick + "," + z_layer + "," + texture_kg[row, col, layer, 0] + "," + texture_kg[row, col, layer, 1] + "," + texture_kg[row, col, layer, 2] + "," + texture_kg[row, col, layer, 3] + "," + texture_kg[row, col, layer, 4] + "," + young_SOM_kg[row, col, layer] + "," + old_SOM_kg[row, col, layer] + "," + young_SOM_kg[row, col, layer] / old_SOM_kg[row, col, layer] + "," + texture_kg[row, col, layer, 0] / totalweight_tex + "," + texture_kg[row, col, layer, 1] / totalweight_tex + "," + texture_kg[row, col, layer, 2] / totalweight_tex + "," + texture_kg[row, col, layer, 3] / totalweight_tex + "," + texture_kg[row, col, layer, 4] / totalweight_tex + "," + (texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4]) / totalweight_tex + "," + (young_SOM_kg[row, col, layer] + old_SOM_kg[row, col, layer]) / (young_SOM_kg[row, col, layer] + old_SOM_kg[row, col, layer] + totalweight_tex) + "," + bulkdensity[row, col, layer]);
+
+
+                                    if (CN_checkbox.Checked)
+                                    {
+                                        sw.Write("," + CN_atoms_cm2[row, col, layer, 0] + "," + CN_atoms_cm2[row, col, layer, 1] + "," + (CN_atoms_cm2[row, col, layer, 0] + CN_atoms_cm2[row, col, layer, 1]) + "," + CN_atoms_cm2[row, col, layer, 2] + "," + CN_atoms_cm2[row, col, layer, 3]);
+                                    }
+
+                                    sw.Write("\r\n");
+                                    midthick += layerthickness_m[row, col, layer] / 2;
+                                    z_layer -= layerthickness_m[row, col, layer];
+                                }
+
+                            }
+
+                        }
+                    }
+                }
+
+
+                sw.Close();
+            }
+        }// end writeinputsoils
+
         void writeallsoils(string FILENAME)
         {
             int layer;
@@ -1546,8 +1616,10 @@ namespace LORICA4
                         evap_constant_value_box.Text = xreader.ReadElementString("evap_constant_value");
                         textbox_max_soil_layers.Text = xreader.ReadElementString("max_soil_layers");
                         textbox_layer_thickness.Text = xreader.ReadElementString("layer_thickness");
+                        textbox_layer_thickness_increase.Text = xreader.ReadElementString("layer_thickness_increase");
                         fill_sinks_before_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("check_fill_sinks_before"));
                         fill_sinks_during_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("check_fill_sinks_during"));
+                        proglacial_input_filename_textbox.Text = xreader.ReadElementString("proglacial_input_filename");
                         xreader.ReadEndElement();
                     }
                     catch { read_error = 1; Debug.WriteLine("failed reading more input paras"); }
@@ -1561,6 +1633,7 @@ namespace LORICA4
                         Spitsbergen_case_study.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("Spitsbergen"));
                         version_lux_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("Luxembourg"));
                         luxlitter_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("Luxlitter"));
+                        Proglacial_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("Proglacial"));
                         version_Konza_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("Konza"));
                         OSL_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("OSL_tracing"));
                         CN_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("CN_tracing"));
@@ -1661,6 +1734,73 @@ namespace LORICA4
                         xreader.ReadEndElement();
                     }
                     catch { read_error = 1; Debug.WriteLine("failed reading soil frac paras"); }
+
+                    try
+                    {
+                        xreader.ReadStartElement("Landuse_parameters");//AleG 
+                        landuse_determinator.LU1_Ero_textbox.Text = xreader.ReadElementString("LU1_Ero");
+                        landuse_determinator.LU1_Dep_textbox.Text = xreader.ReadElementString("LU1_Dep");
+                        landuse_determinator.LU1_Inf_textbox.Text = xreader.ReadElementString("LU1_Inf");
+                        landuse_determinator.LU1_Evap_textbox.Text = xreader.ReadElementString("LU1_Evap");
+                        landuse_determinator.LU1_RootC_textbox.Text = xreader.ReadElementString("LU1_RootC");
+
+                        landuse_determinator.LU2_Ero_textbox.Text = xreader.ReadElementString("LU2_Ero");
+                        landuse_determinator.LU2_Dep_textbox.Text = xreader.ReadElementString("LU2_Dep");
+                        landuse_determinator.LU2_Inf_textbox.Text = xreader.ReadElementString("LU2_Inf");
+                        landuse_determinator.LU2_Evap_textbox.Text = xreader.ReadElementString("LU2_Evap");
+                        landuse_determinator.LU2_RootC_textbox.Text = xreader.ReadElementString("LU2_RootC");
+
+                        landuse_determinator.LU3_Ero_textbox.Text = xreader.ReadElementString("LU3_Ero");
+                        landuse_determinator.LU3_Dep_textbox.Text = xreader.ReadElementString("LU3_Dep");
+                        landuse_determinator.LU3_Inf_textbox.Text = xreader.ReadElementString("LU3_Inf");
+                        landuse_determinator.LU3_Evap_textbox.Text = xreader.ReadElementString("LU3_Evap");
+                        landuse_determinator.LU3_RootC_textbox.Text = xreader.ReadElementString("LU3_RootC");
+
+                        landuse_determinator.LU4_Ero_textbox.Text = xreader.ReadElementString("LU4_Ero");
+                        landuse_determinator.LU4_Dep_textbox.Text = xreader.ReadElementString("LU4_Dep");
+                        landuse_determinator.LU4_Inf_textbox.Text = xreader.ReadElementString("LU4_Inf");
+                        landuse_determinator.LU4_Evap_textbox.Text = xreader.ReadElementString("LU4_Evap");
+                        landuse_determinator.LU4_RootC_textbox.Text = xreader.ReadElementString("LU4_RootC");
+
+                        landuse_determinator.LU5_Ero_textbox.Text = xreader.ReadElementString("LU5_Ero");
+                        landuse_determinator.LU5_Dep_textbox.Text = xreader.ReadElementString("LU5_Dep");
+                        landuse_determinator.LU5_Inf_textbox.Text = xreader.ReadElementString("LU5_Inf");
+                        landuse_determinator.LU5_Evap_textbox.Text = xreader.ReadElementString("LU5_Evap");
+                        landuse_determinator.LU5_RootC_textbox.Text = xreader.ReadElementString("LU5_RootC");
+
+                        landuse_determinator.LU6_Ero_textbox.Text = xreader.ReadElementString("LU6_Ero");
+                        landuse_determinator.LU6_Dep_textbox.Text = xreader.ReadElementString("LU6_Dep");
+                        landuse_determinator.LU6_Inf_textbox.Text = xreader.ReadElementString("LU6_Inf");
+                        landuse_determinator.LU6_Evap_textbox.Text = xreader.ReadElementString("LU6_Evap");
+                        landuse_determinator.LU6_RootC_textbox.Text = xreader.ReadElementString("LU6_RootC");
+
+                        landuse_determinator.LU7_Ero_textbox.Text = xreader.ReadElementString("LU7_Ero");
+                        landuse_determinator.LU7_Dep_textbox.Text = xreader.ReadElementString("LU7_Dep");
+                        landuse_determinator.LU7_Inf_textbox.Text = xreader.ReadElementString("LU7_Inf");
+                        landuse_determinator.LU7_Evap_textbox.Text = xreader.ReadElementString("LU7_Evap");
+                        landuse_determinator.LU7_RootC_textbox.Text = xreader.ReadElementString("LU7_RootC");
+
+                        landuse_determinator.LU8_Ero_textbox.Text = xreader.ReadElementString("LU8_Ero");
+                        landuse_determinator.LU8_Dep_textbox.Text = xreader.ReadElementString("LU8_Dep");
+                        landuse_determinator.LU8_Inf_textbox.Text = xreader.ReadElementString("LU8_Inf");
+                        landuse_determinator.LU8_Evap_textbox.Text = xreader.ReadElementString("LU8_Evap");
+                        landuse_determinator.LU8_RootC_textbox.Text = xreader.ReadElementString("LU8_RootC");
+
+                        landuse_determinator.LU9_Ero_textbox.Text = xreader.ReadElementString("LU9_Ero");
+                        landuse_determinator.LU9_Dep_textbox.Text = xreader.ReadElementString("LU9_Dep");
+                        landuse_determinator.LU9_Inf_textbox.Text = xreader.ReadElementString("LU9_Inf");
+                        landuse_determinator.LU9_Evap_textbox.Text = xreader.ReadElementString("LU9_Evap");
+                        landuse_determinator.LU9_RootC_textbox.Text = xreader.ReadElementString("LU9_RootC");
+
+                        landuse_determinator.LU10_Ero_textbox.Text = xreader.ReadElementString("LU10_Ero");
+                        landuse_determinator.LU10_Dep_textbox.Text = xreader.ReadElementString("LU10_Dep");
+                        landuse_determinator.LU10_Inf_textbox.Text = xreader.ReadElementString("LU10_Inf");
+                        landuse_determinator.LU10_Evap_textbox.Text = xreader.ReadElementString("LU10_Evap");
+                        landuse_determinator.LU10_RootC_textbox.Text = xreader.ReadElementString("LU10_RootC");
+                        xreader.ReadEndElement();
+                    }
+                    catch { read_error = 1; Debug.WriteLine("failed reading land use paras"); }
+
 
                     if (read_error == 1) { MessageBox.Show("warning : not all runfile data could be read.\r\n LORICA can continue"); }
                     if (read_error == 2) { MessageBox.Show("Error in new XML lines"); }
@@ -1898,8 +2038,11 @@ namespace LORICA4
                 xwriter.WriteElementString("evap_constant_value", evap_constant_value_box.Text);
                 xwriter.WriteElementString("max_soil_layers", textbox_max_soil_layers.Text);
                 xwriter.WriteElementString("layer_thickness", textbox_layer_thickness.Text);
+                xwriter.WriteElementString("layer_thickness_increase", textbox_layer_thickness_increase.Text);
                 xwriter.WriteElementString("check_fill_sinks_before", XmlConvert.ToString(fill_sinks_before_checkbox.Checked));
                 xwriter.WriteElementString("check_fill_sinks_during", XmlConvert.ToString(fill_sinks_during_checkbox.Checked));
+
+                xwriter.WriteElementString("proglacial_input_filename", proglacial_input_filename_textbox.Text);
 
                 xwriter.WriteEndElement();
 
@@ -1911,6 +2054,7 @@ namespace LORICA4
                 xwriter.WriteElementString("Spitsbergen", XmlConvert.ToString(Spitsbergen_case_study.Checked));
                 xwriter.WriteElementString("Luxembourg", XmlConvert.ToString(version_lux_checkbox.Checked));
                 xwriter.WriteElementString("Luxlitter", XmlConvert.ToString(luxlitter_checkbox.Checked));
+                xwriter.WriteElementString("Proglacial", XmlConvert.ToString(Proglacial_checkbox.Checked));
                 xwriter.WriteElementString("Konza", XmlConvert.ToString(version_Konza_checkbox.Checked));
                 xwriter.WriteElementString("OSL_tracing", XmlConvert.ToString(OSL_checkbox.Checked));
                 xwriter.WriteElementString("CN_tracing", XmlConvert.ToString(CN_checkbox.Checked));
@@ -2004,6 +2148,69 @@ namespace LORICA4
                 xwriter.WriteElementString("siltfrac", soildata.siltbox.Text);
                 xwriter.WriteElementString("clayfrac", soildata.claybox.Text);
                 xwriter.WriteElementString("fclayfrac", soildata.fineclaybox.Text);
+                xwriter.WriteEndElement();
+
+                xwriter.WriteStartElement("Landuse_parameters"); 
+                xwriter.WriteElementString("LU1_Ero", landuse_determinator.LU1_Ero_textbox.Text);
+                xwriter.WriteElementString("LU1_Dep", landuse_determinator.LU1_Dep_textbox.Text);
+                xwriter.WriteElementString("LU1_Inf", landuse_determinator.LU1_Inf_textbox.Text);
+                xwriter.WriteElementString("LU1_Evap", landuse_determinator.LU1_Evap_textbox.Text);
+                xwriter.WriteElementString("LU1_RootC", landuse_determinator.LU1_RootC_textbox.Text);
+
+                xwriter.WriteElementString("LU2_Ero", landuse_determinator.LU2_Ero_textbox.Text);
+                xwriter.WriteElementString("LU2_Dep", landuse_determinator.LU2_Dep_textbox.Text);
+                xwriter.WriteElementString("LU2_Inf", landuse_determinator.LU2_Inf_textbox.Text);
+                xwriter.WriteElementString("LU2_Evap", landuse_determinator.LU2_Evap_textbox.Text);
+                xwriter.WriteElementString("LU2_RootC", landuse_determinator.LU2_RootC_textbox.Text);
+
+                xwriter.WriteElementString("LU3_Ero", landuse_determinator.LU3_Ero_textbox.Text);
+                xwriter.WriteElementString("LU3_Dep", landuse_determinator.LU3_Dep_textbox.Text);
+                xwriter.WriteElementString("LU3_Inf", landuse_determinator.LU3_Inf_textbox.Text);
+                xwriter.WriteElementString("LU3_Evap", landuse_determinator.LU3_Evap_textbox.Text);
+                xwriter.WriteElementString("LU3_RootC", landuse_determinator.LU3_RootC_textbox.Text);
+
+                xwriter.WriteElementString("LU4_Ero", landuse_determinator.LU4_Ero_textbox.Text);
+                xwriter.WriteElementString("LU4_Dep", landuse_determinator.LU4_Dep_textbox.Text);
+                xwriter.WriteElementString("LU4_Inf", landuse_determinator.LU4_Inf_textbox.Text);
+                xwriter.WriteElementString("LU4_Evap", landuse_determinator.LU4_Evap_textbox.Text);
+                xwriter.WriteElementString("LU4_RootC", landuse_determinator.LU4_RootC_textbox.Text);
+
+                xwriter.WriteElementString("LU5_Ero", landuse_determinator.LU5_Ero_textbox.Text);
+                xwriter.WriteElementString("LU5_Dep", landuse_determinator.LU5_Dep_textbox.Text);
+                xwriter.WriteElementString("LU5_Inf", landuse_determinator.LU5_Inf_textbox.Text);
+                xwriter.WriteElementString("LU5_Evap", landuse_determinator.LU5_Evap_textbox.Text);
+                xwriter.WriteElementString("LU5_RootC", landuse_determinator.LU5_RootC_textbox.Text);
+
+                xwriter.WriteElementString("LU6_Ero", landuse_determinator.LU6_Ero_textbox.Text);
+                xwriter.WriteElementString("LU6_Dep", landuse_determinator.LU6_Dep_textbox.Text);
+                xwriter.WriteElementString("LU6_Inf", landuse_determinator.LU6_Inf_textbox.Text);
+                xwriter.WriteElementString("LU6_Evap", landuse_determinator.LU6_Evap_textbox.Text);
+                xwriter.WriteElementString("LU6_RootC", landuse_determinator.LU6_RootC_textbox.Text);
+
+                xwriter.WriteElementString("LU7_Ero", landuse_determinator.LU7_Ero_textbox.Text);
+                xwriter.WriteElementString("LU7_Dep", landuse_determinator.LU7_Dep_textbox.Text);
+                xwriter.WriteElementString("LU7_Inf", landuse_determinator.LU7_Inf_textbox.Text);
+                xwriter.WriteElementString("LU7_Evap", landuse_determinator.LU7_Evap_textbox.Text);
+                xwriter.WriteElementString("LU7_RootC", landuse_determinator.LU7_RootC_textbox.Text);
+
+                xwriter.WriteElementString("LU8_Ero", landuse_determinator.LU8_Ero_textbox.Text);
+                xwriter.WriteElementString("LU8_Dep", landuse_determinator.LU8_Dep_textbox.Text);
+                xwriter.WriteElementString("LU8_Inf", landuse_determinator.LU8_Inf_textbox.Text);
+                xwriter.WriteElementString("LU8_Evap", landuse_determinator.LU8_Evap_textbox.Text);
+                xwriter.WriteElementString("LU8_RootC", landuse_determinator.LU8_RootC_textbox.Text);
+
+                xwriter.WriteElementString("LU9_Ero", landuse_determinator.LU9_Ero_textbox.Text);
+                xwriter.WriteElementString("LU9_Dep", landuse_determinator.LU9_Dep_textbox.Text);
+                xwriter.WriteElementString("LU9_Inf", landuse_determinator.LU9_Inf_textbox.Text);
+                xwriter.WriteElementString("LU9_Evap", landuse_determinator.LU9_Evap_textbox.Text);
+                xwriter.WriteElementString("LU9_RootC", landuse_determinator.LU9_RootC_textbox.Text);
+
+                xwriter.WriteElementString("LU10_Ero", landuse_determinator.LU10_Ero_textbox.Text);
+                xwriter.WriteElementString("LU10_Dep", landuse_determinator.LU10_Dep_textbox.Text);
+                xwriter.WriteElementString("LU10_Inf", landuse_determinator.LU10_Inf_textbox.Text);
+                xwriter.WriteElementString("LU10_Evap", landuse_determinator.LU10_Evap_textbox.Text);
+                xwriter.WriteElementString("LU10_RootC", landuse_determinator.LU10_RootC_textbox.Text);
+
                 xwriter.WriteEndElement();
                 //End the document
                 xwriter.WriteEndDocument();
@@ -2117,5 +2324,85 @@ namespace LORICA4
                 }
             }
         }
+
+        int min_value_int(int[,] map2, int nr, int nc) //Proglacial 
+        {
+            int loopnr_min = 0;
+            int min_val = 0;
+            int rast_val = 0;
+            int row;
+            int col;
+
+            for (row = 0; row < nr; row++)
+            {
+                for (col = 0; col < nc; col++)
+                {
+                    if (map2[row, col] != -9999)
+                    {
+                        rast_val = map2[row, col];
+
+                        if (loopnr_min == 0)
+                        {
+                            min_val = rast_val;
+                            loopnr_min = loopnr_min + 1;
+                        }
+                        else
+                        {
+                            if (rast_val < min_val)
+                            {
+                                min_val = rast_val;
+                            }
+                        }
+
+                    }
+
+
+                }
+
+            }
+            return min_val;
+
+        } // end min_value_int()
+
+
+        int max_value_int(int[,] map2, int nr, int nc) //Proglacial 
+        {
+            int loopnr_max = 0;
+            int max_val = 0;
+            int rast_val = 0;
+            int row;
+            int col;
+
+            for (row = 0; row < nr; row++)
+            {
+                for (col = 0; col < nc; col++)
+                {
+                    if (map2[row, col] != -9999)
+                    {
+                        rast_val = map2[row, col];
+
+                        if (loopnr_max == 0)
+                        {
+                            max_val = rast_val;
+                            loopnr_max = loopnr_max + 1;
+                        }
+                        else
+                        {
+                            if (rast_val > max_val)
+                            {
+                                max_val = rast_val;
+                            }
+                        }
+
+                    }
+
+
+                }
+
+            }
+            return max_val;
+
+        } // end min_value_int()
+
     }
 }

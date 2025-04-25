@@ -340,7 +340,7 @@ namespace LORICA4
                                 if (total_layer_fine_earth_mass_kg(row, col, layer) > 0)  //this says: if the layer actually exists
 
                                 {
-                                    double dd_bt = bioturbation_decay_depth_m * 2; // possible adjustments to second depth decay for bioturbation are possible here
+                                    double dd_bt_m = bioturbation_decay_depth_m * 2; // possible adjustments to second depth decay for bioturbation are possible here
 
 
                                     //double total_BT_depth_decay_index = 
@@ -354,14 +354,14 @@ namespace LORICA4
                                     //then calculate the fraction of bioturbation that will happen in this layer, and multiply with total bioturbation in this cell
                                     fine_layer_mass = total_layer_fine_earth_mass_kg(row, col, layer);
 
-                                    layer_bioturbation_kg = activity_fraction(bioturbation_decay_depth_m, total_soil_thickness_m, depth, layerthickness_m[row, col, layer]) * local_bioturbation_kg;
+                                    layer_bioturbation_kg = activity_fraction(bioturbation_decay_depth_m, total_soil_thickness_m, depth, depth + layerthickness_m[row, col, layer]) * local_bioturbation_kg;
                                     mass_distance_sum = 0;
 
                                     depth += layerthickness_m[row, col, layer] /2;  ///ArT development needed
 
                                     double total_BT_depth_decay_index =
-                                        -1 / dd_bt * (Math.Exp(-dd_bt * (depth - 0)) - 1) + // upper part of the curve
-                                        -1 / dd_bt * (Math.Exp(-dd_bt * (total_soil_thickness_m - depth)) - 1); // lower part of the curve
+                                        -1 / dd_bt_m * (Math.Exp(-dd_bt_m * (depth - 0)) - 1) + // upper part of the curve //Should this also be changed since dd_bt_m is now m instead of 1/m? AleG
+                                        -1 / dd_bt_m * (Math.Exp(-dd_bt_m * (total_soil_thickness_m - depth)) - 1); // lower part of the curve //Should this also be changed since dd_bt_m is now m instead of 1/m? AleG
 
 
                                     otherdepth = 0; distance = 0;
@@ -390,16 +390,18 @@ namespace LORICA4
 
                                         if (otherlayer < layer) // above the bioturbated layer
                                         {
-                                            layer_BT_depth_decay_index = -1 / dd_bt * (Math.Exp(-dd_bt * (depth - z_topotherlayer)) - Math.Exp(-dd_bt * (depth - z_bottomotherlayer)));
+                                            layer_BT_depth_decay_index = -1 / dd_bt_m * (Math.Exp(-(depth - z_topotherlayer) / dd_bt_m) - Math.Exp(-(depth - z_bottomotherlayer) / dd_bt_m));
+
                                         }
                                         if (otherlayer == layer) // if layer is the same layer. Can it be excluded here and in the calculations? It should be included in calculating the depth profiles
                                         {
-                                            layer_BT_depth_decay_index = -1 / dd_bt * (Math.Exp(-dd_bt * (depth - z_topotherlayer)) - 1) +
-                                                -1 / dd_bt * (Math.Exp(-dd_bt * (z_bottomotherlayer - depth)) - 1);
+                                            layer_BT_depth_decay_index = -1 / dd_bt_m * (Math.Exp(-(depth - z_topotherlayer) / dd_bt_m) - 1) +
+                                            -1 / (Math.Exp(-dd_bt_m * (z_bottomotherlayer - depth) / dd_bt_m) - 1);
+
                                         }
                                         if (otherlayer > layer) // below the bioturbated layer
                                         {
-                                            layer_BT_depth_decay_index = -1 / dd_bt * (Math.Exp(-dd_bt * (z_bottomotherlayer - depth)) - Math.Exp(-dd_bt * (z_topotherlayer - depth)));
+                                            layer_BT_depth_decay_index = -1 / dd_bt_m * (Math.Exp(-(z_bottomotherlayer - depth) / dd_bt_m) - Math.Exp(-(z_topotherlayer - depth) / dd_bt_m));
                                         }
 
                                         otherdepth += layerthickness_m[row, col, otherlayer] / 2; // MM moved out of if-function, otherwise distance is not calculated correctly
@@ -1092,7 +1094,7 @@ namespace LORICA4
                                     // ICBM model
                                     // Andrén & Kätterer 1997: https://doi.org/10.2307/2641210
                                     young_SOM_kg[row, col, layer] += layer_OM_input_kg;
-                                    old_SOM_kg[row, col, layer] += humification_fraction * (young_SOM_kg[row, col, layer] * potential_young_decomp_rate * 1 * Math.Exp(-young_OM_decomp_char_decay_depth_m * depth));
+                                    old_SOM_kg[row, col, layer] += humification_fraction * (young_SOM_kg[row, col, layer] * potential_young_decomp_rate * 1 * Math.Exp(depth / young_OM_decomp_char_decay_depth_m));
                                 }
                                 if (double.IsNaN(young_SOM_kg[row, col, layer]))
                                 {

@@ -86,6 +86,50 @@
             this.LU10_Dep_textbox = new System.Windows.Forms.TextBox();
             this.LU10_Ero_textbox = new System.Windows.Forms.TextBox();
             this.landuse_ready_button = new System.Windows.Forms.Button();
+            this.LU10_RootC_textbox = new System.Windows.Forms.TextBox();
+            this.LU10_BiotR_textbox = new System.Windows.Forms.TextBox();
+            this.LU10_Till_textbox = new System.Windows.Forms.TextBox();
+            this.LU10_OM_textbox = new System.Windows.Forms.TextBox();
+            this.LU9_RootC_textbox = new System.Windows.Forms.TextBox();
+            this.LU9_BiotR_textbox = new System.Windows.Forms.TextBox();
+            this.LU9_Till_textbox = new System.Windows.Forms.TextBox();
+            this.LU9_OM_textbox = new System.Windows.Forms.TextBox();
+            this.label_RC = new System.Windows.Forms.Label();
+            this.LU3_RootC_textbox = new System.Windows.Forms.TextBox();
+            this.LU4_RootC_textbox = new System.Windows.Forms.TextBox();
+            this.LU5_RootC_textbox = new System.Windows.Forms.TextBox();
+            this.LU6_RootC_textbox = new System.Windows.Forms.TextBox();
+            this.LU7_RootC_textbox = new System.Windows.Forms.TextBox();
+            this.LU8_RootC_textbox = new System.Windows.Forms.TextBox();
+            this.LU2_RootC_textbox = new System.Windows.Forms.TextBox();
+            this.LU1_RootC_textbox = new System.Windows.Forms.TextBox();
+            this.LU3_BiotR_textbox = new System.Windows.Forms.TextBox();
+            this.LU4_BiotR_textbox = new System.Windows.Forms.TextBox();
+            this.LU5_BiotR_textbox = new System.Windows.Forms.TextBox();
+            this.LU6_BiotR_textbox = new System.Windows.Forms.TextBox();
+            this.LU7_BiotR_textbox = new System.Windows.Forms.TextBox();
+            this.LU8_BiotR_textbox = new System.Windows.Forms.TextBox();
+            this.LU2_BiotR_textbox = new System.Windows.Forms.TextBox();
+            this.LU1_BiotR_textbox = new System.Windows.Forms.TextBox();
+            this.LU3_Till_textbox = new System.Windows.Forms.TextBox();
+            this.LU4_Till_textbox = new System.Windows.Forms.TextBox();
+            this.LU5_Till_textbox = new System.Windows.Forms.TextBox();
+            this.LU6_Till_textbox = new System.Windows.Forms.TextBox();
+            this.LU7_Till_textbox = new System.Windows.Forms.TextBox();
+            this.LU8_Till_textbox = new System.Windows.Forms.TextBox();
+            this.LU2_Till_textbox = new System.Windows.Forms.TextBox();
+            this.LU1_Till_textbox = new System.Windows.Forms.TextBox();
+            this.LU3_OM_textbox = new System.Windows.Forms.TextBox();
+            this.LU4_OM_textbox = new System.Windows.Forms.TextBox();
+            this.LU5_OM_textbox = new System.Windows.Forms.TextBox();
+            this.LU6_OM_textbox = new System.Windows.Forms.TextBox();
+            this.LU7_OM_textbox = new System.Windows.Forms.TextBox();
+            this.LU8_OM_textbox = new System.Windows.Forms.TextBox();
+            this.LU2_OM_textbox = new System.Windows.Forms.TextBox();
+            this.label_OM = new System.Windows.Forms.Label();
+            this.label_tillage = new System.Windows.Forms.Label();
+            this.label_biot = new System.Windows.Forms.Label();
+            this.LU1_OM_textbox = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // label1
@@ -93,7 +137,7 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(38, 25);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(455, 39);
+            this.label1.Size = new System.Drawing.Size(455, 52);
             this.label1.TabIndex = 0;
             this.label1.Text = resources.GetString("label1.Text");
             // 
@@ -558,15 +602,416 @@
             this.landuse_ready_button.Name = "landuse_ready_button";
             this.landuse_ready_button.Size = new System.Drawing.Size(70, 22);
             this.landuse_ready_button.TabIndex = 57;
-            this.landuse_ready_button.Text = "ready";
+            this.landuse_ready_button.Text = "done";
             this.landuse_ready_button.UseVisualStyleBackColor = true;
             this.landuse_ready_button.Click += new System.EventHandler(this.landuse_ready_button_Click);
+            // 
+            // LU10_RootC_textbox
+            // 
+            this.LU10_RootC_textbox.Location = new System.Drawing.Point(666, 356);
+            this.LU10_RootC_textbox.Name = "LU10_RootC_textbox";
+            this.LU10_RootC_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU10_RootC_textbox.TabIndex = 101;
+            this.LU10_RootC_textbox.Text = "1";
+            // 
+            // LU10_BiotR_textbox
+            // 
+            this.LU10_BiotR_textbox.Location = new System.Drawing.Point(587, 356);
+            this.LU10_BiotR_textbox.Name = "LU10_BiotR_textbox";
+            this.LU10_BiotR_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU10_BiotR_textbox.TabIndex = 100;
+            this.LU10_BiotR_textbox.Text = "1";
+            // 
+            // LU10_Till_textbox
+            // 
+            this.LU10_Till_textbox.Location = new System.Drawing.Point(510, 356);
+            this.LU10_Till_textbox.Name = "LU10_Till_textbox";
+            this.LU10_Till_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU10_Till_textbox.TabIndex = 99;
+            this.LU10_Till_textbox.Text = "1";
+            // 
+            // LU10_OM_textbox
+            // 
+            this.LU10_OM_textbox.Location = new System.Drawing.Point(433, 356);
+            this.LU10_OM_textbox.Name = "LU10_OM_textbox";
+            this.LU10_OM_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU10_OM_textbox.TabIndex = 98;
+            this.LU10_OM_textbox.Text = "1";
+            // 
+            // LU9_RootC_textbox
+            // 
+            this.LU9_RootC_textbox.Location = new System.Drawing.Point(666, 330);
+            this.LU9_RootC_textbox.Name = "LU9_RootC_textbox";
+            this.LU9_RootC_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU9_RootC_textbox.TabIndex = 97;
+            this.LU9_RootC_textbox.Text = "1";
+            // 
+            // LU9_BiotR_textbox
+            // 
+            this.LU9_BiotR_textbox.Location = new System.Drawing.Point(587, 330);
+            this.LU9_BiotR_textbox.Name = "LU9_BiotR_textbox";
+            this.LU9_BiotR_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU9_BiotR_textbox.TabIndex = 96;
+            this.LU9_BiotR_textbox.Text = "1";
+            // 
+            // LU9_Till_textbox
+            // 
+            this.LU9_Till_textbox.Location = new System.Drawing.Point(510, 330);
+            this.LU9_Till_textbox.Name = "LU9_Till_textbox";
+            this.LU9_Till_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU9_Till_textbox.TabIndex = 95;
+            this.LU9_Till_textbox.Text = "1";
+            // 
+            // LU9_OM_textbox
+            // 
+            this.LU9_OM_textbox.Location = new System.Drawing.Point(433, 330);
+            this.LU9_OM_textbox.Name = "LU9_OM_textbox";
+            this.LU9_OM_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU9_OM_textbox.TabIndex = 94;
+            this.LU9_OM_textbox.Text = "1";
+            // 
+            // label_RC
+            // 
+            this.label_RC.AutoSize = true;
+            this.label_RC.Location = new System.Drawing.Point(663, 96);
+            this.label_RC.Name = "label_RC";
+            this.label_RC.Size = new System.Drawing.Size(83, 13);
+            this.label_RC.TabIndex = 93;
+            this.label_RC.Text = "Root Coh. (kPa)";
+            // 
+            // LU3_RootC_textbox
+            // 
+            this.LU3_RootC_textbox.Location = new System.Drawing.Point(666, 174);
+            this.LU3_RootC_textbox.Name = "LU3_RootC_textbox";
+            this.LU3_RootC_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU3_RootC_textbox.TabIndex = 92;
+            this.LU3_RootC_textbox.Text = "1";
+            // 
+            // LU4_RootC_textbox
+            // 
+            this.LU4_RootC_textbox.Location = new System.Drawing.Point(666, 200);
+            this.LU4_RootC_textbox.Name = "LU4_RootC_textbox";
+            this.LU4_RootC_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU4_RootC_textbox.TabIndex = 91;
+            this.LU4_RootC_textbox.Text = "1";
+            // 
+            // LU5_RootC_textbox
+            // 
+            this.LU5_RootC_textbox.Location = new System.Drawing.Point(666, 226);
+            this.LU5_RootC_textbox.Name = "LU5_RootC_textbox";
+            this.LU5_RootC_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU5_RootC_textbox.TabIndex = 90;
+            this.LU5_RootC_textbox.Text = "1";
+            // 
+            // LU6_RootC_textbox
+            // 
+            this.LU6_RootC_textbox.Location = new System.Drawing.Point(666, 252);
+            this.LU6_RootC_textbox.Name = "LU6_RootC_textbox";
+            this.LU6_RootC_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU6_RootC_textbox.TabIndex = 89;
+            this.LU6_RootC_textbox.Text = "1";
+            // 
+            // LU7_RootC_textbox
+            // 
+            this.LU7_RootC_textbox.Location = new System.Drawing.Point(666, 278);
+            this.LU7_RootC_textbox.Name = "LU7_RootC_textbox";
+            this.LU7_RootC_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU7_RootC_textbox.TabIndex = 88;
+            this.LU7_RootC_textbox.Text = "1";
+            // 
+            // LU8_RootC_textbox
+            // 
+            this.LU8_RootC_textbox.Location = new System.Drawing.Point(666, 304);
+            this.LU8_RootC_textbox.Name = "LU8_RootC_textbox";
+            this.LU8_RootC_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU8_RootC_textbox.TabIndex = 87;
+            this.LU8_RootC_textbox.Text = "1";
+            // 
+            // LU2_RootC_textbox
+            // 
+            this.LU2_RootC_textbox.Location = new System.Drawing.Point(666, 148);
+            this.LU2_RootC_textbox.Name = "LU2_RootC_textbox";
+            this.LU2_RootC_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU2_RootC_textbox.TabIndex = 86;
+            this.LU2_RootC_textbox.Text = "1";
+            // 
+            // LU1_RootC_textbox
+            // 
+            this.LU1_RootC_textbox.Location = new System.Drawing.Point(666, 122);
+            this.LU1_RootC_textbox.Name = "LU1_RootC_textbox";
+            this.LU1_RootC_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU1_RootC_textbox.TabIndex = 85;
+            this.LU1_RootC_textbox.Text = "1";
+            // 
+            // LU3_BiotR_textbox
+            // 
+            this.LU3_BiotR_textbox.Location = new System.Drawing.Point(587, 174);
+            this.LU3_BiotR_textbox.Name = "LU3_BiotR_textbox";
+            this.LU3_BiotR_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU3_BiotR_textbox.TabIndex = 84;
+            this.LU3_BiotR_textbox.Text = "1";
+            // 
+            // LU4_BiotR_textbox
+            // 
+            this.LU4_BiotR_textbox.Location = new System.Drawing.Point(587, 200);
+            this.LU4_BiotR_textbox.Name = "LU4_BiotR_textbox";
+            this.LU4_BiotR_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU4_BiotR_textbox.TabIndex = 83;
+            this.LU4_BiotR_textbox.Text = "1";
+            // 
+            // LU5_BiotR_textbox
+            // 
+            this.LU5_BiotR_textbox.Location = new System.Drawing.Point(587, 226);
+            this.LU5_BiotR_textbox.Name = "LU5_BiotR_textbox";
+            this.LU5_BiotR_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU5_BiotR_textbox.TabIndex = 82;
+            this.LU5_BiotR_textbox.Text = "1";
+            // 
+            // LU6_BiotR_textbox
+            // 
+            this.LU6_BiotR_textbox.Location = new System.Drawing.Point(587, 252);
+            this.LU6_BiotR_textbox.Name = "LU6_BiotR_textbox";
+            this.LU6_BiotR_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU6_BiotR_textbox.TabIndex = 81;
+            this.LU6_BiotR_textbox.Text = "1";
+            // 
+            // LU7_BiotR_textbox
+            // 
+            this.LU7_BiotR_textbox.Location = new System.Drawing.Point(587, 278);
+            this.LU7_BiotR_textbox.Name = "LU7_BiotR_textbox";
+            this.LU7_BiotR_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU7_BiotR_textbox.TabIndex = 80;
+            this.LU7_BiotR_textbox.Text = "1";
+            // 
+            // LU8_BiotR_textbox
+            // 
+            this.LU8_BiotR_textbox.Location = new System.Drawing.Point(587, 304);
+            this.LU8_BiotR_textbox.Name = "LU8_BiotR_textbox";
+            this.LU8_BiotR_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU8_BiotR_textbox.TabIndex = 79;
+            this.LU8_BiotR_textbox.Text = "1";
+            // 
+            // LU2_BiotR_textbox
+            // 
+            this.LU2_BiotR_textbox.Location = new System.Drawing.Point(587, 148);
+            this.LU2_BiotR_textbox.Name = "LU2_BiotR_textbox";
+            this.LU2_BiotR_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU2_BiotR_textbox.TabIndex = 78;
+            this.LU2_BiotR_textbox.Text = "1";
+            // 
+            // LU1_BiotR_textbox
+            // 
+            this.LU1_BiotR_textbox.Location = new System.Drawing.Point(587, 122);
+            this.LU1_BiotR_textbox.Name = "LU1_BiotR_textbox";
+            this.LU1_BiotR_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU1_BiotR_textbox.TabIndex = 77;
+            this.LU1_BiotR_textbox.Text = "1";
+            // 
+            // LU3_Till_textbox
+            // 
+            this.LU3_Till_textbox.Location = new System.Drawing.Point(510, 174);
+            this.LU3_Till_textbox.Name = "LU3_Till_textbox";
+            this.LU3_Till_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU3_Till_textbox.TabIndex = 76;
+            this.LU3_Till_textbox.Text = "1";
+            // 
+            // LU4_Till_textbox
+            // 
+            this.LU4_Till_textbox.Location = new System.Drawing.Point(510, 200);
+            this.LU4_Till_textbox.Name = "LU4_Till_textbox";
+            this.LU4_Till_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU4_Till_textbox.TabIndex = 75;
+            this.LU4_Till_textbox.Text = "1";
+            // 
+            // LU5_Till_textbox
+            // 
+            this.LU5_Till_textbox.Location = new System.Drawing.Point(510, 226);
+            this.LU5_Till_textbox.Name = "LU5_Till_textbox";
+            this.LU5_Till_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU5_Till_textbox.TabIndex = 74;
+            this.LU5_Till_textbox.Text = "1";
+            // 
+            // LU6_Till_textbox
+            // 
+            this.LU6_Till_textbox.Location = new System.Drawing.Point(510, 252);
+            this.LU6_Till_textbox.Name = "LU6_Till_textbox";
+            this.LU6_Till_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU6_Till_textbox.TabIndex = 73;
+            this.LU6_Till_textbox.Text = "1";
+            // 
+            // LU7_Till_textbox
+            // 
+            this.LU7_Till_textbox.Location = new System.Drawing.Point(510, 278);
+            this.LU7_Till_textbox.Name = "LU7_Till_textbox";
+            this.LU7_Till_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU7_Till_textbox.TabIndex = 72;
+            this.LU7_Till_textbox.Text = "1";
+            // 
+            // LU8_Till_textbox
+            // 
+            this.LU8_Till_textbox.Location = new System.Drawing.Point(510, 304);
+            this.LU8_Till_textbox.Name = "LU8_Till_textbox";
+            this.LU8_Till_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU8_Till_textbox.TabIndex = 71;
+            this.LU8_Till_textbox.Text = "1";
+            // 
+            // LU2_Till_textbox
+            // 
+            this.LU2_Till_textbox.Location = new System.Drawing.Point(510, 148);
+            this.LU2_Till_textbox.Name = "LU2_Till_textbox";
+            this.LU2_Till_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU2_Till_textbox.TabIndex = 70;
+            this.LU2_Till_textbox.Text = "1";
+            // 
+            // LU1_Till_textbox
+            // 
+            this.LU1_Till_textbox.Location = new System.Drawing.Point(510, 122);
+            this.LU1_Till_textbox.Name = "LU1_Till_textbox";
+            this.LU1_Till_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU1_Till_textbox.TabIndex = 69;
+            this.LU1_Till_textbox.Text = "1";
+            // 
+            // LU3_OM_textbox
+            // 
+            this.LU3_OM_textbox.Location = new System.Drawing.Point(433, 174);
+            this.LU3_OM_textbox.Name = "LU3_OM_textbox";
+            this.LU3_OM_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU3_OM_textbox.TabIndex = 68;
+            this.LU3_OM_textbox.Text = "1";
+            // 
+            // LU4_OM_textbox
+            // 
+            this.LU4_OM_textbox.Location = new System.Drawing.Point(433, 200);
+            this.LU4_OM_textbox.Name = "LU4_OM_textbox";
+            this.LU4_OM_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU4_OM_textbox.TabIndex = 67;
+            this.LU4_OM_textbox.Text = "1";
+            // 
+            // LU5_OM_textbox
+            // 
+            this.LU5_OM_textbox.Location = new System.Drawing.Point(433, 226);
+            this.LU5_OM_textbox.Name = "LU5_OM_textbox";
+            this.LU5_OM_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU5_OM_textbox.TabIndex = 66;
+            this.LU5_OM_textbox.Text = "1";
+            // 
+            // LU6_OM_textbox
+            // 
+            this.LU6_OM_textbox.Location = new System.Drawing.Point(433, 252);
+            this.LU6_OM_textbox.Name = "LU6_OM_textbox";
+            this.LU6_OM_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU6_OM_textbox.TabIndex = 65;
+            this.LU6_OM_textbox.Text = "1";
+            // 
+            // LU7_OM_textbox
+            // 
+            this.LU7_OM_textbox.Location = new System.Drawing.Point(433, 278);
+            this.LU7_OM_textbox.Name = "LU7_OM_textbox";
+            this.LU7_OM_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU7_OM_textbox.TabIndex = 64;
+            this.LU7_OM_textbox.Text = "1";
+            // 
+            // LU8_OM_textbox
+            // 
+            this.LU8_OM_textbox.Location = new System.Drawing.Point(433, 304);
+            this.LU8_OM_textbox.Name = "LU8_OM_textbox";
+            this.LU8_OM_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU8_OM_textbox.TabIndex = 63;
+            this.LU8_OM_textbox.Text = "1";
+            // 
+            // LU2_OM_textbox
+            // 
+            this.LU2_OM_textbox.Location = new System.Drawing.Point(433, 148);
+            this.LU2_OM_textbox.Name = "LU2_OM_textbox";
+            this.LU2_OM_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU2_OM_textbox.TabIndex = 62;
+            this.LU2_OM_textbox.Text = "1";
+            // 
+            // label_OM
+            // 
+            this.label_OM.AutoSize = true;
+            this.label_OM.Location = new System.Drawing.Point(430, 96);
+            this.label_OM.Name = "label_OM";
+            this.label_OM.Size = new System.Drawing.Size(50, 13);
+            this.label_OM.TabIndex = 61;
+            this.label_OM.Text = "OM input";
+            this.label_OM.Click += new System.EventHandler(this.label18_Click);
+            // 
+            // label_tillage
+            // 
+            this.label_tillage.AutoSize = true;
+            this.label_tillage.Location = new System.Drawing.Point(507, 96);
+            this.label_tillage.Name = "label_tillage";
+            this.label_tillage.Size = new System.Drawing.Size(38, 13);
+            this.label_tillage.TabIndex = 60;
+            this.label_tillage.Text = "Tillage";
+            // 
+            // label_biot
+            // 
+            this.label_biot.AutoSize = true;
+            this.label_biot.Location = new System.Drawing.Point(584, 96);
+            this.label_biot.Name = "label_biot";
+            this.label_biot.Size = new System.Drawing.Size(49, 13);
+            this.label_biot.TabIndex = 59;
+            this.label_biot.Text = "Biot. rate";
+            // 
+            // LU1_OM_textbox
+            // 
+            this.LU1_OM_textbox.Location = new System.Drawing.Point(433, 122);
+            this.LU1_OM_textbox.Name = "LU1_OM_textbox";
+            this.LU1_OM_textbox.Size = new System.Drawing.Size(59, 20);
+            this.LU1_OM_textbox.TabIndex = 58;
+            this.LU1_OM_textbox.Text = "1";
             // 
             // Landuse_determinator
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(513, 459);
+            this.ClientSize = new System.Drawing.Size(764, 459);
+            this.Controls.Add(this.LU10_RootC_textbox);
+            this.Controls.Add(this.LU10_BiotR_textbox);
+            this.Controls.Add(this.LU10_Till_textbox);
+            this.Controls.Add(this.LU10_OM_textbox);
+            this.Controls.Add(this.LU9_RootC_textbox);
+            this.Controls.Add(this.LU9_BiotR_textbox);
+            this.Controls.Add(this.LU9_Till_textbox);
+            this.Controls.Add(this.LU9_OM_textbox);
+            this.Controls.Add(this.label_RC);
+            this.Controls.Add(this.LU3_RootC_textbox);
+            this.Controls.Add(this.LU4_RootC_textbox);
+            this.Controls.Add(this.LU5_RootC_textbox);
+            this.Controls.Add(this.LU6_RootC_textbox);
+            this.Controls.Add(this.LU7_RootC_textbox);
+            this.Controls.Add(this.LU8_RootC_textbox);
+            this.Controls.Add(this.LU2_RootC_textbox);
+            this.Controls.Add(this.LU1_RootC_textbox);
+            this.Controls.Add(this.LU3_BiotR_textbox);
+            this.Controls.Add(this.LU4_BiotR_textbox);
+            this.Controls.Add(this.LU5_BiotR_textbox);
+            this.Controls.Add(this.LU6_BiotR_textbox);
+            this.Controls.Add(this.LU7_BiotR_textbox);
+            this.Controls.Add(this.LU8_BiotR_textbox);
+            this.Controls.Add(this.LU2_BiotR_textbox);
+            this.Controls.Add(this.LU1_BiotR_textbox);
+            this.Controls.Add(this.LU3_Till_textbox);
+            this.Controls.Add(this.LU4_Till_textbox);
+            this.Controls.Add(this.LU5_Till_textbox);
+            this.Controls.Add(this.LU6_Till_textbox);
+            this.Controls.Add(this.LU7_Till_textbox);
+            this.Controls.Add(this.LU8_Till_textbox);
+            this.Controls.Add(this.LU2_Till_textbox);
+            this.Controls.Add(this.LU1_Till_textbox);
+            this.Controls.Add(this.LU3_OM_textbox);
+            this.Controls.Add(this.LU4_OM_textbox);
+            this.Controls.Add(this.LU5_OM_textbox);
+            this.Controls.Add(this.LU6_OM_textbox);
+            this.Controls.Add(this.LU7_OM_textbox);
+            this.Controls.Add(this.LU8_OM_textbox);
+            this.Controls.Add(this.LU2_OM_textbox);
+            this.Controls.Add(this.label_OM);
+            this.Controls.Add(this.label_tillage);
+            this.Controls.Add(this.label_biot);
+            this.Controls.Add(this.LU1_OM_textbox);
             this.Controls.Add(this.landuse_ready_button);
             this.Controls.Add(this.LU10_Evap_textbox);
             this.Controls.Add(this.LU10_Inf_textbox);
@@ -690,6 +1135,49 @@
         public System.Windows.Forms.TextBox LU10_Dep_textbox;
         public System.Windows.Forms.TextBox LU10_Ero_textbox;
         public System.Windows.Forms.Button landuse_ready_button;
-
+        public System.Windows.Forms.TextBox LU10_RootC_textbox;
+        public System.Windows.Forms.TextBox LU10_BiotR_textbox;
+        public System.Windows.Forms.TextBox LU10_Till_textbox;
+        public System.Windows.Forms.TextBox LU10_OM_textbox;
+        public System.Windows.Forms.TextBox LU9_RootC_textbox;
+        public System.Windows.Forms.TextBox LU9_BiotR_textbox;
+        public System.Windows.Forms.TextBox LU9_Till_textbox;
+        public System.Windows.Forms.TextBox LU9_OM_textbox;
+        public System.Windows.Forms.Label label_RC;
+        public System.Windows.Forms.TextBox LU3_RootC_textbox;
+        public System.Windows.Forms.TextBox LU4_RootC_textbox;
+        public System.Windows.Forms.TextBox LU5_RootC_textbox;
+        public System.Windows.Forms.TextBox LU6_RootC_textbox;
+        public System.Windows.Forms.TextBox LU7_RootC_textbox;
+        public System.Windows.Forms.TextBox LU8_RootC_textbox;
+        public System.Windows.Forms.TextBox LU2_RootC_textbox;
+        public System.Windows.Forms.TextBox LU1_RootC_textbox;
+        public System.Windows.Forms.TextBox LU3_BiotR_textbox;
+        public System.Windows.Forms.TextBox LU4_BiotR_textbox;
+        public System.Windows.Forms.TextBox LU5_BiotR_textbox;
+        public System.Windows.Forms.TextBox LU6_BiotR_textbox;
+        public System.Windows.Forms.TextBox LU7_BiotR_textbox;
+        public System.Windows.Forms.TextBox LU8_BiotR_textbox;
+        public System.Windows.Forms.TextBox LU2_BiotR_textbox;
+        public System.Windows.Forms.TextBox LU1_BiotR_textbox;
+        public System.Windows.Forms.TextBox LU3_Till_textbox;
+        public System.Windows.Forms.TextBox LU4_Till_textbox;
+        public System.Windows.Forms.TextBox LU5_Till_textbox;
+        public System.Windows.Forms.TextBox LU6_Till_textbox;
+        public System.Windows.Forms.TextBox LU7_Till_textbox;
+        public System.Windows.Forms.TextBox LU8_Till_textbox;
+        public System.Windows.Forms.TextBox LU2_Till_textbox;
+        public System.Windows.Forms.TextBox LU1_Till_textbox;
+        public System.Windows.Forms.TextBox LU3_OM_textbox;
+        public System.Windows.Forms.TextBox LU4_OM_textbox;
+        public System.Windows.Forms.TextBox LU5_OM_textbox;
+        public System.Windows.Forms.TextBox LU6_OM_textbox;
+        public System.Windows.Forms.TextBox LU7_OM_textbox;
+        public System.Windows.Forms.TextBox LU8_OM_textbox;
+        public System.Windows.Forms.TextBox LU2_OM_textbox;
+        public System.Windows.Forms.Label label_OM;
+        public System.Windows.Forms.Label label_tillage;
+        public System.Windows.Forms.Label label_biot;
+        public System.Windows.Forms.TextBox LU1_OM_textbox;
     }
 }

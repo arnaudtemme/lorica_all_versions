@@ -1294,31 +1294,6 @@
   <metadata name="mainMenu1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>109, 17</value>
   </metadata>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <data name="label5.ToolTip" xml:space="preserve">
-    <value>Input filenames are not available when both f(x,y) and f(t) are unchecked. In that case, 
-only single values are input
-LORICA will use filename in the following way:
-
-1. When f(x,y) is checked but f(t) is not checked, filename is the ascii grid that will be read.
-Example: filename = use.asc ; LORICA will read use.asc
-
-2. When f(x,y) and f(t) are checked, filename is the prefix for 
-a series of ascii grid files with the timestep following the prefix. 
-Example: filename = use.asc ; LORICA will read use1.asc, use2.asc, use3.asc etc
-
-3. When f(x,y) is not checked, but f(t) is checked, filename is the text file containing 
-(spatially uniform) timeseries. The number of values in this file should at least equal 
-the number of timesteps in the run. LORICA will start using the first value.
-Example: rainfall.asc can look like:
-0.67
-0.54
-0.87
-0.70
-etc</value>
-  </data>
   <data name="groupBox9.ToolTip" xml:space="preserve">
     <value>The process description for biological (and other) weathering 
 uses the humped model and is based on Minasny and McBratney 
@@ -4546,9 +4521,6 @@ Reference: Temme et al, 1996. Computers and Geosciences
         ew4+fPJZeEzOd/Kr0eP06dP/D644/B+exioGAAAAAElFTkSuQmCC
 </value>
   </data>
-  <metadata name="rockweath_method.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
   <metadata name="rockweath_method.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>

@@ -45,20 +45,34 @@ For Alessia:
 -- FINISHED runfile --> settings
 -- FINISHED deactivate the start button once clicked
 -- FINISHED fix the soil specifier open after clicking X
--- fix the landuse_det open after clicking X
--- write output at t = 0 before simulations
+-- FINISHED fix the landuse_det open after clicking X
+-- FINISHED write output at t = 0 before simulations
 -- check that the model really does not run when wrong decimal separator
--- FINISHED added the new
+-- FINISHED updated the xml file saving and reading (land use pop up, increasing thickness ratio, proglacial mode)
 -- FINISHED Renamed inputs in input page for consistency
--- Fix various radio-buttons and buttons for f(x,y) and f(t)
+-- FINISHED Fix various radio-buttons and buttons for f(x,y) and f(t)
+-- FINISHED made tillage button editable, 0 as default
+-- FINISHED Made the f(t) button inaccessible for Land use and tillage fields
+-- FINISHED Made Physical weathering and water erosion the only processes active by default
+-- FINISHED In the "Input" page, made the hovering to ask for information more obvious
+
+
+Other changes Alessia:
+-- FINISHED In old_SOM_kg[row, col, layer] corrected from "Math.Exp(-young_OM_decomp_char_decay_depth_m * depth)" to "Math.Exp(depth/young_OM_decomp_char_decay_depth_m)"
+-- FINISHED In layer_bioturbation_kg, the last required variable was corrected from "layerthickness_m[row, col, layer]" to "depth + layerthickness_m[row, col, layer]"
+-- FINISHED In soil_bioturbation_mixing(): dd_bt changed to dd_bt_m
+-- FINISHED In soil_bioturbation_mixing(): due to unit change, "-dd_bt *" changed to "/-dd_bt_m" in three lines 
+-- FINISHED Proglacial version added
+-- FINISHED land use pop up can now be saved into a xml 
+
 
 	-- Marijn: I have my computer set to dutch regional settings, but overwritten the decimal separator to point. This also produced an error. So we need to mention in the manual which exact regional setting works for the model
 -- update the xml reading and writing with removed and added parameters (esp. landuse and soil specifier variables)
    -- figure out how we can keep updating this without giving issues in the future when other parameters are added
    -- new parameters from Marijn: in bioturbation, SOM cycling, layering
 -- start button re-activate when better inputs needed
-=- clean up input section
--- fixing button thingy landuse popup
+
+
 
 For Arnaud:
 -- steps already done
@@ -73,7 +87,7 @@ For Marijn:
 
 
 WISHLIST
-- possibility to set fixed BD value in interfae instead of PTF MvdM
+- possibility to set fixed BD value in interface instead of PTF MvdM
 - collective transfer function for transport into pools which is later redistributed (bt_mixing, tillage mixing / upheaval, treefall, water erosion?) MvdM
 - put all case studies / calibration studies in popup window
 - empty output folder before simulations, to avoid old and new files in one directory. Give warning or popup window if there are files present
@@ -94,21 +108,8 @@ ERRORS & DEVELOPMENT
    - check if this solves the problem
 - one code for initialize_once(_testing)
 - integrate initialise_every_till into initialise_every
+- tillfields_constant_value never actually used in the code
+- The root cohesion could be connected to the Water erosion somehow since it is the only value in the landuse popup that is not connected to Water erosion.
 
 
-
-
-ALE
-spegni box soil dep come quello del land use se non clicchi su (x,y)
-rendili tutti uguali. xk f(t)??
-
-
-controlla che tillage funzioni nel modo giusto. vedi vari pulsanti grigi o meno
-
- in bioturbation activity_fraction sistema depth + layerthick e fai nota separata in cose cambiate!!!
-layer_bioturbation_kg = activity_fraction(bioturbation_depth_decay_constant, total_soil_thickness_m, depth, depth + layerthickness_m[row, col, layer]) * local_bioturbation_kg;
-                                    
-
-in OM dynamics corretta formula da:
-old_SOM_kg[row, col, layer] += humification_fraction * (young_SOM_kg[row, col, layer] * potential_young_decomp_rate * 1 * Math.Exp(-young_OM_decomp_char_decay_depth_m * depth));
-a:   old_SOM_kg[row, col, layer] += humification_fraction * (young_SOM_kg[row, col, layer] * potential_young_decomp_rate * Math.Exp(depth/young_OM_decomp_char_decay_depth_m));
+   

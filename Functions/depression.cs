@@ -25,6 +25,23 @@ namespace LORICA4
             numsinks = 0;
             int row, col;
 
+            if (Proglacial_checkbox.Checked)  //AleG
+            {
+
+                if (t == 0) 
+                {
+                    dtm_WE = og_dtm;
+                }
+                else
+                {
+                    dtm_WE = filled_dtm;
+                }
+            }
+            else
+            {
+                dtm_WE = dtm;
+            }
+
             for (row = 0; row < nr; row++)
             {        //visit all cells in the DEM and  ...
                 for (col = 0; col < nc; col++)
@@ -117,6 +134,22 @@ namespace LORICA4
                 jloedge[z] = 0;
                 iupedge[z] = 0;
                 jupedge[z] = 0;
+            }
+
+            if (Proglacial_checkbox.Checked)  
+            {
+                if (t == 0)
+                {
+                    dtm_WE = og_dtm;
+                }
+                else
+                {
+                    dtm_WE = filled_dtm;
+                }
+            }
+            else
+            {
+                dtm_WE = dtm;
             }
 
             totaldepressions = 0; totaldepressionsize = 0; maxsize = 0; totaldepressionvolume = 0; largestdepression = -1;

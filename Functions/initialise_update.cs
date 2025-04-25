@@ -149,6 +149,15 @@ namespace LORICA4
                     if (memory_records == false) { makerecords(filename); }
                     read_record(filename, rainfall_record);
                 }
+
+                if (Proglacial_checkbox.Checked)
+                {
+                    filename = this.proglacial_input_filename_textbox.Text;
+                    read_integer(filename, age_rast_yr);
+                    Debug.WriteLine("read age raster");
+
+                }
+
                 if (check_time_till_fields.Checked)
                 {
                     filename = this.tillfields_input_filename_textbox.Text;
@@ -188,8 +197,14 @@ namespace LORICA4
                             K_fac[row, col] = advection_erodibility; P_fac[row, col] = P_act;
                         } //WVG K_fac matrix initialisation is needed when landuse is disabled
 
-                        if (Water_ero_checkbox.Checked && check_space_landuse.Checked == true)
+                        if (check_space_landuse.Checked == true)
                         {
+                            evapotranspiration[row, col] = -9999; 
+                            infil[row, col] = -9999; 
+                            root_cohesion_kPa_new[row, col] = -9999; 
+                            K_fac[row, col] = -9999; 
+                            P_fac[row, col] = -9999; 
+
                             //currently, this will throw an exception if landuse is actually spatial //development required //ArT
                             if (landuse[row, col] == 1)
                             {
@@ -197,6 +212,7 @@ namespace LORICA4
                                 evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU1_Evap_textbox.Text);
                                 K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU1_Ero_textbox.Text);
                                 P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU1_Dep_textbox.Text);
+                                root_cohesion_kPa_new[row, col] *= System.Convert.ToDouble(landuse_determinator.LU1_RootC_textbox.Text);
                             }
                             if (landuse[row, col] == 2)
                             {
@@ -204,6 +220,7 @@ namespace LORICA4
                                 evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU2_Evap_textbox.Text);
                                 K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU2_Ero_textbox.Text);
                                 P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU2_Dep_textbox.Text);
+                                root_cohesion_kPa_new[row, col] *= System.Convert.ToDouble(landuse_determinator.LU2_RootC_textbox.Text);
                             }
                             if (landuse[row, col] == 3)
                             {
@@ -211,6 +228,7 @@ namespace LORICA4
                                 evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU3_Evap_textbox.Text);
                                 K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU3_Ero_textbox.Text);
                                 P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU3_Dep_textbox.Text);
+                                root_cohesion_kPa_new[row, col] *= System.Convert.ToDouble(landuse_determinator.LU3_RootC_textbox.Text);
                             }
                             if (landuse[row, col] == 4)
                             {
@@ -218,6 +236,7 @@ namespace LORICA4
                                 evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU4_Evap_textbox.Text);
                                 K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU4_Ero_textbox.Text);
                                 P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU4_Dep_textbox.Text);
+                                root_cohesion_kPa_new[row, col] *= System.Convert.ToDouble(landuse_determinator.LU4_RootC_textbox.Text);
                             }
                             if (landuse[row, col] == 5)
                             {
@@ -225,6 +244,7 @@ namespace LORICA4
                                 evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU5_Evap_textbox.Text);
                                 K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU5_Ero_textbox.Text);
                                 P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU5_Dep_textbox.Text);
+                                root_cohesion_kPa_new[row, col] *= System.Convert.ToDouble(landuse_determinator.LU5_RootC_textbox.Text);
                             }
                             if (landuse[row, col] == 6)
                             {
@@ -232,6 +252,7 @@ namespace LORICA4
                                 evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU6_Evap_textbox.Text);
                                 K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU6_Ero_textbox.Text);
                                 P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU6_Dep_textbox.Text);
+                                root_cohesion_kPa_new[row, col] *= System.Convert.ToDouble(landuse_determinator.LU6_RootC_textbox.Text);
                             }
                             if (landuse[row, col] == 7)
                             {
@@ -239,6 +260,7 @@ namespace LORICA4
                                 evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU7_Evap_textbox.Text);
                                 K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU7_Ero_textbox.Text);
                                 P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU7_Dep_textbox.Text);
+                                root_cohesion_kPa_new[row, col] *= System.Convert.ToDouble(landuse_determinator.LU7_RootC_textbox.Text);
                             }
                             if (landuse[row, col] == 8)
                             {
@@ -246,6 +268,7 @@ namespace LORICA4
                                 evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU8_Evap_textbox.Text);
                                 K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU8_Ero_textbox.Text);
                                 P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU8_Dep_textbox.Text);
+                                root_cohesion_kPa_new[row, col] *= System.Convert.ToDouble(landuse_determinator.LU8_RootC_textbox.Text);
                             }
                             if (landuse[row, col] == 9)
                             {
@@ -253,6 +276,7 @@ namespace LORICA4
                                 evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU9_Evap_textbox.Text);
                                 K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU9_Ero_textbox.Text);
                                 P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU9_Dep_textbox.Text);
+                                root_cohesion_kPa_new[row, col] *= System.Convert.ToDouble(landuse_determinator.LU9_RootC_textbox.Text);
                             }
                             if (landuse[row, col] == 10)
                             {
@@ -260,6 +284,7 @@ namespace LORICA4
                                 evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU10_Evap_textbox.Text);
                                 K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU10_Ero_textbox.Text);
                                 P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU10_Dep_textbox.Text);
+                                root_cohesion_kPa_new[row, col] *= System.Convert.ToDouble(landuse_determinator.LU10_RootC_textbox.Text);
                             }
                         }
                     } //for
@@ -549,6 +574,7 @@ namespace LORICA4
                                 evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU1_Evap_textbox.Text);
                                 K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU1_Ero_textbox.Text);
                                 P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU1_Dep_textbox.Text);
+                                root_cohesion_kPa_new[row, col] *= System.Convert.ToDouble(landuse_determinator.LU1_RootC_textbox.Text);
                             }
                             if (landuse[row, col] == 2)
                             {
@@ -556,6 +582,7 @@ namespace LORICA4
                                 evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU2_Evap_textbox.Text);
                                 K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU2_Ero_textbox.Text);
                                 P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU2_Dep_textbox.Text);
+                                root_cohesion_kPa_new[row, col] *= System.Convert.ToDouble(landuse_determinator.LU2_RootC_textbox.Text);
                             }
                             if (landuse[row, col] == 3)
                             {
@@ -563,6 +590,7 @@ namespace LORICA4
                                 evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU3_Evap_textbox.Text);
                                 K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU3_Ero_textbox.Text);
                                 P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU3_Dep_textbox.Text);
+                                root_cohesion_kPa_new[row, col] *= System.Convert.ToDouble(landuse_determinator.LU3_RootC_textbox.Text);
                             }
                             if (landuse[row, col] == 4)
                             {
@@ -570,6 +598,7 @@ namespace LORICA4
                                 evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU4_Evap_textbox.Text);
                                 K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU4_Ero_textbox.Text);
                                 P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU4_Dep_textbox.Text);
+                                root_cohesion_kPa_new[row, col] *= System.Convert.ToDouble(landuse_determinator.LU4_RootC_textbox.Text);
                             }
                             if (landuse[row, col] == 5)
                             {
@@ -577,6 +606,7 @@ namespace LORICA4
                                 evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU5_Evap_textbox.Text);
                                 K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU5_Ero_textbox.Text);
                                 P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU5_Dep_textbox.Text);
+                                root_cohesion_kPa_new[row, col] *= System.Convert.ToDouble(landuse_determinator.LU5_RootC_textbox.Text);
                             }
                             if (landuse[row, col] == 6)
                             {
@@ -584,6 +614,7 @@ namespace LORICA4
                                 evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU6_Evap_textbox.Text);
                                 K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU6_Ero_textbox.Text);
                                 P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU6_Dep_textbox.Text);
+                                root_cohesion_kPa_new[row, col] *= System.Convert.ToDouble(landuse_determinator.LU6_RootC_textbox.Text);
                             }
                             if (landuse[row, col] == 7)
                             {
@@ -591,6 +622,7 @@ namespace LORICA4
                                 evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU7_Evap_textbox.Text);
                                 K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU7_Ero_textbox.Text);
                                 P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU7_Dep_textbox.Text);
+                                root_cohesion_kPa_new[row, col] *= System.Convert.ToDouble(landuse_determinator.LU7_RootC_textbox.Text);
                             }
                             if (landuse[row, col] == 8)
                             {
@@ -598,6 +630,7 @@ namespace LORICA4
                                 evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU8_Evap_textbox.Text);
                                 K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU8_Ero_textbox.Text);
                                 P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU8_Dep_textbox.Text);
+                                root_cohesion_kPa_new[row, col] *= System.Convert.ToDouble(landuse_determinator.LU8_RootC_textbox.Text);
                             }
                             if (landuse[row, col] == 9)
                             {
@@ -605,6 +638,7 @@ namespace LORICA4
                                 evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU9_Evap_textbox.Text);
                                 K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU9_Ero_textbox.Text);
                                 P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU9_Dep_textbox.Text);
+                                root_cohesion_kPa_new[row, col] *= System.Convert.ToDouble(landuse_determinator.LU9_RootC_textbox.Text);
                             }
                             if (landuse[row, col] == 10)
                             {
@@ -612,6 +646,7 @@ namespace LORICA4
                                 evapotranspiration[row, col] *= System.Convert.ToDouble(landuse_determinator.LU10_Evap_textbox.Text);
                                 K_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU10_Ero_textbox.Text);
                                 P_fac[row, col] *= System.Convert.ToDouble(landuse_determinator.LU10_Dep_textbox.Text);
+                                root_cohesion_kPa_new[row, col] *= System.Convert.ToDouble(landuse_determinator.LU10_RootC_textbox.Text);
                             }
                         }
                     } //for
@@ -1018,6 +1053,7 @@ namespace LORICA4
                 } // end col
             } // end row
               //Debug.WriteLine("initialised soil");
+            writeinputsoils();
         }
 
         void initialise_every_till()
@@ -1204,6 +1240,23 @@ namespace LORICA4
                 int layer;
                 double depth_m, z_layer_ref_m, old_thickness, new_thickness;
                 bool boolsplit, boolcombine;
+
+                if (Proglacial_checkbox.Checked)  
+                {
+
+                    if (t == 0)
+                    {
+                        dtm_WE = og_dtm;
+                    }
+                    else
+                    {
+                        dtm_WE = filled_dtm;
+                    }
+                }
+                else
+                {
+                    dtm_WE = dtm;
+                }
 
                 total_average_soilthickness_m = 0;
                 number_soil_thicker_than = 0;

@@ -383,6 +383,21 @@ Example: rainfall.asc can look like:
             }
         }
 
+        private void proglacial_input_filename_textbox_TextChanged(object sender, EventArgs e)  
+        {
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+
+            openFileDialog1.InitialDirectory = workdir;
+            openFileDialog1.Filter = "Ascii grids (*.asc)|*.asc|All files (*.*)|*.*";
+            openFileDialog1.FilterIndex = 1;
+            openFileDialog1.RestoreDirectory = false;
+
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                proglacial_input_filename_textbox.Text = openFileDialog1.FileName;
+            }
+        }
+
         private void soil_specify_button_Click(object sender, EventArgs e)
         {
             soildata.Visible = true;
