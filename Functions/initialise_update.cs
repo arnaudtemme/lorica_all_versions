@@ -1053,7 +1053,7 @@ namespace LORICA4
                 } // end col
             } // end row
               //Debug.WriteLine("initialised soil");
-            writeinputsoils();
+            writeallsoils(workdir + "\\" + run_number + "_" + t + "_out_allsoils.csv");
         }
 
         void initialise_every_till()

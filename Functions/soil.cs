@@ -19,6 +19,13 @@ namespace LORICA4
             double activity_fraction = (Math.Exp(-layertop_m / c) - Math.Exp(-layerbottom_m / c)) / (Math.Exp(-0 / c) - Math.Exp(-soildepth_m / c));
             return activity_fraction;
         }
+
+        public double layer_midpoint_m(double characteristic_depth_m, double layertop_m, double layerbottom_m)
+        {
+            double c = characteristic_depth_m;
+            double z_star = -c * Math.Log((Math.Exp(-layertop_m / c) + Math.Exp(-layerbottom_m / c)) / 2);
+            return z_star;
+        }
         void soil_physical_weathering()  //calculate physical weathering
         {
             decimal old_mass_kg = 0;
@@ -1042,6 +1049,7 @@ namespace LORICA4
             {
                 double local_OM_input_kg, layer_OM_input_kg;
                 double young_decomposition_rate, old_decomposition_rate;
+                double young_midpoint_m, old_midpoint_m;
                 //Debug.WriteLine("succesfully read parameters for soil SOM");
                 double depth;
                 double total_soil_thickness;
@@ -1101,10 +1109,12 @@ namespace LORICA4
                                     Debug.WriteLine("err_cc2");
                                 }
 
-                                //young_decomposition_rate = potential_young_decomp_rate * Math.Exp(-young_CTI_decay_constant * dynamic_TWI) * Math.Exp(-young_depth_decay_constant * depth);
-                                //old_decomposition_rate = potential_old_decomp_rate * Math.Exp(-old_CTI_decay_constant * dynamic_TWI) * Math.Exp(-old_depth_decay_constant * depth);
-                                young_decomposition_rate = potential_young_decomp_rate * activity_fraction(young_OM_decomp_char_decay_depth_m, total_soil_thickness, depth, depth + layerthickness_m[row, col, layer]);
-                                old_decomposition_rate = potential_old_decomp_rate * activity_fraction(old_OM_decomp_char_decay_depth_m, total_soil_thickness, depth, depth + layerthickness_m[row, col, layer]);
+                                young_midpoint_m = layer_midpoint_m(young_OM_decomp_char_decay_depth_m, depth, depth + layerthickness_m[row, col, layer]);
+                                old_midpoint_m = layer_midpoint_m(old_OM_decomp_char_decay_depth_m, depth, depth + layerthickness_m[row, col, layer]);
+                                young_decomposition_rate = potential_young_decomp_rate * Math.Exp(-young_OM_decomp_char_decay_depth_m * (depth+young_midpoint_m));
+                                old_decomposition_rate = potential_old_decomp_rate * Math.Exp(-old_OM_decomp_char_decay_depth_m * (depth+old_midpoint_m));
+
+
                                 young_SOM_kg[row, col, layer] *= (1 - young_decomposition_rate);
                                 old_SOM_kg[row, col, layer] *= (1 - old_decomposition_rate);
                                 //Debug.WriteLine(" cell  " + row + " " + col + " has layer_OM_input of " + layer_OM_input_kg);
