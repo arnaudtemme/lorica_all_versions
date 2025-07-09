@@ -719,7 +719,8 @@ namespace LORICA4
             //https://www.sciencedirect.com/science/article/abs/pii/S0016706198001323
             // Debug.WriteLine("KsW1");
             //Debug.WriteLine("calculating Ks_Wosten with " + silt + " " + clay + " " + OM + " " + BD_g_cm3 + " " + topsoil);            
-            if (OM < 0.5) { OM = 0.5; } // half percent of OM for soils where it is absent, otherwise the PTFs will crash
+            if (OM < 1) { OM = 1; } // half percent of OM for soils where it is absent, otherwise the PTFs will crash //AleG
+            if (silt < 1) { silt = 1; } // half percent of silt for soils where it is absent, otherwise the PTFs will crash //AleG
             double KsW = Math.Exp(7.755 + 0.03252 * silt + 0.93 * topsoil - 0.967 * BD_g_cm3 * BD_g_cm3 - 0.000484 * clay * clay - 0.000322 * silt *
                 silt + 0.001 / silt - 0.0748 / OM - 0.643 * Math.Log(silt) - 0.01398 * BD_g_cm3 * clay - 0.1673 * BD_g_cm3 * OM + 0.02986 * topsoil * clay - 0.03305 * topsoil * silt) / 100;
             // Debug.WriteLine("KsW2");

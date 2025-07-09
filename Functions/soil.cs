@@ -55,6 +55,7 @@ namespace LORICA4
                                     total_phys_weathered_mass_kg += weathered_mass_kg;
                                     //Debug.WriteLine(" weathered mass is " + weathered_mass + " for class " + tempclass );
                                     // calculate the products involved
+
                                     if (tex_class == 0) //coarse fraction , boulders
                                     {
                                         texture_kg[row, tempcol, templayer, tempclass + 1] += 0.975 * weathered_mass_kg;
@@ -77,15 +78,16 @@ namespace LORICA4
                     }  //);
                 } // end for cells
                   //timeseries
-                if (timeseries.timeseries_cell_waterflow_check.Checked)
+                if (timeseries.timeseries_cell_waterflow_check.Checked) 
                 {
+
                     timeseries_matrix[t, timeseries_order[23]] = total_phys_weathered_mass_kg;
                 }
+
             }
             catch { Debug.WriteLine(" Soil physical weathering calculation threw an exception"); }
-
-            decimal new_mass_kg = total_catchment_mass_decimal();
-            if (Math.Abs(old_mass_kg - new_mass_kg) > Convert.ToDecimal(0.0001))
+            decimal new_mass_kg = total_catchment_mass_decimal(); 
+            if (Math.Abs(old_mass_kg - new_mass_kg) > Convert.ToDecimal(0.0001)) //quiii
             {
                 Debug.WriteLine("err_spw1");
             }
@@ -756,7 +758,7 @@ namespace LORICA4
                 {
                     for (col = 0; col < nc; col++)
                     {
-                        if (dtm[row, col] != -9999 & soildepth_m[row, col] > 0)
+                        if (dtm[row, col] != nodata_value & soildepth_m[row, col] > 0)
                         {
                             update_all_layer_thicknesses(row, col);
 

@@ -573,7 +573,8 @@ namespace LORICA4
                 while (lineArray2[sp] == "") sp++;
                 dx = double.Parse(lineArray2[sp]);
 
-                if (dx <= 0.1)  //AleG
+                if (dx <= 0.1)  //
+                                //
                 {
                     MessageBox.Show("Make sure that the DEM cell resolution is in meters");
                     start_button.Enabled = true;
@@ -715,6 +716,18 @@ namespace LORICA4
 
             }
             sr.Close();
+
+            for (int row = 0; row < nr; row++)
+            {
+                for (int col = 0; col < nc; col++)
+                {
+                    if (dtm[row, col] == nodata_value) //AleG
+                    {
+                        map1[row,col] = nodata_value;
+                    }
+                }
+            }
+            
         } // end read_double()
         void read_integer(string name2, int[,] map1)
         {
@@ -785,6 +798,17 @@ namespace LORICA4
 
             }
             sr.Close();
+
+            for (int row = 0; row < nr; row++)
+            {
+                for (int col = 0; col < nc; col++)
+                {
+                    if (dtm[row, col] == nodata_value) //AleG
+                    {
+                        map1[row, col] = nodata_value;
+                    }
+                }
+            }
             //Debug.WriteLine("completed reading file" + FILE_NAME);
         } // end read_integer()
         void read_record(string filename, int[] record)
@@ -872,9 +896,17 @@ namespace LORICA4
                 {
                     for (col = 0; col < nc; col++)
                     {
-                        sw.Write("{0:F6}", output[row, col]);
-                        sw.Write(" ");
-
+                        if (dtm[row, col] != nodata_value) //AleG 
+                        {
+                            sw.Write("{0:F6}", output[row, col]);
+                            sw.Write(" ");
+                        }
+                        else
+                        {
+                            sw.Write("{0:F6}", nodata_value); //AleG
+                            sw.Write(" ");
+                        }
+                            
                     }
                     sw.Write("\r\n");
                 }
@@ -969,9 +1001,18 @@ namespace LORICA4
                 {
                     for (col = 0; col < nc; col++)
                     {
+                        if (dtm[row, col] != nodata_value) //AleG 
+                        {
+                            sw.Write(output[row, col]);
+                            sw.Write(" ");
+                        }
 
-                        sw.Write(output[row, col]);
-                        sw.Write(" ");
+                        else //AleG
+                        {
+                            sw.Write(nodata_value);
+                            sw.Write(" ");
+                        }
+
                     }
 
                     sw.Write("\n");
@@ -993,9 +1034,18 @@ namespace LORICA4
                 {
                     for (int col = 0; col < nc; col++)
                     {
+                        if (dtm[row, col] != nodata_value) //AleG 
+                        {
+                            sw.Write(output[row, col]);
+                            sw.Write(" ");
+                        }
 
-                        sw.Write(output[row, col]);
-                        sw.Write(" ");
+                        else //AleG
+                        {
+                            sw.Write(nodata_value); 
+                            sw.Write(" ");
+                        }
+                    
                     }
 
                     sw.Write("\n");
@@ -1134,7 +1184,7 @@ namespace LORICA4
                 {
                     for (int col = 0; col < nc; col++)
                     {
-                        if (dtm[row, col] != -9999)
+                        if (dtm[row, col] != nodata_value)
                         {
                             cumthick = 0;
                             midthick = 0;
@@ -1392,6 +1442,7 @@ namespace LORICA4
                         parameter_k1_textbox.Text = xreader.ReadElementString("para_k1");
                         parameter_k2_textbox.Text = xreader.ReadElementString("para_k2");
                         parameter_Pa_textbox.Text = xreader.ReadElementString("para_Pa");
+                        rockweath_method_box.SelectedIndex = XmlConvert.ToInt32(xreader.ReadElementString("rockweath_method")); //AleG
                         xreader.ReadEndElement();
                     }
                     catch { read_error = 1; Debug.WriteLine("failed reading weathering paras"); }
@@ -1408,6 +1459,7 @@ namespace LORICA4
                         textBox_ls_ifr.Text = xreader.ReadElementString("para_friction");
                         textBox_ls_bd.Text = xreader.ReadElementString("para_density");
                         textBox_ls_trans.Text = xreader.ReadElementString("para_transmissivity");
+                        minimum_slope_for_movement_tan_textbox.Text = xreader.ReadElementString("minimum_slope_for_movement_tan"); //AleG
                         xreader.ReadEndElement();
                     }
                     catch { read_error = 1; Debug.WriteLine("failed reading landsliding paras"); }
@@ -1507,6 +1559,7 @@ namespace LORICA4
                         soil_bioturb_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("bioturbation_active"));
                         potential_bt_mixing_textbox.Text = xreader.ReadElementString("potential_bioturb");
                         bt_depth_decay_textbox.Text = xreader.ReadElementString("bioturb_depth_decay");
+                        bt_depthfunction_box.SelectedIndex = XmlConvert.ToInt32(xreader.ReadElementString("bt_depth_function")); //AleG
                         xreader.ReadEndElement();
                     }
                     catch { read_error = 1; Debug.WriteLine("failed reading water ero paras"); }
@@ -1515,6 +1568,7 @@ namespace LORICA4
                     {
                         xreader.ReadStartElement("Carboncycle");
                         soil_carbon_cycle_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("carboncycle_active"));
+                        som_cycle_algorithm_box.SelectedIndex = XmlConvert.ToInt32(xreader.ReadElementString("som_cycle_algorithm")); //AleG
                         carbon_input_textbox.Text = xreader.ReadElementString("carbon_input");
                         carbon_depth_decay_textbox.Text = xreader.ReadElementString("carbon_depth_decay");
                         carbon_humification_fraction_textbox.Text = xreader.ReadElementString("carbon_hum_fraction");
@@ -1728,6 +1782,8 @@ namespace LORICA4
                         soildata.siltbox.Text = xreader.ReadElementString("siltfrac");
                         soildata.claybox.Text = xreader.ReadElementString("clayfrac");
                         soildata.fineclaybox.Text = xreader.ReadElementString("fclayfrac");
+                        soildata.yombox.Text = xreader.ReadElementString("yomfrac"); //AleG
+                        soildata.oombox.Text = xreader.ReadElementString("oomfrac"); //AleG
                         xreader.ReadEndElement();
                     }
                     catch { read_error = 1; Debug.WriteLine("failed reading soil frac paras"); }
@@ -1736,61 +1792,51 @@ namespace LORICA4
                     {
                         xreader.ReadStartElement("Landuse_parameters");//AleG 
                         landuse_determinator.LU1_Ero_textbox.Text = xreader.ReadElementString("LU1_Ero");
-                        landuse_determinator.LU1_Dep_textbox.Text = xreader.ReadElementString("LU1_Dep");
                         landuse_determinator.LU1_Inf_textbox.Text = xreader.ReadElementString("LU1_Inf");
                         landuse_determinator.LU1_Evap_textbox.Text = xreader.ReadElementString("LU1_Evap");
                         landuse_determinator.LU1_RootC_textbox.Text = xreader.ReadElementString("LU1_RootC");
 
                         landuse_determinator.LU2_Ero_textbox.Text = xreader.ReadElementString("LU2_Ero");
-                        landuse_determinator.LU2_Dep_textbox.Text = xreader.ReadElementString("LU2_Dep");
                         landuse_determinator.LU2_Inf_textbox.Text = xreader.ReadElementString("LU2_Inf");
                         landuse_determinator.LU2_Evap_textbox.Text = xreader.ReadElementString("LU2_Evap");
                         landuse_determinator.LU2_RootC_textbox.Text = xreader.ReadElementString("LU2_RootC");
 
                         landuse_determinator.LU3_Ero_textbox.Text = xreader.ReadElementString("LU3_Ero");
-                        landuse_determinator.LU3_Dep_textbox.Text = xreader.ReadElementString("LU3_Dep");
                         landuse_determinator.LU3_Inf_textbox.Text = xreader.ReadElementString("LU3_Inf");
                         landuse_determinator.LU3_Evap_textbox.Text = xreader.ReadElementString("LU3_Evap");
                         landuse_determinator.LU3_RootC_textbox.Text = xreader.ReadElementString("LU3_RootC");
 
                         landuse_determinator.LU4_Ero_textbox.Text = xreader.ReadElementString("LU4_Ero");
-                        landuse_determinator.LU4_Dep_textbox.Text = xreader.ReadElementString("LU4_Dep");
                         landuse_determinator.LU4_Inf_textbox.Text = xreader.ReadElementString("LU4_Inf");
                         landuse_determinator.LU4_Evap_textbox.Text = xreader.ReadElementString("LU4_Evap");
                         landuse_determinator.LU4_RootC_textbox.Text = xreader.ReadElementString("LU4_RootC");
 
                         landuse_determinator.LU5_Ero_textbox.Text = xreader.ReadElementString("LU5_Ero");
-                        landuse_determinator.LU5_Dep_textbox.Text = xreader.ReadElementString("LU5_Dep");
                         landuse_determinator.LU5_Inf_textbox.Text = xreader.ReadElementString("LU5_Inf");
                         landuse_determinator.LU5_Evap_textbox.Text = xreader.ReadElementString("LU5_Evap");
                         landuse_determinator.LU5_RootC_textbox.Text = xreader.ReadElementString("LU5_RootC");
 
                         landuse_determinator.LU6_Ero_textbox.Text = xreader.ReadElementString("LU6_Ero");
-                        landuse_determinator.LU6_Dep_textbox.Text = xreader.ReadElementString("LU6_Dep");
                         landuse_determinator.LU6_Inf_textbox.Text = xreader.ReadElementString("LU6_Inf");
                         landuse_determinator.LU6_Evap_textbox.Text = xreader.ReadElementString("LU6_Evap");
                         landuse_determinator.LU6_RootC_textbox.Text = xreader.ReadElementString("LU6_RootC");
 
                         landuse_determinator.LU7_Ero_textbox.Text = xreader.ReadElementString("LU7_Ero");
-                        landuse_determinator.LU7_Dep_textbox.Text = xreader.ReadElementString("LU7_Dep");
                         landuse_determinator.LU7_Inf_textbox.Text = xreader.ReadElementString("LU7_Inf");
                         landuse_determinator.LU7_Evap_textbox.Text = xreader.ReadElementString("LU7_Evap");
                         landuse_determinator.LU7_RootC_textbox.Text = xreader.ReadElementString("LU7_RootC");
 
                         landuse_determinator.LU8_Ero_textbox.Text = xreader.ReadElementString("LU8_Ero");
-                        landuse_determinator.LU8_Dep_textbox.Text = xreader.ReadElementString("LU8_Dep");
                         landuse_determinator.LU8_Inf_textbox.Text = xreader.ReadElementString("LU8_Inf");
                         landuse_determinator.LU8_Evap_textbox.Text = xreader.ReadElementString("LU8_Evap");
                         landuse_determinator.LU8_RootC_textbox.Text = xreader.ReadElementString("LU8_RootC");
 
                         landuse_determinator.LU9_Ero_textbox.Text = xreader.ReadElementString("LU9_Ero");
-                        landuse_determinator.LU9_Dep_textbox.Text = xreader.ReadElementString("LU9_Dep");
                         landuse_determinator.LU9_Inf_textbox.Text = xreader.ReadElementString("LU9_Inf");
                         landuse_determinator.LU9_Evap_textbox.Text = xreader.ReadElementString("LU9_Evap");
                         landuse_determinator.LU9_RootC_textbox.Text = xreader.ReadElementString("LU9_RootC");
 
                         landuse_determinator.LU10_Ero_textbox.Text = xreader.ReadElementString("LU10_Ero");
-                        landuse_determinator.LU10_Dep_textbox.Text = xreader.ReadElementString("LU10_Dep");
                         landuse_determinator.LU10_Inf_textbox.Text = xreader.ReadElementString("LU10_Inf");
                         landuse_determinator.LU10_Evap_textbox.Text = xreader.ReadElementString("LU10_Evap");
                         landuse_determinator.LU10_RootC_textbox.Text = xreader.ReadElementString("LU10_RootC");
@@ -1871,6 +1917,7 @@ namespace LORICA4
                 xwriter.WriteElementString("para_k1", parameter_k1_textbox.Text);
                 xwriter.WriteElementString("para_k2", parameter_k2_textbox.Text);
                 xwriter.WriteElementString("para_Pa", parameter_Pa_textbox.Text);
+                xwriter.WriteElementString("rockweath_method", XmlConvert.ToString(rockweath_method_box.SelectedIndex));//AleG
                 xwriter.WriteEndElement();
 
                 xwriter.WriteStartElement("Landsliding");
@@ -1883,6 +1930,7 @@ namespace LORICA4
                 xwriter.WriteElementString("para_friction", textBox_ls_ifr.Text);
                 xwriter.WriteElementString("para_density", textBox_ls_bd.Text);
                 xwriter.WriteElementString("para_transmissivity", textBox_ls_trans.Text);
+                xwriter.WriteElementString("minimum_slope_for_movement_tan", minimum_slope_for_movement_tan_textbox.Text);//AleG
                 xwriter.WriteEndElement();
 
                 xwriter.WriteStartElement("Creep");
@@ -1952,10 +2000,12 @@ namespace LORICA4
                 xwriter.WriteElementString("bioturbation_active", XmlConvert.ToString(soil_bioturb_checkbox.Checked));
                 xwriter.WriteElementString("potential_bioturb", potential_bt_mixing_textbox.Text);
                 xwriter.WriteElementString("bioturb_depth_decay", bt_depth_decay_textbox.Text);
+                xwriter.WriteElementString("bt_depth_function", XmlConvert.ToString(bt_depthfunction_box.SelectedIndex)); //AleG
                 xwriter.WriteEndElement();
 
                 xwriter.WriteStartElement("Carboncycle");
                 xwriter.WriteElementString("carboncycle_active", XmlConvert.ToString(soil_carbon_cycle_checkbox.Checked));
+                xwriter.WriteElementString("som_cycle_algorithm", XmlConvert.ToString(som_cycle_algorithm_box.SelectedIndex));//AleG
                 xwriter.WriteElementString("carbon_input", carbon_input_textbox.Text);
                 xwriter.WriteElementString("carbon_depth_decay", carbon_depth_decay_textbox.Text);
                 xwriter.WriteElementString("carbon_hum_fraction", carbon_humification_fraction_textbox.Text);
@@ -2145,65 +2195,57 @@ namespace LORICA4
                 xwriter.WriteElementString("siltfrac", soildata.siltbox.Text);
                 xwriter.WriteElementString("clayfrac", soildata.claybox.Text);
                 xwriter.WriteElementString("fclayfrac", soildata.fineclaybox.Text);
+                xwriter.WriteElementString("yomfrac", soildata.yombox.Text); //AleG
+                xwriter.WriteElementString("oomfrac", soildata.oombox.Text); //AleG
                 xwriter.WriteEndElement();
 
                 xwriter.WriteStartElement("Landuse_parameters"); 
                 xwriter.WriteElementString("LU1_Ero", landuse_determinator.LU1_Ero_textbox.Text);
-                xwriter.WriteElementString("LU1_Dep", landuse_determinator.LU1_Dep_textbox.Text);
                 xwriter.WriteElementString("LU1_Inf", landuse_determinator.LU1_Inf_textbox.Text);
                 xwriter.WriteElementString("LU1_Evap", landuse_determinator.LU1_Evap_textbox.Text);
                 xwriter.WriteElementString("LU1_RootC", landuse_determinator.LU1_RootC_textbox.Text);
 
                 xwriter.WriteElementString("LU2_Ero", landuse_determinator.LU2_Ero_textbox.Text);
-                xwriter.WriteElementString("LU2_Dep", landuse_determinator.LU2_Dep_textbox.Text);
                 xwriter.WriteElementString("LU2_Inf", landuse_determinator.LU2_Inf_textbox.Text);
                 xwriter.WriteElementString("LU2_Evap", landuse_determinator.LU2_Evap_textbox.Text);
                 xwriter.WriteElementString("LU2_RootC", landuse_determinator.LU2_RootC_textbox.Text);
 
                 xwriter.WriteElementString("LU3_Ero", landuse_determinator.LU3_Ero_textbox.Text);
-                xwriter.WriteElementString("LU3_Dep", landuse_determinator.LU3_Dep_textbox.Text);
                 xwriter.WriteElementString("LU3_Inf", landuse_determinator.LU3_Inf_textbox.Text);
                 xwriter.WriteElementString("LU3_Evap", landuse_determinator.LU3_Evap_textbox.Text);
                 xwriter.WriteElementString("LU3_RootC", landuse_determinator.LU3_RootC_textbox.Text);
 
                 xwriter.WriteElementString("LU4_Ero", landuse_determinator.LU4_Ero_textbox.Text);
-                xwriter.WriteElementString("LU4_Dep", landuse_determinator.LU4_Dep_textbox.Text);
                 xwriter.WriteElementString("LU4_Inf", landuse_determinator.LU4_Inf_textbox.Text);
                 xwriter.WriteElementString("LU4_Evap", landuse_determinator.LU4_Evap_textbox.Text);
                 xwriter.WriteElementString("LU4_RootC", landuse_determinator.LU4_RootC_textbox.Text);
 
                 xwriter.WriteElementString("LU5_Ero", landuse_determinator.LU5_Ero_textbox.Text);
-                xwriter.WriteElementString("LU5_Dep", landuse_determinator.LU5_Dep_textbox.Text);
                 xwriter.WriteElementString("LU5_Inf", landuse_determinator.LU5_Inf_textbox.Text);
                 xwriter.WriteElementString("LU5_Evap", landuse_determinator.LU5_Evap_textbox.Text);
                 xwriter.WriteElementString("LU5_RootC", landuse_determinator.LU5_RootC_textbox.Text);
 
                 xwriter.WriteElementString("LU6_Ero", landuse_determinator.LU6_Ero_textbox.Text);
-                xwriter.WriteElementString("LU6_Dep", landuse_determinator.LU6_Dep_textbox.Text);
                 xwriter.WriteElementString("LU6_Inf", landuse_determinator.LU6_Inf_textbox.Text);
                 xwriter.WriteElementString("LU6_Evap", landuse_determinator.LU6_Evap_textbox.Text);
                 xwriter.WriteElementString("LU6_RootC", landuse_determinator.LU6_RootC_textbox.Text);
 
                 xwriter.WriteElementString("LU7_Ero", landuse_determinator.LU7_Ero_textbox.Text);
-                xwriter.WriteElementString("LU7_Dep", landuse_determinator.LU7_Dep_textbox.Text);
                 xwriter.WriteElementString("LU7_Inf", landuse_determinator.LU7_Inf_textbox.Text);
                 xwriter.WriteElementString("LU7_Evap", landuse_determinator.LU7_Evap_textbox.Text);
                 xwriter.WriteElementString("LU7_RootC", landuse_determinator.LU7_RootC_textbox.Text);
 
                 xwriter.WriteElementString("LU8_Ero", landuse_determinator.LU8_Ero_textbox.Text);
-                xwriter.WriteElementString("LU8_Dep", landuse_determinator.LU8_Dep_textbox.Text);
                 xwriter.WriteElementString("LU8_Inf", landuse_determinator.LU8_Inf_textbox.Text);
                 xwriter.WriteElementString("LU8_Evap", landuse_determinator.LU8_Evap_textbox.Text);
                 xwriter.WriteElementString("LU8_RootC", landuse_determinator.LU8_RootC_textbox.Text);
 
                 xwriter.WriteElementString("LU9_Ero", landuse_determinator.LU9_Ero_textbox.Text);
-                xwriter.WriteElementString("LU9_Dep", landuse_determinator.LU9_Dep_textbox.Text);
                 xwriter.WriteElementString("LU9_Inf", landuse_determinator.LU9_Inf_textbox.Text);
                 xwriter.WriteElementString("LU9_Evap", landuse_determinator.LU9_Evap_textbox.Text);
                 xwriter.WriteElementString("LU9_RootC", landuse_determinator.LU9_RootC_textbox.Text);
 
                 xwriter.WriteElementString("LU10_Ero", landuse_determinator.LU10_Ero_textbox.Text);
-                xwriter.WriteElementString("LU10_Dep", landuse_determinator.LU10_Dep_textbox.Text);
                 xwriter.WriteElementString("LU10_Inf", landuse_determinator.LU10_Inf_textbox.Text);
                 xwriter.WriteElementString("LU10_Evap", landuse_determinator.LU10_Evap_textbox.Text);
                 xwriter.WriteElementString("LU10_RootC", landuse_determinator.LU10_RootC_textbox.Text);
@@ -2334,7 +2376,7 @@ namespace LORICA4
             {
                 for (col = 0; col < nc; col++)
                 {
-                    if (map2[row, col] != -9999)
+                    if (map2[row, col] != nodata_value)
                     {
                         rast_val = map2[row, col];
 
@@ -2374,7 +2416,7 @@ namespace LORICA4
             {
                 for (col = 0; col < nc; col++)
                 {
-                    if (map2[row, col] != -9999)
+                    if (map2[row, col] != nodata_value)
                     {
                         rast_val = map2[row, col];
 

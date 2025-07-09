@@ -134,7 +134,7 @@ namespace LORICA4
             double[] total_mass_eroded, total_mass_deposited_kg;
             total_mass_eroded = new double[7] { 0, 0, 0, 0, 0, 0, 0 };
             total_mass_deposited_kg = new double[7] { 0, 0, 0, 0, 0, 0, 0 };
-            transport_capacity_kg = advection_erodibility * (bulkdensity[row_sd, col_sd, 0] * dx * dx) * (Math.Pow(waterflow_m3_per_m, m) * Math.Pow(dh, n)); // in a departure from literature, the erosion threshold is only evaluated if erosion actually occurs
+            transport_capacity_kg = erodibility_value_m * (bulkdensity[row_sd, col_sd, 0] * dx * dx) * (Math.Pow(waterflow_m3_per_m, m) * Math.Pow(dh, n)); // in a departure from literature, the erosion threshold is only evaluated if erosion actually occurs //AleG
             if (transport_capacity_kg < 0)
             {
                 transport_capacity_kg = 0;
@@ -704,6 +704,13 @@ namespace LORICA4
                             if (check_space_infil.Checked == true) { total_infil_m += infil[row, col]; }
                             total_infil_m += infil_value_m;
                             if (waterflow_m3[row, col] * dx * dx > timeseries.timeseries_waterflow_threshold) { wet_cells++; }
+                            if (check_space_landuse.Checked) //AleG 
+                            {
+                                total_infil_m += infil[row, col];
+                                total_evap_m += evapotranspiration[row, col];
+                                erodibility_value_m = K_fac[row, col];  
+                                bio_protection_constant = 0.1 * root_cohesion_kPa_new[row, col];
+                            }
                         } // end for nodata
                     }   // end for col
                 } // end for row
@@ -749,7 +756,8 @@ namespace LORICA4
             domain_OOM_export_kg = 0;
             domain_YOM_export_kg = 0;
 
-            if (Proglacial_checkbox.Checked == true)  //AleG
+            if (Proglacial_checkbox.Checked == true)  //
+                                                      //
             {
 
                 if (t == 0)
@@ -788,7 +796,7 @@ namespace LORICA4
                     
                     if (Proglacial_checkbox.Checked)  //Proglacial
                     {
-                        if (og_dtm[row, col] != -9999)
+                        if (og_dtm[row, col] != nodata_value)
                         {
                             // First, we apply rainwater to our landscape (in a two step approach - first normal cells and lake outlets)
                             if (depression[row, col] == 0 ||
@@ -801,6 +809,14 @@ namespace LORICA4
                                 if (check_space_evap.Checked == true) { evap_value_m = evapotranspiration[row, col]; }
                                 if (check_space_rain.Checked == true) { rain_value_m = rain_m[row, col]; }
                                 if (check_space_infil.Checked == true) { infil_value_m = infil[row, col]; }
+                                if (water_ero_active == true) { erodibility_value_m = K_fac[row, col]; } //AleG
+                                if (check_space_landuse.Checked) //AleG 
+                                {
+                                    infil_value_m = infil[row, col];
+                                    evap_value_m = evapotranspiration[row, col];
+                                    erodibility_value_m = K_fac[row, col]; //AleG //switch
+                                    bio_protection_constant = 0.1 * root_cohesion_kPa_new[row, col];
+                                }
                                 //ArT // development required to account for f(t) situations
                                 waterflow_m3[row, col] += (rain_value_m - infil_value_m - evap_value_m) * dx * dx;
                                 if (waterflow_m3[row, col] < 0) { waterflow_m3[row, col] = 0; }
@@ -821,6 +837,15 @@ namespace LORICA4
                                     if (check_space_evap.Checked == true) { evap_value_m = evapotranspiration[row, col]; }
                                     if (check_space_rain.Checked == true) { rain_value_m = rain_m[row, col]; }
                                     if (check_space_infil.Checked == true) { infil_value_m = infil[row, col]; }
+                                    if (water_ero_active == true) { erodibility_value_m = K_fac[row, col]; } //AleG
+                                    if (check_space_landuse.Checked) //AleG 
+                                    {
+                                        infil_value_m = infil[row, col];
+                                        evap_value_m = evapotranspiration[row, col];
+                                        erodibility_value_m = K_fac[row, col] ; //AleG
+                                        //root_cohesion_kPa = root_cohesion_kPa_new[row, col]; //AleG
+                                        bio_protection_constant = 0.1 * root_cohesion_kPa_new[row, col];
+                                    }
                                     //ArT // development required to account for f(t) situations
                                     //ArT remember to check for negative lake outflow once it happens
                                     waterflow_m3[drainingoutlet_row[depression[row, col], i], drainingoutlet_col[depression[row, col], i]] += dx * dx * (rain_value_m - infil_value_m - evap_value_m) / outletcounter;
@@ -858,7 +883,7 @@ namespace LORICA4
 
                     else
                     {
-                        if (dtm[row, col] != -9999)
+                        if (dtm[row, col] != nodata_value)
                         {
                             // First, we apply rainwater to our landscape (in a two step approach - first normal cells and lake outlets)
                             if (depression[row, col] == 0 ||
@@ -868,9 +893,18 @@ namespace LORICA4
                                 (drainingoutlet_row[depression[row, col], 3] == row && drainingoutlet_col[depression[row, col], 3] == col) ||
                                 (drainingoutlet_row[depression[row, col], 4] == row && drainingoutlet_col[depression[row, col], 4] == col))
                             {
-                                if (check_space_evap.Checked == true) { evap_value_m = evapotranspiration[row, col]; }
-                                if (check_space_rain.Checked == true) { rain_value_m = rain_m[row, col]; }
-                                if (check_space_infil.Checked == true) { infil_value_m = infil[row, col]; }
+                                if (check_space_evap.Checked == true) {  evap_value_m = evapotranspiration[row, col]; }//AleG 
+                                if (check_space_rain.Checked == true) { rain_value_m = rain_m[row, col]; }//AleG 
+                                if (check_space_infil.Checked == true) { infil_value_m = infil[row, col]; }//AleG 
+                                if (water_ero_active == true) { erodibility_value_m = K_fac[row, col]; } //AleG 
+
+                                if (check_space_landuse.Checked) //AleG 
+                                {
+                                    infil_value_m = infil[row, col];//AleG 
+                                    evap_value_m = evapotranspiration[row, col];//AleG 
+                                    erodibility_value_m = K_fac[row, col]; //AleG  
+                                    bio_protection_constant = root_cohesion_kPa_new[row, col]* 0.1;//AleG 
+                                }
                                 //ArT // development required to account for f(t) situations
                                 waterflow_m3[row, col] += (rain_value_m - infil_value_m - evap_value_m) * dx * dx;
                                 if (waterflow_m3[row, col] < 0) { waterflow_m3[row, col] = 0; }
@@ -888,9 +922,18 @@ namespace LORICA4
                                 for (i = 0; i < outletcounter; i++)
                                 {
 
-                                    if (check_space_evap.Checked == true) { evap_value_m = evapotranspiration[row, col]; }
-                                    if (check_space_rain.Checked == true) { rain_value_m = rain_m[row, col]; }
-                                    if (check_space_infil.Checked == true) { infil_value_m = infil[row, col]; }
+                                    if (check_space_evap.Checked == true) { evap_value_m = evapotranspiration[row, col]; }//AleG // not anymore switch
+                                    if (check_space_rain.Checked == true) { rain_value_m = rain_m[row, col]; }//AleG 
+                                    if (check_space_infil.Checked == true) { infil_value_m = infil[row, col]; }//AleG 
+                                    if (water_ero_active == true) { erodibility_value_m = K_fac[row, col]; } //AleG 
+
+                                    if (check_space_landuse.Checked) //AleG 
+                                    {
+                                        infil_value_m = infil[row, col];//AleG 
+                                        evap_value_m = evapotranspiration[row, col];//AleG 
+                                        erodibility_value_m = K_fac[row, col]; //AleG  
+                                        bio_protection_constant = root_cohesion_kPa_new[row, col] *0.1;//AleG 
+                                    }
                                     //ArT // development required to account for f(t) situations
                                     //ArT remember to check for negative lake outflow once it happens
                                     waterflow_m3[drainingoutlet_row[depression[row, col], i], drainingoutlet_col[depression[row, col], i]] += dx * dx * (rain_value_m - infil_value_m - evap_value_m) / outletcounter;
@@ -1000,7 +1043,7 @@ namespace LORICA4
 
                                         if (Proglacial_checkbox.Checked) //Proglacial
                                         {
-                                            if (og_dtm[row + i, col + j] != -9999)
+                                            if (og_dtm[row + i, col + j] != nodata_value)
                                             {  //if the cell has no NODATA
                                                 if (only_waterflow_checkbox.Checked)
                                                 {
@@ -1008,7 +1051,7 @@ namespace LORICA4
                                                 }
                                                 else
                                                 {
-                                                    if (dtm[row, col] == -9999)  //Glacier areas
+                                                    if (dtm[row, col] == nodata_value)  //Glacier areas
                                                     {
                                                         dh = og_dtm[row, col] - og_dtm[row + i, col + j];
                                                     }
@@ -1037,7 +1080,7 @@ namespace LORICA4
 
                                         else
                                         {
-                                            if (dtm[row + i, col + j] != -9999)
+                                            if (dtm[row + i, col + j] != nodata_value)
                                             {  //if the cell has no NODATA
                                                 if (only_waterflow_checkbox.Checked)
                                                 {
@@ -1248,6 +1291,8 @@ namespace LORICA4
                         if (check_space_infil.Checked == true) { total_infil_m += infil[row, col]; }
                         total_infil_m += infil_value_m;
                         if (waterflow_m3[row, col] * dx * dx > timeseries.timeseries_waterflow_threshold) { wet_cells++; }
+                       
+
                     } // end for nodata
                 }   // end for col
             } // end for row
@@ -1395,6 +1440,7 @@ namespace LORICA4
             //   Combined Cohesion and Internal friction.
 
             rain_intensity_m_d = Convert.ToDouble(text_ls_rel_rain_intens.Text) * rain_value_m;
+            
 
             for (row = 0; row < nr; row++)
             {
@@ -1408,10 +1454,10 @@ namespace LORICA4
                     resid_friction_angle_radians[row, col] = nodata_value;
                 } //for
             } //for
-            for (int ls = 0; ls < 100000; ls++)
-            {
-                landslidesum_thickness_m[ls] = 0;
-            }
+            //for (int ls = 0; ls < 100000; ls++) //AleG
+            //{
+                //landslidesum_thickness_m[ls] = 0;
+            //}
             //Debug.WriteLine(" initialized old landslide parameters from interface");
         }
 
@@ -1457,6 +1503,7 @@ namespace LORICA4
                     }
                 }
             }
+            
         }
 
         void calc_soil_cohesion_factor()
@@ -1464,9 +1511,11 @@ namespace LORICA4
             //dimensionless soil cohesion equals root cohesion plus soil cohesion (both in kPa) , divided by soil thickness, sat soil bulk density and gravitational constant
             //for ease, we take only topsoil cohesion into account
             double g_constant = 9.81;
-            double root_cohesion_kPa = 1;
+            //double root_cohesion_kPa;
             double soil_cohesion_kPa = 0;
             double clay_perc = 0;
+
+            //if (check_space_landuse.Checked == false ) { root_cohesion_kPa_new[row, col] = 1; } //AleG
 
             for (int row = 0; row < nr; row++)
             {
@@ -1476,7 +1525,7 @@ namespace LORICA4
                     {
                         clay_perc = 100 * (texture_kg[row, col, 0, 3] + texture_kg[row, col, 0, 4]) / (texture_kg[row, col, 0, 0] + texture_kg[row, col, 0, 1] + texture_kg[row, col, 0, 2] + texture_kg[row, col, 0, 3] + texture_kg[row, col, 0, 4]); // of the entire soil
                         soil_cohesion_kPa = 1.33 + 0.33 * clay_perc; // Khaboushan et al 2018, Soil Tillage Research (R2 0.75 - P < 0.01)
-                        Cohesion_factor[row, col] = (root_cohesion_kPa + soil_cohesion_kPa) / (soildepth_m[row, col] * (sat_bd_kg_m3[row, col] / 1000) * g_constant);
+                        Cohesion_factor[row, col] = (root_cohesion_kPa_new[row, col] + soil_cohesion_kPa) / (soildepth_m[row, col] * (sat_bd_kg_m3[row, col] / 1000) * g_constant); //AleG
                     }
                     else
                     {
@@ -1494,6 +1543,9 @@ namespace LORICA4
             double slope_rad = 0;
             double Ks_m_hr;
             double BD_kg_m3 = 0;
+            double silt_perc;//AleG
+            double clay_perc;//AleG
+            double OM_perc;//AleG
             for (int row = 0; row < nr; row++)
             {
                 for (int col = 0; col < nc; col++)
@@ -1508,17 +1560,20 @@ namespace LORICA4
                             try
                             {
                                 currentdepth_m += layerthickness_m[row, col, layer];
-                                fsilt = 100 * texture_kg[row, col, layer, 2] / (texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4] + old_SOM_kg[row, col, layer] + young_SOM_kg[row, col, layer]); // only fine fraction
-                                fclay = 100 * (texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4]) / (texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4] + old_SOM_kg[row, col, layer] + young_SOM_kg[row, col, layer]); // only fine fraction
-                                fOM = 100 * (old_SOM_kg[row, col, layer] + young_SOM_kg[row, col, layer]) / (texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4] + old_SOM_kg[row, col, layer] + young_SOM_kg[row, col, layer]); // only fine fraction
+                                silt_perc = 100 * texture_kg[row, col, layer, 2] / (texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4] + old_SOM_kg[row, col, layer] + young_SOM_kg[row, col, layer]); // only fine fraction //AleG
+                                clay_perc = 100 * (texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4]) / (texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4] + old_SOM_kg[row, col, layer] + young_SOM_kg[row, col, layer]); // only fine fraction //AleG
+                                OM_perc = 100 * (old_SOM_kg[row, col, layer] + young_SOM_kg[row, col, layer]) / (texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4] + old_SOM_kg[row, col, layer] + young_SOM_kg[row, col, layer]); // only fine fraction //AleG
+                                //fOM = (Double.IsNaN(fOM) || fOM < 0.5f) ? 0.5f : fOM; //AleG
                                 BD_kg_m3 = bulk_density_calc_kg_m3(texture_kg[row, col, layer, 0], texture_kg[row, col, layer, 1], texture_kg[row, col, layer, 2], texture_kg[row, col, layer, 3], texture_kg[row, col, layer, 4], old_SOM_kg[row, col, layer], young_SOM_kg[row, col, layer], currentdepth_m);
                                 //this BD does not yet account for a stone fraction (it would become higher).
                                 slope_rad = calc_slope_stdesc(row, col);
-                                Ks_m_hr = (Ks_wosten(fsilt, fclay, fOM, BD_kg_m3 / 1000, 1) / 24);
+                                Ks_m_hr = (Ks_wosten(silt_perc, clay_perc, OM_perc, BD_kg_m3 / 1000, 1) / 24);
+                                //Debug.WriteLine(Ks_m_hr);
+                                
                                 transmissivity_m2_hr += Ks_m_hr * (layerthickness_m[row, col, layer] * Math.Cos(slope_rad));
                                 if (Double.IsInfinity(transmissivity_m2_hr))
                                 {
-                                    Debug.WriteLine("transmis is " + transmissivity_m2_hr + " m2/hr");
+                                    break;
                                 }
                             }
                             catch
@@ -1532,7 +1587,7 @@ namespace LORICA4
                     {
                         T_fac[row, col] = nodata_value;
                     }
-
+                    
                 }
             }
 
@@ -1700,7 +1755,9 @@ namespace LORICA4
             }
             if (locally_deposited_mass_kg == 0)
             {
-                Debug.WriteLine(" error: almost no mass used ");
+                Debug.WriteLine(" warning: almost no mass used ");
+
+
             }
             return locally_deposited_mass_kg;
         }
@@ -1856,7 +1913,7 @@ namespace LORICA4
                                             //if (((sat_bd_kg_m3[row, col] * Math.Sin(stslope_radians[row, col])) + ((1 - sat_bd_kg_m3[row, col]) * Math.Cos(stslope_radians[row, col]) * Math.Tan(peak_friction_angle_radians[row, col]))) <= ((sat_bd_kg_m3[row, col]) * (Cohesion_factor[row, col])))
                                             if (Math.Tan(stslope_radians[row, col]) <= (Cohesion_factor[row, col] / Math.Cos(stslope_radians[row, col]) + (1 - (1000 / sat_bd_kg_m3[row, col])) * Math.Tan(peak_friction_angle_radians[row, col])))
                                             {
-                                                beta = -9999; // unconditionally stable
+                                                beta = nodata_value; // unconditionally stable
                                             }
                                             if (Math.Tan(stslope_radians[row, col]) > (Math.Tan(peak_friction_angle_radians[row, col]) + (Cohesion_factor[row, col] / Math.Cos(stslope_radians[row, col]))))
                                             {
@@ -1877,7 +1934,8 @@ namespace LORICA4
                     } // end no data loop
                 } // end for
             } // end for 
-            if (t % 20 == 0)
+            
+            if (t % 20 == 0 && t>0) //AleG 
             {
                 out_double(workdir + "\\" + run_number + "_" + t + "_critrain_m_d.asc", crrain_m_d);
                 out_double(workdir + "\\" + run_number + "_" + t + "_peakfrictangle_radians.asc", peak_friction_angle_radians);
@@ -1946,7 +2004,7 @@ namespace LORICA4
 
             Debug.WriteLine("started new land sliding at time " + t);
             //Mostafa, these values should be set in the interface by the user:
-            double minimum_slope_for_movement_tan = 0.7;
+            double minimum_slope_for_movement_tan = Convert.ToDouble(minimum_slope_for_movement_tan_textbox.Text); //AleG;  
             double runout_ratio = 0.35; //in horizontal meters covered by the deposit PER vertical meters of the eroding part of a landslide. Ratio is static, hordist can grow and shrink repeatedly with topography
             double LS_conv_fac = 1.75; // determines how much eroding material is distributed sideways
 
@@ -1998,6 +2056,7 @@ namespace LORICA4
                     steepdesc(row, col); // this changes the value of global variables xrow,xcol so that those reference the steepest lower neighbour
                     if (xrow == row | xcol == col) { d_x = dx; } else { d_x = dx * Math.Sqrt(2); }
                     double steepestslope_tan = (dtm[row, col] - dtm[xrow, xcol]) / d_x;
+                    steepestslope_tan = steepestslope_tan;
                     //calculating current local rain intensity:
                     if (check_space_rain.Checked == true) { rain_value_m = rain_m[row, col]; }
                     rain_intensity_m_d = Convert.ToDouble(text_ls_rel_rain_intens.Text) * rain_value_m;
@@ -2007,9 +2066,6 @@ namespace LORICA4
                     rain_intensity_m_d = rain_intensity_m_d * n;
                     sum_rainfall_intensity_m_d += rain_intensity_m_d;
                     //Debug.WriteLine("this year's rain factor is " + n);
-
-
-                    //now let's calculate which situation applies to this cell:
 
                     if (crrain_m_d[row, col] > 0.0 && rain_intensity_m_d > crrain_m_d[row, col])
                     {
@@ -2315,6 +2371,10 @@ namespace LORICA4
                         }
                     }
                 } //for runner
+
+
+
+
                 //now update the DTM:
                 for (row = 0; row < nr; row++)
                 {
@@ -3619,20 +3679,20 @@ namespace LORICA4
                         //if more weathering is calculated than needed to get to the hardlayer, then it should be thus limited. 
 
                         weatheringdepth = soildepth_m[row, col];
-
+                        
                         // humped
-                        if (rockweath_method.SelectedIndex == 0)
+                        if (rockweath_method == 0) //AleG
                         {
                             bedrock_weathering_m[row, col] = P0 * (Math.Exp(-k1 * weatheringdepth) - Math.Exp(-k2 * weatheringdepth)) + Pa;
 
                         }
-                        if (rockweath_method.SelectedIndex == 1)
+                        if (rockweath_method == 1) //AleG
                         {
                             // exponential (Heimsath, Chappell et al., 2000)
                             bedrock_weathering_m[row, col] = P0 * (Math.Exp(-k1 * weatheringdepth));
                         }
 
-                        if (rockweath_method.SelectedIndex == 2)
+                        if (rockweath_method == 2) //AleG
                         {
                             if (daily_water.Checked)
                             {

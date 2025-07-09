@@ -121,6 +121,6 @@
     <value>This interface allows you to determine the values of model inputs as a function of landuse type. 
 The maximum number of landuse types is 10. Fill in factors with which the parameter values 
 input in the main interface will be multiplied [0.001 - 999]. 
-The Root Cohesion input should instead be provided as an absolute value in KPa.</value>
+The Root Cohesion input should instead be provided as an absolute value in kPa.</value>
   </data>
 </root>

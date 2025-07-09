@@ -26,5 +26,10 @@ namespace LORICA4
         {
 
         }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

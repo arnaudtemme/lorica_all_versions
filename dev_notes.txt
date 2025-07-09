@@ -1,3 +1,67 @@
+Lorica update  - July 2025
+All changes are marked with "//AleG" for now
+
+Land use popup:
+-Some of the values (e.g. K_fac) were not being properly read. Now fixed.
+-Removal of P factor, which was not actually being used anymore.
+-Added a box for the root cohesion. It gets read in the landslide module and in the erosion module it is linked to the bioprotection constant. Right now, bio protection constant = 0.1*root cohesion
+-root_cohesion_kPa_new[row, col] is now a map rather than a single value
+-The root cohesion is inputted as an absolute value (as specified by the description of the popup) rather than a relative multiplier
+-Added all to the reading/writing to the xml
+
+OM:
+-yombox e oombox in soil specifier were not being read but they are now
+-added yombox e oombox to initialise_soil
+-added yombox e oombox in the reading/writing of the xml
+
+Landslides module:
+-The root cohesion can be read as an input from the land use popup
+-The root cohesion is now a map. I updated the Cohesion_factor calculation to accommodate that.
+-pulled minimum_slope_for_movement_tan to the interface
+-Input cohesion and transmissivity removed from interface as they were actually being calculated by the model
+-In calc_transmissivity() the formulas were corrected to feature silt/clay/OM percentages rather than fractions 
+-In Ks_wosten, OM and silt are forced to be at least 1% to avoid divisions by zero which occasionally made transmissivity infinite
+-Removal of outdated variables (cel_dist, sed_bud_m, dh_slid)
+-made slide status a default output of landsliding
+
+Rock weathering/Soil production module
+-Renamed the dropdown box to rockweath_method_box and created the int variable rockweath_method
+-Added a line in the portion of the code in which the inputs get read to read the content of rockweath_method_box
+-Saved to/read from xml
+-It used to crash due to the dropdown box not being pro but after the changes it does not 
+
+Other
+-Rearranged the tabs so that Input|Run|Output are at the beginning
+-advection_erodibility substituted with erodibility_value_m in transport_capacity_kg
+-In multiple parts of the code, all cells of the dtm were being processed instead of excluding the no data ones. "dtm[row, col] == nodata_value" added where necessary
+-Added a line to manually overwrite no data cells in out_double and out_integer. This overwrites the problem but it does not solve it.
+-Added the selection from the dropdown menus for bt_depth_function (bioturbation) and som_cycle_algorithm (organic matter) to the reading/writing xml
+-In the interface corrected the "specific area coefficient"´s unit of measurements to m-1
+-Corrected one of the activity_fraction formula which was missing a portion (I forgot to mark this one and cannot find it anymore! Maybe it had already been fixed in the previous release)
+
+To do:
+In LU popup connect OM input, Tillage, etc.
+Merge with Marijn´s last version! E.g. no more "writeinputsoil" and fixed OM decay which was integrated w/depth
+Fix issue of no data values not being taken into account in output
+Add unit of measurements to the interface in the pages for tillage  
+
+Outdated/not used code:
+para_tillage_constant is in the interface but is never used
+neoform_rate_constant is in the interface but is never used
+Frost_weathering_checkbox does not actually do anything - and it is not visible in the interface 
+initialise_soil_standard() is defined but never used
+sum_biological_weathering[row, col] = 0; created but not used 
+
+Issues:
+Organic Matter with "ICBM" algorithm produces some very odd results once a thick layer is split. The bottom layers become thousands of meters thick and the OOM is infinite in those layers
+The uniform thickness button gives different results for output thickness compared to before the last update
+-Tillage (no map, just changed to 1 in input page) takes ages/never ends
+in void transfer_OSL_grains, P_fromto = ∞, P_tofrom=0. It crashes when it reaches this line: P_transfer = Convert.ToInt32(Math.Round(1000000000 * P_fromto)); 
+
+
+
+Older dev notes:
+
 - visualization : Marijn finishes, we add case study + data (runfile) --> towards publication
 
 KEY TASKS AND THEIR ORDER:
