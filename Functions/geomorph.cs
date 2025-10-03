@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Security.Policy;
 using System.Text;
@@ -675,6 +676,11 @@ namespace LORICA4
                 total_rain_m = 0; total_evap_m = 0; total_infil_m = 0;
                 total_rain_m3 = 0; total_evap_m3 = 0; total_infil_m3 = 0; total_outflow_m3 = 0;
                 wet_cells = 0; eroded_cells = 0; deposited_cells = 0;
+                if (Proglacial_checkbox.Checked) //Proglacial
+                {  
+                    total_meltwater_m = 0;
+                    total_meltwater_m3 = 0;
+                }; 
                 for (int row = 0; row < nr; row++)
                 {
                     for (int col = 0; col < nc; col++)
@@ -703,6 +709,8 @@ namespace LORICA4
                             total_evap_m += evap_value_m;
                             if (check_space_infil.Checked == true) { total_infil_m += infil[row, col]; }
                             total_infil_m += infil_value_m;
+                            if (Proglacial_checkbox.Checked == true) { total_meltwater_m += meltwater_m[row, col]; } //Proglacial
+                            total_meltwater_m += meltwater_value_m; //Proglacial
                             if (waterflow_m3[row, col] * dx * dx > timeseries.timeseries_waterflow_threshold) { wet_cells++; }
                             if (check_space_landuse.Checked) //AleG 
                             {
@@ -719,6 +727,7 @@ namespace LORICA4
                 total_rain_m3 = total_rain_m * dx * dx;   // m3
                 total_evap_m3 = total_evap_m * dx * dx;   // m3
                 total_infil_m3 = total_infil_m * dx * dx;  // m3
+                total_meltwater_m3 = total_meltwater_m * dx * dx;  // m3 //Proglacial
                 total_outflow_m3 = total_rain_m3 - total_evap_m3 - total_infil_m3;
                 //Debug.WriteLine("\n--erosion and deposition overview--");
                 //Debug.WriteLine("rain " + total_rain + " evap " + total_evap + " total_infil " + total_infil);
@@ -756,23 +765,7 @@ namespace LORICA4
             domain_OOM_export_kg = 0;
             domain_YOM_export_kg = 0;
 
-            if (Proglacial_checkbox.Checked == true)  //
-                                                      //
-            {
-
-                if (t == 0)
-                {
-                    dtm_WE = og_dtm;
-                }
-                else
-                {
-                    dtm_WE = filled_dtm;
-                }
-            }
-            else
-            {
-                dtm_WE = dtm;
-            }
+           
 
             double powered_slope_sum, flow_between_cells_m3_per_m;
             int size;
@@ -784,7 +777,7 @@ namespace LORICA4
                     if (drainingoutlet_row[alpha, outletcounter] != -1)
                     {
                         waterflow_m3[drainingoutlet_row[alpha, outletcounter], drainingoutlet_col[alpha, outletcounter]] = 0;
-                    }
+                    } 
                 }
             }
             if (NA_anywhere_in_soil() == true) { Debug.WriteLine("NA found before row col loop in water erosed"); }
@@ -793,93 +786,121 @@ namespace LORICA4
                 for (col = 0; col < nc; col++)
                 {
                     // if(row==50 & col == 99) { Debugger.Break(); }
-                    
-                    if (Proglacial_checkbox.Checked)  //Proglacial
+                    if (Proglacial_checkbox.Checked) // Proglacial mode
                     {
-                        if (og_dtm[row, col] != nodata_value)
+                        if (dtm[row, col] != nodata_value) // Only process non-nodata cells
                         {
-                            // First, we apply rainwater to our landscape (in a two step approach - first normal cells and lake outlets)
-                            if (depression[row, col] == 0 ||
-                                (drainingoutlet_row[depression[row, col], 0] == row && drainingoutlet_col[depression[row, col], 0] == col) ||
-                                (drainingoutlet_row[depression[row, col], 1] == row && drainingoutlet_col[depression[row, col], 1] == col) ||
-                                (drainingoutlet_row[depression[row, col], 2] == row && drainingoutlet_col[depression[row, col], 2] == col) ||
-                                (drainingoutlet_row[depression[row, col], 3] == row && drainingoutlet_col[depression[row, col], 3] == col) ||
-                                (drainingoutlet_row[depression[row, col], 4] == row && drainingoutlet_col[depression[row, col], 4] == col))
+                            // Apply water flow processes based on glacier_cell
+                            if (glacier_cell[row, col] == 1) // If it's a glacier cell
                             {
+                                // Glacier cells will only handle water flow (no erosion or sediment transport)
                                 if (check_space_evap.Checked == true) { evap_value_m = evapotranspiration[row, col]; }
                                 if (check_space_rain.Checked == true) { rain_value_m = rain_m[row, col]; }
                                 if (check_space_infil.Checked == true) { infil_value_m = infil[row, col]; }
-                                if (water_ero_active == true) { erodibility_value_m = K_fac[row, col]; } //AleG
-                                if (check_space_landuse.Checked) //AleG 
-                                {
-                                    infil_value_m = infil[row, col];
-                                    evap_value_m = evapotranspiration[row, col];
-                                    erodibility_value_m = K_fac[row, col]; //AleG //switch
-                                    bio_protection_constant = 0.1 * root_cohesion_kPa_new[row, col];
-                                }
-                                //ArT // development required to account for f(t) situations
-                                waterflow_m3[row, col] += (rain_value_m - infil_value_m - evap_value_m) * dx * dx;
-                                if (waterflow_m3[row, col] < 0) { waterflow_m3[row, col] = 0; }
-                                if (waterflow_m3[row, col] < -0.001) { Debug.WriteLine(" Negative waterflow at " + row + " " + col + ": " + waterflow_m3[row, col] + ". rain " + rain_value_m + " infil " + infil_value_m + " evap " + evap_value_m + " use " + landuse[row, col]); }
-                            }
-                            else  // and then, second step, for other lake cells
-                            { // for other lakecells, we send the rainwater directly (equally distributed) to that lake's outlet(s) (infiltration is not zero in the lake at the moment)
-                              //Debug.WriteLine(" B at " + row + " col " + col + " alt " + dtm[row, col] + " dep " + depression[row, col]);
-                                int outletcounter = 0; ;
-                                while (drainingoutlet_col[depression[row, col], outletcounter] != -1)
-                                {
-                                    outletcounter++;
-                                    if (outletcounter == 5) { break; }
-                                }
-                                for (i = 0; i < outletcounter; i++)
-                                {
+                                if (Proglacial_checkbox.Checked == true) { meltwater_value_m = meltwater_m[row, col]; } // Glacier meltwater contribution
 
+                                //if (water_ero_active == true) { erodibility_value_m = K_fac[row, col]; }
+
+                                waterflow_m3[row, col] += (rain_value_m - evap_value_m) * dx * dx;
+                                // For glaciers, only water flow is considered (no erosion, no sediment transport)
+                            }
+                            else // Non-glacier cells
+                            {
+                                // For non-glacier cells, apply full erosion, infiltration, and sediment transport processes
+                                if (depression[row, col] == 0 ||
+                                    (drainingoutlet_row[depression[row, col], 0] == row && drainingoutlet_col[depression[row, col], 0] == col) ||
+                                    (drainingoutlet_row[depression[row, col], 1] == row && drainingoutlet_col[depression[row, col], 1] == col) ||
+                                    (drainingoutlet_row[depression[row, col], 2] == row && drainingoutlet_col[depression[row, col], 2] == col) ||
+                                    (drainingoutlet_row[depression[row, col], 3] == row && drainingoutlet_col[depression[row, col], 3] == col) ||
+                                    (drainingoutlet_row[depression[row, col], 4] == row && drainingoutlet_col[depression[row, col], 4] == col))
+                                {
                                     if (check_space_evap.Checked == true) { evap_value_m = evapotranspiration[row, col]; }
                                     if (check_space_rain.Checked == true) { rain_value_m = rain_m[row, col]; }
                                     if (check_space_infil.Checked == true) { infil_value_m = infil[row, col]; }
-                                    if (water_ero_active == true) { erodibility_value_m = K_fac[row, col]; } //AleG
-                                    if (check_space_landuse.Checked) //AleG 
+                                    if (water_ero_active == true) { erodibility_value_m = K_fac[row, col]; }
+
+                                    if (check_space_landuse.Checked) // Land use adjustments for erosion, infiltration, and protection
                                     {
                                         infil_value_m = infil[row, col];
                                         evap_value_m = evapotranspiration[row, col];
-                                        erodibility_value_m = K_fac[row, col] ; //AleG
-                                        //root_cohesion_kPa = root_cohesion_kPa_new[row, col]; //AleG
+                                        erodibility_value_m = K_fac[row, col]; // Adjust for erosion
                                         bio_protection_constant = 0.1 * root_cohesion_kPa_new[row, col];
                                     }
-                                    //ArT // development required to account for f(t) situations
-                                    //ArT remember to check for negative lake outflow once it happens
-                                    waterflow_m3[drainingoutlet_row[depression[row, col], i], drainingoutlet_col[depression[row, col], i]] += dx * dx * (rain_value_m - infil_value_m - evap_value_m) / outletcounter;
-                                }
-                            }
-                            if (only_waterflow_checkbox.Checked == false)
-                            {
-                                for (size = 0; size < n_texture_classes; size++)
-                                {
-                                    sediment_in_transport_kg[row, col, size] = 0;
-                                }
-                                old_SOM_in_transport_kg[row, col] = 0;
-                                young_SOM_in_transport_kg[row, col] = 0;
-                                dz_ero_m[row, col] = 0;
-                                dz_sed_m[row, col] = 0;
-                                lake_sed_m[row, col] = 0;
 
-                                if (OSL_checkbox.Checked)
-                                {
-                                    OSL_grainages_in_transport[row, col] = new int[] { };
-                                    OSL_depositionages_in_transport[row, col] = new int[] { };
-                                    OSL_surfacedcount_in_transport[row, col] = new int[] { };
-                                }
-                                if (CN_checkbox.Checked)
-                                {
-                                    for (int i_cn = 0; i_cn < n_cosmo; i_cn++)
+                                    // Water flow for non-glacier areas considering rain, evapotranspiration, and infiltration
+                                    waterflow_m3[row, col] += (rain_value_m - infil_value_m - evap_value_m) * dx * dx;
+
+                                    // Ensure water flow doesn't go negative
+                                    if (waterflow_m3[row, col] < 0) { waterflow_m3[row, col] = 0; }
+                                    if (waterflow_m3[row, col] < -0.001)
                                     {
-                                        CN_in_transport[row, col, i_cn] = 0;
+                                        Debug.WriteLine("Negative waterflow at " + row + " " + col + ": " + waterflow_m3[row, col] + ". rain " + rain_value_m + " infil " + infil_value_m + " evap " + evap_value_m);
+                                    }
+                                }
+                                else // Non-glacier lake cells or outlets
+                                {
+                                    // For lake cells or draining outlets, distribute rainwater to outlets equally
+                                    int outletcounter = 0;
+                                    while (drainingoutlet_col[depression[row, col], outletcounter] != -1)
+                                    {
+                                        outletcounter++;
+                                        if (outletcounter == 5) { break; }
+                                    }
+
+                                    for (int i = 0; i < outletcounter; i++)
+                                    {
+                                        if (check_space_evap.Checked == true) { evap_value_m = evapotranspiration[row, col]; }
+                                        if (check_space_rain.Checked == true) { rain_value_m = rain_m[row, col]; }
+                                        if (check_space_infil.Checked == true) { infil_value_m = infil[row, col]; }
+
+                                        if (water_ero_active == true) { erodibility_value_m = K_fac[row, col]; }
+
+                                        if (check_space_landuse.Checked) // Land use adjustments for lake areas
+                                        {
+                                            infil_value_m = infil[row, col];
+                                            evap_value_m = evapotranspiration[row, col];
+                                            erodibility_value_m = K_fac[row, col];
+                                            bio_protection_constant = 0.1 * root_cohesion_kPa_new[row, col];
+                                        }
+
+                                        // Distribute water equally across lake outlets
+                                        waterflow_m3[drainingoutlet_row[depression[row, col], i], drainingoutlet_col[depression[row, col], i]] += dx * dx * (rain_value_m - infil_value_m - evap_value_m) / outletcounter;
                                     }
                                 }
 
+                                // Apply erosion, sediment transport, and other processes for non-glacier cells
+                                if (only_waterflow_checkbox.Checked == false)
+                                {
+                                    for (size = 0; size < n_texture_classes; size++)
+                                    {
+                                        sediment_in_transport_kg[row, col, size] = 0;
+                                    }
+                                    old_SOM_in_transport_kg[row, col] = 0;
+                                    young_SOM_in_transport_kg[row, col] = 0;
+                                    dz_ero_m[row, col] = 0;
+                                    dz_sed_m[row, col] = 0;
+                                    lake_sed_m[row, col] = 0;
+
+                                    if (OSL_checkbox.Checked)
+                                    {
+                                        OSL_grainages_in_transport[row, col] = new int[] { };
+                                        OSL_depositionages_in_transport[row, col] = new int[] { };
+                                        OSL_surfacedcount_in_transport[row, col] = new int[] { };
+                                    }
+
+                                    if (CN_checkbox.Checked)
+                                    {
+                                        for (int i_cn = 0; i_cn < n_cosmo; i_cn++)
+                                        {
+                                            CN_in_transport[row, col, i_cn] = 0;
+                                        }
+                                    }
+                                }
+                                
                             }
                         }
                     }
+
 
                     else
                     {
@@ -907,6 +928,7 @@ namespace LORICA4
                                 }
                                 //ArT // development required to account for f(t) situations
                                 waterflow_m3[row, col] += (rain_value_m - infil_value_m - evap_value_m) * dx * dx;
+                                
                                 if (waterflow_m3[row, col] < 0) { waterflow_m3[row, col] = 0; }
                                 if (waterflow_m3[row, col] < -0.001) { Debug.WriteLine(" Negative waterflow at " + row + " " + col + ": " + waterflow_m3[row, col] + ". rain " + rain_value_m + " infil " + infil_value_m + " evap " + evap_value_m + " use " + landuse[row, col]); }
                             }
@@ -1043,7 +1065,7 @@ namespace LORICA4
 
                                         if (Proglacial_checkbox.Checked) //Proglacial
                                         {
-                                            if (og_dtm[row + i, col + j] != nodata_value)
+                                            if (dtm[row + i, col + j] != nodata_value)
                                             {  //if the cell has no NODATA
                                                 if (only_waterflow_checkbox.Checked)
                                                 {
@@ -1051,13 +1073,15 @@ namespace LORICA4
                                                 }
                                                 else
                                                 {
-                                                    if (dtm[row, col] == nodata_value)  //Glacier areas
+                                                    if (glacier_cell[row, col] == 1)  // or use age_rast_yr[row, col] == some_glacier_condition
                                                     {
-                                                        dh = og_dtm[row, col] - og_dtm[row + i, col + j];
+                                                        // Glacier areas: No erosion, just use the original DTM difference
+                                                        dh = dtm[row, col] - dtm[row + i, col + j]; // Original topography difference for glaciers
                                                     }
                                                     else
                                                     {
-                                                        dh = dtm[row, col] + dz_ero_m[row, col] + dz_sed_m[row, col] - (dtm[row + i, col + j] + dz_ero_m[row + i, col + j] + dz_sed_m[row + i, col + j]);    // diff @ this moment 
+                                                        // Non-glacier areas: Apply erosion and sediment changes
+                                                        dh = dtm[row, col] + dz_ero_m[row, col] + dz_sed_m[row, col] - (dtm[row + i, col + j] + dz_ero_m[row + i, col + j] + dz_sed_m[row + i, col + j]); // Difference considering erosion and sedimentation
                                                     }
 
                                                 }
@@ -1121,7 +1145,7 @@ namespace LORICA4
                                         {
                                             if ((row != row + i) && (col != col + j)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }
                                             if (Proglacial_checkbox.Checked == false) { dh = dtm[row, col] - dtm[row + i, col + j]; }
-                                            if (Proglacial_checkbox.Checked) { dh = og_dtm[row, col] - og_dtm[row + i, col + j]; } //Proglacial
+                                            if (Proglacial_checkbox.Checked) { dh = dtm[row, col] - dtm[row + i, col + j]; } //Proglacial
                                             dh = dtm[row, col] - dtm[row + i, col + j];
                                             if (dh > 0)
                                             {// i j is a lower neighbour
@@ -1169,14 +1193,30 @@ namespace LORICA4
                                        //if (row == 24 && col == 81) { Debug.WriteLine("entered" + i + j); }
                                         if (dtm[row + i, col + j] != nodata_value)
                                         {
-                                            if (only_waterflow_checkbox.Checked)
+                                            if (Proglacial_checkbox.Checked)
                                             {
-                                                dh = dtm[row, col] - dtm[row + i, col + j];
+                                                if (glacier_cell[row, col] == 1)  // or use age_rast_yr[row, col] == some_glacier_condition
+                                                {
+                                                    // Glacier areas: No erosion, just use the original DTM difference
+                                                    dh = dtm[row, col] - dtm[row + i, col + j]; // Original topography difference for glaciers
+                                                }
+                                                else
+                                                {
+                                                    // Non-glacier areas: Apply erosion and sediment changes
+                                                    dh = dtm[row, col] + dz_ero_m[row, col] + dz_sed_m[row, col] - (dtm[row + i, col + j] + dz_ero_m[row + i, col + j] + dz_sed_m[row + i, col + j]); // Difference considering erosion and sedimentation
+                                                }
                                             }
-                                            else
-                                            {
-                                                dh = (dtm[row, col] + dz_ero_m[row, col] + dz_sed_m[row, col]) - (dtm[row + i, col + j] + dz_ero_m[row + i, col + j] + dz_sed_m[row + i, col + j]);
+                                            else {
+                                                if (only_waterflow_checkbox.Checked)
+                                                {
+                                                    dh = dtm[row, col] - dtm[row + i, col + j];
+                                                }
+                                                else
+                                                {
+                                                    dh = (dtm[row, col] + dz_ero_m[row, col] + dz_sed_m[row, col]) - (dtm[row + i, col + j] + dz_ero_m[row + i, col + j] + dz_sed_m[row + i, col + j]);
+                                                }
                                             }
+
                                             if (dh > 0)
 
                                             {
@@ -1213,11 +1253,22 @@ namespace LORICA4
                                                         }
                                                     }
 
-                                                    if (only_waterflow_checkbox.Checked == false)
+                                                    if (Proglacial_checkbox.Checked)
                                                     {
-                                                        calculate_sediment_dynamics(row, col, i, j, flow_between_cells_m3_per_m, fraction, sum_frac_OSL);
+                                                        if (glacier_cell[row, col] != 1)  // or use age_rast_yr[row, col] == some_glacier_condition
+                                                        {
+                                                            calculate_sediment_dynamics(row, col, i, j, flow_between_cells_m3_per_m, fraction, sum_frac_OSL);
+                                                        }
+                                                        
+                                                    }
+                                                    else
+                                                    {
+                                                        if (only_waterflow_checkbox.Checked == false)
+                                                        {
+                                                            calculate_sediment_dynamics(row, col, i, j, flow_between_cells_m3_per_m, fraction, sum_frac_OSL);
 
-                                                    } // end if else : also erosion and deposition considered
+                                                        } // end if else : also erosion and deposition considered
+                                                    }
                                                     sum_frac_OSL += fraction;
                                                 }
 
@@ -1247,6 +1298,12 @@ namespace LORICA4
             total_rain_m = 0; total_evap_m = 0; total_infil_m = 0;
             total_rain_m3 = 0; total_evap_m3 = 0; total_infil_m3 = 0; total_outflow_m3 = 0;
             wet_cells = 0; eroded_cells = 0; deposited_cells = 0;
+            if (Proglacial_checkbox.Checked) //Proglacial
+            {
+                total_meltwater_m = 0;
+                total_meltwater_m3 = 0;
+            }
+            ;
             for (int row = 0; row < nr; row++)
             {
                 for (int col = 0; col < nc; col++)
@@ -1290,6 +1347,8 @@ namespace LORICA4
                         total_evap_m += evap_value_m;
                         if (check_space_infil.Checked == true) { total_infil_m += infil[row, col]; }
                         total_infil_m += infil_value_m;
+                        if (Proglacial_checkbox.Checked == true) { total_meltwater_m += meltwater_m[row, col]; } //Proglacial
+                        total_meltwater_m += meltwater_value_m; //Proglacial
                         if (waterflow_m3[row, col] * dx * dx > timeseries.timeseries_waterflow_threshold) { wet_cells++; }
                        
 
@@ -3674,60 +3733,123 @@ namespace LORICA4
                     if (dtm[row, col] != nodata_value)
                     {
                         double weatheringdepth = 0;
+
+                        if (dtm[row, col] != nodata_value) // Only process non-nodata cells
+                        {
+                            // Apply water flow processes based on glacier_cell
+                            if (glacier_cell[row, col] == 1) // If it's a glacier cell
+                            {
+                                weatheringdepth = soildepth_m[row, col];
+
+                                // humped
+                                if (rockweath_method == 0) //AleG
+                                {
+                                    bedrock_weathering_m[row, col] = P0 * (Math.Exp(-k1 * weatheringdepth) - Math.Exp(-k2 * weatheringdepth)) + Pa;
+
+                                }
+                                if (rockweath_method == 1) //AleG
+                                {
+                                    // exponential (Heimsath, Chappell et al., 2000)
+                                    bedrock_weathering_m[row, col] = P0 * (Math.Exp(-k1 * weatheringdepth));
+                                }
+
+                                if (rockweath_method == 2) //AleG
+                                {
+                                    if (daily_water.Checked)
+                                    {
+                                        bedrock_weathering_m[row, col] = P0 * -k1 * (Iy[row, col] - Imin) / (Imax - Imin);
+                                    }
+                                }
+                                //we now know how deep we would weather into normal bedrock
+                                if (blocks_active == 1)
+                                {
+                                    double newlowestelevsoil = dtm[row, col] - soildepth_m[row, col] - bedrock_weathering_m[row, col];
+                                    double oldlowestelevsoil = dtm[row, col] - soildepth_m[row, col];
+                                    if (newlowestelevsoil < hardlayerelevation_m && oldlowestelevsoil >= hardlayerelevation_m)
+                                    {
+                                        //we limit bedrock weathering to the part of the bedrock above hardlayer:
+                                        bedrock_weathering_m[row, col] = (dtm[row, col] - soildepth_m[row, col]) - hardlayerelevation_m;
+                                        Debug.WriteLine(" limited bedrock weathering to stop at hardlayer r " + row + " c " + col + " dtm " + dtm[row, col]);
+                                        //and apply the rest of the weathering to increasing openness of the hardlayer:
+                                        hardlayeropenness_fraction[row, col] += Convert.ToSingle((hardlayerelevation_m - newlowestelevsoil) * hardlayer_weath_contrast);
+                                        Debug.WriteLine(" increased openness of hardlayer to " + hardlayeropenness_fraction[row, col]);
+                                        if (hardlayeropenness_fraction[row, col] > 0.5) { hardlayeropenness_fraction[row, col] = 0.5f; }
+                                    }
+                                }
+
+                                soildepth_m[row, col] += bedrock_weathering_m[row, col]; // this will really be updated at the end of this timestep, but this is a good approximation for the moment
+
+                                //we also add this amount of coarse material to the lowest layer of our soil
+                                soil_layer = 0; lowest_soil_layer = 0;
+                                while (layerthickness_m[row, col, soil_layer] > 0 & soil_layer < max_soil_layers) // MvdM added second conditional for when all layers are already filled
+                                {
+                                    lowest_soil_layer = soil_layer;
+                                    soil_layer++;
+                                    //Debug.WriteLine(" lowest soil layer now " + soil_layer);
+                                    if (lowest_soil_layer == max_soil_layers - 1) { break; }
+                                }
+                                texture_kg[row, col, lowest_soil_layer, 0] += bedrock_weathering_m[row, col] * 2700 * dx * dx;   // to go from m (=m3/m2) to kg, we multiply by m2 and by kg/m3
+                            }
+                        }
+                        else 
+                        {
+                            weatheringdepth = soildepth_m[row, col];
+
+                            // humped
+                            if (rockweath_method == 0) //AleG
+                            {
+                                bedrock_weathering_m[row, col] = P0 * (Math.Exp(-k1 * weatheringdepth) - Math.Exp(-k2 * weatheringdepth)) + Pa;
+
+                            }
+                            if (rockweath_method == 1) //AleG
+                            {
+                                // exponential (Heimsath, Chappell et al., 2000)
+                                bedrock_weathering_m[row, col] = P0 * (Math.Exp(-k1 * weatheringdepth));
+                            }
+
+                            if (rockweath_method == 2) //AleG
+                            {
+                                if (daily_water.Checked)
+                                {
+                                    bedrock_weathering_m[row, col] = P0 * -k1 * (Iy[row, col] - Imin) / (Imax - Imin);
+                                }
+                            }
+                            //we now know how deep we would weather into normal bedrock
+                            if (blocks_active == 1)
+                            {
+                                double newlowestelevsoil = dtm[row, col] - soildepth_m[row, col] - bedrock_weathering_m[row, col];
+                                double oldlowestelevsoil = dtm[row, col] - soildepth_m[row, col];
+                                if (newlowestelevsoil < hardlayerelevation_m && oldlowestelevsoil >= hardlayerelevation_m)
+                                {
+                                    //we limit bedrock weathering to the part of the bedrock above hardlayer:
+                                    bedrock_weathering_m[row, col] = (dtm[row, col] - soildepth_m[row, col]) - hardlayerelevation_m;
+                                    Debug.WriteLine(" limited bedrock weathering to stop at hardlayer r " + row + " c " + col + " dtm " + dtm[row, col]);
+                                    //and apply the rest of the weathering to increasing openness of the hardlayer:
+                                    hardlayeropenness_fraction[row, col] += Convert.ToSingle((hardlayerelevation_m - newlowestelevsoil) * hardlayer_weath_contrast);
+                                    Debug.WriteLine(" increased openness of hardlayer to " + hardlayeropenness_fraction[row, col]);
+                                    if (hardlayeropenness_fraction[row, col] > 0.5) { hardlayeropenness_fraction[row, col] = 0.5f; }
+                                }
+                            }
+
+                            soildepth_m[row, col] += bedrock_weathering_m[row, col]; // this will really be updated at the end of this timestep, but this is a good approximation for the moment
+
+                            //we also add this amount of coarse material to the lowest layer of our soil
+                            soil_layer = 0; lowest_soil_layer = 0;
+                            while (layerthickness_m[row, col, soil_layer] > 0 & soil_layer < max_soil_layers) // MvdM added second conditional for when all layers are already filled
+                            {
+                                lowest_soil_layer = soil_layer;
+                                soil_layer++;
+                                //Debug.WriteLine(" lowest soil layer now " + soil_layer);
+                                if (lowest_soil_layer == max_soil_layers - 1) { break; }
+                            }
+                            texture_kg[row, col, lowest_soil_layer, 0] += bedrock_weathering_m[row, col] * 2700 * dx * dx;   // to go from m (=m3/m2) to kg, we multiply by m2 and by kg/m3
+                        }
+                        
                         //Debug.WriteLine(" bedrock weathering at r " + row + " c " + col);
                         //if the first occurrence of bedrock is the hardlayer, then no weathering should occur.
                         //if more weathering is calculated than needed to get to the hardlayer, then it should be thus limited. 
 
-                        weatheringdepth = soildepth_m[row, col];
                         
-                        // humped
-                        if (rockweath_method == 0) //AleG
-                        {
-                            bedrock_weathering_m[row, col] = P0 * (Math.Exp(-k1 * weatheringdepth) - Math.Exp(-k2 * weatheringdepth)) + Pa;
-
-                        }
-                        if (rockweath_method == 1) //AleG
-                        {
-                            // exponential (Heimsath, Chappell et al., 2000)
-                            bedrock_weathering_m[row, col] = P0 * (Math.Exp(-k1 * weatheringdepth));
-                        }
-
-                        if (rockweath_method == 2) //AleG
-                        {
-                            if (daily_water.Checked)
-                            {
-                                bedrock_weathering_m[row, col] = P0 * -k1 * (Iy[row, col] - Imin) / (Imax - Imin);
-                            }
-                        }
-                        //we now know how deep we would weather into normal bedrock
-                        if (blocks_active == 1)
-                        {
-                            double newlowestelevsoil = dtm[row, col] - soildepth_m[row, col] - bedrock_weathering_m[row, col];
-                            double oldlowestelevsoil = dtm[row, col] - soildepth_m[row, col];
-                            if (newlowestelevsoil < hardlayerelevation_m && oldlowestelevsoil >= hardlayerelevation_m)
-                            {
-                                //we limit bedrock weathering to the part of the bedrock above hardlayer:
-                                bedrock_weathering_m[row, col] = (dtm[row, col] - soildepth_m[row, col]) - hardlayerelevation_m;
-                                Debug.WriteLine(" limited bedrock weathering to stop at hardlayer r " + row + " c " + col + " dtm " + dtm[row, col]);
-                                //and apply the rest of the weathering to increasing openness of the hardlayer:
-                                hardlayeropenness_fraction[row, col] += Convert.ToSingle((hardlayerelevation_m - newlowestelevsoil) * hardlayer_weath_contrast);
-                                Debug.WriteLine(" increased openness of hardlayer to " + hardlayeropenness_fraction[row, col]);
-                                if (hardlayeropenness_fraction[row, col] > 0.5) { hardlayeropenness_fraction[row, col] = 0.5f; }
-                            }
-                        }
-
-                        soildepth_m[row, col] += bedrock_weathering_m[row, col]; // this will really be updated at the end of this timestep, but this is a good approximation for the moment
-
-                        //we also add this amount of coarse material to the lowest layer of our soil
-                        soil_layer = 0; lowest_soil_layer = 0;
-                        while (layerthickness_m[row, col, soil_layer] > 0 & soil_layer < max_soil_layers) // MvdM added second conditional for when all layers are already filled
-                        {
-                            lowest_soil_layer = soil_layer;
-                            soil_layer++;
-                            //Debug.WriteLine(" lowest soil layer now " + soil_layer);
-                            if (lowest_soil_layer == max_soil_layers - 1) { break; }
-                        }
-                        texture_kg[row, col, lowest_soil_layer, 0] += bedrock_weathering_m[row, col] * 2700 * dx * dx;   // to go from m (=m3/m2) to kg, we multiply by m2 and by kg/m3
                     }
 
                 }

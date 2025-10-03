@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace LORICA4
 {
@@ -193,10 +194,12 @@ namespace LORICA4
                 for (int ii = 0; ii < n_texture_classes; ii++)
                 {
                     tot_mass += Convert.ToDecimal(texture_kg[rowmass, colmass, lay, ii]);
+
                 }
                 tot_mass += Convert.ToDecimal(old_SOM_kg[rowmass, colmass, lay]);
                 tot_mass += Convert.ToDecimal(young_SOM_kg[rowmass, colmass, lay]);
             }
+            
             return (tot_mass);
         }
 
@@ -221,6 +224,7 @@ namespace LORICA4
             for (int ii = 1; ii < 5; ii++)
             {
                 tot_mass += texture_kg[rowmass, colmass, laymass, ii];
+
             }
             tot_mass += old_SOM_kg[rowmass, colmass, laymass];
             tot_mass += young_SOM_kg[rowmass, colmass, laymass];
@@ -336,7 +340,6 @@ namespace LORICA4
                     }
                 }
             }
-            
             return (tot_mass);
         }
 

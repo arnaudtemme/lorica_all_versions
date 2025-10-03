@@ -1053,6 +1053,43 @@ namespace LORICA4
                 sw.Close();
             }
         } //end out_short
+        void out_bool(string name4, bool[,] output)
+        {
+            int nn, row, col;
+            string FILENAME = name4;
+            using (StreamWriter sw = new StreamWriter(FILENAME))
+            {
+                sw.Write("ncols         " + nc);
+                sw.Write("\r\n");
+                sw.Write("nrows         " + nr);
+                sw.Write("\r\n");
+                for (nn = 2; nn <= 5; nn++)
+                {
+                    sw.Write(inputheader[nn]); sw.Write("\r\n");
+                }
+                for (row = 0; row < nr; row++)
+                {
+                    for (col = 0; col < nc; col++)
+                    {
+                        if (dtm[row, col] != nodata_value) //AleG 
+                        {
+                            sw.Write("{0:F6}", output[row, col]);
+                            sw.Write(" ");
+                        }
+                        else
+                        {
+                            sw.Write("{0:F6}", nodata_value); //AleG
+                            sw.Write(" ");
+                        }
+
+                    }
+                    sw.Write("\r\n");
+                }
+                sw.Close();
+            }
+
+        }
+        
         void out_profile(string name5, double[,] output, bool row_is_fixed, int row_or_col)
         {
             // WVG 20-10-2010 output a profile file for benefit glorious model of LORICA
@@ -1166,58 +1203,9 @@ namespace LORICA4
             }
         }
 
-        void writeinputsoils()  
-        {
-            int layer;
-            double cumthick, midthick, z_layer;
-            string FILENAME = string.Format("{0}\\t{1}_out_allsoils.csv", workdir, t);
-            using (StreamWriter sw = new StreamWriter(FILENAME))
-            {
-                sw.Write("row,col,t,nlayer,cumth_m,thick_m,midthick_m,z,coarse_kg,sand_kg,silt_kg,clay_kg,fine_kg,YOM_kg,OOM_kg,YOM/OOM,f_coarse,f_sand,f_silt,f_clay,f_fineclay,ftotal_clay,f_OM,BD"); 
-                if (CN_checkbox.Checked) { sw.Write(",Be-10_meteoric_clay,Be-10_meteoric_silt,Be-10_meteoric_total,Be-10_insitu,C-14_insitu"); }
-                sw.Write("\r\n");
-                //int t_out = t + 1;
+        
 
-                
-
-                for (int row = 0; row < nr; row++)
-                {
-                    for (int col = 0; col < nc; col++)
-                    {
-                        if (dtm[row, col] != nodata_value)
-                        {
-                            cumthick = 0;
-                            midthick = 0;
-                            z_layer = dtm[row, col];
-                            for (layer = 0; layer < max_soil_layers; layer++) // only the top layer
-                            {
-                                if (layerthickness_m[row, col, layer] > 0)
-                                {
-                                    cumthick += layerthickness_m[row, col, layer];
-                                    midthick += layerthickness_m[row, col, layer] / 2;
-                                    double totalweight = texture_kg[row, col, layer, 0] + texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4] + young_SOM_kg[row, col, layer] + old_SOM_kg[row, col, layer];
-                                    double totalweight_tex = texture_kg[row, col, layer, 0] + texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4];
-                                    sw.Write(row + "," + col + "," + t + "," + layer + "," + cumthick + "," + layerthickness_m[row, col, layer] + "," + midthick + "," + z_layer + "," + texture_kg[row, col, layer, 0] + "," + texture_kg[row, col, layer, 1] + "," + texture_kg[row, col, layer, 2] + "," + texture_kg[row, col, layer, 3] + "," + texture_kg[row, col, layer, 4] + "," + young_SOM_kg[row, col, layer] + "," + old_SOM_kg[row, col, layer] + "," + young_SOM_kg[row, col, layer] / old_SOM_kg[row, col, layer] + "," + texture_kg[row, col, layer, 0] / totalweight_tex + "," + texture_kg[row, col, layer, 1] / totalweight_tex + "," + texture_kg[row, col, layer, 2] / totalweight_tex + "," + texture_kg[row, col, layer, 3] / totalweight_tex + "," + texture_kg[row, col, layer, 4] / totalweight_tex + "," + (texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4]) / totalweight_tex + "," + (young_SOM_kg[row, col, layer] + old_SOM_kg[row, col, layer]) / (young_SOM_kg[row, col, layer] + old_SOM_kg[row, col, layer] + totalweight_tex) + "," + bulkdensity[row, col, layer]);
-
-
-                                    if (CN_checkbox.Checked)
-                                    {
-                                        sw.Write("," + CN_atoms_cm2[row, col, layer, 0] + "," + CN_atoms_cm2[row, col, layer, 1] + "," + (CN_atoms_cm2[row, col, layer, 0] + CN_atoms_cm2[row, col, layer, 1]) + "," + CN_atoms_cm2[row, col, layer, 2] + "," + CN_atoms_cm2[row, col, layer, 3]);
-                                    }
-
-                                    sw.Write("\r\n");
-                                    midthick += layerthickness_m[row, col, layer] / 2;
-                                    z_layer -= layerthickness_m[row, col, layer];
-                                }
-                            }
-                        }
-                    }
-                }
-                sw.Close();
-            }
-        }// end writeinputsoils
-
-        void writeallsoils(string FILENAME)
+        void writeallsoils(string FILENAME, int t_corr)
         {
             int layer;
             double cumthick, midthick, z_layer;
@@ -1227,8 +1215,8 @@ namespace LORICA4
                 sw.Write("row,col,t,nlayer,cumth_m,thick_m,midthick_m,z,coarse_kg,sand_kg,silt_kg,clay_kg,fine_kg,YOM_kg,OOM_kg,YOM/OOM,f_coarse,f_sand,f_silt,f_clay,f_fineclay,ftotal_clay,f_OM,BD");
                 if (CN_checkbox.Checked) { sw.Write(",Be-10_meteoric_clay,Be-10_meteoric_silt,Be-10_meteoric_total,Be-10_insitu,C-14_insitu"); }
                 sw.Write("\r\n");
-                int t_corr = t;
-                if(t_corr > 0) { t_corr += 1; }
+                //int t_corr = t;
+                //if(t_corr > 0) { t_corr += 1; }
                 for (int row = 0; row < nr; row++)
                 {
                     for (int col = 0; col < nc; col++)
@@ -1614,6 +1602,16 @@ namespace LORICA4
 
                     try
                     {
+                        xreader.ReadStartElement("Proglacial");
+                        proglacial_input_filename_textbox.Text = xreader.ReadElementString("proglacial_input_filename");
+                        melt_rate_1971_textbox.Text = xreader.ReadElementString("melt_rate_m_1971");
+                        melt_rate_1972_textbox.Text = xreader.ReadElementString("melt_rate_m_1972");
+                        xreader.ReadEndElement();
+                    }
+                    catch { read_error = 1; Debug.WriteLine("failed reading proglacial paras"); }
+
+                    try
+                    {
                         xreader.ReadStartElement("Inputs");
                         check_space_DTM.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("check_space_DTM"));
                         check_space_soildepth.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("check_space_soil"));
@@ -1670,7 +1668,6 @@ namespace LORICA4
                         textbox_layer_thickness_increase.Text = xreader.ReadElementString("layer_thickness_increase");
                         fill_sinks_before_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("check_fill_sinks_before"));
                         fill_sinks_during_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("check_fill_sinks_during"));
-                        proglacial_input_filename_textbox.Text = xreader.ReadElementString("proglacial_input_filename");
                         xreader.ReadEndElement();
                     }
                     catch { read_error = 1; Debug.WriteLine("failed reading more input paras"); }
@@ -2040,6 +2037,12 @@ namespace LORICA4
 
                 xwriter.WriteEndElement();
 
+                xwriter.WriteStartElement("Proglacial");
+                xwriter.WriteElementString("proglacial_input_filename", proglacial_input_filename_textbox.Text); //Proglacial
+                xwriter.WriteElementString("melt_rate_m_1971", melt_rate_1971_textbox.Text); //Proglacial
+                xwriter.WriteElementString("melt_rate_m_1972", melt_rate_1972_textbox.Text); //Proglacial
+                xwriter.WriteEndElement();
+
                 xwriter.WriteStartElement("Inputs");
                 xwriter.WriteElementString("check_space_DTM", XmlConvert.ToString(check_space_DTM.Checked));
                 xwriter.WriteElementString("check_space_soil", XmlConvert.ToString(check_space_soildepth.Checked));
@@ -2088,8 +2091,6 @@ namespace LORICA4
                 xwriter.WriteElementString("layer_thickness_increase", textbox_layer_thickness_increase.Text);
                 xwriter.WriteElementString("check_fill_sinks_before", XmlConvert.ToString(fill_sinks_before_checkbox.Checked));
                 xwriter.WriteElementString("check_fill_sinks_during", XmlConvert.ToString(fill_sinks_during_checkbox.Checked));
-
-                xwriter.WriteElementString("proglacial_input_filename", proglacial_input_filename_textbox.Text);
 
                 xwriter.WriteEndElement();
 
@@ -2185,6 +2186,7 @@ namespace LORICA4
                 xwriter.WriteElementString("soil_col", timeseries.timeseries_soil_cell_row.Text);
                 xwriter.WriteElementString("coarser_fraction", timeseries.timeseries_soil_coarser_fraction_textbox.Text);
                 xwriter.WriteElementString("thicker_threshold", timeseries.timeseries_soil_thicker_textbox.Text);
+                
                 xwriter.WriteEndElement();
 
                 xwriter.WriteEndElement();
@@ -2402,6 +2404,7 @@ namespace LORICA4
             return min_val;
 
         } // end min_value_int()
+
 
 
         int max_value_int(int[,] map2, int nr, int nc) //Proglacial 

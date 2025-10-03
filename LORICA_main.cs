@@ -184,9 +184,6 @@ namespace LORICA4
                     dtm,                //altitude matrix
                     dtmchange_m,  	    //change in altitude matrix
                     dtmfill_A,
-                    og_dtm,           //original dtm accessed for proglacial mode 
-                    filled_dtm,       //filled dtm accessed for proglacial mode 
-                    dtm_WE,           //original dtm accessed for proglacial mode
                     dz_soil,
                     waterflow_m3,        //discharge matrix
                     K_fac,
@@ -236,6 +233,7 @@ namespace LORICA4
                     dh_slid,
                     lake_sed_m,         //the thickness of lake sediment
                     rain_m,
+                    meltwater_m, //Proglacial
                     timeseries_matrix,
                     lessivage_errors, // for calibration of lessivage
                     tpi,            //topographic position index
@@ -258,6 +256,7 @@ namespace LORICA4
                     treefall_count,     // count number of tree falls
                     age_rast_yr,       //age raster for proglacial mode - raster representing the year in which the glacier was last recorded at a certain location
                     vegetation_type,
+                    glacier_cell,//Proglaciar
                     slidenr;
         short[,] slidestatus;
 
@@ -288,7 +287,7 @@ namespace LORICA4
         // for layer thicknesses
         double layer_z_surface; // Read from interface
         double layer_z_increase;
-        double tolerance = 100; // Standard value //aleg_c 0.55
+        double tolerance = 0.55; // Standard value //aleg_c 0.55
 
         int n_texture_classes = 5;
 
@@ -326,9 +325,9 @@ namespace LORICA4
             soil_carbon_active,
             input_data_error,
             memory_records,
-            new_glacier,   
+            new_glacier, //Proglaciar
             memory_records_d;
-
+        
         int num_out,
                 ntr,				//WVG 22-10-2010 number of rows (timesteps) in profile timeseries matrices			
                 cross1, 			//WVG 22-10-2010 rows (or in the future columns) of which profiles are wanted
@@ -338,6 +337,8 @@ namespace LORICA4
                 numfile,
                 nr,
                 nc,
+                nrrrr, //Proglacial
+                ncccc, //Proglacial
                 row,
                 col,
                 i,
@@ -503,8 +504,8 @@ namespace LORICA4
                 out_t,
                 total_altitude_m,
                 total_average_altitude_m,
-                total_rain_m, total_evap_m, total_infil_m,
-                total_rain_m3, total_evap_m3, total_infil_m3, total_outflow_m3;
+                total_rain_m, total_evap_m, total_infil_m, total_meltwater_m, //Proglacial
+                total_rain_m3, total_evap_m3, total_infil_m3, total_outflow_m3, total_meltwater_m3;//Proglacial
         private TabPage Experimental;
         private TabControl tabControl2;
         private TabPage physical;
@@ -516,9 +517,26 @@ namespace LORICA4
         private TextBox chem_weath_specific_coefficient_textbox;
         private Label label7;
         private TextBox minimum_slope_for_movement_tan_textbox;
-        private TextBox chem_weath_depth_constant_textbox;
+        private Label label44;
+        private Label label46;
+        private TextBox melt_rate_1972_textbox;
+        private TextBox melt_rate_1971_textbox;
+        private Label label47;
+        private Label label45;
 
        
+
+        private void label45_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private TextBox chem_weath_depth_constant_textbox;
+
+        private void label47_Click(object sender, EventArgs e)
+        {
+
+        }
 
         private void explain_input_Click(object sender, EventArgs e)
         {
@@ -960,6 +978,10 @@ namespace LORICA4
         int som_cycle_algorithm,
             rockweath_method; //AleG
 
+        //Proglacial
+        double melt_rate_m_1971, //Proglacial
+               melt_rate_m_1972; //Proglacial
+
         // Decalcification parameters
         double[,,] CO3_kg;   // CaCO3, to track decalcification speed. Does not contribute to texture or soil mass (yet) MM
         double ini_CO3_content_frac;
@@ -968,7 +990,7 @@ namespace LORICA4
         sediment_filled_m, depressionvolume_filled_m, sediment_delta_m,   // counters for logging and reporting the filling of depressions
         altidiff, minaltidiff,
         totaldepressionvolume,
-        infil_value_m, evap_value_m, rain_value_m, soildepth_value,
+        infil_value_m, evap_value_m, rain_value_m, soildepth_value, meltwater_value_m,//Proglacial
         volume_eroded_m, volume_deposited_m,
         sum_normalweathered, sum_frostweathered, sum_soildepth, sum_creep, sum_solif, avg_solif, avg_creep, avg_soildepth,
         sum_ls, total_sum_tillage, total_sum_uplift, total_sum_tilting, total_sed_export;  // counters for logging and reporting through time
@@ -1255,6 +1277,10 @@ namespace LORICA4
             this.label4 = new System.Windows.Forms.Label();
             this.annual_output_checkbox = new System.Windows.Forms.RadioButton();
             this.cumulative_output_checkbox = new System.Windows.Forms.RadioButton();
+            this.label44 = new System.Windows.Forms.Label();
+            this.label45 = new System.Windows.Forms.Label();
+            this.label46 = new System.Windows.Forms.Label();
+            this.label47 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.explain_input_button = new System.Windows.Forms.Button();
             this.UTMzonebox = new System.Windows.Forms.TextBox();
@@ -1553,6 +1579,8 @@ namespace LORICA4
             this.Spitsbergen_case_study = new System.Windows.Forms.CheckBox();
             this.dtm_iterate_checkbox = new System.Windows.Forms.CheckBox();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.melt_rate_1972_textbox = new System.Windows.Forms.TextBox();
+            this.melt_rate_1971_textbox = new System.Windows.Forms.TextBox();
             this.proglacial_input_filename_textbox = new System.Windows.Forms.TextBox();
             this.Proglacial_checkbox = new System.Windows.Forms.CheckBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
@@ -2604,6 +2632,50 @@ namespace LORICA4
             this.cumulative_output_checkbox.Text = "cumulative";
             this.toolTip1.SetToolTip(this.cumulative_output_checkbox, "Between current timestep and timestep 0");
             this.cumulative_output_checkbox.UseVisualStyleBackColor = true;
+            // 
+            // label44
+            // 
+            this.label44.Location = new System.Drawing.Point(285, 139);
+            this.label44.Name = "label44";
+            this.label44.Size = new System.Drawing.Size(334, 30);
+            this.label44.TabIndex = 165;
+            this.label44.Text = "The default values are for Alpine glaciers";
+            this.label44.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.toolTip1.SetToolTip(this.label44, "\"constant value\" is only available for some inputs and only \r\nwhen neither f(t) n" +
+        "or f(x,y) are checked");
+            // 
+            // label45
+            // 
+            this.label45.Location = new System.Drawing.Point(13, 121);
+            this.label45.Name = "label45";
+            this.label45.Size = new System.Drawing.Size(151, 24);
+            this.label45.TabIndex = 166;
+            this.label45.Text = "melting rate until 1971 [m]";
+            this.label45.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.toolTip1.SetToolTip(this.label45, "Hourly rainfall data - in an ascii format");
+            this.label45.Click += new System.EventHandler(this.label45_Click);
+            // 
+            // label46
+            // 
+            this.label46.Location = new System.Drawing.Point(13, 161);
+            this.label46.Name = "label46";
+            this.label46.Size = new System.Drawing.Size(151, 24);
+            this.label46.TabIndex = 168;
+            this.label46.Text = "melting rate since 1972 [m]";
+            this.label46.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.toolTip1.SetToolTip(this.label46, "Hourly rainfall data - in an ascii format");
+            // 
+            // label47
+            // 
+            this.label47.Location = new System.Drawing.Point(13, 205);
+            this.label47.Name = "label47";
+            this.label47.Size = new System.Drawing.Size(705, 24);
+            this.label47.TabIndex = 171;
+            this.label47.Text = "Processes which can be simulated: Water erosion, Soil production, Physical weath." +
+    ", Chemical weath., Clay dynamics, Bioturbation, Organic Matter";
+            this.label47.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.toolTip1.SetToolTip(this.label47, "Hourly rainfall data - in an ascii format");
+            this.label47.Click += new System.EventHandler(this.label47_Click);
             // 
             // label5
             // 
@@ -4011,6 +4083,7 @@ namespace LORICA4
             // Frost_weathering_checkbox
             // 
             this.Frost_weathering_checkbox.AutoSize = true;
+            this.Frost_weathering_checkbox.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.Frost_weathering_checkbox.Enabled = false;
             this.Frost_weathering_checkbox.Location = new System.Drawing.Point(14, 19);
             this.Frost_weathering_checkbox.Name = "Frost_weathering_checkbox";
@@ -4384,7 +4457,7 @@ namespace LORICA4
             this.carbon_o_decomp_rate_textbox.Name = "carbon_o_decomp_rate_textbox";
             this.carbon_o_decomp_rate_textbox.Size = new System.Drawing.Size(100, 26);
             this.carbon_o_decomp_rate_textbox.TabIndex = 81;
-            this.carbon_o_decomp_rate_textbox.Text = "0.005";
+            this.carbon_o_decomp_rate_textbox.Text = "0.01";
             // 
             // carbon_y_decomp_rate_textbox
             // 
@@ -4392,7 +4465,7 @@ namespace LORICA4
             this.carbon_y_decomp_rate_textbox.Name = "carbon_y_decomp_rate_textbox";
             this.carbon_y_decomp_rate_textbox.Size = new System.Drawing.Size(100, 26);
             this.carbon_y_decomp_rate_textbox.TabIndex = 79;
-            this.carbon_y_decomp_rate_textbox.Text = "0.01";
+            this.carbon_y_decomp_rate_textbox.Text = "0.05";
             // 
             // carbon_o_depth_decay_textbox
             // 
@@ -4432,7 +4505,7 @@ namespace LORICA4
             this.carbon_input_textbox.Name = "carbon_input_textbox";
             this.carbon_input_textbox.Size = new System.Drawing.Size(100, 26);
             this.carbon_input_textbox.TabIndex = 60;
-            this.carbon_input_textbox.Text = "1.5";
+            this.carbon_input_textbox.Text = "0.6";
             // 
             // soil_carbon_cycle_checkbox
             // 
@@ -5485,7 +5558,7 @@ namespace LORICA4
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(13, 185);
+            this.button4.Location = new System.Drawing.Point(7, 179);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(191, 41);
             this.button4.TabIndex = 165;
@@ -5678,6 +5751,12 @@ namespace LORICA4
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.label47);
+            this.tabPage1.Controls.Add(this.melt_rate_1972_textbox);
+            this.tabPage1.Controls.Add(this.melt_rate_1971_textbox);
+            this.tabPage1.Controls.Add(this.label46);
+            this.tabPage1.Controls.Add(this.label45);
+            this.tabPage1.Controls.Add(this.label44);
             this.tabPage1.Controls.Add(this.label37);
             this.tabPage1.Controls.Add(this.proglacial_input_filename_textbox);
             this.tabPage1.Controls.Add(this.Proglacial_text);
@@ -5689,6 +5768,22 @@ namespace LORICA4
             this.tabPage1.TabIndex = 14;
             this.tabPage1.Text = "Proglacial";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // melt_rate_1972_textbox
+            // 
+            this.melt_rate_1972_textbox.Location = new System.Drawing.Point(147, 161);
+            this.melt_rate_1972_textbox.Name = "melt_rate_1972_textbox";
+            this.melt_rate_1972_textbox.Size = new System.Drawing.Size(120, 26);
+            this.melt_rate_1972_textbox.TabIndex = 170;
+            this.melt_rate_1972_textbox.Text = "0.9070";
+            // 
+            // melt_rate_1971_textbox
+            // 
+            this.melt_rate_1971_textbox.Location = new System.Drawing.Point(147, 124);
+            this.melt_rate_1971_textbox.Name = "melt_rate_1971_textbox";
+            this.melt_rate_1971_textbox.Size = new System.Drawing.Size(120, 26);
+            this.melt_rate_1971_textbox.TabIndex = 169;
+            this.melt_rate_1971_textbox.Text = "0.1735";
             // 
             // proglacial_input_filename_textbox
             // 
@@ -6031,7 +6126,8 @@ namespace LORICA4
 
                 if (this.Proglacial_checkbox.Checked) { 
                     Array.Clear(age_rast_yr, 0, age_rast_yr.Length);
-                    Array.Clear(og_dtm, 0, og_dtm.Length);
+                    Array.Clear(glacier_cell, 0, glacier_cell.Length);
+                    Array.Clear(meltwater_m, 0, meltwater_m.Length);
                 }
 
                 if (check_space_landuse.Checked == true) 
@@ -6217,7 +6313,8 @@ namespace LORICA4
                 if (Proglacial_checkbox.Checked)
                 {
                     age_rast_yr = new int[nr, nc];
-                    og_dtm = new double[nr, nc];
+                    glacier_cell = new int[nr, nc];
+                    meltwater_m = new double[nr, nc];
                 }
             }
             aspect = new double[nr, nc];
@@ -6490,7 +6587,7 @@ namespace LORICA4
                             catch { input_data_error = true; MessageBox.Show("value for parameter k2 is not valid"); }
                             try { Pa = double.Parse(parameter_Pa_textbox.Text); }
                             catch { input_data_error = true; MessageBox.Show("value for parameter Pa is not valid"); }
-                            this.Invoke(new MethodInvoker(delegate () { rockweath_method = rockweath_method_box.SelectedIndex; })); //AleG quiii 
+                            this.Invoke(new MethodInvoker(delegate () { rockweath_method = rockweath_method_box.SelectedIndex; })); //AleG
                         }
 
                         //Tilting parameters
@@ -6696,6 +6793,15 @@ namespace LORICA4
                             }
                         }
 
+                        //PROGLACIAL
+                        if (Proglacial_checkbox.Checked)
+                        {
+                            try { melt_rate_m_1971 = double.Parse(melt_rate_1971_textbox.Text); }
+                            catch { input_data_error = true; MessageBox.Show("value for melting rate until 1971 is not valid"); }   // meltwater rate until 1971
+                            try { melt_rate_m_1972 = double.Parse(melt_rate_1972_textbox.Text); }
+                            catch { input_data_error = true; MessageBox.Show("value for melting rate since 1972 is not valid"); }   // meltwater rate since 1972
+                        }
+
                         if (input_data_error == false)
                         {
                             try
@@ -6737,7 +6843,6 @@ namespace LORICA4
                             {
                                 filename = dtmfilename;             //for directory input
                                 dtm_file(filename);                 // from dtm_file(), almost all memory for the model is claimed
-
                             }
                             catch { Debug.WriteLine(" failed to initialise dtm matrices"); }
                             try { initialise_once(); } // reading input files
@@ -6789,7 +6894,7 @@ namespace LORICA4
                                     }
                                 }
 
-                                timeseries_matrix = new double[System.Convert.ToInt32(end_time), number_of_outputs];
+                                
                                 Debug.WriteLine("Created timeseries matrix with " + System.Convert.ToInt32(end_time) + " rows and " + number_of_outputs + " columns");
                                 if (input_data_error == false)
                                 {
@@ -6806,149 +6911,156 @@ namespace LORICA4
                                         {
                                             if (t == 0)
                                             {
+                                                // Determine min and max values of age_rast_yr to set age_rast_value
                                                 age_rast_min = min_value_int(age_rast_yr, nr, nc);
                                                 age_rast_max = max_value_int(age_rast_yr, nr, nc);
-                                                age_rast_value = age_rast_min - 1;
-
+                                                age_rast_value = age_rast_min;
                                                 if (checkbox_t_intervene.Checked)
                                                 {
                                                     age_rast_min = age_rast_min + (int)t_intervene;
                                                 }
-
-
+                                                // Iterate through the grid
                                                 for (row = 0; row < nr; row++)
                                                 {
                                                     for (col = 0; col < nc; col++)
                                                     {
-                                                        og_dtm[row, col] = dtm[row, col];
-
-                                                        if (og_dtm[row, col] != nodata_value)
-
+                                                        // Only process valid cells (dtm is not NoData)
+                                                        if (dtm[row, col] != nodata_value)
                                                         {
+                                                            // If age_rast_yr is valid (not NoData)
                                                             if (age_rast_yr[row, col] != nodata_value)
-
                                                             {
+                                                                // Glacier condition: age_rast_yr >= age_rast_value
                                                                 if (age_rast_yr[row, col] >= age_rast_value)
                                                                 {
-                                                                    dtm[row, col] = nodata_value;
+                                                                    glacier_cell[row, col] = 1;  // Mark as glacier cell
+                                                                                                    // DO NOT modify the dtm value for glacier cells (keep it as it is)
                                                                 }
-
                                                                 else
                                                                 {
+                                                                    glacier_cell[row, col] = 0;  // Not a glacier cell
 
-                                                                    dtm[row, col] = dtm[row, col];
+                                                                    // Modify dtm for non-glacier cells (set it to NoData if required)
+                                                                    // You can apply your specific conditions here for non-glacier cells.
+                                                                    
                                                                 }
                                                             }
-                                                            else
-                                                            {
-                                                                dtm[row, col] = dtm[row, col];
-                                                            }
-
                                                         }
-
                                                     }
-
                                                 }
-
+                                                
                                             }
-
+                                            out_integer(workdir + "\\" + run_number + "_0_out_glacier.asc", glacier_cell);
                                         }
+                                        
+                                        
 
-                                        if (t_intervene > 0) { read_soil_elevation_distance_from_output(t_intervene, workdir); }
+
+                                        if (t_intervene > 0)
+                                        {                                            
+                                            read_soil_elevation_distance_from_output(t_intervene, workdir);
+                                        }
 
                                         for (t = t_intervene; t < end_time; t++)
                                         {
-                                            //Proglacial mode 
+                                            // Proglacial mode
                                             if (Proglacial_checkbox.Checked)
                                             {
-
+                                                // Check if the glacier has progressed
                                                 if (t <= (age_rast_max - age_rast_min) + 1)
-
                                                 {
                                                     age_rast_value = age_rast_value + 1;
-
-
+                                                    // Loop through the raster grid and check for new glacier cells
                                                     for (row = 0; row < nr; row++)
                                                     {
                                                         for (col = 0; col < nc; col++)
                                                         {
-
+                                                            // If this cell has reached the current age_rast_value, it's a new glacier
                                                             if (age_rast_yr[row, col] == age_rast_value)
-
                                                             {
                                                                 new_glacier = true;
-
-                                                                if (new_glacier == true)
-                                                                {
-                                                                    break;
-                                                                }
-
+                                                                break;  // Break out of the column loop
                                                             }
-
                                                             if (new_glacier == true)
                                                             {
                                                                 break;
                                                             }
 
+                                                            // If a new glacier has been found, break out of the row loop
+                                                            if (new_glacier == true)
+                                                            {
+                                                                break;
+                                                            }
                                                         }
 
+                                                        // If a new glacier has been found, break out of the row loop
                                                         if (new_glacier == true)
                                                         {
                                                             break;
                                                         }
-
                                                     }
 
+                                                    // If a new glacier has been found, update the DTM and glacier cells
                                                     if (new_glacier == true)
                                                     {
                                                         for (row = 0; row < nr; ++row)
                                                         {
                                                             for (col = 0; col < nc; col++)
                                                             {
-                                                                if (og_dtm[row, col] != nodata_value)
+                                                                
 
+                                                                // If the DTM is not NoData, process the glacier cell
+                                                                if (dtm[row, col] != nodata_value)
                                                                 {
-                                                                    if (dtm[row, col] == nodata_value)
-                                                                    {
-                                                                        dtm[row, col] = og_dtm[row, col];
-                                                                    }
+                                                                    // Initialize meltwater_m 
+                                                                    meltwater_m[row, col] = 0;
+                                                                    glacier_cell[row, col] = 0;  // Not a glacier cell
 
-
+                                                                    // Check if the current cell is a glacier based on age_rast
                                                                     if (age_rast_yr[row, col] != nodata_value)
-
                                                                     {
+                                                                        // Glacier condition: age_rast_yr >= age_rast_value
                                                                         if (age_rast_yr[row, col] >= age_rast_value)
                                                                         {
-                                                                            dtm[row, col] = nodata_value;
+                                                                            glacier_cell[row, col] = 1;  // Mark as glacier cell
+                                                                                                         // DO NOT modify the dtm value for glacier cells (keep it as it is)
                                                                         }
-
                                                                         else
                                                                         {
+                                                                            glacier_cell[row, col] = 0;  // Not a glacier cell
 
-                                                                            dtm[row, col] = dtm[row, col];
                                                                         }
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        dtm[row, col] = dtm[row, col];
-                                                                    }
 
+                                                                        if (age_rast_yr[row, col] == age_rast_value)
+                                                                        {
+                                                                            // Glacier is forming here
+                                                                            meltwater_m[row, col] = dtm[row, col];  // Set meltwater to dtm value for glacier cells
 
+                                                                            // Set meltwater based on the age of the glacier
+                                                                            if (age_rast_value < 1972)
+                                                                            {
+                                                                                meltwater_m[row, col] = melt_rate_m_1971 * dx;
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                meltwater_m[row, col] = melt_rate_m_1972 * dx;
+                                                                            }
+                                                                        }
+
+                                                                        
+                                                                    }
                                                                 }
-                                                                else
-                                                                {
-                                                                    dtm[row, col] = og_dtm[row, col];
-                                                                }
+                                                                
                                                             }
                                                         }
+                                                        // Reset new_glacier flag for the next iteration
                                                         new_glacier = false;
-
+                                                        
                                                     }
-
+                                                    
                                                 }
-
                                             }
-
+                                            
 
                                             try
                                             {
@@ -6956,11 +7068,14 @@ namespace LORICA4
                                             }
                                             catch
                                             {
-                                                Debug.WriteLine("failed to run in timestep " + t);
-                                                MessageBox.Show("failed to run in timestep + " + t);
+                                                int t_fail = t+1;//AleG
+                                                Debug.WriteLine("failed to run in timestep " + t_fail); //AleG
+                                                MessageBox.Show("failed to run in timestep + " + t_fail);//AleG
                                                 break;
                                             }
                                         }
+
+
                                     }
                                 }
                             }
@@ -7084,8 +7199,7 @@ namespace LORICA4
                 comb_sort();
                 findsinks();
                 searchdepressions();
-                define_fillheight_new();
-                calculate_water_ero_sed();
+                define_fillheight_new();  
                 soil_update_split_and_combine_layers();
             }
 
@@ -7403,7 +7517,7 @@ namespace LORICA4
                 try
                 {
                     //Debug.WriteLine("writing all soils");
-                    writeallsoils(workdir + "\\" + run_number + "_" + t_out + "_out_allsoils.csv");
+                    writeallsoils(workdir + "\\" + run_number + "_" + t_out + "_out_allsoils.csv", t_out);
                 }
                 catch
                 {
@@ -7568,6 +7682,14 @@ namespace LORICA4
                         }
                     }
                     catch { MessageBox.Show("vegetation type has not been written"); }
+                }
+
+                if (Proglacial_checkbox.Checked) //Proglacial
+                {
+                    try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_meltwater.asc", meltwater_m); }
+                    catch { MessageBox.Show("meltwater has not been written"); }
+                    try { out_integer(workdir + "\\" + run_number + "_" + t_out + "_out_glacier.asc", glacier_cell); } 
+                    catch { MessageBox.Show("filled dtm has not been written"); }
                 }
 
                 if (version_lux_checkbox.Checked == true)

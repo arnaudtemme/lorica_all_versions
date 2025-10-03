@@ -1103,7 +1103,7 @@ namespace LORICA4
                 } // end col
             } // end row
               //Debug.WriteLine("initialised soil");
-            writeallsoils(workdir + "\\" + run_number + "_" + t + "_out_allsoils.csv");
+            writeallsoils(workdir + "\\" + run_number + "_" + t + "_out_allsoils.csv", t);
         }
 
         void initialise_every_till()
@@ -1162,6 +1162,7 @@ namespace LORICA4
                             if (Creep_Checkbox.Checked) { sum_creep_grid[row, col] = 0; creep[row, col] = 0; }
                             if (treefall_checkbox.Checked) { dz_treefall[row, col] = 0; treefall_count[row, col] = 0; }
                             if (Water_ero_checkbox.Checked) { sum_water_erosion[row, col] = 0; }
+                            if (Proglacial_checkbox.Checked) { meltwater_m[row, col] = 0; glacier_cell[row, col] = 0; } 
                             if (Biological_weathering_checkbox.Checked) 
                             {
                                 bedrock_weathering_m[row, col] = 0; //AleG
@@ -1190,7 +1191,7 @@ namespace LORICA4
                         } //AleG total_sum_tillage = 0; 
                         if (soildepth_m[row, col] < 0.0) { soildepth_error += soildepth_m[row, col]; soildepth_m[row, col] = 0; }
                         if (Water_ero_checkbox.Checked) { waterflow_m3[row, col] = 0.0; } //AleG K_fac[row, col] = 0;
-                                                                                          //if (check_space_landuse.Checked)//AleG //if i activate these every cell is zero //quiii
+                                                                                          //if (check_space_landuse.Checked)//AleG //if i activate these every cell is zero 
                                                                                           //{
                                                                                           //K_fac[row, col] = 0;
                                                                                           //infil[row, col] = 0;
@@ -1325,23 +1326,7 @@ namespace LORICA4
                 double depth_m, z_layer_ref_m, old_thickness, new_thickness;
                 bool boolsplit, boolcombine;
 
-                if (Proglacial_checkbox.Checked)  
-                {
-
-                    if (t == 0)
-                    {
-                        dtm_WE = og_dtm;
-                    }
-                    else
-                    {
-                        dtm_WE = filled_dtm;
-                    }
-                }
-                else
-                {
-                    dtm_WE = dtm;
-                }
-
+                
                 total_average_soilthickness_m = 0;
                 number_soil_thicker_than = 0;
                 number_soil_coarser_than = 0;
@@ -1440,6 +1425,8 @@ namespace LORICA4
                 double div;
                 int[] grains_before = new int[max_soil_layers];
                 int[] grains_after = new int[max_soil_layers];
+
+
                 if (OSL_checkbox.Checked)
                 {
                     for (int lay_OSL = 0; lay_OSL < max_soil_layers; lay_OSL++)
@@ -1542,6 +1529,9 @@ namespace LORICA4
         {
             double CN_before = 0, CN_after = 0;
             //if (CN_checkbox.Checked) { CN_before = total_CNs(); }
+
+            
+
             double mass_before = total_layer_mass_kg(rowwer, coller, lay1) + total_layer_mass_kg(rowwer, coller, lay2);
             try
             {
@@ -1605,6 +1595,8 @@ namespace LORICA4
             double transport_betw_layers;
             // determine whether coarse material gets transported as well. Standard is yes, but some cases it doesn't happen, such as bioturbation by soil fauna
             int tex_start = 0;
+
+
             if (!transport_coarse) { tex_start = 1; }
             if (fraction_transport > 0)
             {

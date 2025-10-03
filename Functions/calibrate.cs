@@ -549,7 +549,7 @@ namespace LORICA4
             return sum;
         }
 
-        private double calib_objective_function_Konza()
+        private double calib_objective_function_Konza() //AleG_update_Mvdm
         {
             observations = new double[100, 100];         //may be used for other sets of observations as well
             string input;
@@ -641,138 +641,134 @@ namespace LORICA4
                 {
                     for (col = 0; col < nc; col++)
                     {
-                        if (dtm[row, col] != nodata_value)//AleG
-                        {//Debug.WriteLine("rc " + row + " " + col + " obsnumber " + obsnumber + " next obsrow= " + observations[obsnumber, 0] + " col " + observations[obsnumber, 1]);
-                            if (row == observations[obsnumber, 0] && col == observations[obsnumber, 1])
+                        //Debug.WriteLine("rc " + row + " " + col + " obsnumber " + obsnumber + " next obsrow= " + observations[obsnumber, 0] + " col " + observations[obsnumber, 1]);
+                        if (row == observations[obsnumber, 0] && col == observations[obsnumber, 1])
+                        {
+                            //in this case, we are in a cell where we also have an observation. Time to compare and calculate an error, first for the soil depth
+                            localdepth_error = Math.Pow(Math.Abs(soildepth_m[row, 0] - observations[obsnumber, 2]) / (observations[obsnumber, 2] + soildepth_m[row, 0]), 2);
+                            //and now for all other properties, where we need to take a complicated average over all layers:
+                            SOM_error_depthproduct = 0; coarse_error_depthproduct = 0; sand_error_depthproduct = 0; silt_error_depthproduct = 0; clay_error_depthproduct = 0;
+                            int obshorizon = 0;
+                            int lyr = 0;
+                            double lyr_end_depth_m = 0;
+                            double lyr_begin_depth_m = 0;
+                            double hor_end_depth_m = 0;
+                            double hor_begin_depth_m = 0;
+                            double overlap_m = 0;
+                            bool horizonchanged = false;
+                            //now calulate errors
+                            while (layerthickness_m[row, col, lyr] > 0) // as long as we still have layers left
                             {
-                                //in this case, we are in a cell where we also have an observation. Time to compare and calculate an error, first for the soil depth
-                                localdepth_error = Math.Pow(Math.Abs(soildepth_m[row, 0] - observations[obsnumber, 2]) / (observations[obsnumber, 2] + soildepth_m[row, 0]), 2);
-                                //and now for all other properties, where we need to take a complicated average over all layers:
-                                SOM_error_depthproduct = 0; coarse_error_depthproduct = 0; sand_error_depthproduct = 0; silt_error_depthproduct = 0; clay_error_depthproduct = 0;
-                                int obshorizon = 0;
-                                int lyr = 0;
-                                double lyr_end_depth_m = 0;
-                                double lyr_begin_depth_m = 0;
-                                double hor_end_depth_m = 0;
-                                double hor_begin_depth_m = 0;
-                                double overlap_m = 0;
-                                bool horizonchanged = false;
-                                //now calulate errors
-                                while (layerthickness_m[row, col, lyr] > 0) // as long as we still have layers left
-                                {
 
-                                    lyr_end_depth_m += layerthickness_m[row, col, lyr];  //we update how deep this layer ends
-                                    lyr_begin_depth_m = lyr_end_depth_m - layerthickness_m[row, col, lyr];
-                                    horizonchanged = false;
-                                    try
+                                lyr_end_depth_m += layerthickness_m[row, col, lyr];  //we update how deep this layer ends
+                                lyr_begin_depth_m = lyr_end_depth_m - layerthickness_m[row, col, lyr];
+                                horizonchanged = false;
+                                try
+                                {
+                                    while (observations[obsnumber, 3 + 6 * obshorizon] > 0 && !(lyr_begin_depth_m > observations[obsnumber, 3 + 6 * obshorizon]))
                                     {
-                                        while (observations[obsnumber, 3 + 6 * obshorizon] > 0 && !(lyr_begin_depth_m > observations[obsnumber, 3 + 6 * obshorizon]))
+                                        horizonchanged = false;
+                                        //Debug.WriteLine(" now depth " + lyr_end_depth_m + " obshorizon " + obshorizon + " compared to obs depth " + observations[obsnumber, (3 + 6 * obshorizon)]);
+                                        if (lyr_end_depth_m > observations[obsnumber, (3 + 6 * obshorizon)])
                                         {
-                                            horizonchanged = false;
-                                            //Debug.WriteLine(" now depth " + lyr_end_depth_m + " obshorizon " + obshorizon + " compared to obs depth " + observations[obsnumber, (3 + 6 * obshorizon)]);
-                                            if (lyr_end_depth_m > observations[obsnumber, (3 + 6 * obshorizon)])
-                                            {
-                                                overlap_m = layerthickness_m[row, col, lyr] + (observations[obsnumber, (3 + 6 * obshorizon)] - lyr_end_depth_m);
-                                            }
-                                            else
-                                            {
-                                                overlap_m = layerthickness_m[row, col, lyr];
-                                            }
-                                            //Debug.WriteLine(" overlap depth = " + overlap_m);
-                                            SOM_error = Math.Abs(((young_SOM_kg[row, col, lyr] + old_SOM_kg[row, col, lyr]) / total_layer_fine_earth_om_mass_kg(row, col, lyr)) - observations[obsnumber, 4 + 6 * obshorizon]);
-                                            coarse_error = Math.Abs((texture_kg[row, col, lyr, 0] / total_layer_mineral_earth_mass_kg(row, col, lyr)) - observations[obsnumber, 5 + 6 * obshorizon]);
-                                            sand_error = Math.Abs((texture_kg[row, col, lyr, 1] / total_layer_fine_earth_mass_kg(row, col, lyr)) - observations[obsnumber, 6 + 6 * obshorizon]);
-                                            silt_error = Math.Abs((texture_kg[row, col, lyr, 2] / total_layer_fine_earth_mass_kg(row, col, lyr)) - observations[obsnumber, 7 + 6 * obshorizon]);
-                                            clay_error = Math.Abs(((texture_kg[row, col, lyr, 3] + texture_kg[row, col, lyr, 4]) / total_layer_fine_earth_mass_kg(row, col, lyr)) - observations[obsnumber, 8 + 6 * obshorizon]);
-                                            //now normalize and add the errors to the error depth products, but account for the fact that only a fraction of this layer was decsribed in this observed horizon
-                                            SOM_error_depthproduct += SOM_error * overlap_m;
-                                            coarse_error_depthproduct += coarse_error * overlap_m;
-                                            sand_error_depthproduct += sand_error * overlap_m;
-                                            silt_error_depthproduct += silt_error * overlap_m;
-                                            clay_error_depthproduct += clay_error * overlap_m;
-
-                                            if (lyr_end_depth_m > observations[obsnumber, (3 + 6 * obshorizon)])
-                                            {
-                                                obshorizon++; horizonchanged = true;
-                                                //Debug.WriteLine(" moved to next obshorizon : " + obshorizon);
-                                                //Debug.WriteLine(" now depth " + lyr_end_depth_m + " obshorizon " + obshorizon + " compared to obs depth " + observations[obsnumber, (3 + 6 * obshorizon)]);
-                                            }
-                                            else
-                                            {
-                                                //Debug.WriteLine(" breaking out, going for next layer "); 
-                                                break;
-                                            }
-                                            //alternative ways to calculate all these errors:
-                                            //clay_error_depthproduct += clay_error / observations[obsnumber, 8 + 6 * obshorizon] * overlap_m;  / has the disadvantage that if observations[,] = 0, the error is INF
-                                            //clay_error_depthproduct += clay_error / ((((texture_kg[row, col, lyr, 3] + texture_kg[row, col, lyr, 4]) / total_layer_fine_earth_mass_kg(row, col, lyr))/2) 
-                                            //the one above divides by the mean of obs and sim, which may still be zero, but then the error was also zero. Not sure what that results in, but possibly still unstable
-                                            //Debug.WriteLine(" obshorizon now " + obshorizon + " with depth " + observations[obsnumber, 3 + 6 * obshorizon] + " lyr " + lyr + " begin " + lyr_begin_depth_m + " end " + lyr_end_depth_m);
+                                            overlap_m = layerthickness_m[row, col, lyr] + (observations[obsnumber, (3 + 6 * obshorizon)] - lyr_end_depth_m);
                                         }
-                                    }
-                                    catch { Debug.WriteLine("error - failed during calculation of local errors "); }
-                                    //Debug.WriteLine(" no more horizons eligible or available after hor " + obshorizon + " lyr now " + lyr + " end depth " + lyr_end_depth_m);
-                                    if (horizonchanged == false)
-                                    {
-                                        lyr++;
-                                        //Debug.WriteLine(" increased layer to " + lyr); 
-                                    }
-                                    if (lyr == max_soil_layers) { break; }
+                                        else
+                                        {
+                                            overlap_m = layerthickness_m[row, col, lyr];
+                                        }
+                                        //Debug.WriteLine(" overlap depth = " + overlap_m);
+                                        SOM_error = Math.Abs(((young_SOM_kg[row, col, lyr] + old_SOM_kg[row, col, lyr]) / total_layer_fine_earth_om_mass_kg(row, col, lyr)) - observations[obsnumber, 4 + 6 * obshorizon]);
+                                        coarse_error = Math.Abs((texture_kg[row, col, lyr, 0] / total_layer_mineral_earth_mass_kg(row, col, lyr)) - observations[obsnumber, 5 + 6 * obshorizon]);
+                                        sand_error = Math.Abs((texture_kg[row, col, lyr, 1] / total_layer_fine_earth_mass_kg(row, col, lyr)) - observations[obsnumber, 6 + 6 * obshorizon]);
+                                        silt_error = Math.Abs((texture_kg[row, col, lyr, 2] / total_layer_fine_earth_mass_kg(row, col, lyr)) - observations[obsnumber, 7 + 6 * obshorizon]);
+                                        clay_error = Math.Abs(((texture_kg[row, col, lyr, 3] + texture_kg[row, col, lyr, 4]) / total_layer_fine_earth_mass_kg(row, col, lyr)) - observations[obsnumber, 8 + 6 * obshorizon]);
+                                        //now normalize and add the errors to the error depth products, but account for the fact that only a fraction of this layer was decsribed in this observed horizon
+                                        SOM_error_depthproduct += SOM_error * overlap_m;
+                                        coarse_error_depthproduct += coarse_error * overlap_m;
+                                        sand_error_depthproduct += sand_error * overlap_m;
+                                        silt_error_depthproduct += silt_error * overlap_m;
+                                        clay_error_depthproduct += clay_error * overlap_m;
 
+                                        if (lyr_end_depth_m > observations[obsnumber, (3 + 6 * obshorizon)])
+                                        {
+                                            obshorizon++; horizonchanged = true;
+                                            //Debug.WriteLine(" moved to next obshorizon : " + obshorizon);
+                                            //Debug.WriteLine(" now depth " + lyr_end_depth_m + " obshorizon " + obshorizon + " compared to obs depth " + observations[obsnumber, (3 + 6 * obshorizon)]);
+                                        }
+                                        else
+                                        {
+                                            //Debug.WriteLine(" breaking out, going for next layer "); 
+                                            break;
+                                        }
+                                        //alternative ways to calculate all these errors:
+                                        //clay_error_depthproduct += clay_error / observations[obsnumber, 8 + 6 * obshorizon] * overlap_m;  / has the disadvantage that if observations[,] = 0, the error is INF
+                                        //clay_error_depthproduct += clay_error / ((((texture_kg[row, col, lyr, 3] + texture_kg[row, col, lyr, 4]) / total_layer_fine_earth_mass_kg(row, col, lyr))/2) 
+                                        //the one above divides by the mean of obs and sim, which may still be zero, but then the error was also zero. Not sure what that results in, but possibly still unstable
+                                        //Debug.WriteLine(" obshorizon now " + obshorizon + " with depth " + observations[obsnumber, 3 + 6 * obshorizon] + " lyr " + lyr + " begin " + lyr_begin_depth_m + " end " + lyr_end_depth_m);
+                                    }
                                 }
-                                //Debug.WriteLine("rc" + row + col + " no more layers left after lyr " + lyr);
-                                //we now calculated, normalized and depth_summed all errors. Dividing by depth and adding up is the next step
-                                normal_OM_error = SOM_error_depthproduct / lyr_end_depth_m;
-                                normal_coarse_error = coarse_error_depthproduct / lyr_end_depth_m;
-                                normal_sand_error = sand_error_depthproduct / lyr_end_depth_m;
-                                normal_silt_error = silt_error_depthproduct / lyr_end_depth_m;
-                                normal_clay_error = clay_error_depthproduct / lyr_end_depth_m;
-                                //if there was no  simulated layer at all, we just divided by zero up here, and should replace the NaN with a large value
-                                int largereplacementerror = 100;
-                                if (Double.IsNaN(localdepth_error)) { localdepth_error = largereplacementerror; }
-                                if (Double.IsNaN(normal_OM_error)) { normal_OM_error = largereplacementerror; }
-                                if (Double.IsNaN(normal_coarse_error)) { normal_coarse_error = largereplacementerror; }
-                                if (Double.IsNaN(normal_sand_error)) { normal_sand_error = largereplacementerror; }
-                                if (Double.IsNaN(normal_silt_error)) { normal_silt_error = largereplacementerror; }
-                                if (Double.IsNaN(normal_clay_error)) { normal_clay_error = largereplacementerror; }
-                                location_error = (localdepth_error + normal_OM_error + normal_coarse_error + normal_sand_error + normal_silt_error + normal_clay_error) / 6;
-                                all_locations_error += location_error;
-                                Debug.WriteLine(row + " " + col + " " + location_error + "  " + all_locations_error + " " + localdepth_error);
-                                totaldepth_error += localdepth_error;
-
-                                double NBW = 0;
-                                if (bedrock_weathering_active)
+                                catch { Debug.WriteLine("error - failed during calculation of local errors "); }
+                                //Debug.WriteLine(" no more horizons eligible or available after hor " + obshorizon + " lyr now " + lyr + " end depth " + lyr_end_depth_m);
+                                if (horizonchanged == false)
                                 {
-                                    if (bedrock_weathering_m[row, col] < 0) //MMS to prevent negative bedrock weathering production
-                                    {
-                                        NBW = 1;
-                                    }
-                                    else
-                                    {
-                                        NBW = 0;
-                                    }
+                                    lyr++;
+                                    //Debug.WriteLine(" increased layer to " + lyr); 
                                 }
+                                if (lyr == max_soil_layers) { break; }
 
-                                //write this to file for this location
+                            }
+                            //Debug.WriteLine("rc" + row + col + " no more layers left after lyr " + lyr);
+                            //we now calculated, normalized and depth_summed all errors. Dividing by depth and adding up is the next step
+                            normal_OM_error = SOM_error_depthproduct / lyr_end_depth_m;
+                            normal_coarse_error = coarse_error_depthproduct / lyr_end_depth_m;
+                            normal_sand_error = sand_error_depthproduct / lyr_end_depth_m;
+                            normal_silt_error = silt_error_depthproduct / lyr_end_depth_m;
+                            normal_clay_error = clay_error_depthproduct / lyr_end_depth_m;
+                            //if there was no  simulated layer at all, we just divided by zero up here, and should replace the NaN with a large value
+                            int largereplacementerror = 100;
+                            if (Double.IsNaN(localdepth_error)) { localdepth_error = largereplacementerror; }
+                            if (Double.IsNaN(normal_OM_error)) { normal_OM_error = largereplacementerror; }
+                            if (Double.IsNaN(normal_coarse_error)) { normal_coarse_error = largereplacementerror; }
+                            if (Double.IsNaN(normal_sand_error)) { normal_sand_error = largereplacementerror; }
+                            if (Double.IsNaN(normal_silt_error)) { normal_silt_error = largereplacementerror; }
+                            if (Double.IsNaN(normal_clay_error)) { normal_clay_error = largereplacementerror; }
+                            location_error = (localdepth_error + normal_OM_error + normal_coarse_error + normal_sand_error + normal_silt_error + normal_clay_error) / 6;
+                            all_locations_error += location_error;
+                            Debug.WriteLine(row + " " + col + " " + location_error + "  " + all_locations_error + " " + localdepth_error);
+                            totaldepth_error += localdepth_error;
 
-                                if (location_errors_requested)
+                            double NBW = 0;
+                            if (bedrock_weathering_active)
+                            {
+                                if (bedrock_weathering_m[row, col] < 0) //MMS to prevent negative bedrock weathering production
                                 {
-                                    using (StreamWriter sw = new StreamWriter(localfile, true))
-                                    {
-                                        //sw.Write(run + "," + row + "," + col + "," + location_error + "," + totaldepth_error + "," + normal_OM_error + "," + normal_coarse_error + "," + normal_sand_error + "," + normal_silt_error + "," + normal_clay_error); //MMS_eva
-                                        sw.Write(run_number + "," + row + "," + col + "," + location_error + "," + localdepth_error + "," + normal_OM_error + "," + normal_coarse_error + "," + normal_sand_error + "," + normal_silt_error + "," + normal_clay_error + "," + advection_erodibility + "," + potential_creep_kg_m2_y + "," + P0 + "," + k1 + "," + k2 + "," + NBW); //MMS_eva
-                                        sw.Write("\r\n");
-                                        sw.Close();
-                                    }
+                                    NBW = 1;
                                 }
-                                obsnumber++;
-                                //Debug.WriteLine("increased obsnumber to " + obsnumber);
-                            }
-                            else
-                            { //do nothing , this is a cell where we have no observations so it gets ignored
+                                else
+                                {
+                                    NBW = 0;
+                                }
                             }
 
+                            //write this to file for this location
+
+                            if (location_errors_requested)
+                            {
+                                using (StreamWriter sw = new StreamWriter(localfile, true))
+                                {
+                                    //sw.Write(run + "," + row + "," + col + "," + location_error + "," + totaldepth_error + "," + normal_OM_error + "," + normal_coarse_error + "," + normal_sand_error + "," + normal_silt_error + "," + normal_clay_error); //MMS_eva
+                                    sw.Write(run_number + "," + row + "," + col + "," + location_error + "," + localdepth_error + "," + normal_OM_error + "," + normal_coarse_error + "," + normal_sand_error + "," + normal_silt_error + "," + normal_clay_error + "," + advection_erodibility + "," + potential_creep_kg_m2_y + "," + P0 + "," + k1 + "," + k2 + "," + NBW); //MMS_eva
+                                    sw.Write("\r\n");
+                                    sw.Close();
+                                }
+                            }
+                            obsnumber++;
+                            //Debug.WriteLine("increased obsnumber to " + obsnumber);
                         }
-                        
+                        else
+                        { //do nothing , this is a cell where we have no observations so it gets ignored
+                        }
                     }
 
                 }
@@ -843,7 +839,6 @@ namespace LORICA4
             */
             return ((all_locations_error + entire_domain_error) / 2);
         }
-
         private void calib_update_best_paras()
         {
             //this code updates the recorded set of parameter values that gives the best score for the objective function
