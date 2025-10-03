@@ -13,7 +13,7 @@ if (soildepth_m < 1e-6)  // If soil depth is too small, use a default safe value
    return 0.0;  // Return a reasonable default for small soil depths
 }
 
--The logic of writeallsoils() was causing for the timestep column in 0_1_out_allsoils.csv to show t_out=0 instead of t_out=1. Now fixed by requiring the reference time variable as in insput if the fuction writeallsoils().
+-The logic of writeallsoils() was causing for the timestep column in 0_1_out_allsoils.csv to show t_out=0 instead of t_out=1. Now fixed by requiring the reference time variable as in input if the function writeallsoils().
 
 Proglacial mode:
 -Added meltwater contribution for the proglacial mode with different rates based on literature that you can choose from the interface.
