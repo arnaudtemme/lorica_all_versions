@@ -205,6 +205,7 @@ namespace LORICA4
                     Tau,                //for graphics
                     hillshade,          //for graphics
                     sum_water_erosion,
+                    sum_meltwater_m, //Proglacial
                     sum_biological_weathering,
                     sum_frost_weathering,
                     sum_creep_grid,
@@ -243,6 +244,7 @@ namespace LORICA4
                     OM_LU,
                     Till_LU,
                     BiotRate_LU,
+                   coarsemap_perc, //coarsemap
                     remaining_vertical_size_m;  //for landslides
 
         int[,]  // integer matrices
@@ -263,7 +265,7 @@ namespace LORICA4
         int[,,][] OSL_grainages, OSL_depositionages, OSL_surfacedcount;
         int[,][] OSL_grainages_in_transport, OSL_depositionages_in_transport, OSL_surfacedcount_in_transport;
         int ngrains_kgsand_m2, start_age;
-        double bleaching_depth_m;
+        double bleaching_depth_m; 
 
         int[,]
         drainingoutlet_row = new int[numberofsinks, 5],
@@ -522,6 +524,17 @@ namespace LORICA4
         private TextBox melt_rate_1972_textbox;
         private TextBox melt_rate_1971_textbox;
         private Label label47;
+        private TabPage tabPage2;
+        private Label label57;
+        private TextBox coarsemap_sand_ratio_box;
+        private Label label54;
+        private TextBox coarsemap_silt_ratio_box;
+        private Label label55;
+        private Label label56;
+        private TextBox coarsemap_input_filename_textbox;
+        private Label label49;
+        private CheckBox coarsemap_checkbox;
+        private TextBox coarsemap_clay_ratio_box;
         private Label label45;
 
        
@@ -537,6 +550,8 @@ namespace LORICA4
         {
 
         }
+
+        
 
         private void explain_input_Click(object sender, EventArgs e)
         {
@@ -558,7 +573,7 @@ namespace LORICA4
         private CheckBox Proglacial_checkbox;
         private TextBox proglacial_input_filename_textbox;
         private Label Proglacial_text;
-        private Label label37;
+        private Label Proglacial_text2;
 
         private void label37_Click(object sender, EventArgs e)
         {
@@ -982,6 +997,10 @@ namespace LORICA4
         double melt_rate_m_1971, //Proglacial
                melt_rate_m_1972; //Proglacial
 
+        //Coarsemap
+        double sand_ratio, silt_ratio, clay_ratio;
+
+
         // Decalcification parameters
         double[,,] CO3_kg;   // CaCO3, to track decalcification speed. Does not contribute to texture or soil mass (yet) MM
         double ini_CO3_content_frac;
@@ -1273,7 +1292,7 @@ namespace LORICA4
             this.textbox_layer_thickness = new System.Windows.Forms.TextBox();
             this.textbox_layer_thickness_increase = new System.Windows.Forms.TextBox();
             this.Proglacial_text = new System.Windows.Forms.Label();
-            this.label37 = new System.Windows.Forms.Label();
+            this.Proglacial_text2 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.annual_output_checkbox = new System.Windows.Forms.RadioButton();
             this.cumulative_output_checkbox = new System.Windows.Forms.RadioButton();
@@ -1281,6 +1300,7 @@ namespace LORICA4
             this.label45 = new System.Windows.Forms.Label();
             this.label46 = new System.Windows.Forms.Label();
             this.label47 = new System.Windows.Forms.Label();
+            this.label49 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.explain_input_button = new System.Windows.Forms.Button();
             this.UTMzonebox = new System.Windows.Forms.TextBox();
@@ -1583,6 +1603,16 @@ namespace LORICA4
             this.melt_rate_1971_textbox = new System.Windows.Forms.TextBox();
             this.proglacial_input_filename_textbox = new System.Windows.Forms.TextBox();
             this.Proglacial_checkbox = new System.Windows.Forms.CheckBox();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.label57 = new System.Windows.Forms.Label();
+            this.coarsemap_sand_ratio_box = new System.Windows.Forms.TextBox();
+            this.coarsemap_clay_ratio_box = new System.Windows.Forms.TextBox();
+            this.label54 = new System.Windows.Forms.Label();
+            this.coarsemap_silt_ratio_box = new System.Windows.Forms.TextBox();
+            this.label55 = new System.Windows.Forms.Label();
+            this.label56 = new System.Windows.Forms.Label();
+            this.coarsemap_input_filename_textbox = new System.Windows.Forms.TextBox();
+            this.coarsemap_checkbox = new System.Windows.Forms.CheckBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             label6 = new System.Windows.Forms.Label();
             label76 = new System.Windows.Forms.Label();
@@ -1675,6 +1705,7 @@ namespace LORICA4
             this.Options.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.SuspendLayout();
             // 
             // label6
@@ -2587,16 +2618,16 @@ namespace LORICA4
             this.Proglacial_text.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.toolTip1.SetToolTip(this.Proglacial_text, "Hourly rainfall data - in an ascii format");
             // 
-            // label37
+            // Proglacial_text2
             // 
-            this.label37.Location = new System.Drawing.Point(285, 52);
-            this.label37.Name = "label37";
-            this.label37.Size = new System.Drawing.Size(401, 24);
-            this.label37.TabIndex = 164;
-            this.label37.Text = "Ascii map of the year in which the glacier retreated from each location";
-            this.label37.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.toolTip1.SetToolTip(this.label37, "Hourly rainfall data - in an ascii format");
-            this.label37.Click += new System.EventHandler(this.label37_Click);
+            this.Proglacial_text2.Location = new System.Drawing.Point(285, 52);
+            this.Proglacial_text2.Name = "Proglacial_text2";
+            this.Proglacial_text2.Size = new System.Drawing.Size(401, 24);
+            this.Proglacial_text2.TabIndex = 164;
+            this.Proglacial_text2.Text = "Ascii map of the year in which the glacier retreated from each location";
+            this.Proglacial_text2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.toolTip1.SetToolTip(this.Proglacial_text2, "Hourly rainfall data - in an ascii format");
+            this.Proglacial_text2.Click += new System.EventHandler(this.label37_Click);
             // 
             // label4
             // 
@@ -2646,7 +2677,7 @@ namespace LORICA4
             // 
             // label45
             // 
-            this.label45.Location = new System.Drawing.Point(13, 121);
+            this.label45.Location = new System.Drawing.Point(13, 125);
             this.label45.Name = "label45";
             this.label45.Size = new System.Drawing.Size(151, 24);
             this.label45.TabIndex = 166;
@@ -2676,6 +2707,16 @@ namespace LORICA4
             this.label47.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.toolTip1.SetToolTip(this.label47, "Hourly rainfall data - in an ascii format");
             this.label47.Click += new System.EventHandler(this.label47_Click);
+            // 
+            // label49
+            // 
+            this.label49.Location = new System.Drawing.Point(14, 60);
+            this.label49.Name = "label49";
+            this.label49.Size = new System.Drawing.Size(266, 23);
+            this.label49.TabIndex = 165;
+            this.label49.Text = "Map of coarse percentage [-]";
+            this.label49.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.toolTip1.SetToolTip(this.label49, "Hourly rainfall data - in an ascii format");
             // 
             // label5
             // 
@@ -4953,7 +4994,8 @@ namespace LORICA4
             this.tabControl4.Controls.Add(this.treefall);
             this.tabControl4.Controls.Add(this.Options);
             this.tabControl4.Controls.Add(this.tabPage1);
-            this.tabControl4.Location = new System.Drawing.Point(8, 18);
+            this.tabControl4.Controls.Add(this.tabPage2);
+            this.tabControl4.Location = new System.Drawing.Point(8, 17);
             this.tabControl4.Name = "tabControl4";
             this.tabControl4.SelectedIndex = 0;
             this.tabControl4.Size = new System.Drawing.Size(732, 269);
@@ -5757,7 +5799,7 @@ namespace LORICA4
             this.tabPage1.Controls.Add(this.label46);
             this.tabPage1.Controls.Add(this.label45);
             this.tabPage1.Controls.Add(this.label44);
-            this.tabPage1.Controls.Add(this.label37);
+            this.tabPage1.Controls.Add(this.Proglacial_text2);
             this.tabPage1.Controls.Add(this.proglacial_input_filename_textbox);
             this.tabPage1.Controls.Add(this.Proglacial_text);
             this.tabPage1.Controls.Add(this.Proglacial_checkbox);
@@ -5804,6 +5846,106 @@ namespace LORICA4
             this.Proglacial_checkbox.TabIndex = 10;
             this.Proglacial_checkbox.Text = "Activate this process";
             this.Proglacial_checkbox.UseVisualStyleBackColor = true;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.label57);
+            this.tabPage2.Controls.Add(this.coarsemap_sand_ratio_box);
+            this.tabPage2.Controls.Add(this.coarsemap_clay_ratio_box);
+            this.tabPage2.Controls.Add(this.label54);
+            this.tabPage2.Controls.Add(this.coarsemap_silt_ratio_box);
+            this.tabPage2.Controls.Add(this.label55);
+            this.tabPage2.Controls.Add(this.label56);
+            this.tabPage2.Controls.Add(this.coarsemap_input_filename_textbox);
+            this.tabPage2.Controls.Add(this.label49);
+            this.tabPage2.Controls.Add(this.coarsemap_checkbox);
+            this.tabPage2.Location = new System.Drawing.Point(4, 29);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(724, 236);
+            this.tabPage2.TabIndex = 15;
+            this.tabPage2.Text = "Coarse map";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // label57
+            // 
+            this.label57.AutoSize = true;
+            this.label57.Location = new System.Drawing.Point(444, 23);
+            this.label57.Name = "label57";
+            this.label57.Size = new System.Drawing.Size(259, 20);
+            this.label57.TabIndex = 174;
+            this.label57.Text = "Ratio between the other grain sizes";
+            // 
+            // coarsemap_sand_ratio_box
+            // 
+            this.coarsemap_sand_ratio_box.Location = new System.Drawing.Point(575, 57);
+            this.coarsemap_sand_ratio_box.Name = "coarsemap_sand_ratio_box";
+            this.coarsemap_sand_ratio_box.Size = new System.Drawing.Size(65, 26);
+            this.coarsemap_sand_ratio_box.TabIndex = 173;
+            this.coarsemap_sand_ratio_box.Text = "1";
+            // 
+            // coarsemap_clay_ratio_box
+            // 
+            this.coarsemap_clay_ratio_box.Location = new System.Drawing.Point(574, 115);
+            this.coarsemap_clay_ratio_box.Name = "coarsemap_clay_ratio_box";
+            this.coarsemap_clay_ratio_box.Size = new System.Drawing.Size(66, 26);
+            this.coarsemap_clay_ratio_box.TabIndex = 172;
+            this.coarsemap_clay_ratio_box.Text = "1";
+            // 
+            // label54
+            // 
+            this.label54.AutoSize = true;
+            this.label54.Location = new System.Drawing.Point(468, 115);
+            this.label54.Name = "label54";
+            this.label54.Size = new System.Drawing.Size(91, 20);
+            this.label54.TabIndex = 171;
+            this.label54.Text = "Coarse clay";
+            // 
+            // coarsemap_silt_ratio_box
+            // 
+            this.coarsemap_silt_ratio_box.Location = new System.Drawing.Point(574, 86);
+            this.coarsemap_silt_ratio_box.Name = "coarsemap_silt_ratio_box";
+            this.coarsemap_silt_ratio_box.Size = new System.Drawing.Size(66, 26);
+            this.coarsemap_silt_ratio_box.TabIndex = 170;
+            this.coarsemap_silt_ratio_box.Text = "1";
+            // 
+            // label55
+            // 
+            this.label55.AutoSize = true;
+            this.label55.Location = new System.Drawing.Point(468, 86);
+            this.label55.Name = "label55";
+            this.label55.Size = new System.Drawing.Size(31, 20);
+            this.label55.TabIndex = 169;
+            this.label55.Text = "Silt";
+            // 
+            // label56
+            // 
+            this.label56.AutoSize = true;
+            this.label56.Location = new System.Drawing.Point(468, 57);
+            this.label56.Name = "label56";
+            this.label56.Size = new System.Drawing.Size(47, 20);
+            this.label56.TabIndex = 168;
+            this.label56.Text = "Sand";
+            // 
+            // coarsemap_input_filename_textbox
+            // 
+            this.coarsemap_input_filename_textbox.Location = new System.Drawing.Point(242, 60);
+            this.coarsemap_input_filename_textbox.Name = "coarsemap_input_filename_textbox";
+            this.coarsemap_input_filename_textbox.Size = new System.Drawing.Size(120, 26);
+            this.coarsemap_input_filename_textbox.TabIndex = 166;
+            this.coarsemap_input_filename_textbox.Text = "..";
+            this.coarsemap_input_filename_textbox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.coarsemap_input_filename_textbox.Click += new System.EventHandler(this.coarsemap_input_filename_textbox_TextChanged);
+            // 
+            // coarsemap_checkbox
+            // 
+            this.coarsemap_checkbox.AutoSize = true;
+            this.coarsemap_checkbox.Location = new System.Drawing.Point(18, 19);
+            this.coarsemap_checkbox.Name = "coarsemap_checkbox";
+            this.coarsemap_checkbox.Size = new System.Drawing.Size(181, 24);
+            this.coarsemap_checkbox.TabIndex = 11;
+            this.coarsemap_checkbox.Text = "Activate this process";
+            this.coarsemap_checkbox.UseVisualStyleBackColor = true;
             // 
             // Mother_form
             // 
@@ -5911,6 +6053,8 @@ namespace LORICA4
             this.groupBox2.PerformLayout();
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -6128,6 +6272,11 @@ namespace LORICA4
                     Array.Clear(age_rast_yr, 0, age_rast_yr.Length);
                     Array.Clear(glacier_cell, 0, glacier_cell.Length);
                     Array.Clear(meltwater_m, 0, meltwater_m.Length);
+                    Array.Clear(sum_meltwater_m, 0, sum_meltwater_m.Length);
+                }
+                if (this.coarsemap_checkbox.Checked)
+                {
+                    Array.Clear(coarsemap_perc, 0, coarsemap_perc.Length); //coarsemap
                 }
 
                 if (check_space_landuse.Checked == true) 
@@ -6315,6 +6464,12 @@ namespace LORICA4
                     age_rast_yr = new int[nr, nc];
                     glacier_cell = new int[nr, nc];
                     meltwater_m = new double[nr, nc];
+                    sum_meltwater_m = new double[nr, nc];
+                }
+
+                if (coarsemap_checkbox.Checked) //coarsemap
+                {
+                    coarsemap_perc = new double[nr, nc];
                 }
             }
             aspect = new double[nr, nc];
@@ -6802,6 +6957,16 @@ namespace LORICA4
                             catch { input_data_error = true; MessageBox.Show("value for melting rate since 1972 is not valid"); }   // meltwater rate since 1972
                         }
 
+                        if (coarsemap_checkbox.Checked)
+                        {
+                            try { sand_ratio = double.Parse(coarsemap_sand_ratio_box.Text); }
+                            catch { input_data_error = true; MessageBox.Show("value for sand ratio is not valid"); }
+                            try { silt_ratio = double.Parse(coarsemap_silt_ratio_box.Text); }
+                            catch { input_data_error = true; MessageBox.Show("value for silt ratio is not valid"); }
+                            try { clay_ratio = double.Parse(coarsemap_clay_ratio_box.Text); }
+                            catch { input_data_error = true; MessageBox.Show("value for clay ratio is not valid"); }
+                        }
+
                         if (input_data_error == false)
                         {
                             try
@@ -7031,7 +7196,7 @@ namespace LORICA4
 
                                                                         }
 
-                                                                        if (age_rast_yr[row, col] == age_rast_value)
+                                                                        if (age_rast_yr[row, col] == age_rast_value-1)
                                                                         {
                                                                             // Glacier is forming here
                                                                             meltwater_m[row, col] = dtm[row, col];  // Set meltwater to dtm value for glacier cells
@@ -7045,6 +7210,8 @@ namespace LORICA4
                                                                             {
                                                                                 meltwater_m[row, col] = melt_rate_m_1972 * dx;
                                                                             }
+
+                                                                            sum_meltwater_m[row, col] += meltwater_m[row, col];
                                                                         }
 
                                                                         
@@ -7060,6 +7227,7 @@ namespace LORICA4
                                                     
                                                 }
                                             }
+
                                             
 
                                             try
@@ -7492,6 +7660,8 @@ namespace LORICA4
             }
             if (NA_anywhere_in_soil() == true) { Debug.WriteLine("NA found after soil bioturb"); }
 
+
+
             pedo_t += DateTime.Now - pedo_start;
 
             #endregion
@@ -7522,16 +7692,18 @@ namespace LORICA4
                 catch
                 {
                     Debug.WriteLine("Failed during writing of soils");
+                    MessageBox.Show("LORICA cannot write an output soil file. Perhaps you still have it open? ");
+
                 }
 
                 if (Altitude_output_checkbox.Checked)
                 {
 
                     try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_dtm.asc", dtm); }
-                    catch { MessageBox.Show("dtm has not been written"); }
+                    catch { MessageBox.Show("DTM has not been written. Perhaps you still have it open?"); }
 
                     try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_dz_soil.asc", dz_soil); }
-                    catch { MessageBox.Show("dz_soil has not been written"); }
+                    catch { MessageBox.Show("dz_soil has not been written. Perhaps you still have it open?"); }
 
                     //try { out_double(workdir + "\\" + run_number + "_" + t + "_out_dzero.asc", dz_ero_m); }
                     //catch { MessageBox.Show("dzero has not been written"); }
@@ -7546,17 +7718,17 @@ namespace LORICA4
                         out_integer(workdir + "\\" + run_number + "_" + t_out + "_out_treefallcount.asc", treefall_count);
 
                     }
-                    catch { MessageBox.Show("treefall has not been written"); }
+                    catch { MessageBox.Show("treefall has not been written. Perhaps you still have it open?"); }
                 }
                 if (Soildepth_output_checkbox.Checked)
                 {
                     try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_soildepth.asc", soildepth_m); }
-                    catch { MessageBox.Show("soildepth has not been written"); }
+                    catch { MessageBox.Show("soildepth has not been written. Perhaps you still have it open?"); }
                 }
                 if (Alt_change_output_checkbox.Checked)
                 {
                     try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_change.asc", dtmchange_m); }
-                    catch { MessageBox.Show("change has not been written"); }
+                    catch { MessageBox.Show("change has not been written. Perhaps you still have it open?"); }
                 }
 
                 if (water_output_checkbox.Checked & Water_ero_checkbox.Checked)
@@ -7577,14 +7749,14 @@ namespace LORICA4
                         }
                         out_double(workdir + "\\" + run_number + "_" + t_out + "_out_water.asc", waterflow_m3);
                     }
-                    catch { MessageBox.Show("water has not been written"); }
+                    catch { MessageBox.Show("water has not been written. Perhaps you still have it open?"); }
                 }
                 if (depressions_output_checkbox.Checked)
                 {
                     try { out_integer(workdir + "\\" + run_number + "_" + t_out + "_out_depress.asc", depression); }
                     catch { MessageBox.Show("depressions have not been written"); }
                     try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_dtmfillA.asc", dtmfill_A); }
-                    catch { MessageBox.Show("dfmfill has not been written"); }
+                    catch { MessageBox.Show("dfmfill has not been written. Perhaps you still have it open?"); }
                 }
                 if (Water_ero_checkbox.Checked)
                 {
@@ -7594,7 +7766,7 @@ namespace LORICA4
                     {
                         try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_water_erosion.asc", sum_water_erosion); }
                         
-                        catch { MessageBox.Show("water erosion has not been written"); }
+                        catch { MessageBox.Show("water erosion has not been written. Perhaps you still have it open?"); }
                         
                     }
                 }
@@ -7603,11 +7775,11 @@ namespace LORICA4
                 {
                     try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_kfac.asc", K_fac); } //AleG temp
 
-                    catch { MessageBox.Show("k_fac has not been written"); }
+                    catch { MessageBox.Show("k_fac has not been written. Perhaps you still have it open?"); }
 
                     try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_rootcoh.asc", root_cohesion_kPa_new); }
 
-                    catch { MessageBox.Show("root cohesion has not been written"); }
+                    catch { MessageBox.Show("root cohesion has not been written. Perhaps you still have it open?"); }
 
                 }
                 if (creep_active_checkbox.Checked)
@@ -7615,7 +7787,7 @@ namespace LORICA4
                     // Debug.WriteLine("before writing creep");
 
                     try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_creep.asc", creep); }
-                    catch { MessageBox.Show("creep has not been written"); }
+                    catch { MessageBox.Show("creep has not been written. Perhaps you still have it open?"); }
 
                 }
 
@@ -7626,7 +7798,7 @@ namespace LORICA4
                     if (all_process_output_checkbox.Checked)
                     {
                         try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_tillage.asc", sum_tillage); }
-                        catch { MessageBox.Show("tillage has not been written"); }
+                        catch { MessageBox.Show("tillage has not been written. Perhaps you still have it open?"); }
                     }
                 }
 
@@ -7645,15 +7817,15 @@ namespace LORICA4
                 if (Landslide_checkbox.Checked)
                 {
                     try { out_double(workdir + "\\" + run_number + "_" + t_out + "_crrain.asc", crrain_m_d); }
-                    catch { MessageBox.Show("crrain has not been written"); }
+                    catch { MessageBox.Show("crrain has not been written. Perhaps you still have it open?"); }
                     try { out_double(workdir + "\\" + run_number + "_" + t_out + "_ca.asc", camf); }
-                    catch { MessageBox.Show("ca has not been written"); }
+                    catch { MessageBox.Show("ca has not been written. Perhaps you still have it open?"); }
                     try { out_double(workdir + "\\" + run_number + "_" + t_out + "_slide_erosion_m.asc", ero_slid_m); }
-                    catch { MessageBox.Show("ca has not been written"); }
+                    catch { MessageBox.Show("ca has not been written. Perhaps you still have it open?"); }
                     try { out_double(workdir + "\\" + run_number + "_" + t_out + "_slide_deposit_m.asc", sed_slid_m); }
-                    catch { MessageBox.Show("ca has not been written"); }
+                    catch { MessageBox.Show("ca has not been written. Perhaps you still have it open?"); }
                     try { out_short(workdir + "\\" + run_number + "_" + t_out + "_slide_status.asc", slidestatus); }
-                    catch { MessageBox.Show("ca has not been written"); }
+                    catch { MessageBox.Show("ca has not been written. Perhaps you still have it open?"); }
                 }
                 //Debug.WriteLine("after outputs");
 
@@ -7665,10 +7837,10 @@ namespace LORICA4
                     //catch { MessageBox.Show("vegetation has not been written"); }
 
                     try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_infiltration_m.asc", Iy); }
-                    catch { MessageBox.Show("infiltration has not been written"); }
+                    catch { MessageBox.Show("infiltration has not been written. Perhaps you still have it open?"); }
 
                     try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_actual_evapotranspiration_m.asc", ETay); }
-                    catch { MessageBox.Show("ETa has not been written"); }
+                    catch { MessageBox.Show("ETa has not been written. Perhaps you still have it open?"); }
 
                     try
                     {
@@ -7681,15 +7853,15 @@ namespace LORICA4
                             }
                         }
                     }
-                    catch { MessageBox.Show("vegetation type has not been written"); }
+                    catch { MessageBox.Show("vegetation type has not been written. Perhaps you still have it open?"); }
                 }
 
                 if (Proglacial_checkbox.Checked) //Proglacial
                 {
-                    try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_meltwater.asc", meltwater_m); }
-                    catch { MessageBox.Show("meltwater has not been written"); }
+                    try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_meltwater.asc", sum_meltwater_m); }
+                    catch { MessageBox.Show("meltwater has not been written. Perhaps you still have it open?"); }
                     try { out_integer(workdir + "\\" + run_number + "_" + t_out + "_out_glacier.asc", glacier_cell); } 
-                    catch { MessageBox.Show("filled dtm has not been written"); }
+                    catch { MessageBox.Show("filled dtm has not been written. Perhaps you still have it open?"); }
                 }
 
                 if (version_lux_checkbox.Checked == true)
@@ -7744,11 +7916,11 @@ namespace LORICA4
                                     }
                                 }
                                 try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_litter_" + type + "_" + output + ".asc", output_litter_map); }
-                                catch { MessageBox.Show("litter output has not been written"); }
+                                catch { MessageBox.Show("litter output has not been written. Perhaps you still have it open?"); }
                             }
                         }
                         try { out_double(workdir + "\\" + run_number + "_" + t_out + "_out_TPI.asc", tpi); }
-                        catch { MessageBox.Show("TPI output has not been written"); }
+                        catch { MessageBox.Show("TPI output has not been written. Perhaps you still have it open?"); }
 
                         /* CODE BLOCK BELOW WRITES OUT DIFFERENT ORGANIC MATTER MAPS. THIS IS NOT NECESSARY ANYMORE NOW LITTER IS STORED IN ITS OWN MATRIX
                          * 

@@ -407,7 +407,7 @@ namespace LORICA4
             if (transport_capacity_kg < total_sediment_in_transport_kg)
             {
                 //first, calculate how much we are going to keep in transport. This is the way that selectivity works now. 
-                double sum_diameter_power = 0, clay_deposited = 0, clay_transported = 0, clay_in_transport = 0, sand_deposited = 0, sand_in_transport = 0;
+                double sum_diameter_power = 0, clay_deposited = 0, clay_transported = 0, clay_in_transport = 0, sand_deposited = 0, sand_in_transport = 0, silt_deposited = 0, silt_in_transport = 0;
                 for (size = 0; size < 5; size++)
                 {
                     sum_diameter_power += 1 / Math.Pow(upper_particle_size[size], 0.5);
@@ -426,11 +426,21 @@ namespace LORICA4
                             sand_deposited = sediment_in_transport_kg[row_sd, col_sd, size] * flowfraction - potential_transported_amount_kg;
                             sand_in_transport = sediment_in_transport_kg[row_sd, col_sd, size] * flowfraction;
                         }
+                        if (size == 2)
+                        {
+                            silt_deposited = sediment_in_transport_kg[row_sd, col_sd, size] * flowfraction - potential_transported_amount_kg;
+                            silt_in_transport = sediment_in_transport_kg[row_sd, col_sd, size] * flowfraction;
+                            //sed_bal_silt_map_lay0[row_sd, col_sd] = sed_bal_silt_map_lay0[row_sd, col_sd] - silt_deposited;   //AleG_connectivity
+
+                        }
+
                         if (size > 2)
                         {
                             clay_deposited += sediment_in_transport_kg[row_sd, col_sd, size] * flowfraction - potential_transported_amount_kg;
                             clay_transported += potential_transported_amount_kg;
                             clay_in_transport += sediment_in_transport_kg[row_sd, col_sd, size] * flowfraction;
+                            //sed_bal_clay_map_lay0[row_sd, col_sd] = sed_bal_clay_map_lay0[row_sd, col_sd] - clay_deposited;   //AleG_connectivity
+
                         }
                     }
                     else
@@ -709,7 +719,9 @@ namespace LORICA4
                             total_evap_m += evap_value_m;
                             if (check_space_infil.Checked == true) { total_infil_m += infil[row, col]; }
                             total_infil_m += infil_value_m;
-                            if (Proglacial_checkbox.Checked == true) { total_meltwater_m += meltwater_m[row, col]; } //Proglacial
+                            if (Proglacial_checkbox.Checked == true) { total_meltwater_m += meltwater_m[row, col];
+                               sum_meltwater_m[row, col] += meltwater_m[row, col];
+                            } //Proglacial
                             total_meltwater_m += meltwater_value_m; //Proglacial
                             if (waterflow_m3[row, col] * dx * dx > timeseries.timeseries_waterflow_threshold) { wet_cells++; }
                             if (check_space_landuse.Checked) //AleG 
@@ -3737,119 +3749,121 @@ namespace LORICA4
                         if (dtm[row, col] != nodata_value) // Only process non-nodata cells
                         {
                             // Apply water flow processes based on glacier_cell
-                            if (glacier_cell[row, col] == 1) // If it's a glacier cell
-                            {
-                                weatheringdepth = soildepth_m[row, col];
-
-                                // humped
-                                if (rockweath_method == 0) //AleG
+                            if (Proglacial_checkbox.Checked) {
+                                if (glacier_cell[row, col] == 1) // If it's a glacier cell
                                 {
-                                    bedrock_weathering_m[row, col] = P0 * (Math.Exp(-k1 * weatheringdepth) - Math.Exp(-k2 * weatheringdepth)) + Pa;
+                                    weatheringdepth = soildepth_m[row, col];
 
-                                }
-                                if (rockweath_method == 1) //AleG
-                                {
-                                    // exponential (Heimsath, Chappell et al., 2000)
-                                    bedrock_weathering_m[row, col] = P0 * (Math.Exp(-k1 * weatheringdepth));
-                                }
-
-                                if (rockweath_method == 2) //AleG
-                                {
-                                    if (daily_water.Checked)
+                                    // humped
+                                    if (rockweath_method == 0) //AleG
                                     {
-                                        bedrock_weathering_m[row, col] = P0 * -k1 * (Iy[row, col] - Imin) / (Imax - Imin);
+                                        bedrock_weathering_m[row, col] = P0 * (Math.Exp(-k1 * weatheringdepth) - Math.Exp(-k2 * weatheringdepth)) + Pa;
+
                                     }
-                                }
-                                //we now know how deep we would weather into normal bedrock
-                                if (blocks_active == 1)
-                                {
-                                    double newlowestelevsoil = dtm[row, col] - soildepth_m[row, col] - bedrock_weathering_m[row, col];
-                                    double oldlowestelevsoil = dtm[row, col] - soildepth_m[row, col];
-                                    if (newlowestelevsoil < hardlayerelevation_m && oldlowestelevsoil >= hardlayerelevation_m)
+                                    if (rockweath_method == 1) //AleG
                                     {
-                                        //we limit bedrock weathering to the part of the bedrock above hardlayer:
-                                        bedrock_weathering_m[row, col] = (dtm[row, col] - soildepth_m[row, col]) - hardlayerelevation_m;
-                                        Debug.WriteLine(" limited bedrock weathering to stop at hardlayer r " + row + " c " + col + " dtm " + dtm[row, col]);
-                                        //and apply the rest of the weathering to increasing openness of the hardlayer:
-                                        hardlayeropenness_fraction[row, col] += Convert.ToSingle((hardlayerelevation_m - newlowestelevsoil) * hardlayer_weath_contrast);
-                                        Debug.WriteLine(" increased openness of hardlayer to " + hardlayeropenness_fraction[row, col]);
-                                        if (hardlayeropenness_fraction[row, col] > 0.5) { hardlayeropenness_fraction[row, col] = 0.5f; }
+                                        // exponential (Heimsath, Chappell et al., 2000)
+                                        bedrock_weathering_m[row, col] = P0 * (Math.Exp(-k1 * weatheringdepth));
                                     }
-                                }
 
-                                soildepth_m[row, col] += bedrock_weathering_m[row, col]; // this will really be updated at the end of this timestep, but this is a good approximation for the moment
+                                    if (rockweath_method == 2) //AleG
+                                    {
+                                        if (daily_water.Checked)
+                                        {
+                                            bedrock_weathering_m[row, col] = P0 * -k1 * (Iy[row, col] - Imin) / (Imax - Imin);
+                                        }
+                                    }
+                                    //we now know how deep we would weather into normal bedrock
+                                    if (blocks_active == 1)
+                                    {
+                                        double newlowestelevsoil = dtm[row, col] - soildepth_m[row, col] - bedrock_weathering_m[row, col];
+                                        double oldlowestelevsoil = dtm[row, col] - soildepth_m[row, col];
+                                        if (newlowestelevsoil < hardlayerelevation_m && oldlowestelevsoil >= hardlayerelevation_m)
+                                        {
+                                            //we limit bedrock weathering to the part of the bedrock above hardlayer:
+                                            bedrock_weathering_m[row, col] = (dtm[row, col] - soildepth_m[row, col]) - hardlayerelevation_m;
+                                            Debug.WriteLine(" limited bedrock weathering to stop at hardlayer r " + row + " c " + col + " dtm " + dtm[row, col]);
+                                            //and apply the rest of the weathering to increasing openness of the hardlayer:
+                                            hardlayeropenness_fraction[row, col] += Convert.ToSingle((hardlayerelevation_m - newlowestelevsoil) * hardlayer_weath_contrast);
+                                            Debug.WriteLine(" increased openness of hardlayer to " + hardlayeropenness_fraction[row, col]);
+                                            if (hardlayeropenness_fraction[row, col] > 0.5) { hardlayeropenness_fraction[row, col] = 0.5f; }
+                                        }
+                                    }
 
-                                //we also add this amount of coarse material to the lowest layer of our soil
-                                soil_layer = 0; lowest_soil_layer = 0;
-                                while (layerthickness_m[row, col, soil_layer] > 0 & soil_layer < max_soil_layers) // MvdM added second conditional for when all layers are already filled
-                                {
-                                    lowest_soil_layer = soil_layer;
-                                    soil_layer++;
-                                    //Debug.WriteLine(" lowest soil layer now " + soil_layer);
-                                    if (lowest_soil_layer == max_soil_layers - 1) { break; }
+                                    soildepth_m[row, col] += bedrock_weathering_m[row, col]; // this will really be updated at the end of this timestep, but this is a good approximation for the moment
+
+                                    //we also add this amount of coarse material to the lowest layer of our soil
+                                    soil_layer = 0; lowest_soil_layer = 0;
+                                    while (layerthickness_m[row, col, soil_layer] > 0 & soil_layer < max_soil_layers) // MvdM added second conditional for when all layers are already filled
+                                    {
+                                        lowest_soil_layer = soil_layer;
+                                        soil_layer++;
+                                        //Debug.WriteLine(" lowest soil layer now " + soil_layer);
+                                        if (lowest_soil_layer == max_soil_layers - 1) { break; }
+                                    }
+                                    texture_kg[row, col, lowest_soil_layer, 0] += bedrock_weathering_m[row, col] * 2700 * dx * dx;   // to go from m (=m3/m2) to kg, we multiply by m2 and by kg/m3
                                 }
-                                texture_kg[row, col, lowest_soil_layer, 0] += bedrock_weathering_m[row, col] * 2700 * dx * dx;   // to go from m (=m3/m2) to kg, we multiply by m2 and by kg/m3
                             }
+
+                            
                         }
-                        else 
+
+                        weatheringdepth = soildepth_m[row, col];
+
+                        // humped
+                        if (rockweath_method == 0) //AleG
                         {
-                            weatheringdepth = soildepth_m[row, col];
+                            bedrock_weathering_m[row, col] = P0 * (Math.Exp(-k1 * weatheringdepth) - Math.Exp(-k2 * weatheringdepth)) + Pa;
 
-                            // humped
-                            if (rockweath_method == 0) //AleG
-                            {
-                                bedrock_weathering_m[row, col] = P0 * (Math.Exp(-k1 * weatheringdepth) - Math.Exp(-k2 * weatheringdepth)) + Pa;
-
-                            }
-                            if (rockweath_method == 1) //AleG
-                            {
-                                // exponential (Heimsath, Chappell et al., 2000)
-                                bedrock_weathering_m[row, col] = P0 * (Math.Exp(-k1 * weatheringdepth));
-                            }
-
-                            if (rockweath_method == 2) //AleG
-                            {
-                                if (daily_water.Checked)
-                                {
-                                    bedrock_weathering_m[row, col] = P0 * -k1 * (Iy[row, col] - Imin) / (Imax - Imin);
-                                }
-                            }
-                            //we now know how deep we would weather into normal bedrock
-                            if (blocks_active == 1)
-                            {
-                                double newlowestelevsoil = dtm[row, col] - soildepth_m[row, col] - bedrock_weathering_m[row, col];
-                                double oldlowestelevsoil = dtm[row, col] - soildepth_m[row, col];
-                                if (newlowestelevsoil < hardlayerelevation_m && oldlowestelevsoil >= hardlayerelevation_m)
-                                {
-                                    //we limit bedrock weathering to the part of the bedrock above hardlayer:
-                                    bedrock_weathering_m[row, col] = (dtm[row, col] - soildepth_m[row, col]) - hardlayerelevation_m;
-                                    Debug.WriteLine(" limited bedrock weathering to stop at hardlayer r " + row + " c " + col + " dtm " + dtm[row, col]);
-                                    //and apply the rest of the weathering to increasing openness of the hardlayer:
-                                    hardlayeropenness_fraction[row, col] += Convert.ToSingle((hardlayerelevation_m - newlowestelevsoil) * hardlayer_weath_contrast);
-                                    Debug.WriteLine(" increased openness of hardlayer to " + hardlayeropenness_fraction[row, col]);
-                                    if (hardlayeropenness_fraction[row, col] > 0.5) { hardlayeropenness_fraction[row, col] = 0.5f; }
-                                }
-                            }
-
-                            soildepth_m[row, col] += bedrock_weathering_m[row, col]; // this will really be updated at the end of this timestep, but this is a good approximation for the moment
-
-                            //we also add this amount of coarse material to the lowest layer of our soil
-                            soil_layer = 0; lowest_soil_layer = 0;
-                            while (layerthickness_m[row, col, soil_layer] > 0 & soil_layer < max_soil_layers) // MvdM added second conditional for when all layers are already filled
-                            {
-                                lowest_soil_layer = soil_layer;
-                                soil_layer++;
-                                //Debug.WriteLine(" lowest soil layer now " + soil_layer);
-                                if (lowest_soil_layer == max_soil_layers - 1) { break; }
-                            }
-                            texture_kg[row, col, lowest_soil_layer, 0] += bedrock_weathering_m[row, col] * 2700 * dx * dx;   // to go from m (=m3/m2) to kg, we multiply by m2 and by kg/m3
                         }
-                        
+                        if (rockweath_method == 1) //AleG
+                        {
+                            // exponential (Heimsath, Chappell et al., 2000)
+                            bedrock_weathering_m[row, col] = P0 * (Math.Exp(-k1 * weatheringdepth));
+                        }
+
+                        if (rockweath_method == 2) //AleG
+                        {
+                            if (daily_water.Checked)
+                            {
+                                bedrock_weathering_m[row, col] = P0 * -k1 * (Iy[row, col] - Imin) / (Imax - Imin);
+                            }
+                        }
+                        //we now know how deep we would weather into normal bedrock
+                        if (blocks_active == 1)
+                        {
+                            double newlowestelevsoil = dtm[row, col] - soildepth_m[row, col] - bedrock_weathering_m[row, col];
+                            double oldlowestelevsoil = dtm[row, col] - soildepth_m[row, col];
+                            if (newlowestelevsoil < hardlayerelevation_m && oldlowestelevsoil >= hardlayerelevation_m)
+                            {
+                                //we limit bedrock weathering to the part of the bedrock above hardlayer:
+                                bedrock_weathering_m[row, col] = (dtm[row, col] - soildepth_m[row, col]) - hardlayerelevation_m;
+                                Debug.WriteLine(" limited bedrock weathering to stop at hardlayer r " + row + " c " + col + " dtm " + dtm[row, col]);
+                                //and apply the rest of the weathering to increasing openness of the hardlayer:
+                                hardlayeropenness_fraction[row, col] += Convert.ToSingle((hardlayerelevation_m - newlowestelevsoil) * hardlayer_weath_contrast);
+                                Debug.WriteLine(" increased openness of hardlayer to " + hardlayeropenness_fraction[row, col]);
+                                if (hardlayeropenness_fraction[row, col] > 0.5) { hardlayeropenness_fraction[row, col] = 0.5f; }
+                            }
+                        }
+
+                        soildepth_m[row, col] += bedrock_weathering_m[row, col]; // this will really be updated at the end of this timestep, but this is a good approximation for the moment
+
+                        //we also add this amount of coarse material to the lowest layer of our soil
+                        soil_layer = 0; lowest_soil_layer = 0;
+                        while (layerthickness_m[row, col, soil_layer] > 0 & soil_layer < max_soil_layers) // MvdM added second conditional for when all layers are already filled
+                        {
+                            lowest_soil_layer = soil_layer;
+                            soil_layer++;
+                            //Debug.WriteLine(" lowest soil layer now " + soil_layer);
+                            if (lowest_soil_layer == max_soil_layers - 1) { break; }
+                        }
+                        texture_kg[row, col, lowest_soil_layer, 0] += bedrock_weathering_m[row, col] * 2700 * dx * dx;   // to go from m (=m3/m2) to kg, we multiply by m2 and by kg/m3
+
                         //Debug.WriteLine(" bedrock weathering at r " + row + " c " + col);
                         //if the first occurrence of bedrock is the hardlayer, then no weathering should occur.
                         //if more weathering is calculated than needed to get to the hardlayer, then it should be thus limited. 
 
-                        
+
                     }
 
                 }

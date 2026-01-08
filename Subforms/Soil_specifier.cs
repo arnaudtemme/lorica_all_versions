@@ -28,7 +28,7 @@ namespace LORICA4
         }
 
         public void textBox1_TextChanged(object sender, EventArgs e)
-        {
+        { 
             try
             {
                 total_box.Text = System.Convert.ToString(sum_perc(coarsebox.Text, sandbox.Text, siltbox.Text, claybox.Text, fineclaybox.Text, yombox.Text, oombox.Text));
@@ -72,6 +72,7 @@ namespace LORICA4
             catch { };
         }
 
+       
         public void button1_Click(object sender, EventArgs e)
         {
             try

@@ -169,6 +169,12 @@ namespace LORICA4
                     read_record(filename, till_record);
                     Debug.WriteLine("Tillage time parameters read");
                 }
+
+                if (coarsemap_checkbox.Checked)
+                {
+                    filename = this.coarsemap_input_filename_textbox.Text;
+                    read_double(filename, coarsemap_perc);
+                }
             }
 
 
@@ -218,15 +224,16 @@ namespace LORICA4
 
                             }
 
+                            if (Proglacial_checkbox.Checked) { sum_meltwater_m[row, col] = 0; } //Proglacial
+
                             if (Water_ero_checkbox.Checked && only_waterflow_checkbox.Checked == false)
                             {
                                 K_fac[row, col] = advection_erodibility;
                             } //WVG K_fac matrix initialisation is needed when landuse is disabled
 
+                            
                             if (check_space_landuse.Checked == true)
                             {
-
-
 
                                 //currently, this will throw an exception if landuse is actually spatial //development required //ArT
                                 if (landuse[row, col] == 1)
@@ -550,6 +557,12 @@ namespace LORICA4
                 Debug.WriteLine("Tillage time parameters read");
             }
 
+            if (coarsemap_checkbox.Checked)
+            {
+                filename = this.coarsemap_input_filename_textbox.Text;
+                read_double(filename, coarsemap_perc);
+            }
+
             try
             {
                 // Debug.WriteLine(" assigning starting values for geomorph  ");
@@ -596,11 +609,14 @@ namespace LORICA4
 
                             }
 
+                            if (Proglacial_checkbox.Checked) { sum_meltwater_m[row, col] = 0; } //Proglacial
+
                             if (Water_ero_checkbox.Checked && only_waterflow_checkbox.Checked == false)
                             {
                                 K_fac[row, col] = advection_erodibility;
                             } //WVG K_fac matrix initialisation is needed when landuse is disabled
 
+                           
                             if (Water_ero_checkbox.Checked && check_space_landuse.Checked == true)
                             {
                                 //currently, this will throw an exception if landuse is actually spatial //development required //ArT
@@ -959,6 +975,7 @@ namespace LORICA4
             double fclayfrac = Convert.ToDouble(soildata.fineclaybox.Text) / 100;
             double yomfrac = Convert.ToDouble(soildata.yombox.Text) / 100; //AleG
             double oomfrac = Convert.ToDouble(soildata.oombox.Text) / 100; //AleG
+            double finerfrac; //coarsemap
             double location_bd;
 
             for (int row = 0; row < nr; row++)
@@ -997,6 +1014,24 @@ namespace LORICA4
                         }
                         else
                         {
+
+                            if (coarsemap_checkbox.Checked)
+                            {
+                                coarsefrac = (coarsemap_perc[row, col]) / 100;
+                                finerfrac = 1.0 - coarsefrac;
+                                if (finerfrac >0) 
+                                {
+                                   double finerfrac_ratio = sand_ratio + silt_ratio + clay_ratio;
+
+                                    sandfrac = finerfrac * (sand_ratio / finerfrac_ratio);
+                                    siltfrac = finerfrac * (silt_ratio / finerfrac_ratio);
+                                    clayfrac = finerfrac * (clay_ratio / finerfrac_ratio);
+
+                                }
+                               
+
+                            }
+
                             //now assign thicknesses and material to layer.
                             double available_soildepth = soildepth_m[row, col];
                             soil_layer = 0;
@@ -1103,7 +1138,18 @@ namespace LORICA4
                 } // end col
             } // end row
               //Debug.WriteLine("initialised soil");
-            writeallsoils(workdir + "\\" + run_number + "_" + t + "_out_allsoils.csv", t);
+            try
+            {
+                //Debug.WriteLine("writing all soils");
+                writeallsoils(workdir + "\\" + run_number + "_" + t + "_out_allsoils.csv", t);
+            }
+            catch
+            {
+                Debug.WriteLine("Failed during writing of soils");
+                MessageBox.Show("LORICA cannot write an output soil file. Perhaps you still have it open? ");
+
+            }
+            
         }
 
         void initialise_every_till()
@@ -1162,7 +1208,7 @@ namespace LORICA4
                             if (Creep_Checkbox.Checked) { sum_creep_grid[row, col] = 0; creep[row, col] = 0; }
                             if (treefall_checkbox.Checked) { dz_treefall[row, col] = 0; treefall_count[row, col] = 0; }
                             if (Water_ero_checkbox.Checked) { sum_water_erosion[row, col] = 0; }
-                            if (Proglacial_checkbox.Checked) { meltwater_m[row, col] = 0; glacier_cell[row, col] = 0; } 
+                            if (Proglacial_checkbox.Checked) { meltwater_m[row, col] = 0; glacier_cell[row, col] = 0; sum_meltwater_m[row, col] = 0; }
                             if (Biological_weathering_checkbox.Checked) 
                             {
                                 bedrock_weathering_m[row, col] = 0; //AleG
