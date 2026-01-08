@@ -1228,7 +1228,7 @@ namespace LORICA4
                             z_layer = dtm[row, col];
                             for (layer = 0; layer < max_soil_layers; layer++) // only the top layer
                             {
-                                if (layerthickness_m[row, col, layer] >= 0)
+                                if (layerthickness_m[row, col, layer] > 0)
                                 {
                                     cumthick += layerthickness_m[row, col, layer];
                                     midthick += layerthickness_m[row, col, layer] / 2;
@@ -1510,7 +1510,7 @@ namespace LORICA4
                     {
                         xreader.ReadStartElement("Chemical_weathering");
                         soil_chem_weath_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("chem_weath_active"));
-                        chem_weath_rate_constant_textbox.Text = xreader.ReadElementString("chemical_weathering_constant");
+                        chem_weath_rate_constant_textbox.Text = xreader.ReadElementString("weath_rate_constant");
                         chem_weath_depth_constant_textbox.Text = xreader.ReadElementString("constant3");
                         chem_weath_specific_coefficient_textbox.Text = xreader.ReadElementString("constant4");
                         soildata.specific_area_coarse_textbox.Text = xreader.ReadElementString("surface_coarse");
@@ -1603,25 +1603,12 @@ namespace LORICA4
                     try
                     {
                         xreader.ReadStartElement("Proglacial");
-                        Proglacial_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("check_proglacial"));
                         proglacial_input_filename_textbox.Text = xreader.ReadElementString("proglacial_input_filename");
                         melt_rate_1971_textbox.Text = xreader.ReadElementString("melt_rate_m_1971");
                         melt_rate_1972_textbox.Text = xreader.ReadElementString("melt_rate_m_1972");
                         xreader.ReadEndElement();
                     }
                     catch { read_error = 1; Debug.WriteLine("failed reading proglacial paras"); }
-
-                    try
-                    {
-                        xreader.ReadStartElement("Coarsemap");
-                        coarsemap_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("check_coarsemap"));
-                        coarsemap_input_filename_textbox.Text = xreader.ReadElementString("coarsemap_input_filename");
-                        coarsemap_sand_ratio_box.Text = xreader.ReadElementString("sand_ratio");
-                        coarsemap_silt_ratio_box.Text = xreader.ReadElementString("silt_ratio");
-                        coarsemap_clay_ratio_box.Text = xreader.ReadElementString("clay_ratio");
-                        xreader.ReadEndElement();
-                    }
-                    catch { read_error = 1; Debug.WriteLine("failed reading coarsemap paras"); }
 
                     try
                     {
@@ -1984,7 +1971,7 @@ namespace LORICA4
 
                 xwriter.WriteStartElement("Chemical_weathering");
                 xwriter.WriteElementString("chem_weath_active", XmlConvert.ToString(soil_chem_weath_checkbox.Checked));
-                xwriter.WriteElementString("chemical_weathering_constant", chem_weath_rate_constant_textbox.Text);
+                xwriter.WriteElementString("weath_rate_constant", chem_weath_rate_constant_textbox.Text);
                 xwriter.WriteElementString("constant3", chem_weath_depth_constant_textbox.Text);
                 xwriter.WriteElementString("constant4", chem_weath_specific_coefficient_textbox.Text);
                 xwriter.WriteElementString("surface_coarse", soildata.specific_area_coarse_textbox.Text);
@@ -2051,18 +2038,9 @@ namespace LORICA4
                 xwriter.WriteEndElement();
 
                 xwriter.WriteStartElement("Proglacial");
-                xwriter.WriteElementString("check_proglacial", XmlConvert.ToString(Proglacial_checkbox.Checked));
                 xwriter.WriteElementString("proglacial_input_filename", proglacial_input_filename_textbox.Text); //Proglacial
                 xwriter.WriteElementString("melt_rate_m_1971", melt_rate_1971_textbox.Text); //Proglacial
                 xwriter.WriteElementString("melt_rate_m_1972", melt_rate_1972_textbox.Text); //Proglacial
-                xwriter.WriteEndElement();
-
-                xwriter.WriteStartElement("Coarsemap");
-                xwriter.WriteElementString("check_coarsemap", XmlConvert.ToString(coarsemap_checkbox.Checked));
-                xwriter.WriteElementString("coarsemap_input_filename", coarsemap_input_filename_textbox.Text); //Coarsemap
-                xwriter.WriteElementString("sand_ratio", coarsemap_sand_ratio_box.Text); //Coarsemap
-                xwriter.WriteElementString("silt_ratio", coarsemap_silt_ratio_box.Text); //Coarsemap
-                xwriter.WriteElementString("clay_ratio", coarsemap_clay_ratio_box.Text); //Coarsemap
                 xwriter.WriteEndElement();
 
                 xwriter.WriteStartElement("Inputs");
@@ -2332,13 +2310,6 @@ namespace LORICA4
                 filename = dir + "0_" + time + "_out_dz_treefall.asc";
                 read_double(filename, dz_treefall);
                 Debug.WriteLine("read dz_treefall");
-            }
-
-            if (Proglacial_checkbox.Checked) //Proglacial
-            {
-                filename = dir + "0_" + time + "_out_meltwater.asc";
-                read_double(filename, sum_meltwater_m);
-                Debug.WriteLine("read meltwater");
             }
 
             filename = dir + "0_" + time + "_out_dz_soil.asc";
