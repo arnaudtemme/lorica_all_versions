@@ -1,3 +1,27 @@
+Lorica update - September 2025
+
+Changes September 2025 
+
+-Algorithm choices from drop list can now be saved to xml (e.g. bioturbation algorithms, OM algorithms, etc.)
+
+-the error message "failed at timestep" used to show the value of the variable t. Now fixed to show t+1 which is the actual timestep of failure
+
+-Soil depths very close to zero were causing NaN values in some circumstances, which lead to the following error message: "Exception thrown: 'System.OverflowException' in mscorlib.dll".
+Added these lines to the activity fraction which now prevents it.
+if (soildepth_m < 1e-6)  // If soil depth is too small, use a default safe value //AleG
+{
+   return 0.0;  // Return a reasonable default for small soil depths
+}
+
+-The logic of writeallsoils() was causing for the timestep column in 0_1_out_allsoils.csv to show t_out=0 instead of t_out=1. Now fixed by requiring the reference time variable as in input if the function writeallsoils().
+
+Proglacial mode:
+-Added meltwater contribution for the proglacial mode with different rates based on literature that you can choose from the interface.
+-I changed the logic for the proglacial mode (before the glacier cells were no data, but now they are instead just masked). The following processes have been adapted so that they can be used in the proglacial mode: Processes which can be simulated: Water erosion, Soil production, Physical weath., Chemical weath., Clay dynamics, Bioturbation, Organic Matter
+
+
+
+
 Lorica update  - July 2025
 All changes are marked with "//AleG" for now
 
