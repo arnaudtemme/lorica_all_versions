@@ -1899,7 +1899,7 @@ namespace LORICA4
                                         total_soil_thickness += layerthickness_m[row, col, layer];
                                     }
                                 }
-                                local_OM_input_kg = potential_OM_input * (1 - Math.Exp(-OM_input_decay_depth_m * total_soil_thickness)) * dx * dx * dt;
+                                local_OM_input_kg = potential_OM_input * (1 - Math.Exp(- total_soil_thickness / OM_input_decay_depth_m)) * dx * dx * dt;
                                 total_OM_input_kg += local_OM_input_kg;
                                 depth = 0;
 
