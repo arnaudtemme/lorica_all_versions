@@ -7319,7 +7319,7 @@ namespace LORICA4
                 comb_sort();
                 findsinks();
                 searchdepressions();
-                define_fillheight_new();
+                define_fillheight_new(epsilon);
                 soil_update_split_and_combine_layers();
             }
 
@@ -7397,7 +7397,7 @@ namespace LORICA4
                     Debug.WriteLine("before annual WE2");
                     findsinks();
                     searchdepressions();
-                    define_fillheight_new();
+                    define_fillheight_new(epsilon);
                     if (NA_anywhere_in_soil() == true) { Debug.WriteLine("NA found before erosed"); }
                     //Debug.WriteLine("before annual calc WE2");
                     calculate_water_ero_sed();
