@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Security.Policy;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -131,7 +127,7 @@ namespace LORICA4
         void calculate_sediment_dynamics(int row_sd, int col_sd, int i_sd, int j_sd, double waterflow_m3_per_m, double flowfraction, double sum_of_fractions)
         {
             int size;
-            double total_sediment_in_transport_kg, organic_in_transport, mass_to_be_eroded, rock_fraction, bio_fraction, vegetation_cover_fraction, selectivity_fraction, potential_transported_amount_kg, organic_selectivity_fraction, frac_eroded, frac_deposited;
+            double total_sediment_in_transport_kg, mass_to_be_eroded, rock_fraction, vegetation_cover_fraction, selectivity_fraction, potential_transported_amount_kg, frac_eroded, frac_deposited;
             double[] total_mass_eroded, total_mass_deposited_kg;
             total_mass_eroded = new double[7] { 0, 0, 0, 0, 0, 0, 0 };
             total_mass_deposited_kg = new double[7] { 0, 0, 0, 0, 0, 0, 0 };
@@ -500,7 +496,7 @@ namespace LORICA4
             Decimal mass_before = total_catchment_mass_decimal(), mass_after, mass_export = 0;
             //Debug.WriteLine("WE1");
             int size, dir;
-            double water_out, flow_between_cells_m3_per_m, total_sediment_in_transport_kg, rock_fraction, total_ero = 0, total_dep = 0, potential_transported_amount_kg, vegetation_cover_fraction, mass_to_be_eroded, selectivity_fraction;
+            double water_out, flow_between_cells_m3_per_m, total_dep = 0;
 
             // 1: set all water and sediment flow to 0
             for (int row = 0; row < nr; row++)
@@ -687,10 +683,11 @@ namespace LORICA4
                 total_rain_m3 = 0; total_evap_m3 = 0; total_infil_m3 = 0; total_outflow_m3 = 0;
                 wet_cells = 0; eroded_cells = 0; deposited_cells = 0;
                 if (Proglacial_checkbox.Checked) //Proglacial
-                {  
+                {
                     total_meltwater_m = 0;
                     total_meltwater_m3 = 0;
-                }; 
+                }
+                ;
                 for (int row = 0; row < nr; row++)
                 {
                     for (int col = 0; col < nc; col++)
@@ -719,8 +716,10 @@ namespace LORICA4
                             total_evap_m += evap_value_m;
                             if (check_space_infil.Checked == true) { total_infil_m += infil[row, col]; }
                             total_infil_m += infil_value_m;
-                            if (Proglacial_checkbox.Checked == true) { total_meltwater_m += meltwater_m[row, col];
-                               sum_meltwater_m[row, col] += meltwater_m[row, col];
+                            if (Proglacial_checkbox.Checked == true)
+                            {
+                                total_meltwater_m += meltwater_m[row, col];
+                                sum_meltwater_m[row, col] += meltwater_m[row, col];
                             } //Proglacial
                             total_meltwater_m += meltwater_value_m; //Proglacial
                             if (waterflow_m3[row, col] * dx * dx > timeseries.timeseries_waterflow_threshold) { wet_cells++; }
@@ -728,9 +727,12 @@ namespace LORICA4
                             {
                                 total_infil_m += infil[row, col];
                                 total_evap_m += evapotranspiration[row, col];
-                                erodibility_value_m = K_fac[row, col];  
+                                erodibility_value_m = K_fac[row, col];
                                 bio_protection_constant = 0.1 * root_cohesion_kPa_new[row, col];
                             }
+
+
+
                         } // end for nodata
                     }   // end for col
                 } // end for row
@@ -777,7 +779,7 @@ namespace LORICA4
             domain_OOM_export_kg = 0;
             domain_YOM_export_kg = 0;
 
-           
+
 
             double powered_slope_sum, flow_between_cells_m3_per_m;
             int size;
@@ -789,7 +791,7 @@ namespace LORICA4
                     if (drainingoutlet_row[alpha, outletcounter] != -1)
                     {
                         waterflow_m3[drainingoutlet_row[alpha, outletcounter], drainingoutlet_col[alpha, outletcounter]] = 0;
-                    } 
+                    }
                 }
             }
             if (NA_anywhere_in_soil() == true) { Debug.WriteLine("NA found before row col loop in water erosed"); }
@@ -830,6 +832,7 @@ namespace LORICA4
                                     if (check_space_rain.Checked == true) { rain_value_m = rain_m[row, col]; }
                                     if (check_space_infil.Checked == true) { infil_value_m = infil[row, col]; }
                                     if (water_ero_active == true) { erodibility_value_m = K_fac[row, col]; }
+                                    if (Proglacial_checkbox.Checked == true) { meltwater_value_m = meltwater_m[row, col]; } // Glacier meltwater contribution //Sophie_new
 
                                     if (check_space_landuse.Checked) // Land use adjustments for erosion, infiltration, and protection
                                     {
@@ -840,7 +843,7 @@ namespace LORICA4
                                     }
 
                                     // Water flow for non-glacier areas considering rain, evapotranspiration, and infiltration
-                                    waterflow_m3[row, col] += (rain_value_m - infil_value_m - evap_value_m) * dx * dx;
+                                    waterflow_m3[row, col] += (rain_value_m + meltwater_value_m - infil_value_m - evap_value_m) * dx * dx;  //Sophie new
 
                                     // Ensure water flow doesn't go negative
                                     if (waterflow_m3[row, col] < 0) { waterflow_m3[row, col] = 0; }
@@ -908,7 +911,7 @@ namespace LORICA4
                                         }
                                     }
                                 }
-                                
+
                             }
                         }
                     }
@@ -926,7 +929,7 @@ namespace LORICA4
                                 (drainingoutlet_row[depression[row, col], 3] == row && drainingoutlet_col[depression[row, col], 3] == col) ||
                                 (drainingoutlet_row[depression[row, col], 4] == row && drainingoutlet_col[depression[row, col], 4] == col))
                             {
-                                if (check_space_evap.Checked == true) {  evap_value_m = evapotranspiration[row, col]; }//AleG 
+                                if (check_space_evap.Checked == true) { evap_value_m = evapotranspiration[row, col]; }//AleG 
                                 if (check_space_rain.Checked == true) { rain_value_m = rain_m[row, col]; }//AleG 
                                 if (check_space_infil.Checked == true) { infil_value_m = infil[row, col]; }//AleG 
                                 if (water_ero_active == true) { erodibility_value_m = K_fac[row, col]; } //AleG 
@@ -936,11 +939,11 @@ namespace LORICA4
                                     infil_value_m = infil[row, col];//AleG 
                                     evap_value_m = evapotranspiration[row, col];//AleG 
                                     erodibility_value_m = K_fac[row, col]; //AleG  
-                                    bio_protection_constant = root_cohesion_kPa_new[row, col]* 0.1;//AleG 
+                                    bio_protection_constant = root_cohesion_kPa_new[row, col] * 0.1;//AleG 
                                 }
                                 //ArT // development required to account for f(t) situations
                                 waterflow_m3[row, col] += (rain_value_m - infil_value_m - evap_value_m) * dx * dx;
-                                
+
                                 if (waterflow_m3[row, col] < 0) { waterflow_m3[row, col] = 0; }
                                 if (waterflow_m3[row, col] < -0.001) { Debug.WriteLine(" Negative waterflow at " + row + " " + col + ": " + waterflow_m3[row, col] + ". rain " + rain_value_m + " infil " + infil_value_m + " evap " + evap_value_m + " use " + landuse[row, col]); }
                             }
@@ -966,7 +969,7 @@ namespace LORICA4
                                         infil_value_m = infil[row, col];//AleG 
                                         evap_value_m = evapotranspiration[row, col];//AleG 
                                         erodibility_value_m = K_fac[row, col]; //AleG  
-                                        bio_protection_constant = root_cohesion_kPa_new[row, col] *0.1;//AleG 
+                                        bio_protection_constant = root_cohesion_kPa_new[row, col] * 0.1;//AleG 
                                     }
                                     //ArT // development required to account for f(t) situations
                                     //ArT remember to check for negative lake outflow once it happens
@@ -1106,9 +1109,9 @@ namespace LORICA4
                                                 {  // i j is a lower neighbour
                                                     if (dh > max_allowed_erosion - dh_tol) { max_allowed_erosion = dh - dh_tol; }  // we keep track of the minimum difference in current altitude between this cell and its highest lower neighbour - we will not erode it more, even if we would like to
 
-                                                    dh = dh / d_x;
+                                                    dh /= d_x;
                                                     dh = Math.Pow(dh, conv_fac);
-                                                    powered_slope_sum = powered_slope_sum + dh;
+                                                    powered_slope_sum += dh;
                                                 }//end if dh  
                                             }//end if novalues
 
@@ -1136,9 +1139,9 @@ namespace LORICA4
                                                 {  // i j is a lower neighbour
                                                     if (dh > max_allowed_erosion - dh_tol) { max_allowed_erosion = dh - dh_tol; }  // we keep track of the minimum difference in current altitude between this cell and its highest lower neighbour - we will not erode it more, even if we would like to
 
-                                                    dh = dh / d_x;
+                                                    dh /= d_x;
                                                     dh = Math.Pow(dh, conv_fac);
-                                                    powered_slope_sum = powered_slope_sum + dh;
+                                                    powered_slope_sum += dh;
                                                 }//end if dh  
                                             }//end if novalues
 
@@ -1161,9 +1164,9 @@ namespace LORICA4
                                             dh = dtm[row, col] - dtm[row + i, col + j];
                                             if (dh > 0)
                                             {// i j is a lower neighbour
-                                                dh = dh / d_x;                      // dh is now equal to slope
+                                                dh /= d_x;                      // dh is now equal to slope
                                                 dh = Math.Pow(dh, conv_fac);            // dh is nu de helling tot de macht conv fac
-                                                powered_slope_sum = powered_slope_sum + dh;
+                                                powered_slope_sum += dh;
                                             } // end if lower nb
                                         } //end if nb not within depression
                                     } // end if drainingoutlet
@@ -1218,7 +1221,8 @@ namespace LORICA4
                                                     dh = dtm[row, col] + dz_ero_m[row, col] + dz_sed_m[row, col] - (dtm[row + i, col + j] + dz_ero_m[row + i, col + j] + dz_sed_m[row + i, col + j]); // Difference considering erosion and sedimentation
                                                 }
                                             }
-                                            else {
+                                            else
+                                            {
                                                 if (only_waterflow_checkbox.Checked)
                                                 {
                                                     dh = dtm[row, col] - dtm[row + i, col + j];
@@ -1271,7 +1275,7 @@ namespace LORICA4
                                                         {
                                                             calculate_sediment_dynamics(row, col, i, j, flow_between_cells_m3_per_m, fraction, sum_frac_OSL);
                                                         }
-                                                        
+
                                                     }
                                                     else
                                                     {
@@ -1362,7 +1366,7 @@ namespace LORICA4
                         if (Proglacial_checkbox.Checked == true) { total_meltwater_m += meltwater_m[row, col]; } //Proglacial
                         total_meltwater_m += meltwater_value_m; //Proglacial
                         if (waterflow_m3[row, col] * dx * dx > timeseries.timeseries_waterflow_threshold) { wet_cells++; }
-                       
+
 
                     } // end for nodata
                 }   // end for col
@@ -1511,25 +1515,25 @@ namespace LORICA4
             //   Combined Cohesion and Internal friction.
 
             rain_intensity_m_d = Convert.ToDouble(text_ls_rel_rain_intens.Text) * rain_value_m;
-            
+
 
             for (row = 0; row < nr; row++)
             {
                 for (col = 0; col < nc; col++)
                 {
                     //currently spatially uniform
-                    T_fac[row, col] = nodata_value;
+                    transmissiv_m2_d[row, col] = nodata_value;
                     Cohesion_factor[row, col] = nodata_value;
                     sat_bd_kg_m3[row, col] = nodata_value;
                     peak_friction_angle_radians[row, col] = nodata_value;
                     resid_friction_angle_radians[row, col] = nodata_value;
                 } //for
             } //for
-            //for (int ls = 0; ls < 100000; ls++) //AleG
-            //{
-                //landslidesum_thickness_m[ls] = 0;
-            //}
-            //Debug.WriteLine(" initialized old landslide parameters from interface");
+              //for (int ls = 0; ls < 100000; ls++) //AleG
+              //{
+              //landslidesum_thickness_m[ls] = 0;
+              //}
+              //Debug.WriteLine(" initialized old landslide parameters from interface");
         }
 
         void calc_friction_angles()
@@ -1549,23 +1553,28 @@ namespace LORICA4
                 {
                     if (dtm[row, col] != nodata_value)
                     {//note that specific surface areas from the interface are in m2/kg, we need m2/g:
-                        fcoarse = texture_kg[row, col, 0, 0] / total_layer_mass_kg(row, col, 0);
-                        fsand = texture_kg[row, col, 0, 1] / total_layer_mass_kg(row, col, 0);
-                        fsilt = texture_kg[row, col, 0, 2] / total_layer_mass_kg(row, col, 0);
-                        fclay = texture_kg[row, col, 0, 3] / total_layer_mass_kg(row, col, 0);
-                        ffineclay = texture_kg[row, col, 0, 4] / total_layer_mass_kg(row, col, 0);
-                        specific_surface_area_m2_g = (fcoarse * specific_area[0] + fsand * specific_area[1] + fsilt * specific_area[2] + fclay * specific_area[3] + ffineclay * specific_area[4]) * 0.001;
-
-                        //for peak:
-                        min_frict_angle = 8; max_frict_angle = 32; reference_SSA_m2_g = 25; parameter_n = 2.7;
-                        n_exponent = n_exponent = -(1 - (1 / parameter_n));
-                        peak_friction_angle = min_frict_angle + (max_frict_angle - min_frict_angle) * Math.Pow(1 + Math.Pow(specific_surface_area_m2_g / reference_SSA_m2_g, parameter_n), n_exponent);
-                        peak_friction_angle_radians[row, col] = peak_friction_angle / 180 * Math.PI;
-                        //for residual:
-                        min_frict_angle = 3.7; max_frict_angle = 30; reference_SSA_m2_g = 25; parameter_n = 3.0;
-                        n_exponent = n_exponent = -(1 - (1 / parameter_n));
-                        resid_friction_angle = min_frict_angle + (max_frict_angle - min_frict_angle) * Math.Pow(1 + Math.Pow(specific_surface_area_m2_g / reference_SSA_m2_g, parameter_n), n_exponent);
-                        resid_friction_angle_radians[row, col] = resid_friction_angle / 180 * Math.PI;
+                        if (total_layer_mass_kg(row, col, 0) > 0)
+                        {
+                            fcoarse = texture_kg[row, col, 0, 0] / total_layer_mass_kg(row, col, 0);
+                            fsand = texture_kg[row, col, 0, 1] / total_layer_mass_kg(row, col, 0);
+                            fsilt = texture_kg[row, col, 0, 2] / total_layer_mass_kg(row, col, 0);
+                            fclay = texture_kg[row, col, 0, 3] / total_layer_mass_kg(row, col, 0);
+                            ffineclay = texture_kg[row, col, 0, 4] / total_layer_mass_kg(row, col, 0);
+                            specific_surface_area_m2_g = (fcoarse * specific_area[0] + fsand * specific_area[1] + fsilt * specific_area[2] + fclay * specific_area[3] + ffineclay * specific_area[4]) * 0.001;
+                            //for peak:
+                            min_frict_angle = 8; max_frict_angle = 32; reference_SSA_m2_g = 25; parameter_n = 2.7; n_exponent = (1 / parameter_n) - 1;
+                            peak_friction_angle = min_frict_angle + (max_frict_angle - min_frict_angle) * Math.Pow(1 + Math.Pow(specific_surface_area_m2_g / reference_SSA_m2_g, parameter_n), n_exponent);
+                            peak_friction_angle_radians[row, col] = peak_friction_angle / 180 * Math.PI;
+                            //for residual:
+                            min_frict_angle = 3.7; max_frict_angle = 30; reference_SSA_m2_g = 25; parameter_n = 3.0; n_exponent = (1 / parameter_n) - 1;
+                            resid_friction_angle = min_frict_angle + (max_frict_angle - min_frict_angle) * Math.Pow(1 + Math.Pow(specific_surface_area_m2_g / reference_SSA_m2_g, parameter_n), n_exponent);
+                            resid_friction_angle_radians[row, col] = resid_friction_angle / 180 * Math.PI;
+                        }
+                        else
+                        {
+                            peak_friction_angle_radians[row, col] = nodata_value;
+                            resid_friction_angle_radians[row, col] = nodata_value;
+                        }
                     }
                     else
                     {
@@ -1574,17 +1583,14 @@ namespace LORICA4
                     }
                 }
             }
-            
+
         }
 
         void calc_soil_cohesion_factor()
         {
             //dimensionless soil cohesion equals root cohesion plus soil cohesion (both in kPa) , divided by soil thickness, sat soil bulk density and gravitational constant
             //for ease, we take only topsoil cohesion into account
-            double g_constant = 9.81;
-            //double root_cohesion_kPa;
-            double soil_cohesion_kPa = 0;
-            double clay_perc = 0;
+            const double g_constant = 9.81;
 
             //if (check_space_landuse.Checked == false ) { root_cohesion_kPa_new[row, col] = 1; } //AleG
 
@@ -1594,8 +1600,14 @@ namespace LORICA4
                 {
                     if (dtm[row, col] != nodata_value)
                     {
-                        clay_perc = 100 * (texture_kg[row, col, 0, 3] + texture_kg[row, col, 0, 4]) / (texture_kg[row, col, 0, 0] + texture_kg[row, col, 0, 1] + texture_kg[row, col, 0, 2] + texture_kg[row, col, 0, 3] + texture_kg[row, col, 0, 4]); // of the entire soil
-                        soil_cohesion_kPa = 1.33 + 0.33 * clay_perc; // Khaboushan et al 2018, Soil Tillage Research (R2 0.75 - P < 0.01)
+                        double denom = texture_kg[row, col, 0, 0] + texture_kg[row, col, 0, 1] + texture_kg[row, col, 0, 2] + texture_kg[row, col, 0, 3] + texture_kg[row, col, 0, 4];
+                        if (denom <= 0.0 || soildepth_m[row, col] <= 0.0 || sat_bd_kg_m3[row, col] <= 0.0)
+                        {
+                            Cohesion_factor[row, col] = nodata_value;
+                            continue;
+                        }
+                        double clay_perc = 100 * (texture_kg[row, col, 0, 3] + texture_kg[row, col, 0, 4]) / denom;
+                        double soil_cohesion_kPa = 1.33 + 0.33 * clay_perc; // Khaboushan et al 2018, Soil Tillage Research (R2 0.75 - P < 0.01)
                         Cohesion_factor[row, col] = (root_cohesion_kPa_new[row, col] + soil_cohesion_kPa) / (soildepth_m[row, col] * (sat_bd_kg_m3[row, col] / 1000) * g_constant); //AleG
                     }
                     else
@@ -1608,57 +1620,72 @@ namespace LORICA4
 
         void calc_transmissivity()
         {
-            double transmissivity_m2_hr;
-            double fsilt = 0, fclay = 0, fOM = 0;
-            double currentdepth_m;
-            double slope_rad = 0;
-            double Ks_m_hr;
-            double BD_kg_m3 = 0;
-            double silt_perc;//AleG
-            double clay_perc;//AleG
-            double OM_perc;//AleG
+            double Ks_m_d;
             for (int row = 0; row < nr; row++)
             {
                 for (int col = 0; col < nc; col++)
                 {
                     if (dtm[row, col] != nodata_value)
                     {
-                        transmissivity_m2_hr = 0;
-                        currentdepth_m = 0;
+                        double slope_rad = calc_slope_stdesc(row, col);
+                        double cos_slope_rad = Math.Cos(slope_rad);
+
+                        double transmissivity_m2_d = 0.0;  // keep in m^2/day if Ks_wosten is m/day
+                        double currentdepth_m = 0.0;
+
                         for (int layer = 0; layer < max_soil_layers; layer++)
                         {
-                            //we calculate transmissivity using the thickness of the soil in slope-perpendicular fashion, i.e. including the cosine of thicknesses of layers
                             try
                             {
-                                currentdepth_m += layerthickness_m[row, col, layer];
-                                silt_perc = 100 * texture_kg[row, col, layer, 2] / (texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4] + old_SOM_kg[row, col, layer] + young_SOM_kg[row, col, layer]); // only fine fraction //AleG
-                                clay_perc = 100 * (texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4]) / (texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4] + old_SOM_kg[row, col, layer] + young_SOM_kg[row, col, layer]); // only fine fraction //AleG
-                                OM_perc = 100 * (old_SOM_kg[row, col, layer] + young_SOM_kg[row, col, layer]) / (texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4] + old_SOM_kg[row, col, layer] + young_SOM_kg[row, col, layer]); // only fine fraction //AleG
-                                //fOM = (Double.IsNaN(fOM) || fOM < 0.5f) ? 0.5f : fOM; //AleG
-                                BD_kg_m3 = bulk_density_calc_kg_m3(texture_kg[row, col, layer, 0], texture_kg[row, col, layer, 1], texture_kg[row, col, layer, 2], texture_kg[row, col, layer, 3], texture_kg[row, col, layer, 4], old_SOM_kg[row, col, layer], young_SOM_kg[row, col, layer], currentdepth_m);
-                                //this BD does not yet account for a stone fraction (it would become higher).
-                                slope_rad = calc_slope_stdesc(row, col);
-                                Ks_m_hr = (Ks_wosten(silt_perc, clay_perc, OM_perc, BD_kg_m3 / 1000, 1) / 24);
-                                //Debug.WriteLine(Ks_m_hr);
-                                
-                                transmissivity_m2_hr += Ks_m_hr * (layerthickness_m[row, col, layer] * Math.Cos(slope_rad));
-                                if (Double.IsInfinity(transmissivity_m2_hr))
-                                {
+                                double lay_thick = layerthickness_m[row, col, layer];
+                                if (lay_thick <= 0.0) continue; // skip empty layer
+
+                                currentdepth_m += lay_thick;
+
+                                // Denominator for percentages (fine fraction only, as in your code)
+                                double fine_den = texture_kg[row, col, layer, 1] +
+                                                  texture_kg[row, col, layer, 2] +
+                                                  texture_kg[row, col, layer, 3] +
+                                                  texture_kg[row, col, layer, 4] +
+                                                  old_SOM_kg[row, col, layer] +
+                                                  young_SOM_kg[row, col, layer];
+                                if (fine_den <= 0.0) continue; // avoid divide-by-zero
+
+                                double silt_perc = 100.0 * texture_kg[row, col, layer, 2] / fine_den;
+                                double clay_perc = 100.0 * (texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4]) / fine_den;
+                                double OM_perc = 100.0 * (old_SOM_kg[row, col, layer] + young_SOM_kg[row, col, layer]) / fine_den;
+
+                                double BD_kg_m3 = bulk_density_calc_kg_m3(
+                                    texture_kg[row, col, layer, 0],
+                                    texture_kg[row, col, layer, 1],
+                                    texture_kg[row, col, layer, 2],
+                                    texture_kg[row, col, layer, 3],
+                                    texture_kg[row, col, layer, 4],
+                                    old_SOM_kg[row, col, layer],
+                                    young_SOM_kg[row, col, layer],
+                                    currentdepth_m);
+
+                                // Ks in m/day (do not divide by 24 if you want T in m^2/day)
+                                Ks_m_d = Ks_wosten(silt_perc, clay_perc, OM_perc, BD_kg_m3 / 1000.0, 1) ;
+
+                                transmissivity_m2_d += Ks_m_d * (lay_thick * cos_slope_rad);
+
+                                if (double.IsInfinity(transmissivity_m2_d) || double.IsNaN(transmissivity_m2_d))
                                     break;
-                                }
                             }
                             catch
                             {
-                                Debug.WriteLine("error in calculating transmissivity " + row + " " + col);
+                                Debug.WriteLine($"error in calculating transmissivity {row} {col}");
+                                break;
                             }
                         }
-                        T_fac[row, col] = transmissivity_m2_hr;
+                        transmissiv_m2_d[row, col] = transmissivity_m2_d;
                     }
                     else
                     {
-                        T_fac[row, col] = nodata_value;
+                        transmissiv_m2_d[row, col] = nodata_value;
                     }
-                    
+
                 }
             }
 
@@ -1668,41 +1695,40 @@ namespace LORICA4
         {
             //saturated density (a double 2D array will be calculated in two steps: 
             //first porosity, from soil bulk density and particle density
-            //then filling the pores with water to calculate bulk density
+            //then filling the pores with water to calculate sat bulk density
             //we'll do this for the entire soildepth
-            double localdepth_m, localmass_kg, profile_dry_bd_kg_m3, porosity_fraction;
+            const double water_density_kg_m3 = 1000.0; //kg/m3
 
-            localmass_kg = 0;
             for (int row = 0; row < nr; row++)
             {
                 for (int col = 0; col < nc; col++)
                 {
-                    if (dtm[row, col] != nodata_value)
+                    if (dtm[row, col] == nodata_value) { sat_bd_kg_m3[row, col] = nodata_value; continue; }
+
+                    double localdepth_m = soildepth_m[row, col];
+                    if (localdepth_m <= 0.0) { sat_bd_kg_m3[row, col] = nodata_value; continue; }
+                    double localmass_kg = 0;
+                    for (int layer = 0; layer < max_soil_layers; layer++)
                     {
-                        localdepth_m = soildepth_m[row, col];
-                        localmass_kg = 0;
-                        for (int layer = 0; layer < max_soil_layers; layer++)
+                        localmass_kg += texture_kg[row, col, layer, 0] + texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4] + young_SOM_kg[row, col, layer] + old_SOM_kg[row, col, layer];
+                        if (localmass_kg < 0)
                         {
-                            localmass_kg += texture_kg[row, col, layer, 0] + texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4] + young_SOM_kg[row, col, layer] + old_SOM_kg[row, col, layer];
-                            if (local_soil_mass_kg < 0)
-                            {
-                                Debug.WriteLine("err_negative_soil_mass");
-                            }
+                            Debug.WriteLine("err_negative_soil_mass");
                         }
-                        profile_dry_bd_kg_m3 = localmass_kg / (dx * dx * localdepth_m);
-                        porosity_fraction = 1 - (profile_dry_bd_kg_m3 / particle_density_kg_m3);
-                        //we know that with saturated bulk density, all this prosity is filled with water at 1000 kg m3, so:
-                        sat_bd_kg_m3[row, col] = porosity_fraction * 1000 + (1 - porosity_fraction) * profile_dry_bd_kg_m3;
-                        /*if(Double.IsNaN(sat_bd_kg_m3[row, col])){
-                            Debug.WriteLine(" Saturated BD is NaN at " + row + " " + col);            
-                        }*/
                     }
-                    else { sat_bd_kg_m3[row, col] = nodata_value; }
+                    double profile_dry_bd_kg_m3 = localmass_kg / (dx * dx * localdepth_m);
+                    double porosity_fraction = 1 - (profile_dry_bd_kg_m3 / particle_density_kg_m3);
+                    porosity_fraction = Math.Max(0.0, Math.Min(1.0, porosity_fraction)); // clamp
+                                                                                         //we know that with saturated bulk density, all this prosity is filled with water at 1000 kg m3, so:
+                    sat_bd_kg_m3[row, col] = porosity_fraction * water_density_kg_m3 + profile_dry_bd_kg_m3;
+                    /*if(Double.IsNaN(sat_bd_kg_m3[row, col])){
+                        Debug.WriteLine(" Saturated BD is NaN at " + row + " " + col);            
+                    }*/
                 }
             }
         }
 
-        double store_slid_mass_new(double extra_slid_thickness_m, int donorrow, int donorcol)
+        double store_slid_mass_mix1(double extra_slid_thickness_m, int donorrow, int donorcol)
         {
             //knowing the depth eroded from a certain donor cell, takes that amount in kg, stores it in the sediment in transport matrix and restores soildata at the donor cell
 
@@ -1723,8 +1749,9 @@ namespace LORICA4
                 //double new_ls_mass_kg = 0;
                 int layer_slide = 0;
                 double slidfraction = 0;
-                while (remaining_depth_m > 0.00001)
+                while (remaining_depth_m > 0.00001 && layer_slide < max_soil_layers)
                 {
+                    if (layerthickness_m[donorrow, donorcol, layer_slide] <= 0.0) { layer_slide++; continue; }
                     if (remaining_depth_m >= layerthickness_m[donorrow, donorcol, layer_slide])
                     {
                         slidfraction = 1;
@@ -1783,11 +1810,123 @@ namespace LORICA4
             return eroded_mass_kg;
         }
 
-        double deposit_slid_mass_new(double depofraction, int deprow, int depcol)
+        double store_slid_mass_mix2(double extra_slid_thickness_m, int donorrow, int donorcol)
+        {
+            // Layer-preserving erosion: stores eroded mass per source layer into layered transport arrays.
+            // Returns the total eroded mass (kg).
+
+            const double EpsDepth = 1e-5;
+            const double ClampEps = 1e-12;
+
+            double ClampNonNegative(double x)
+            {
+                if (x < 0.0 && x > -ClampEps) return 0.0;
+                return (x < 0.0) ? 0.0 : x;
+            }
+
+            double eroded_mass_kg = 0.0;
+
+            if (double.IsNaN(extra_slid_thickness_m) || double.IsInfinity(extra_slid_thickness_m))
+            {
+                Debug.WriteLine("store_slid_mass_mix2: invalid erosion thickness (NaN/Inf)");
+                return 0.0;
+            }
+            if (extra_slid_thickness_m <= 0.0) return 0.0;
+
+            try
+            {
+                double remaining_depth_m = extra_slid_thickness_m;
+                int layer_idx = 0;
+
+                while (remaining_depth_m > EpsDepth && layer_idx < max_soil_layers)
+                {
+                    double lay_thick_m = layerthickness_m[donorrow, donorcol, layer_idx];
+
+                    // Skip empty or non-physical layers
+                    if (lay_thick_m <= 0.0)
+                    {
+                        layer_idx++;
+                        continue;
+                    }
+
+                    // Fraction of this layer to erode
+                    double take_thick_m = Math.Min(remaining_depth_m, lay_thick_m);
+                    double frac = take_thick_m / lay_thick_m;
+                    if (frac < 0.0) frac = 0.0;
+                    if (frac > 1.0) frac = 1.0;
+
+                    // Move texture masses
+                    for (int tex = 0; tex < n_texture_classes; tex++)
+                    {
+                        double src_mass = texture_kg[donorrow, donorcol, layer_idx, tex];
+                        if (src_mass <= 0.0) continue;
+
+                        double dm = frac * src_mass;
+
+                        // Add to layered transport at the same source layer
+                        lay_sediment_in_transport_kg[donorrow, donorcol, layer_idx, tex] += dm;
+
+                        // Subtract from source layer (clamp to avoid tiny negatives)
+                        texture_kg[donorrow, donorcol, layer_idx, tex] = ClampNonNegative(src_mass - dm);
+
+                        eroded_mass_kg += dm;
+                    }
+
+                    // Move SOM (young and old)
+                    {
+                        double y_src = young_SOM_kg[donorrow, donorcol, layer_idx];
+                        double o_src = old_SOM_kg[donorrow, donorcol, layer_idx];
+
+                        double dm_y = frac * y_src;
+                        double dm_o = frac * o_src;
+
+                        lay_young_SOM_in_transport_kg[donorrow, donorcol, layer_idx] += dm_y;
+                        lay_old_SOM_in_transport_kg[donorrow, donorcol, layer_idx] += dm_o;
+
+                        young_SOM_kg[donorrow, donorcol, layer_idx] = ClampNonNegative(y_src - dm_y);
+                        old_SOM_kg[donorrow, donorcol, layer_idx] = ClampNonNegative(o_src - dm_o);
+
+                        eroded_mass_kg += (dm_y + dm_o);
+                    }
+
+                    // Advance through the eroded thickness in this layer
+                    remaining_depth_m -= take_thick_m;
+
+                    // Move to next layer
+                    layer_idx++;
+                }
+
+                // Reconcile layer structure and thickness
+                try { remove_empty_layers(donorrow, donorcol); }
+                catch { Debug.WriteLine("store_slid_mass_mix2: remove_empty_layers failed"); }
+
+                try { update_all_layer_thicknesses(donorrow, donorcol); }
+                catch { Debug.WriteLine("store_slid_mass_mix2: update_all_layer_thicknesses failed"); }
+
+                // Update cached soil depth for this cell
+                soildepth_m[donorrow, donorcol] = total_soil_thickness(donorrow, donorcol);
+
+                // Diagnostics
+                double new_thickness = soildepth_m[donorrow, donorcol];
+                if (new_thickness < 0.0)
+                {
+                    Debug.WriteLine($"store_slid_mass_mix2: negative soil thickness at {donorrow} {donorcol}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"store_slid_mass_mix2: failure ({ex.Message})");
+            }
+
+            return eroded_mass_kg;
+        }
+
+        double deposit_slid_mass_mm1(double depofraction, int deprow, int depcol)
         {
             double locally_deposited_mass_kg = 0;
             try
             {
+
                 //we know how much of the seven materials is available here (via ediment in transport),
                 //and how much of it we deposit (via depofraction)
                 //now let's add that mass to the first layer of the soil here:
@@ -1797,6 +1936,7 @@ namespace LORICA4
                 if (depofraction < 0) { Debug.WriteLine(" ERROR: fraction of mass below 0 "); }
                 else
                 {
+                    depofraction = Math.Max(0.0, Math.Min(1.0, depofraction));
                     for (int ti = 0; ti < n_texture_classes; ti++)
                     {
                         texture_kg[deprow, depcol, 0, ti] += sediment_in_transport_kg[deprow, depcol, ti] * depofraction;
@@ -1818,6 +1958,7 @@ namespace LORICA4
                     {
                         Debug.WriteLine("soil changed from " + old_thickness + "m thick to " + new_thickness_m + "m thick");
                     }
+
                 }
             }
             catch
@@ -1833,6 +1974,303 @@ namespace LORICA4
             return locally_deposited_mass_kg;
         }
 
+        double deposit_slid_mass_mm2(double depofraction, int deprow, int depcol, double dep_depth_m)
+        {
+            // Total mass locally deposited in this operation (returned to caller)
+            double locally_deposited_mass_kg = 0.0;
+
+            // Epsilon used to clamp tiny negative values that can appear due to floating-point roundoff.
+            const double ClampEps = 1e-12;
+
+            // Helper: clamp a value to be non-negative with a tolerance for tiny negatives.
+            double ClampNonNegative(double x)
+            {
+                if (x < 0.0 && x > -ClampEps) return 0.0;
+                return (x < 0.0) ? 0.0 : x;
+            }
+
+            // Sanity checks and soft clamping of depofraction to [0,1]
+            if (depofraction > 1.0)
+            {
+                Debug.WriteLine(" ERROR: fraction of mass above 1 ");
+                depofraction = 1.0;
+            }
+            else if (depofraction < 0.0)
+            {
+                Debug.WriteLine(" ERROR: fraction of mass below 0 ");
+                depofraction = 0.0;
+            }
+
+            double remainingDepositionDepth_m = dep_depth_m;
+
+            // Early exit: nothing to deposit
+            if (remainingDepositionDepth_m <= 0.0)
+                return locally_deposited_mass_kg;
+
+            // 1) Build deposition segments from the template thicknesses lay_m[].
+            //    Each segment corresponds to a potential new layer on top, with thickness equal to
+            //    the template thickness or what remains of dep_depth_m if smaller.
+            List<double> depositionSegmentThicknesses_m = new List<double>();
+            for (int templateLayerIndex = 0;
+                 templateLayerIndex < max_soil_layers && remainingDepositionDepth_m > ClampEps;
+                 templateLayerIndex++)
+            {
+                double templateLayerThickness_m = expected_lay_thick_m[templateLayerIndex];
+                if (templateLayerThickness_m <= 0.0)
+                    continue; // ignore non-physical or zero-thickness layers
+
+                double segmentThickness_m = Math.Min(remainingDepositionDepth_m, templateLayerThickness_m);
+                if (segmentThickness_m > 0.0)
+                {
+                    depositionSegmentThicknesses_m.Add(segmentThickness_m);
+                    remainingDepositionDepth_m -= segmentThickness_m;
+                }
+            }
+
+            int totalNumberOfSegments = depositionSegmentThicknesses_m.Count;
+            if (totalNumberOfSegments == 0)
+                return locally_deposited_mass_kg; // no segments to deposit (e.g., all template layers zero)
+
+            // Strict cap: we keep one bottom layer for preexisting material.
+            // Therefore, we can create at most (maxlayers - 1) new top layers for this deposition event.
+            int numberOfTopSegments = Math.Min(totalNumberOfSegments, max_soil_layers - 1);
+
+            // 2) Perform a single block shift of existing layers downward by numberOfTopSegments.
+            //    - This opens top slots [0 .. numberOfTopSegments - 1] for the new layers.
+            //    - Any content that would be pushed below the bottom is merged into the bottom layer.
+            BlockShiftDownWithBottomMerge_Strict(deprow, depcol, numberOfTopSegments, max_soil_layers);
+
+            // 3) Fill the newly opened top slots with material withdrawn from the corresponding
+            //    in-transport layers, scaled by coverage and depofraction.
+            //
+            //    The correspondence is:
+            //      new top layer index s (0-based) <-> template layer index s (0-based).
+            //    Let:
+            //      coverageFraction_s = segmentThickness_s / templateLayerThickness_s (in [0,1]),
+            //      withdrawalFraction_s = coverageFraction_s * depofraction.
+            for (int layerIndex = 0; layerIndex < numberOfTopSegments; layerIndex++)
+            {
+                double segmentThickness_m = depositionSegmentThicknesses_m[layerIndex];
+                double templateLayerThickness_m = expected_lay_thick_m[layerIndex];
+                double coverageFraction = (templateLayerThickness_m > 0.0)
+                                                  ? (segmentThickness_m / templateLayerThickness_m)
+                                                  : 0.0;
+                double withdrawalFraction = coverageFraction * depofraction;
+
+                // Initialize the new top layer at [segmentIndex] with the prescribed thickness,
+                // zeroing its mass content before adding.
+                layerthickness_m[deprow, depcol, layerIndex] = segmentThickness_m;
+
+                for (int textureClass = 0; textureClass < n_texture_classes; textureClass++)
+                    texture_kg[deprow, depcol, layerIndex, textureClass] = 0.0;
+                young_SOM_kg[deprow, depcol, layerIndex] = 0.0;
+                old_SOM_kg[deprow, depcol, layerIndex] = 0.0;
+
+                // Withdraw from the corresponding in-transport layer and place into the new top layer.
+                for (int textureClass = 0; textureClass < n_texture_classes; textureClass++)
+                {
+                    double availableTransportMass_kg =
+                        lay_sediment_in_transport_kg[deprow, depcol, layerIndex, textureClass];
+
+                    // Compute withdrawn mass for this class
+                    double withdrawnMass_kg = availableTransportMass_kg * withdrawalFraction;
+
+                    // Update destination and source with clamping
+                    texture_kg[deprow, depcol, layerIndex, textureClass] += withdrawnMass_kg;
+
+                    double updatedTransportMass_kg = availableTransportMass_kg - withdrawnMass_kg;
+                    lay_sediment_in_transport_kg[deprow, depcol, layerIndex, textureClass] =
+                        ClampNonNegative(updatedTransportMass_kg);
+
+                    // Accumulate local deposit accounting (optional)
+                    locally_deposited_mass_kg += withdrawnMass_kg;
+                }
+
+                // Withdraw SOM (young and old) for this segment, with clamping.
+                {
+                    double availableYoungTransport_kg = lay_young_SOM_in_transport_kg[deprow, depcol, layerIndex];
+                    double availableOldTransport_kg = lay_old_SOM_in_transport_kg[deprow, depcol, layerIndex];
+
+                    double withdrawnYoung_kg = availableYoungTransport_kg * withdrawalFraction;
+                    double withdrawnOld_kg = availableOldTransport_kg * withdrawalFraction;
+
+                    // Update destination
+                    young_SOM_kg[deprow, depcol, layerIndex] += withdrawnYoung_kg;
+                    old_SOM_kg[deprow, depcol, layerIndex] += withdrawnOld_kg;
+
+                    // Update sources with clamping
+                    lay_young_SOM_in_transport_kg[deprow, depcol, layerIndex] =
+                        ClampNonNegative(availableYoungTransport_kg - withdrawnYoung_kg);
+                    lay_old_SOM_in_transport_kg[deprow, depcol, layerIndex] =
+                        ClampNonNegative(availableOldTransport_kg - withdrawnOld_kg);
+
+                    locally_deposited_mass_kg += (withdrawnYoung_kg + withdrawnOld_kg);
+                }
+            }
+
+            // 4) If deposition depth produced more segments than we have top slots,
+            //    merge the additional deposition segments into the bottom layer:
+            //    - Increase bottom thickness by each remaining segment thickness.
+            //    - Withdraw the corresponding masses from the in-transport arrays and add to bottom.
+            if (totalNumberOfSegments > numberOfTopSegments)
+            {
+                int bottomLayerIndex = max_soil_layers - 1;
+
+                for (int segmentIndex = numberOfTopSegments; segmentIndex < totalNumberOfSegments; segmentIndex++)
+                {
+                    double segmentThickness_m = depositionSegmentThicknesses_m[segmentIndex];
+                    double templateLayerThickness_m = expected_lay_thick_m[segmentIndex];
+                    double coverageFraction = (templateLayerThickness_m > 0.0)
+                                                      ? (segmentThickness_m / templateLayerThickness_m)
+                                                      : 0.0;
+                    double withdrawalFraction = coverageFraction * depofraction;
+
+                    // Increase bottom thickness by the segment thickness (this preserves total thickness).
+                    layerthickness_m[deprow, depcol, bottomLayerIndex] += segmentThickness_m;
+
+                    // Transfer texture masses to bottom layer
+                    for (int textureClass = 0; textureClass < n_texture_classes; textureClass++)
+                    {
+                        double availableTransportMass_kg =
+                            lay_sediment_in_transport_kg[deprow, depcol, segmentIndex, textureClass];
+
+                        double withdrawnMass_kg = availableTransportMass_kg * withdrawalFraction;
+
+                        texture_kg[deprow, depcol, bottomLayerIndex, textureClass] += withdrawnMass_kg;
+
+                        double updatedTransportMass_kg = availableTransportMass_kg - withdrawnMass_kg;
+                        lay_sediment_in_transport_kg[deprow, depcol, segmentIndex, textureClass] =
+                            ClampNonNegative(updatedTransportMass_kg);
+
+                        locally_deposited_mass_kg += withdrawnMass_kg;
+                    }
+
+                    // Transfer SOM to bottom layer
+                    {
+                        double availableYoungTransport_kg = lay_young_SOM_in_transport_kg[deprow, depcol, segmentIndex];
+                        double availableOldTransport_kg = lay_old_SOM_in_transport_kg[deprow, depcol, segmentIndex];
+
+                        double withdrawnYoung_kg = availableYoungTransport_kg * withdrawalFraction;
+                        double withdrawnOld_kg = availableOldTransport_kg * withdrawalFraction;
+
+                        young_SOM_kg[deprow, depcol, bottomLayerIndex] += withdrawnYoung_kg;
+                        old_SOM_kg[deprow, depcol, bottomLayerIndex] += withdrawnOld_kg;
+
+                        lay_young_SOM_in_transport_kg[deprow, depcol, segmentIndex] =
+                            ClampNonNegative(availableYoungTransport_kg - withdrawnYoung_kg);
+                        lay_old_SOM_in_transport_kg[deprow, depcol, segmentIndex] =
+                            ClampNonNegative(availableOldTransport_kg - withdrawnOld_kg);
+
+                        locally_deposited_mass_kg += (withdrawnYoung_kg + withdrawnOld_kg);
+                    }
+                }
+            }
+
+            // 5) Recompute per-cell layer bookkeeping (thickness aggregation, indices, etc.)
+            update_all_layer_thicknesses(deprow, depcol);
+
+            // Optional diagnostics (note: these functions are user-defined in your model)
+            double old_thickness_m = soildepth_m[deprow, depcol];
+            double new_thickness_m = total_soil_thickness(deprow, depcol);
+            if (new_thickness_m > 10.0)
+            {
+                Debug.WriteLine("soil changed from " + old_thickness_m + "m thick to " + new_thickness_m + "m thick");
+            }
+
+            return locally_deposited_mass_kg;
+        }
+
+        void BlockShiftDownWithBottomMerge_Strict(int row, int col, int shiftCount, int maxlayers)
+        // Helper: Shift all layers down by shiftCount positions (0 <= shiftCount <= maxlayers-1).
+        // - The top [0 .. shiftCount-1] layers are cleared and ready to receive new deposition layers.
+        // - Existing layers are moved down by shiftCount.
+        // - Any content that would be pushed out of the bottom index is merged into the bottom layer.
+        // - Includes clamping against tiny negatives.
+        {
+            if (shiftCount <= 0) return;
+            if (shiftCount >= maxlayers) shiftCount = maxlayers - 1; // strict cap safeguard
+
+            const double ClampEpsLocal = 1e-12;
+            double ClampNonNegativeLocal(double x)
+            {
+                if (x < 0.0 && x > -ClampEpsLocal) return 0.0;
+                return (x < 0.0) ? 0.0 : x;
+            }
+
+            // Cache pre-shift content that will be pushed beyond the bottom by this shift.
+            // These are the layers in the range [maxlayers - shiftCount .. maxlayers - 1].
+            double overflowThickness_m = 0.0;
+            double[] overflowTexture_kg = new double[n_texture_classes];
+            double overflowYoungSOM_kg = 0.0;
+            double overflowOldSOM_kg = 0.0;
+
+            for (int layer = maxlayers - shiftCount; layer < maxlayers; layer++)
+            {
+                if (layer < 0) continue; // safety check
+
+                overflowThickness_m += layerthickness_m[row, col, layer];
+
+                for (int textureClass = 0; textureClass < n_texture_classes; textureClass++)
+                    overflowTexture_kg[textureClass] += texture_kg[row, col, layer, textureClass];
+
+                overflowYoungSOM_kg += young_SOM_kg[row, col, layer];
+                overflowOldSOM_kg += old_SOM_kg[row, col, layer];
+            }
+
+            // Downward in-place shift: iterate from bottom to top to avoid overwriting
+            for (int layer = maxlayers - 1; layer >= shiftCount; layer--)
+            {
+                layerthickness_m[row, col, layer] = layerthickness_m[row, col, layer - shiftCount];
+
+                for (int textureClass = 0; textureClass < n_texture_classes; textureClass++)
+                    texture_kg[row, col, layer, textureClass] =
+                        texture_kg[row, col, layer - shiftCount, textureClass];
+
+                young_SOM_kg[row, col, layer] = young_SOM_kg[row, col, layer - shiftCount];
+                old_SOM_kg[row, col, layer] = old_SOM_kg[row, col, layer - shiftCount];
+
+                // Clamp any tiny negatives introduced by previous operations
+                layerthickness_m[row, col, layer] = ClampNonNegativeLocal(layerthickness_m[row, col, layer]);
+                young_SOM_kg[row, col, layer] = ClampNonNegativeLocal(young_SOM_kg[row, col, layer]);
+                old_SOM_kg[row, col, layer] = ClampNonNegativeLocal(old_SOM_kg[row, col, layer]);
+
+                for (int textureClass = 0; textureClass < n_texture_classes; textureClass++)
+                    texture_kg[row, col, layer, textureClass] =
+                        ClampNonNegativeLocal(texture_kg[row, col, layer, textureClass]);
+            }
+
+            // Clear the newly opened top slots [0 .. shiftCount - 1]
+            for (int layer = 0; layer < shiftCount; layer++)
+            {
+                layerthickness_m[row, col, layer] = 0.0;
+
+                for (int textureClass = 0; textureClass < n_texture_classes; textureClass++)
+                    texture_kg[row, col, layer, textureClass] = 0.0;
+
+                young_SOM_kg[row, col, layer] = 0.0;
+                old_SOM_kg[row, col, layer] = 0.0;
+            }
+
+            // Merge cached overflow into the bottom layer (post-shift index = maxlayers - 1).
+            int bottomLayerIndex = maxlayers - 1;
+
+            layerthickness_m[row, col, bottomLayerIndex] += overflowThickness_m;
+
+            for (int textureClass = 0; textureClass < n_texture_classes; textureClass++)
+                texture_kg[row, col, bottomLayerIndex, textureClass] += overflowTexture_kg[textureClass];
+
+            young_SOM_kg[row, col, bottomLayerIndex] += overflowYoungSOM_kg;
+            old_SOM_kg[row, col, bottomLayerIndex] += overflowOldSOM_kg;
+
+            // Final clamp to avoid tiny negative residues
+            layerthickness_m[row, col, bottomLayerIndex] = ClampNonNegativeLocal(layerthickness_m[row, col, bottomLayerIndex]);
+            young_SOM_kg[row, col, bottomLayerIndex] = ClampNonNegativeLocal(young_SOM_kg[row, col, bottomLayerIndex]);
+            old_SOM_kg[row, col, bottomLayerIndex] = ClampNonNegativeLocal(old_SOM_kg[row, col, bottomLayerIndex]);
+            for (int textureClass = 0; textureClass < n_texture_classes; textureClass++)
+                texture_kg[row, col, bottomLayerIndex, textureClass] =
+                    ClampNonNegativeLocal(texture_kg[row, col, bottomLayerIndex, textureClass]);
+        }
+
         void calculate_critical_rain()    //Calculates Critical Steady State Rainfall for Landsliding    
         {
             //Debug.WriteLine(" calculating critical rainfall amounts per cell");
@@ -1843,14 +2281,14 @@ namespace LORICA4
             calc_saturated_density(particle_density_kg_m3);
             calc_soil_cohesion_factor();
 
-            double beta;
+            double prel_ccrain_m_d;
             nb_ok = 0; nb_check = 0; all_grids = 0;
             maximum_allowed_deposition = large_negative_number; dh_tol = 0.00025;
             for (int row = 0; row < nr; row++)
             {
                 for (int col = 0; col < nc; col++)
                 {
-                    camf[row, col] = 1;    // contributing area multiple flow matrix = 1
+                    contributing_cells[row, col] = 1;    // contributing area multiple flow matrix = 1
                     stslope_radians[row, col] = 0;
                     crrain_m_d[row, col] = nodata_value;
                 }
@@ -1891,10 +2329,10 @@ namespace LORICA4
                                 {
                                     if (dh1 > max_allowed_erosion - dh_tol) { max_allowed_erosion = (dh1 - dh_tol); }
                                 }
-                                dh = dh / d_x;
+                                dh /= d_x;
                                 if (dh > dz_max) { dz_max = dh; direction = (i * 3 + 5 + j); }
                                 dh = Math.Pow(dh, conv_fac);
-                                powered_slope_sum = powered_slope_sum + dh;
+                                powered_slope_sum += dh;
                             }//end if
                         }//end if
                     }//end for
@@ -1917,11 +2355,11 @@ namespace LORICA4
                               // fraction of discharge into a neighbour grid
                                 if ((row != row + i) && (col != col + j)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }
                                 slope_tan = dh / d_x;
-                                dh = dh / d_x;
+                                dh /= d_x;
                                 dh = Math.Pow(dh, conv_fac);
                                 fraction = (dh / powered_slope_sum); // multiple flow
-                                frac_dis = (camf[row, col] * fraction);
-                                camf[row + i, col + j] += frac_dis;
+                                frac_dis = (contributing_cells[row, col] * fraction);
+                                contributing_cells[row + i, col + j] += frac_dis;
                             }//end if
                         }//end if boarders
                     }//end for j
@@ -1947,7 +2385,7 @@ namespace LORICA4
                                     if ((row != row + i) && (col != col + j)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }
                                     if (dh > 000000)
                                     {// i j is a lower neighbour
-                                        dh = dh / d_x;
+                                        dh /= d_x;
                                         if (dh > dz_max) { dz_max = dh; direction = (i * 3 + 5 + j); }
                                     }//end if
                                 }//end if
@@ -1974,9 +2412,11 @@ namespace LORICA4
                                             // Calculation of CRITICAL RAINFALL value = relative landslide hazard, along steepest descent local slope
                                             // we must assume a depth of landsliding to calculate all the soil properties over.
                                             // We now assume that the entire soildepth determines these properties.
-                                            beta = (T_fac[row, col] * (Math.Sin(stslope_radians[row, col]))
-                                                * (dx / (camf[row, col] * dx * dx)) * sat_bd_kg_m3[row, col]
-                                                * (1 - ((Math.Sin(stslope_radians[row, col]) - Cohesion_factor[row, col]) / ((Math.Tan(peak_friction_angle_radians[row, col]) * Math.Cos(stslope_radians[row, col])))))); // 'valid' critical rainfall value
+                                            //ArT attention for formula:
+                                            prel_ccrain_m_d = (transmissiv_m2_d[row, col] * (Math.Sin(stslope_radians[row, col]))
+                                                * (dx / (contributing_cells[row, col] * dx * dx)) 
+                                                * (sat_bd_kg_m3[row, col] / 1000)   // saturated soil bd divided by water bulk density 
+                                                * (1 - ((Math.Sin(stslope_radians[row, col]) - Cohesion_factor[row, col]) / ((Math.Tan(peak_friction_angle_radians[row, col]) * Math.Cos(stslope_radians[row, col])))))); 
                                             /*if (beta < 0)
                                             {
                                                 Debug.WriteLine("problem");
@@ -1984,18 +2424,18 @@ namespace LORICA4
                                             //if (((sat_bd_kg_m3[row, col] * Math.Sin(stslope_radians[row, col])) + ((1 - sat_bd_kg_m3[row, col]) * Math.Cos(stslope_radians[row, col]) * Math.Tan(peak_friction_angle_radians[row, col]))) <= ((sat_bd_kg_m3[row, col]) * (Cohesion_factor[row, col])))
                                             if (Math.Tan(stslope_radians[row, col]) <= (Cohesion_factor[row, col] / Math.Cos(stslope_radians[row, col]) + (1 - (1000 / sat_bd_kg_m3[row, col])) * Math.Tan(peak_friction_angle_radians[row, col])))
                                             {
-                                                beta = nodata_value; // unconditionally stable
+                                                prel_ccrain_m_d = nodata_value; // unconditionally stable
                                             }
                                             if (Math.Tan(stslope_radians[row, col]) > (Math.Tan(peak_friction_angle_radians[row, col]) + (Cohesion_factor[row, col] / Math.Cos(stslope_radians[row, col]))))
                                             {
-                                                beta = 0;  //unconditionally unstable
+                                                prel_ccrain_m_d = 0;  //unconditionally unstable
                                             }
                                             //places that are both always unstable and always stable (should not be the case):
                                             if (Math.Tan(peak_friction_angle_radians[row, col]) < (1 - (1000 / sat_bd_kg_m3[row, col])) * Math.Tan(peak_friction_angle_radians[row, col]))
                                             {
-                                                beta = 11;  //both at the same time!
+                                                prel_ccrain_m_d = 11;  //both at the same time!
                                             }
-                                            crrain_m_d[row, col] = (beta);
+                                            crrain_m_d[row, col] = (prel_ccrain_m_d);
                                             //Debug.WriteLine( "critical rain for " + row + " " + col + " " + crrain[row,col] + " T_fac " + T_fac[row, col] + " stslope_sin " + Math.Sin(stslope[row, col]) + " upstream " + camf[row,col] + "\n bulkd " + bulkd[row, col] + " C_fac " + C_fac[row, col] + " intfr " + Math.Tan(intfr[row, col]) + " stslope_cos " + Math.Cos(stslope[row, col]) );
                                         }
                                     }
@@ -2005,14 +2445,14 @@ namespace LORICA4
                     } // end no data loop
                 } // end for
             } // end for 
-            
-            if (t % 20 == 0 && t>0) //AleG 
+
+            if (t % 20 == 0 && t > 0) //AleG 
             {
                 out_double(workdir + "\\" + run_number + "_" + t + "_critrain_m_d.asc", crrain_m_d);
                 out_double(workdir + "\\" + run_number + "_" + t + "_peakfrictangle_radians.asc", peak_friction_angle_radians);
                 out_double(workdir + "\\" + run_number + "_" + t + "_cohesion_factor.asc", Cohesion_factor);
                 out_double(workdir + "\\" + run_number + "_" + t + "_residfrictangle_radians.asc", resid_friction_angle_radians);
-                out_double(workdir + "\\" + run_number + "_" + t + "_transmissivity_m2_d.asc", T_fac);
+                out_double(workdir + "\\" + run_number + "_" + t + "_transmissivity_m2_d.asc", transmissiv_m2_d);
             }
         }
 
@@ -2040,7 +2480,7 @@ namespace LORICA4
                             if (dtm[trow + i, tcol + j] != nodata_value)
                             {
                                 dh = (dtm[trow, tcol] - dtm[trow + i, tcol + j]);
-                                if ((trow != trow + i) && (tcol != tcol + j)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }
+                                double d_x = dx * Math.Sqrt(i * i + j * j); // = dx for orthogonal, dx*√2 for diagonal
                                 if (dh < 000000)
                                 {// i j is a higher neighbour
                                     if (dh > dz_min) { dz_min = dh; }
@@ -2065,23 +2505,32 @@ namespace LORICA4
                         }//end if
                     }//end for
                 }//end for
-                if (maximum_allowed_deposition == large_negative_number) { maximum_allowed_deposition = 0; } else { maximum_allowed_deposition = (maximum_allowed_deposition * (-1)); }
-                if (max_allowed_erosion == 0) { max_allowed_erosion = dh_tol * -1; } else { max_allowed_erosion = (max_allowed_erosion * (-1)); }
+                if (maximum_allowed_deposition == large_negative_number) { maximum_allowed_deposition = 0; } else { maximum_allowed_deposition *= (-1); }
+                if (max_allowed_erosion == 0) { max_allowed_erosion = dh_tol * -1; } else { max_allowed_erosion *= (-1); }
             }
             catch { Debug.WriteLine("failed during search for steepest descent neighbour"); }
         }
+
         void calculate_slide_new()
         {
-
             Debug.WriteLine("started new land sliding at time " + t);
-            //Mostafa, these values should be set in the interface by the user:
-            double minimum_slope_for_movement_tan = Convert.ToDouble(minimum_slope_for_movement_tan_textbox.Text); //AleG;  
-            double runout_ratio = 0.35; //in horizontal meters covered by the deposit PER vertical meters of the eroding part of a landslide. Ratio is static, hordist can grow and shrink repeatedly with topography
+            double minimum_slope_for_movement_tan = 0.7; //safety option
+            double runout_ratio = 0.4;  //safety option
+            try {  minimum_slope_for_movement_tan =  Convert.ToDouble(minimum_slope_for_movement_tan_textbox.Text); }
+            catch { Debug.WriteLine("invalid value for tangent of minimum slope for momvement, using safety value of " + minimum_slope_for_movement_tan); }
+            //runout ratio in horizontal meters covered by the deposit PER vertical meters of the eroding part of a landslide. Ratio is static, hordist can grow and shrink repeatedly with topography
+            try { runout_ratio = Convert.ToDouble(minimum_slope_for_movement_tan_textbox.Text); }
+            catch { Debug.WriteLine("invalid value for runout ratio, using safety value of " + runout_ratio); }
             double LS_conv_fac = 1.75; // determines how much eroding material is distributed sideways
 
-            double initiation_volume_m3 = 0, continuation_volume_m3 = 0, deposition_volume_m3 = 0, requested_deposition_volume_m3 = 0;
+            double initiation_volume_m3 = 0, continuation_volume_m3 = 0, deposition_volume_m3 = 0;
             double average_rainfall_intensity_m_d = 0, sum_rainfall_intensity_m_d = 0;
             decimal initiation_mass_kg = 0, continuation_mass_kg = 0, deposition_mass_kg = 0;
+
+            int ls_mixingmode = 0;
+            if (ls_mix_radio_3.Checked) { ls_mixingmode = 3; }
+            if (ls_mix_radio_2.Checked) { ls_mixingmode = 2; }
+            if (ls_mix_radio_1.Checked) { ls_mixingmode = 1; }
             try
             {
                 Task.Factory.StartNew(() =>
@@ -2115,6 +2564,10 @@ namespace LORICA4
                 // B: a landslide can continue (if there are already landslide deposits here, and the slope is steep enough )
                 // C: a landslide can deposit here ( if there are already ls deposits here, but the slope is not steep enough )
                 int runner;
+                Random random = new Random();
+                double n = 1;
+                //alternatively, hardcode some fraction of variability on rain intensity from yr to yr
+                double daily_rain_as_frct_of_annual = Convert.ToDouble(text_ls_rel_rain_intens.Text);
                 for (runner = number_of_data_cells - 1; runner >= 0; runner--)
                 {           // the list of cells (index) is sorted from low to high values, but flow goes from high to low
                             //so, we will now walk from highest cell to next lower cell, etc, not necessarily to a direct neighbour.
@@ -2127,14 +2580,10 @@ namespace LORICA4
                     steepdesc(row, col); // this changes the value of global variables xrow,xcol so that those reference the steepest lower neighbour
                     if (xrow == row | xcol == col) { d_x = dx; } else { d_x = dx * Math.Sqrt(2); }
                     double steepestslope_tan = (dtm[row, col] - dtm[xrow, xcol]) / d_x;
-                    steepestslope_tan = steepestslope_tan;
                     //calculating current local rain intensity:
                     if (check_space_rain.Checked == true) { rain_value_m = rain_m[row, col]; }
-                    rain_intensity_m_d = Convert.ToDouble(text_ls_rel_rain_intens.Text) * rain_value_m;
-                    //make sure we don't always hit that rain intensity in the same way:
-                    Random random = new Random();
-                    double n = random.NextDouble() / 2 + 0.6;
-                    rain_intensity_m_d = rain_intensity_m_d * n;
+                    rain_intensity_m_d = daily_rain_as_frct_of_annual * rain_value_m;
+                    rain_intensity_m_d *= n;
                     sum_rainfall_intensity_m_d += rain_intensity_m_d;
                     //Debug.WriteLine("this year's rain factor is " + n);
 
@@ -2181,22 +2630,24 @@ namespace LORICA4
                             if (situation_A == true)
                             {
                                 initiation_volume_m3 += actual_erosion_m * dx * dx;
-                                initiation_mass_kg += Convert.ToDecimal(store_slid_mass_new(actual_erosion_m, row, col));
+                                //now actually erode soil layers:
+                                if (ls_mixingmode == 1) { initiation_mass_kg += Convert.ToDecimal(store_slid_mass_mix1(actual_erosion_m, row, col)); }
+                                if (ls_mixingmode == 2) { initiation_mass_kg += Convert.ToDecimal(store_slid_mass_mix2(actual_erosion_m, row, col)); }
                             }
                             else
                             {
                                 continuation_volume_m3 += actual_erosion_m * dx * dx;
-                                continuation_mass_kg += Convert.ToDecimal(store_slid_mass_new(actual_erosion_m, row, col));
+                                //now actually erode soil layers:
+                                if (ls_mixingmode == 1) { continuation_mass_kg += Convert.ToDecimal(store_slid_mass_mix1(actual_erosion_m, row, col)); }
+                                if (ls_mixingmode == 2) { continuation_mass_kg += Convert.ToDecimal(store_slid_mass_mix2(actual_erosion_m, row, col)); }
                             }
                         }
                         else
                         { //so we didn't erode anything, usually because there was no soil. That's OK.
-
                         }
-                        //now, take away from the existing soil and add to material in transport
+
                         //then route material in transport to downhill cells, so first calculate powered slope sum for this cell:
                         powered_slope_sum = 0;
-                        double DANGER_extra_factor_ArT_GSA2024 = 0.09;
                         for (int i = -1; i <= 1; i++)
                         {
                             for (int j = -1; j <= 1; j++)
@@ -2211,7 +2662,7 @@ namespace LORICA4
                                         {// i j is a lower neighbour
                                             if ((row != row + i) && (col != col + j)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }
                                             slope_tan = dh / d_x;
-                                            if (slope_tan > minimum_slope_for_movement_tan + DANGER_extra_factor_ArT_GSA2024) // only cells that are steeply enough under this cell, can be recipients
+                                            if (slope_tan > minimum_slope_for_movement_tan) // only cells that are steeply enough under this cell, can be recipients
                                             {
                                                 double powered_slope = Math.Pow(slope_tan, LS_conv_fac);
                                                 powered_slope_sum += powered_slope;
@@ -2222,7 +2673,7 @@ namespace LORICA4
                             }//end for j
                         }//end for i
                          //we now know powered slope sum 
-                         //now clculate the fraction for this cell:
+                         //now calculate the fraction for this cell:
                         for (int i = -1; i <= 1; i++)
                         {
                             for (int j = -1; j <= 1; j++)
@@ -2237,17 +2688,32 @@ namespace LORICA4
                                         {// i j is a lower neighbour
                                             if ((row != row + i) && (col != col + j)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }
                                             slope_tan = dh / d_x;
-                                            if (slope_tan > minimum_slope_for_movement_tan + DANGER_extra_factor_ArT_GSA2024)
+                                            if (slope_tan > minimum_slope_for_movement_tan)
                                             {
                                                 double powered_slope = Math.Pow(slope_tan, LS_conv_fac);
                                                 fraction = powered_slope / powered_slope_sum;
-                                                for (int tex = 0; tex < n_texture_classes; tex++)
+                                                if (ls_mixingmode == 1)
                                                 {
-                                                    sediment_in_transport_kg[row + i, col + j, tex] += fraction * sediment_in_transport_kg[row, col, tex];
-                                                    //Debug.WriteLine("routed " + texture_kg[donorrow, donorcol, layer_slide, ti] * slidfraction + " to sed in trans, now " + sediment_in_transport_kg[donorrow, donorcol, ti]);
+                                                    for (int tex = 0; tex < n_texture_classes; tex++)
+                                                    {
+                                                        sediment_in_transport_kg[row + i, col + j, tex] += fraction * sediment_in_transport_kg[row, col, tex];
+                                                        //Debug.WriteLine("routed " + texture_kg[donorrow, donorcol, layer_slide, ti] * slidfraction + " to sed in trans, now " + sediment_in_transport_kg[donorrow, donorcol, ti]);
+                                                    }
+                                                    young_SOM_in_transport_kg[row + i, col + j] += fraction * young_SOM_in_transport_kg[row, col];
+                                                    old_SOM_in_transport_kg[row + i, col + j] += fraction * old_SOM_in_transport_kg[row, col];
                                                 }
-                                                young_SOM_in_transport_kg[row + i, col + j] += fraction * young_SOM_in_transport_kg[row, col];
-                                                old_SOM_in_transport_kg[row + i, col + j] += fraction * old_SOM_in_transport_kg[row, col];
+                                                if (ls_mixingmode == 2)
+                                                {
+                                                    for (int lay = 0; lay < max_soil_layers; lay++)
+                                                    {
+                                                        for (int tex = 0; tex < n_texture_classes; tex++)
+                                                        {
+                                                            lay_sediment_in_transport_kg[row + i, col + j, lay, tex] += fraction * lay_sediment_in_transport_kg[row, col, lay, tex];
+                                                        }
+                                                        lay_young_SOM_in_transport_kg[row + i, col + j, lay] += fraction * lay_young_SOM_in_transport_kg[row, col, lay];
+                                                        lay_old_SOM_in_transport_kg[row + i, col + j, lay] += fraction * lay_old_SOM_in_transport_kg[row, col, lay];
+                                                    }
+                                                }
                                                 remaining_vertical_size_m[row + i, col + j] = Math.Max(remaining_vertical_size_m[row + i, col + j], (dtm[row, col] - dtm[row + i, col + j]) + remaining_vertical_size_m[row, col]);
                                             }
                                         }
@@ -2258,12 +2724,30 @@ namespace LORICA4
                         //so, all cells under this cell have received the sediment in transport and OM in transport that they need.
                         //We will work on those cells when it's their turn but not now.
                         //for now, we are done with this cell, and it does no longer have sediment in transport:
-                        for (int tex = 0; tex < n_texture_classes; tex++)
+
+                        if (ls_mixingmode == 1)
                         {
-                            sediment_in_transport_kg[row, col, tex] = 0;
+                            for (int tex = 0; tex < n_texture_classes; tex++)
+                            {
+                                sediment_in_transport_kg[row, col, tex] = 0;
+                            }
+                            young_SOM_in_transport_kg[row, col] = 0;
+                            old_SOM_in_transport_kg[row, col] = 0;
                         }
-                        young_SOM_in_transport_kg[row, col] = 0;
-                        old_SOM_in_transport_kg[row, col] = 0;
+                        if (ls_mixingmode == 2)
+                        {
+
+                            for (int layer = 0; layer < max_soil_layers; layer++)
+                            {
+                                for (int tex = 0; tex < n_texture_classes; tex++)
+                                {
+                                    lay_sediment_in_transport_kg[row, col, layer, tex] = 0;
+                                }
+                                lay_old_SOM_in_transport_kg[row, col, layer] = 0;
+                                lay_young_SOM_in_transport_kg[row, col, layer] = 0;
+                            }
+                        }
+
                         //final administration:
                         if (situation_A == true)
                         {
@@ -2287,18 +2771,45 @@ namespace LORICA4
                         double remaining_runout_distance_cells = remaining_vertical_size_m[row, col] / dx * runout_ratio;
                         if (remaining_runout_distance_cells > 1000)
                         {
-                            Debug.WriteLine("hold it right there ");
+                            Debug.WriteLine("hold it right there - excessive runout distance");
                         }
                         double[] available_mass_kg = { 0, 0, 0, 0, 0 };
                         //let's calculate how much landslide mass and thickness we have available:
+                        double available_youngsom = 0;
+                        double available_oldsom = 0;
                         for (int size = 0; size < n_texture_classes; size++)
                         {
-                            available_mass_kg[size] = sediment_in_transport_kg[row, col, size];
+                            if (ls_mixingmode == 1) // fully mixed = uniform
+                            { //uniform
+                                available_mass_kg[size] = sediment_in_transport_kg[row, col, size];
+
+                            }
+                            if (ls_mixingmode == 2 || ls_mixingmode == 3) // layer-mixed or least mixed
+                                                                          // in this case, we add up over all the layers
+                            {
+                                for (int lay = 0; lay < max_soil_layers; lay++)
+                                {
+                                    available_mass_kg[size] += lay_sediment_in_transport_kg[row, col, lay, size];
+                                }
+                            }
                         }
-                        double available_landslide_material_m = calc_thickness_from_mass(available_mass_kg, young_SOM_in_transport_kg[row, col], old_SOM_in_transport_kg[row, col]);
+                        if (ls_mixingmode == 1) // fully mixed = uniform
+                        { //uniform
+                            available_youngsom = young_SOM_in_transport_kg[row, col];
+                            available_oldsom = old_SOM_in_transport_kg[row, col];
+                        }
+                        if (ls_mixingmode == 2 || ls_mixingmode == 3) // fully mixed = uniform
+                        { //by layer
+                            for (int lay = 0; lay < max_soil_layers; lay++)
+                            {
+                                available_youngsom += lay_young_SOM_in_transport_kg[row, col, lay];
+                                available_oldsom += lay_old_SOM_in_transport_kg[row, col, lay];
+                            }
+                        }
+                        double available_landslide_material_m = calc_thickness_from_mass(available_mass_kg, available_youngsom, available_oldsom);
 
                         //Debug.WriteLine(" approximate bd of material to be deposited: " + ( available_mass_kg.Sum() / (available_landslide_material_m * dx * dx)) + " kg/m3");
-                        //OK, we know what we have available, and what its remaining momentum=runout distance is                        
+                        //OK, we know what we have available, and (from earlier) what its remaining momentum=runout distance is                        
                         double requested_deposition_m = available_landslide_material_m;
                         if (remaining_runout_distance_cells > 1)
                         {
@@ -2341,7 +2852,15 @@ namespace LORICA4
                         sed_slid_m[row, col] += maximum_allowed_deposition_m;
                         deposition_volume_m3 += maximum_allowed_deposition_m * dx * dx;
                         decimal previous_dep_mass_kg = deposition_mass_kg;
-                        deposition_mass_kg += Convert.ToDecimal(deposit_slid_mass_new(deposited_landslide_fraction, row, col));
+                        // here we go into the separate functions that guide deposition
+                        if (ls_mixingmode == 1)
+                        {
+                            deposition_mass_kg += Convert.ToDecimal(deposit_slid_mass_mm1(deposited_landslide_fraction, row, col));
+                        }
+                        if (ls_mixingmode == 2)
+                        {
+                            deposition_mass_kg += Convert.ToDecimal(deposit_slid_mass_mm2(deposited_landslide_fraction, row, col, maximum_allowed_deposition_m));
+                        }
                         try
                         {
                             if (maximum_allowed_deposition_m > 0)
@@ -2398,12 +2917,33 @@ namespace LORICA4
                                                     slope_tan = dh / d_x;
                                                     double powered_slope = Math.Pow(slope_tan, LS_conv_fac);
                                                     double distribution_fraction = powered_slope / powered_slope_sum;
-                                                    for (int tex = 0; tex < n_texture_classes; tex++)
+                                                    if (ls_mixingmode == 1)
                                                     {
-                                                        sediment_in_transport_kg[row + i, col + j, tex] += distribution_fraction * undeposited_landslide_fraction * sediment_in_transport_kg[row, col, tex];
+                                                        for (int tex = 0; tex < n_texture_classes; tex++)
+                                                        {
+                                                            sediment_in_transport_kg[row + i, col + j, tex] += distribution_fraction * undeposited_landslide_fraction * sediment_in_transport_kg[row, col, tex];
+                                                        }
+                                                        young_SOM_in_transport_kg[row + i, col + j] += distribution_fraction * undeposited_landslide_fraction * young_SOM_in_transport_kg[row, col];
+                                                        old_SOM_in_transport_kg[row + i, col + j] += distribution_fraction * undeposited_landslide_fraction * old_SOM_in_transport_kg[row, col];
                                                     }
-                                                    young_SOM_in_transport_kg[row + i, col + j] += distribution_fraction * undeposited_landslide_fraction * young_SOM_in_transport_kg[row, col];
-                                                    old_SOM_in_transport_kg[row + i, col + j] += distribution_fraction * undeposited_landslide_fraction * old_SOM_in_transport_kg[row, col];
+                                                    if (ls_mixingmode == 2)
+                                                    {
+                                                        for (int lay = 0; lay < max_soil_layers; lay++)
+                                                        {
+                                                            for (int tex = 0; tex < n_texture_classes; tex++)
+                                                                lay_sediment_in_transport_kg[row + i, col + j, lay, tex] +=
+                                                                    distribution_fraction * undeposited_landslide_fraction *
+                                                                    lay_sediment_in_transport_kg[row, col, lay, tex];
+
+                                                            lay_young_SOM_in_transport_kg[row + i, col + j, lay] +=
+                                                                distribution_fraction * undeposited_landslide_fraction *
+                                                                lay_young_SOM_in_transport_kg[row, col, lay];
+
+                                                            lay_old_SOM_in_transport_kg[row + i, col + j, lay] +=
+                                                                distribution_fraction * undeposited_landslide_fraction *
+                                                                lay_old_SOM_in_transport_kg[row, col, lay];
+                                                        }
+                                                    }
                                                     remaining_vertical_size_m[row + i, col + j] = Math.Max(remaining_vertical_size_m[row + i, col + j], (remaining_runout_distance_cells - (d_x / dx)) * dx / runout_ratio);
                                                 }//end if
                                             } // end if
@@ -2413,12 +2953,27 @@ namespace LORICA4
                             } // end else
                         }
                         //clean up after we are done here:
-                        for (int tex = 0; tex < n_texture_classes; tex++)
+                        if (ls_mixingmode == 1)
                         {
-                            sediment_in_transport_kg[row, col, tex] = 0;
+                            for (int tex = 0; tex < n_texture_classes; tex++)
+                            {
+                                sediment_in_transport_kg[row, col, tex] = 0;
+                            }
+                            young_SOM_in_transport_kg[row, col] = 0;
+                            old_SOM_in_transport_kg[row, col] = 0;
                         }
-                        young_SOM_in_transport_kg[row, col] = 0;
-                        old_SOM_in_transport_kg[row, col] = 0;
+                        if (ls_mixingmode == 2)
+                        {
+                            for (int lay = 0; lay < max_soil_layers; lay++)
+                            {
+                                for (int tex = 0; tex < n_texture_classes; tex++)
+                                {
+                                    lay_sediment_in_transport_kg[row, col, lay, tex] = 0;
+                                }
+                                lay_young_SOM_in_transport_kg[row, col, lay] = 0;
+                                lay_old_SOM_in_transport_kg[row, col, lay] = 0;
+                            }
+                        }
                         //do administration:
                         if (maximum_allowed_deposition_m == 0)
                         {
@@ -2437,14 +2992,11 @@ namespace LORICA4
                         {
                             if (sediment_in_transport_kg[row, col, tex] > 0)
                             {
-                                //Debug.WriteLine(" there is sediment left but no place to put it. Now what? " + row + " " + col + " " + sediment_in_transport_kg[row, col, tex] + " kg");
+                                Debug.WriteLine(" there is sediment left but no place to put it. Now what? " + row + " " + col + " " + sediment_in_transport_kg[row, col, tex] + " kg");
                             }
                         }
                     }
                 } //for runner
-
-
-
 
                 //now update the DTM:
                 for (row = 0; row < nr; row++)
@@ -2469,6 +3021,7 @@ namespace LORICA4
                     //out_double(workdir + "\\" + run_number + "_" + string.Format("{0:0000.}", t) + "_verticalsize_m.asc", remaining_vertical_size_m);
                     //out_sed_in_tran_kg(workdir + "\\" + run_number + "_" + string.Format("{0:0000.}", t) + "_sed_in_trans_kg.asc", sediment_in_transport_kg);
                 }
+                write_landslide_rasters();
 
                 Debug.WriteLine(" initiated on " + landslide_initiation_cells + " cells (" + (100 * landslide_initiation_cells / number_of_data_cells) + "%)");
                 Debug.WriteLine(" continued through " + landslide_continuation_cells + " cells(" + (100 * landslide_continuation_cells / number_of_data_cells) + "%)");
@@ -2502,7 +3055,171 @@ namespace LORICA4
                 }
                 Debug.WriteLine(" finished landsliding process");
             } // try
-            catch (Exception e) { }
+            catch (Exception) { }
+        }
+
+        // Writes vertically lumped rasters for mineral texture and OM, plus key landslide inputs.
+        // Call this after calc_friction_angles(), calc_transmissivity(), calc_saturated_density(), calc_soil_cohesion_factor()
+        // and (optionally) after a landslide step to include sed/ero/status.
+        void write_landslide_rasters()
+        {
+            try
+            {
+                // Allocate outputs (row, col)
+                double[,] sum_coarse_kg = new double[nr, nc];
+                double[,] sum_sand_kg = new double[nr, nc];
+                double[,] sum_silt_kg = new double[nr, nc];
+                double[,] sum_clay_kg = new double[nr, nc];
+                double[,] sum_fineclay_kg = new double[nr, nc];
+                double[,] sum_youngSOM_kg = new double[nr, nc];
+                double[,] sum_oldSOM_kg = new double[nr, nc];
+
+                double[,] frac_coarse = new double[nr, nc];
+                double[,] frac_sand = new double[nr, nc];
+                double[,] frac_silt = new double[nr, nc];
+                double[,] frac_clay = new double[nr, nc];
+                double[,] frac_fineclay = new double[nr, nc];
+
+                double[,] SSA_m2_g = new double[nr, nc];  // vertically lumped SSA in m^2/g (as in calc_friction_angles)
+
+                // Set defaults to nodata
+                for (int r = 0; r < nr; r++)
+                {
+                    for (int c = 0; c < nc; c++)
+                    {
+                        if (dtm[r, c] == nodata_value)
+                        {
+                            sum_coarse_kg[r, c] = nodata_value;
+                            sum_sand_kg[r, c] = nodata_value;
+                            sum_silt_kg[r, c] = nodata_value;
+                            sum_clay_kg[r, c] = nodata_value;
+                            sum_fineclay_kg[r, c] = nodata_value;
+                            sum_youngSOM_kg[r, c] = nodata_value;
+                            sum_oldSOM_kg[r, c] = nodata_value;
+
+                            frac_coarse[r, c] = nodata_value;
+                            frac_sand[r, c] = nodata_value;
+                            frac_silt[r, c] = nodata_value;
+                            frac_clay[r, c] = nodata_value;
+                            frac_fineclay[r, c] = nodata_value;
+
+                            SSA_m2_g[r, c] = nodata_value;
+                        }
+                    }
+                }
+
+                // Aggregate over layers and compute fractions + SSA
+                for (int r = 0; r < nr; r++)
+                {
+                    for (int c = 0; c < nc; c++)
+                    {
+                        if (dtm[r, c] == nodata_value) continue;
+
+                        double s0 = 0, s1 = 0, s2 = 0, s3 = 0, s4 = 0;
+                        double somY = 0, somO = 0;
+
+                        for (int lay = 0; lay < max_soil_layers; lay++)
+                        {
+                            double t0 = texture_kg[r, c, lay, 0];
+                            double t1 = texture_kg[r, c, lay, 1];
+                            double t2 = texture_kg[r, c, lay, 2];
+                            double t3 = texture_kg[r, c, lay, 3];
+                            double t4 = texture_kg[r, c, lay, 4];
+
+                            if (t0 > 0) s0 += t0;
+                            if (t1 > 0) s1 += t1;
+                            if (t2 > 0) s2 += t2;
+                            if (t3 > 0) s3 += t3;
+                            if (t4 > 0) s4 += t4;
+
+                            double y = young_SOM_kg[r, c, lay];
+                            double o = old_SOM_kg[r, c, lay];
+                            if (y > 0) somY += y;
+                            if (o > 0) somO += o;
+                        }
+
+                        double mineralTotal = s0 + s1 + s2 + s3 + s4;
+
+                        sum_coarse_kg[r, c] = s0;
+                        sum_sand_kg[r, c] = s1;
+                        sum_silt_kg[r, c] = s2;
+                        sum_clay_kg[r, c] = s3;
+                        sum_fineclay_kg[r, c] = s4;
+                        sum_youngSOM_kg[r, c] = somY;
+                        sum_oldSOM_kg[r, c] = somO;
+
+                        if (mineralTotal > 0)
+                        {
+                            frac_coarse[r, c] = s0 / mineralTotal;
+                            frac_sand[r, c] = s1 / mineralTotal;
+                            frac_silt[r, c] = s2 / mineralTotal;
+                            frac_clay[r, c] = s3 / mineralTotal;
+                            frac_fineclay[r, c] = s4 / mineralTotal;
+
+                            // Specific surface area m^2/g, as in calc_friction_angles, but for the whole profile:
+                            // SSA_profile = (Σ f_k * specific_area[k]) * 0.001, with f_k = class fraction over the mineral total.
+                            double ssa_m2_per_kg = 0.0;
+                            ssa_m2_per_kg += frac_coarse[r, c] * specific_area[0];
+                            ssa_m2_per_kg += frac_sand[r, c] * specific_area[1];
+                            ssa_m2_per_kg += frac_silt[r, c] * specific_area[2];
+                            ssa_m2_per_kg += frac_clay[r, c] * specific_area[3];
+                            ssa_m2_per_kg += frac_fineclay[r, c] * specific_area[4];
+
+                            SSA_m2_g[r, c] = ssa_m2_per_kg * 0.001; // m^2/kg -> m^2/g
+                        }
+                        else
+                        {
+                            frac_coarse[r, c] = nodata_value;
+                            frac_sand[r, c] = nodata_value;
+                            frac_silt[r, c] = nodata_value;
+                            frac_clay[r, c] = nodata_value;
+                            frac_fineclay[r, c] = nodata_value;
+                            SSA_m2_g[r, c] = nodata_value;
+                        }
+                    }
+                }
+
+                // Write aggregated mineral and OM maps
+                string prefix = workdir + "\\" + run_number + "_" + t + "_";
+
+                out_double(prefix + "sum_coarse_kg.asc", sum_coarse_kg);
+                out_double(prefix + "sum_sand_kg.asc", sum_sand_kg);
+                out_double(prefix + "sum_silt_kg.asc", sum_silt_kg);
+                out_double(prefix + "sum_clay_kg.asc", sum_clay_kg);
+                out_double(prefix + "sum_fineclay_kg.asc", sum_fineclay_kg);
+
+                out_double(prefix + "sum_youngSOM_kg.asc", sum_youngSOM_kg);
+                out_double(prefix + "sum_oldSOM_kg.asc", sum_oldSOM_kg);
+
+                out_double(prefix + "frac_coarse.asc", frac_coarse);
+                out_double(prefix + "frac_sand.asc", frac_sand);
+                out_double(prefix + "frac_silt.asc", frac_silt);
+                out_double(prefix + "frac_clay.asc", frac_clay);
+                out_double(prefix + "frac_fineclay.asc", frac_fineclay);
+
+                out_double(prefix + "SSA_m2_g.asc", SSA_m2_g);
+
+                // Also write the key landslide inputs already computed at row–col scale
+                // (these are 2D rasters produced by your earlier steps)
+                out_double(prefix + "peakfrictangle_radians.asc", peak_friction_angle_radians);
+                out_double(prefix + "residfrictangle_radians.asc", resid_friction_angle_radians);
+                out_double(prefix + "cohesion_factor.asc", Cohesion_factor);
+                out_double(prefix + "transmissivity_m2_d.asc", transmissiv_m2_d);
+                out_double(prefix + "sat_bd_kg_m3.asc", sat_bd_kg_m3);
+                out_double(prefix + "critrain_m_d.asc", crrain_m_d);
+                out_double(prefix + "stslope_radians.asc", stslope_radians);
+
+                // If a landslide step has been run, these may be meaningful to export as well
+                out_double(prefix + "slide_erosion_m.asc", ero_slid_m);
+                out_double(prefix + "slide_deposit_m.asc", sed_slid_m);
+                out_double(prefix + "remaining_verticalsize_m.asc", remaining_vertical_size_m);
+                out_short(prefix + "slide_status.asc", slidestatus); // integer codes 0..5
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("write_landslide_input_rasters failed: " + ex.Message);
+            }
         }
 
         private void calculate_tillage()
@@ -2530,18 +3247,20 @@ namespace LORICA4
                 for (runner = number_of_data_cells - 1; runner >= 0; runner--)
                 {           // the index is sorted from low to high values, but flow goes from high to low
                     row = row_index[runner]; col = col_index[runner];
-                    //  Debug.WriteLine("till1");
+
 
                     if (tillfields[row, col] == 1)
                     {
                         if (check_negative_weight(row, col) == true) { MessageBox.Show("negative weight in t " + t + ", row " + row + ", col " + col + ", step 1"); }
 
                         // 1. Mixing of the topsoil. We use the code for upheaval for this
-                        soil_bioturbation_upheaval(1, plough_depth);
+                        //Debug.WriteLine("till1 " + tillfields[row, col] + " " + row + " " + col);
+                        soil_bioturbation_upheaval(1, plough_depth, row, col);
+                        //Debug.WriteLine("till1 " + tillfields[row, col] + " " + row + " " + col);
 
 
 
-                        // Debug.WriteLine("till5");
+                        //Debug.WriteLine("till5");
                         // 2. Calculate redistribution of material
                         // 2.a First calculate slope_sum for multiple flow, and remember how much lower the !currently! lowest lower neighbour is
                         slope_sum = 0; d_x = dx; dhtemp = large_negative_number; nb_ok = 1; dz_max = 0; dz_min = large_negative_number;
@@ -2559,9 +3278,9 @@ namespace LORICA4
                                         if (dh > 0)
                                         {           // i j is a lower neighbour
                                             if (dh > dz_max) { dz_max = dh; }
-                                            dh = dh / d_x;
+                                            dh /= d_x;
                                             // dh = Math.Pow(dh, conv_fac); MvdM tillage always with normal divergence, not accentuated by convergence factor
-                                            slope_sum = slope_sum + dh;
+                                            slope_sum += dh;
                                         }//end if
                                     }//end if novalues
                                 }// end if boundaries
@@ -2573,7 +3292,7 @@ namespace LORICA4
                         // than its lowest lower neighbour (avoiding sinks).
                         // we are also going to limit the tilled amount to avoid row+i, col+j becoming higher than its own lowest higher nb.
                         // that avoids sinks as well.
-                        // Debug.WriteLine("till6");
+                        //Debug.WriteLine("till6");
                         for (i = (-1); i <= 1; i++)
                         {
                             for (j = (-1); j <= 1; j++)
@@ -2591,18 +3310,18 @@ namespace LORICA4
                                         {
                                             // Debugger.Break();
                                         }
-                                        if (dh > 0.000000) // i j is a lower neighbour to which we would like to till a certain amount.
+                                        if (dh > 0.0) // i j is a lower neighbour to which we would like to till a certain amount.
                                         {
                                             // Calculate fraction of discharge into this cell
                                             if ((row != row + i) && (col != col + j)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }
                                             slope = dh / d_x;
-                                            dh = dh / d_x;
+                                            dh /= d_x;
                                             // dh = Math.Pow(dh, conv_fac); MvdM tillage always with normal divergence, not accentuated by convergence factor
                                             fraction = (dh / slope_sum);
                                             // Tillage erosion calculation
                                             temptill = fraction * (tilc * slope * plough_depth) * dt;    // temptill is what we would like to till from r,c to r+i,c+j
                                                                                                          // Tillage erosion correction through calculating maximum tillage: tempdep
-                                           if(temptill > 0.5)
+                                            if (temptill > 0.5)
                                             {
                                                 // Debugger.Break();
                                             }
@@ -2640,17 +3359,17 @@ namespace LORICA4
 
                                             till_result[row, col] -= temptill;
                                             till_result[row + i, col + j] += temptill;
-                                           
+
                                             if (check_negative_weight(row, col) == true) { MessageBox.Show("negative weight in t " + t + ", row " + row + ", col " + col + ", step 2"); }
 
                                             //double dz_till_m = temptill;
-                                            // Debug.WriteLine("till7");
+                                            //Debug.WriteLine("till7");
 
                                             // 2.c update soil properties which are tilled
                                             // top layers are mixed, so it doesn't matter where eroded material comes from.
                                             // problems can arise when eroded depth is larger than plough depth. 
                                             // DEVELOP MvdM: development needed for layers with varying bulk density, in the case this occurs in an Ap horizon
-                                            double mass_partial_layer, frac_eroded, total_mass_start, total_mass_end;
+                                            double frac_eroded;
 
                                             //total_mass_start = total_soil_mass(row, col);
                                             int layero = 0;
@@ -2662,19 +3381,19 @@ namespace LORICA4
                                                 temptill -= layerthickness_m[row, col, layero];
 
                                                 transfer_material_between_layers(row, col, layero, row + i, col + j, 0, 1);
-                                                
+
 
                                                 //layerthickness_m[row, col, layero] = 0;
                                                 //layerthickness_m[row + i, col + j, 0] = thickness_calc(row + i, col + j, 0);
 
                                                 layero++;
                                                 // escape when last soil layer is reached
-                                                if (layero == (max_soil_layers - 1)) ;
+                                                if (layero == (max_soil_layers - 1))
                                                 {
                                                     break;
                                                 }
                                             }
-                                            // Debug.WriteLine("till8");
+                                            //Debug.WriteLine("till8");
 
                                             // The remaining layer is partly eroded, based on the volume fraction, or is the last soil layer that gets completely eroded
                                             frac_eroded = temptill / layerthickness_m[row, col, layero];
@@ -2698,7 +3417,7 @@ namespace LORICA4
                         }//end for i
                     } //end if tillfields
                 }   // end  for 
-                    // Debug.WriteLine("till9");
+                    //Debug.WriteLine("till9");
                     // 3. Update elevation changes
                 for (row = 0; row < nr; row++)
                 {
@@ -2719,8 +3438,8 @@ namespace LORICA4
                     }
                 }
 
-                // Debug.WriteLine("\n--tillage overview--");
-                // Debug.WriteLine(" tilled a total of " + total_sum_tillage * dx * dx / 1000 + " * 1000 m3");
+                Debug.WriteLine("\n--tillage overview--");
+                Debug.WriteLine(" tilled a total of " + total_sum_tillage * dx * dx / 1000 + " * 1000 m3");
                 Decimal mass_after = total_catchment_mass_decimal();
                 if (Math.Abs(mass_before - mass_after) > Convert.ToDecimal(0.1))
                 {
@@ -2758,18 +3477,14 @@ namespace LORICA4
                     this.InfoStatusPanel.Text = "creep calculation";
                 }, CancellationToken.None, TaskCreationOptions.None, guiThread);
                 int row, col,
-                            i, j,
-                            nb_ok,
-                            NA_dem;
+                            i, j;
                 double
                             dhmin, dhe_tol, dhs_tol,
                             slope_sum, dhmax, dz_min, d_x, dz_max, dh1, dh,
                             fraction,
-                            temp, tempcreep_kg, tempdep,
-                            slope,
+                            temp, tempcreep_kg, slope,
                             local_creep_kg = 0;
-
-                nb_ok = 0; nb_check = 0; all_grids = 0;
+                nb_check = 0; all_grids = 0;
                 dhmin = large_negative_number; dhe_tol = 0.00000; dhs_tol = 0.00000;
 
                 //NA_dem = NA_in_DEM();
@@ -2800,7 +3515,7 @@ namespace LORICA4
                                 dh = 000000; dh1 = 000; dhtemp = large_negative_number; d_x = dx;
                                 if (((row + i) >= 0) && ((row + i) < nr) && ((col + j) >= 0) && ((col + j) < nc) && !((i == 0) && (j == 0)))
                                 {    // boundaries
-                                    if (dtm[row + i, col + j] != nodata_value);
+                                    if (dtm[row + i, col + j] != nodata_value)
                                     {
                                         dh = ((dtm)[row, col] - (dtm)[row + i, col + j]);
                                         if ((row != row + i) && (col != col + j)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }
@@ -2812,10 +3527,10 @@ namespace LORICA4
                                         if (dh > 000000)
                                         {           // i j is a lower neighbour
                                             if (dh > dhmax - dhe_tol) { dhmax = (dh - dhe_tol); }
-                                            dh = dh / d_x;
+                                            dh /= d_x;
                                             if (dh > dz_max) { dz_max = dh; }
                                             dh = Math.Pow(dh, conv_fac);
-                                            slope_sum = slope_sum + dh;
+                                            slope_sum += dh;
                                         }//end if
                                     }//end if novalues
                                 }// end if boundaries
@@ -2861,7 +3576,7 @@ namespace LORICA4
                             {
                                 for (j = (-1); j <= 1; j++)
                                 {
-                                    dh = 0.000000; fraction = 0.0;
+                                    dh = 0.0; fraction = 0.0;
                                     frac_dis = 0.0;
                                     d_x = dx;
                                     //if (col == 1 | col == (nc - 1))
@@ -2880,14 +3595,14 @@ namespace LORICA4
                                             temp = dtm[row + i, col + j];
                                             // if (NA_dem != NA_in_DEM()) { Debugger.Break(); }
                                             // Multiple Flow: If there are lower neighbours start evaluating
-                                            if (dh > 0.000000)
+                                            if (dh > 0.0)
                                             {
                                                 // if (row == 31 && col == 12) { Debug.WriteLine("creep3"); displaysoil(row, col); }
                                                 //Debug.WriteLine("Cr1, dtm = {0}", dtm[row, col]);
                                                 // fraction of discharge into a neighbour grid
                                                 if ((row != row + i) && (col != col + j)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }
                                                 slope = dh / d_x;
-                                                dh = dh / d_x;
+                                                dh /= d_x;
                                                 dh = Math.Pow(dh, conv_fac);
                                                 fraction = (dh / slope_sum);
                                                 tempcreep_kg = fraction * local_creep_kg * slope * 100; //MM develop. Original function was fraction*slope*diffusivity. Do I need to add slope in calculations?
@@ -3063,7 +3778,7 @@ namespace LORICA4
                 int layerreceiver = 0;
                 double creep_decay_depth_m = Convert.ToDouble(bt_depth_decay_textbox.Text);
 
-                double frac_overlap_lay, upperdepthdonor = 0, lowerdepthdonor = 0, upperdepthreceiver = 0, lowerdepthreceiver = 0, dsoil = 0, upp_z_lay = 0, int_curve_total, int_curve_lay, mass_export_lay_kg;
+                double frac_overlap_lay, upperdepthdonor = 0, lowerdepthdonor = 0, upperdepthreceiver = 0, lowerdepthreceiver = 0, dsoil = 0, upp_z_lay = 0, mass_export_lay_kg;
                 bool C_done = false, lastlayer = false;
 
                 dsoil = total_soil_thickness(row1, col1);
@@ -3281,7 +3996,6 @@ namespace LORICA4
 
         private void creep_transport(int fromrow, int fromcol, int fromlay, int torow, int tocol, int tolay, double mass_export, double fraction_overlap, string exchangetype)
         {
-            double CN_before = 0, CN_after = 0;
             //if (CN_checkbox.Checked) { CN_before = total_CNs(); }
 
             try
@@ -3323,7 +4037,6 @@ namespace LORICA4
         private void calculate_tree_fall()
         {
             Decimal tf_mass_before = total_catchment_mass_decimal();
-            double CN_before = 0, CN_after = 0;
             //if (CN_checkbox.Checked) { CN_before = total_CNs(); }
 
             try
@@ -3749,7 +4462,8 @@ namespace LORICA4
                         if (dtm[row, col] != nodata_value) // Only process non-nodata cells
                         {
                             // Apply water flow processes based on glacier_cell
-                            if (Proglacial_checkbox.Checked) {
+                            if (Proglacial_checkbox.Checked)
+                            {
                                 if (glacier_cell[row, col] == 1) // If it's a glacier cell
                                 {
                                     weatheringdepth = soildepth_m[row, col];
@@ -3805,7 +4519,7 @@ namespace LORICA4
                                 }
                             }
 
-                            
+
                         }
 
                         weatheringdepth = soildepth_m[row, col];

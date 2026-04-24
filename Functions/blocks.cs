@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static LORICA4.Mother_form;
 
 namespace LORICA4
 {
@@ -31,10 +27,9 @@ namespace LORICA4
                             if (hardlayer_near_surface(row, col) == true)
                             {
                                 //Debug.WriteLine(" hard layer is near surface for " + row + " " + col + " dtm " + dtm[row,col] + " layer " + hardlayerelevation_m);
-                                int n_to_s = 5;  //impossible values
-                                int e_to_w = 5;
+                                //impossible values
                                 //Debug.WriteLine("hardlayerthick " + hardlayerthickness_m + "max_dz_across_layer" + max_dz_across_hardlayer_m(row, col, out n_to_s, out e_to_w));
-                                if (max_dz_across_hardlayer_m(row, col, out n_to_s, out e_to_w) > hardlayerthickness_m * 1.25)
+                                if (max_dz_across_hardlayer_m(row, col, out int n_to_s, out int e_to_w) > hardlayerthickness_m * 1.25)
                                 {
                                     //Debug.WriteLine(" hardlayer breaking at row " + row + " " + col );
                                     dtm[row, col] -= hardlayerthickness_m;

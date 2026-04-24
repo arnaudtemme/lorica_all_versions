@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace LORICA4
@@ -26,7 +21,8 @@ namespace LORICA4
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if(timeseries_number_waterflow_check.Checked){
+            if (timeseries_number_waterflow_check.Checked)
+            {
                 try { timeseries_waterflow_threshold = System.Convert.ToDouble(timeseries_textbox_waterflow_threshold.Text); }
                 catch { MessageBox.Show("invalid waterflow threshold"); }
                 if (timeseries_waterflow_threshold < 0) { MessageBox.Show("invalid waterflow threshold"); }

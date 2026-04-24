@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace LORICA4
@@ -164,7 +161,6 @@ namespace LORICA4
             //example for Luxembourg: we want to simulate the correct amount of erosion, over the entire slope
             //Xia, number needs to be adapted
             double simulated_ero_m3 = 0;
-            double simulated_ero_kg_m2_y = 0;
             double known_ero_kg_m2_y = 0.0313;
             double total_bulk_density = 0;
             double average_bulk_density_kg_m3 = 0;
@@ -184,7 +180,7 @@ namespace LORICA4
             average_bulk_density_kg_m3 = total_bulk_density / objective_function_cells;
             //temporary hard fix to test if bulkdensities of 0 are throwing off our calculations 
             average_bulk_density_kg_m3 = 1560;
-            simulated_ero_kg_m2_y = (average_bulk_density_kg_m3 * simulated_ero_m3) / (objective_function_cells * dx * dx) / end_time;
+            double simulated_ero_kg_m2_y = (average_bulk_density_kg_m3 * simulated_ero_m3) / (objective_function_cells * dx * dx) / end_time;
             ;
             Debug.WriteLine(" calib tst - calib_objective_function - error is " + Math.Abs(known_ero_kg_m2_y - simulated_ero_kg_m2_y) + "kg per m2 per year");
             return Math.Abs(known_ero_kg_m2_y - simulated_ero_kg_m2_y);
@@ -201,7 +197,6 @@ namespace LORICA4
             //Xia, number needs to be adapted
             bool calib_erodep = false;
             bool calib_OSL = true;
-            bool calib_CN = false;
             bool calib_stabages = false;
             if (CarboZALF_calib_stabilizationages_checkbox.Checked) { calib_stabages = true; }
             double sim_ero_m = 0, obs_ero_m, sim_depo_m = 0, obs_depo_m, error_CZ = 0;
@@ -467,7 +462,6 @@ namespace LORICA4
             // calculate age penalty
             try
             {
-                int iii = 0;
                 int[] ages_cal = OSL_grainages[row_cal, col_cal, lay_cal];
                 ages_cal = ages_cal.Where(e => e < end_time).ToArray(); // Remove grains that equal run time, focus on the younger ages
                 double[] ages_cal_d = ages_cal.Select(x => (double)x).ToArray();
@@ -539,7 +533,7 @@ namespace LORICA4
                                 if (lineArray[x] == "2") sum += texture_kg[row, col, lyr, 2];
                                 if (lineArray[x] == "3") sum += texture_kg[row, col, lyr, 3];
                                 if (lineArray[x] == "4") sum += texture_kg[row, col, lyr, 4];
-                                if (lineArray[x] == "5") sum += young_SOM_kg[row, col, lyr];  
+                                if (lineArray[x] == "5") sum += young_SOM_kg[row, col, lyr];
                                 if (lineArray[x] == "6") sum += old_SOM_kg[row, col, lyr];
                             }
                         }
@@ -652,8 +646,6 @@ namespace LORICA4
                             int lyr = 0;
                             double lyr_end_depth_m = 0;
                             double lyr_begin_depth_m = 0;
-                            double hor_end_depth_m = 0;
-                            double hor_begin_depth_m = 0;
                             double overlap_m = 0;
                             bool horizonchanged = false;
                             //now calulate errors
@@ -796,7 +788,7 @@ namespace LORICA4
             catch { Debug.WriteLine("  failed during calculation of simulated domain sums"); }
             //the average values of the observations are calculated here
             double OM_obs_depth_sum = 0, coarse_obs_depth_sum = 0, sand_obs_depth_sum = 0, silt_obs_depth_sum = 0, clay_obs_depth_sum = 0, depth_sum = 0;
-            double OM_obs_fract = 0, coarse_obs_fract = 0, sand_obs_fract = 0, silt_obs_fract = 0, clay_obs_fract = 0;
+            double OM_obs_fract, coarse_obs_fract, sand_obs_fract, silt_obs_fract, clay_obs_fract;
             try
             {
                 for (i = 0; i < observations.GetLength(0); i++)
@@ -900,7 +892,7 @@ namespace LORICA4
             }
             Debug.WriteLine(layercount);
             rmse_ct = Math.Pow(rmse_ct / layercount, .5);
-            me_ct = me_ct / layercount;
+            me_ct /= layercount;
             //Debug.Write(rmse_ct + " " + me_ct);
             //Debug.WriteLine("");//start on new line
             lessivage_errors[cal, 0] = Cclay;

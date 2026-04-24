@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace LORICA4
@@ -17,7 +13,7 @@ namespace LORICA4
             this.Close();
         }
 
-         private void timeseries_button_Click(object sender, EventArgs e)
+        private void timeseries_button_Click(object sender, EventArgs e)
         {
             timeseries.Visible = true;
         }
@@ -241,11 +237,13 @@ Example: rainfall.asc can look like:
         private void dtm_input_filename_textbox_Click(object sender, EventArgs e)
         {
 
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
-            openFileDialog1.InitialDirectory = workdir;
-            openFileDialog1.Filter = "Ascii grids (*.asc)|*.asc|All files (*.*)|*.*";
-            openFileDialog1.FilterIndex = 1;
-            openFileDialog1.RestoreDirectory = false;
+            OpenFileDialog openFileDialog1 = new OpenFileDialog
+            {
+                InitialDirectory = workdir,
+                Filter = "Ascii grids (*.asc)|*.asc|All files (*.*)|*.*",
+                FilterIndex = 1,
+                RestoreDirectory = false
+            };
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -255,12 +253,13 @@ Example: rainfall.asc can look like:
 
         private void soildepth_input_filename_textbox_TextChanged(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
-
-            openFileDialog1.InitialDirectory = workdir;
-            openFileDialog1.Filter = "Ascii grids (*.asc)|*.asc|All files (*.*)|*.*";
-            openFileDialog1.FilterIndex = 1;
-            openFileDialog1.RestoreDirectory = false;
+            OpenFileDialog openFileDialog1 = new OpenFileDialog
+            {
+                InitialDirectory = workdir,
+                Filter = "Ascii grids (*.asc)|*.asc|All files (*.*)|*.*",
+                FilterIndex = 1,
+                RestoreDirectory = false
+            };
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -270,12 +269,13 @@ Example: rainfall.asc can look like:
 
         private void landuse_input_filename_textbox_TextChanged(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
-
-            openFileDialog1.InitialDirectory = workdir;
-            openFileDialog1.Filter = "Ascii grids (*.asc)|*.asc|All files (*.*)|*.*";
-            openFileDialog1.FilterIndex = 1;
-            openFileDialog1.RestoreDirectory = false;
+            OpenFileDialog openFileDialog1 = new OpenFileDialog
+            {
+                InitialDirectory = workdir,
+                Filter = "Ascii grids (*.asc)|*.asc|All files (*.*)|*.*",
+                FilterIndex = 1,
+                RestoreDirectory = false
+            };
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -285,12 +285,13 @@ Example: rainfall.asc can look like:
 
         private void tillfields_input_filename_textbox_TextChanged(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
-
-            openFileDialog1.InitialDirectory = workdir;
-            openFileDialog1.Filter = "Ascii grids (*.asc)|*.asc|All files (*.*)|*.*";
-            openFileDialog1.FilterIndex = 1;
-            openFileDialog1.RestoreDirectory = false;
+            OpenFileDialog openFileDialog1 = new OpenFileDialog
+            {
+                InitialDirectory = workdir,
+                Filter = "Ascii grids (*.asc)|*.asc|All files (*.*)|*.*",
+                FilterIndex = 1,
+                RestoreDirectory = false
+            };
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -300,11 +301,12 @@ Example: rainfall.asc can look like:
 
         private void rain_input_filename_textbox_TextChanged(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
-
-            openFileDialog1.InitialDirectory = workdir;
-            openFileDialog1.FilterIndex = 1;
-            openFileDialog1.RestoreDirectory = false;
+            OpenFileDialog openFileDialog1 = new OpenFileDialog
+            {
+                InitialDirectory = workdir,
+                FilterIndex = 1,
+                RestoreDirectory = false
+            };
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -314,12 +316,13 @@ Example: rainfall.asc can look like:
 
         private void infil_input_filename_textbox_TextChanged(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
-
-            openFileDialog1.InitialDirectory = workdir;
-            openFileDialog1.Filter = "Ascii grids (*.asc)|*.asc|All files (*.*)|*.*";
-            openFileDialog1.FilterIndex = 1;
-            openFileDialog1.RestoreDirectory = false;
+            OpenFileDialog openFileDialog1 = new OpenFileDialog
+            {
+                InitialDirectory = workdir,
+                Filter = "Ascii grids (*.asc)|*.asc|All files (*.*)|*.*",
+                FilterIndex = 1,
+                RestoreDirectory = false
+            };
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -329,11 +332,12 @@ Example: rainfall.asc can look like:
 
         private void evap_input_filename_textbox_TextChanged(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
-
-            openFileDialog1.InitialDirectory = workdir;
-            openFileDialog1.FilterIndex = 1;
-            openFileDialog1.RestoreDirectory = false;
+            OpenFileDialog openFileDialog1 = new OpenFileDialog
+            {
+                InitialDirectory = workdir,
+                FilterIndex = 1,
+                RestoreDirectory = false
+            };
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -343,11 +347,12 @@ Example: rainfall.asc can look like:
 
         private void dailyP_TextChanged(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
-
-            openFileDialog1.InitialDirectory = workdir;
-            openFileDialog1.FilterIndex = 1;
-            openFileDialog1.RestoreDirectory = false;
+            OpenFileDialog openFileDialog1 = new OpenFileDialog
+            {
+                InitialDirectory = workdir,
+                FilterIndex = 1,
+                RestoreDirectory = false
+            };
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -357,11 +362,12 @@ Example: rainfall.asc can look like:
 
         private void dailyET0_TextChanged(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
-
-            openFileDialog1.InitialDirectory = workdir;
-            openFileDialog1.FilterIndex = 1;
-            openFileDialog1.RestoreDirectory = false;
+            OpenFileDialog openFileDialog1 = new OpenFileDialog
+            {
+                InitialDirectory = workdir,
+                FilterIndex = 1,
+                RestoreDirectory = false
+            };
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -371,11 +377,12 @@ Example: rainfall.asc can look like:
 
         private void dailyD_TextChanged(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
-
-            openFileDialog1.InitialDirectory = workdir;
-            openFileDialog1.FilterIndex = 1;
-            openFileDialog1.RestoreDirectory = false;
+            OpenFileDialog openFileDialog1 = new OpenFileDialog
+            {
+                InitialDirectory = workdir,
+                FilterIndex = 1,
+                RestoreDirectory = false
+            };
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -383,14 +390,15 @@ Example: rainfall.asc can look like:
             }
         }
 
-        private void proglacial_input_filename_textbox_TextChanged(object sender, EventArgs e)  
+        private void proglacial_input_filename_textbox_TextChanged(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
-
-            openFileDialog1.InitialDirectory = workdir;
-            openFileDialog1.Filter = "Ascii grids (*.asc)|*.asc|All files (*.*)|*.*";
-            openFileDialog1.FilterIndex = 1;
-            openFileDialog1.RestoreDirectory = false;
+            OpenFileDialog openFileDialog1 = new OpenFileDialog
+            {
+                InitialDirectory = workdir,
+                Filter = "Ascii grids (*.asc)|*.asc|All files (*.*)|*.*",
+                FilterIndex = 1,
+                RestoreDirectory = false
+            };
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -400,12 +408,13 @@ Example: rainfall.asc can look like:
 
         private void coarsemap_input_filename_textbox_TextChanged(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
-
-            openFileDialog1.InitialDirectory = workdir;
-            openFileDialog1.Filter = "Ascii grids (*.asc)|*.asc|All files (*.*)|*.*";
-            openFileDialog1.FilterIndex = 1;
-            openFileDialog1.RestoreDirectory = false;
+            OpenFileDialog openFileDialog1 = new OpenFileDialog
+            {
+                InitialDirectory = workdir,
+                Filter = "Ascii grids (*.asc)|*.asc|All files (*.*)|*.*",
+                FilterIndex = 1,
+                RestoreDirectory = false
+            };
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {

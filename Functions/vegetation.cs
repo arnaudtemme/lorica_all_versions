@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace LORICA4
@@ -16,7 +11,7 @@ namespace LORICA4
         void determine_vegetation_type()
         {
             aridity_vegetation = new double[nr, nc];
-            double outflow = 0, aridity, outflowcells = 0;
+            double outflow = 0, aridity;
 
             for (int vrow = 0; vrow < nr; vrow++)
             {

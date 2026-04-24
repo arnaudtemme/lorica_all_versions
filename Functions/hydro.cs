@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace LORICA4
@@ -16,7 +14,7 @@ namespace LORICA4
         int[] Tavgy = new int[365], Tminy = new int[365], Tmaxy = new int[365], Dy = new int[365];
         // int[] D_all = new int[123], Dy = new int[365];
         double[,,] OFy_m, Ks_md, water_balance_m, Ra_rcm;
-        double[,] Iy, ROy, Ks_topsoil_m_h, pond_d, pond_y, outflow_y, stagdepth, waterfactor, total_outflow_y, ETay, ET0y;
+        double[,] Iy, Ks_topsoil_m_h, pond_d, pond_y, outflow_y, stagdepth, waterfactor, total_outflow_y, ETay, ET0y;
         int[] month = new int[12] { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
         int[] monthcum = new int[12] { 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365 };
         int[] midmonthdays = new int[] { 16, 46, 75, 106, 136, 167, 197, 228, 259, 289, 320, 350 };
@@ -473,7 +471,7 @@ namespace LORICA4
             double[,] currentflow = new double[nr, nc];
             // Debug.WriteLine("df1");
             //every cell, inflow and outflow;
-            double powered_slope_sum, OF_tot1 = 0, OF_tot2 = 0, OF_tot3 = 0; ;
+            double powered_slope_sum; ;
             double[,,] OFd = new double[nr, nc, 10];
 
             //0: total flow
@@ -499,7 +497,7 @@ namespace LORICA4
 
             int runner = 0;
             // Debug.WriteLine("df2");
-            double totalwater = 0, totalwater2 = 0;
+            double totalwater = 0;
             // create overland flow in current flow map. This will be reset after flowing out, to consider a new flux of water after saddle overflow, without counting the first flux twice. 
             for (int row = 0; row < nr; row++)
             {
@@ -558,11 +556,11 @@ namespace LORICA4
                                         {
                                             if ((row != row + i) && (col != col + j)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }   // for non-cardinal neighbours, we use the adapted length
 
-                                            dh = dh / d_x;
+                                            dh /= d_x;
                                             dh = Math.Pow(dh, conv_fac);
                                             dh_list.Add(dh);
                                             dh_list_loc.Add(Convert.ToString(col) + "." + Convert.ToString(j));
-                                            powered_slope_sum = powered_slope_sum + dh;
+                                            powered_slope_sum += dh;
 
                                             // no correction for possible sedimentation, like in normal overland flow
                                         }
@@ -592,7 +590,7 @@ namespace LORICA4
                                                 {
                                                     if ((row != row + i) && (col != col + j)) { d_x = dx * Math.Sqrt(2); } else { d_x = dx; }   // for non-cardinal neighbours, we use the adapted length
 
-                                                    dh = dh / d_x;
+                                                    dh /= d_x;
                                                     dh = Math.Pow(dh, conv_fac);
                                                     int t2 = t;
                                                     // if (col == 12) { Debugger.Break(); }
@@ -726,7 +724,7 @@ namespace LORICA4
             // Debug.WriteLine("KsW2");
             if (Double.IsNaN(KsW)) { KsW = 0; }
             // Debug.WriteLine("KsW3");
-            return (KsW); // m day-1
+            return (KsW); // units are m day-1 per the paper
 
         }
 
@@ -861,8 +859,6 @@ namespace LORICA4
                 }
                 // Debug.WriteLine("po3");
             } // end of water redistribution
-
-            bool negativeponding = false;
             for (int r = 0; r < nr; r++)
             {
                 for (int c = 0; c < nc; c++)

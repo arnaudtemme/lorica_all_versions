@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace LORICA4
 {
@@ -144,7 +139,7 @@ namespace LORICA4
                 //{
                 cumthick += layerthickness_m[row, col, layer];
                 depth -= layerthickness_m[row, col, layer] / 2;
-                double totalweight = texture_kg[row, col, layer, 0] + texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4] + young_SOM_kg[row, col, layer] + old_SOM_kg[row, col, layer];  
+                double totalweight = texture_kg[row, col, layer, 0] + texture_kg[row, col, layer, 1] + texture_kg[row, col, layer, 2] + texture_kg[row, col, layer, 3] + texture_kg[row, col, layer, 4] + young_SOM_kg[row, col, layer] + old_SOM_kg[row, col, layer];
                 try { Debug.WriteLine(row + " " + col + " " + t + " " + layer + " " + cumthick + " " + layerthickness_m[row, col, layer] + " " + depth + " " + z_layer + " " + texture_kg[row, col, layer, 0] + " " + texture_kg[row, col, layer, 1] + " " + texture_kg[row, col, layer, 2] + " " + texture_kg[row, col, layer, 3] + " " + texture_kg[row, col, layer, 4] + " " + young_SOM_kg[row, col, layer] + " " + old_SOM_kg[row, col, layer] + " " + young_SOM_kg[row, col, layer] / old_SOM_kg[row, col, layer] + " " + texture_kg[row, col, layer, 0] / totalweight + " " + texture_kg[row, col, layer, 1] / totalweight + " " + texture_kg[row, col, layer, 2] / totalweight + " " + texture_kg[row, col, layer, 3] / totalweight + " " + texture_kg[row, col, layer, 4] / totalweight + " " + bulkdensity[row, col, layer]); }
                 catch { Debug.WriteLine("Cannot write soilprofile"); }
                 depth -= layerthickness_m[row, col, layer] / 2;
@@ -199,7 +194,7 @@ namespace LORICA4
                 tot_mass += Convert.ToDecimal(old_SOM_kg[rowmass, colmass, lay]);
                 tot_mass += Convert.ToDecimal(young_SOM_kg[rowmass, colmass, lay]);
             }
-            
+
             return (tot_mass);
         }
 

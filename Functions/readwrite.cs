@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -14,7 +11,7 @@ namespace LORICA4
     {
         void calculate_terrain_derivatives()
         {
-            //takes the DTM and calculates key derivatives and writes these to ASCII files
+            //only takes the DTM and calculates key derivatives and writes these to ASCII files
             try { dtm_file(dtm_input_filename_textbox.Text); }
             catch { Debug.WriteLine("could not read DEM for derivative calculation"); }
 
@@ -83,7 +80,7 @@ namespace LORICA4
                     ledges[row, col] = nodata_value;
                     nedges[row, col] = nodata_value;
                     hedges[row, col] = nodata_value;
-                    hhcliff[row, col] = nodata_value;  
+                    hhcliff[row, col] = nodata_value;
                     hlcliff[row, col] = nodata_value;
                     slhcliff[row, col] = nodata_value;
                     sllcliff[row, col] = nodata_value;
@@ -446,12 +443,11 @@ namespace LORICA4
 
             memory_records_d = true;
         }
-        void dtm_file_test(string name1)
+        
+        /*void dtm_file_test(string name1)
         {
             string FILE_NAME = name1;
             int z, dem_integer_error = 1;
-            string[] lineArray2;
-            int sp;
             Debug.WriteLine("Opening DEM" + FILE_NAME);
 
             int ok = clearmatrices_test(); //reset values of existing memory instead of allocating new memory (saves RAM)
@@ -508,7 +504,7 @@ namespace LORICA4
 
                 }
             }
-        }
+        } */
         void dtm_file(string name1)
         {
 
@@ -587,14 +583,15 @@ namespace LORICA4
                 {
                     nodata_value = int.Parse(lineArray2[sp]);
                 }
-                catch {
+                catch
+                {
                     MessageBox.Show("The nodata value of the input ascii DEM must be an integer. Please improve and try again");
                     start_button.Enabled = true;
                 }
 
-                
+
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Debug.WriteLine("There is a problem with the header of the DEM file");
                 input_data_error = true;
@@ -658,7 +655,7 @@ namespace LORICA4
 
                 }
                 sr.Close();
-                if (dem_integer_error == 1) { MessageBox.Show("Warning: Digital Elevation Model may only contain integer values\n LORICA can proceed, but may experience problems"); }
+                if (dem_integer_error == 1) { MessageBox.Show("Warning: Digital Elevation Model seems to only contain integer values\n LORICA can proceed, but may experience problems"); }
 
             }
         }
@@ -723,11 +720,11 @@ namespace LORICA4
                 {
                     if (dtm[row, col] == nodata_value) //AleG
                     {
-                        map1[row,col] = nodata_value;
+                        map1[row, col] = nodata_value;
                     }
                 }
             }
-            
+
         } // end read_double()
         void read_integer(string name2, int[,] map1)
         {
@@ -906,7 +903,7 @@ namespace LORICA4
                             sw.Write("{0:F6}", nodata_value); //AleG
                             sw.Write(" ");
                         }
-                            
+
                     }
                     sw.Write("\r\n");
                 }
@@ -1042,10 +1039,10 @@ namespace LORICA4
 
                         else //AleG
                         {
-                            sw.Write(nodata_value); 
+                            sw.Write(nodata_value);
                             sw.Write(" ");
                         }
-                    
+
                     }
 
                     sw.Write("\n");
@@ -1089,7 +1086,7 @@ namespace LORICA4
             }
 
         }
-        
+
         void out_profile(string name5, double[,] output, bool row_is_fixed, int row_or_col)
         {
             // WVG 20-10-2010 output a profile file for benefit glorious model of LORICA
@@ -1176,7 +1173,6 @@ namespace LORICA4
         //}
         void writeOSLages_jaggedArray()
         {
-            int layer;
             string FILENAME = string.Format("{0}\\t{1}_out_OSL_ages_JA.csv", workdir, t + 1);
             using (StreamWriter sw = new StreamWriter(FILENAME))
             {
@@ -1203,7 +1199,7 @@ namespace LORICA4
             }
         }
 
-        
+
 
         void writeallsoils(string FILENAME, int t_corr)
         {
@@ -1373,499 +1369,585 @@ namespace LORICA4
                 sw.Close();
             }
         }
+
         private void menuItemConfigFileOpen_Click(object sender, System.EventArgs e)
         {
-            //opens a runfile
-            XmlTextReader xreader;
-            int read_error = 0;
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
-
-            openFileDialog1.InitialDirectory = workdir;
-            openFileDialog1.Filter = "cfg files (*.xml)|*.xml|All files (*.*)|*.*";
-            openFileDialog1.FilterIndex = 1;
-            openFileDialog1.RestoreDirectory = false;
-
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            var ofd = new OpenFileDialog
             {
-                cfgname = openFileDialog1.FileName;
+                InitialDirectory = workdir,
+                Filter = "cfg files (*.xml)|*.xml|All files (*.*)|*.*",
+                FilterIndex = 1,
+                RestoreDirectory = false
+            };
+            if (ofd.ShowDialog() != DialogResult.OK) return;
+            cfgname = ofd.FileName;
 
-                xreader = new XmlTextReader(cfgname);
+            var settings = new XmlReaderSettings
+            {
+                IgnoreComments = true,
+                IgnoreWhitespace = true,
+                DtdProcessing = DtdProcessing.Prohibit,
+                ConformanceLevel = ConformanceLevel.Document,
+                CheckCharacters = true
+            };
 
-                //Read the file
-                if (xreader != null)
+            int read_error = 0;
+            int totalExpected = 0, totalFound = 0;
+            var missing = new List<string>();
+
+            // Helper: expected keys list
+            List<string> K(params string[] keys) => new List<string>(keys);
+
+            // Read all leaf values (including empty) inside a section subtree
+            Dictionary<string, string> ReadDict(XmlReader xr)
+            {
+                var d = new Dictionary<string, string>(StringComparer.Ordinal);
+                xr.MoveToContent();
+                int rootDepth = xr.Depth; xr.Read();
+
+                while (!xr.EOF && xr.Depth > rootDepth)
                 {
-                    try
-                    {
-                        xreader.ReadStartElement("Parms");
-                        xreader.ReadStartElement("Processes");
-                        xreader.ReadStartElement("Water_erosion");
-                        Water_ero_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("water_active"));
-                        parameter_m_textbox.Text = xreader.ReadElementString("para_m");
-                        parameter_n_textbox.Text = xreader.ReadElementString("para_n");
-                        parameter_conv_textbox.Text = xreader.ReadElementString("para_p");
-                        parameter_K_textbox.Text = xreader.ReadElementString("para_K");
-                        erosion_threshold_textbox.Text = xreader.ReadElementString("para_ero_threshold");
-                        rock_protection_constant_textbox.Text = xreader.ReadElementString("para_rock_protection_const");
-                        bio_protection_constant_textbox.Text = xreader.ReadElementString("para_bio_protection_const");
-                        selectivity_constant_textbox.Text = xreader.ReadElementString("para_selectivity");
-                        xreader.ReadEndElement();
-                    }
-                    catch { read_error = 1; Debug.WriteLine("failed reading water ero paras"); }
+                    if (xr.NodeType != XmlNodeType.Element) { xr.Read(); continue; }
 
-                    try
-                    {
-                        xreader.ReadStartElement("Tillage");
-                        Tillage_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("tillage_active"));
-                        parameter_ploughing_depth_textbox.Text = xreader.ReadElementString("para_plough_depth");
-                        parameter_tillage_constant_textbox.Text = xreader.ReadElementString("para_tillage_constant");
-                        xreader.ReadEndElement();
-                    }
-                    catch { read_error = 1; Debug.WriteLine("failed reading tillage paras"); }
+                    string name = xr.Name;
 
-                    try
+                    if (xr.IsEmptyElement)
                     {
-                        xreader.ReadStartElement("Weathering");
-                        Biological_weathering_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("bio_weathering_active"));
-                        parameter_P0_textbox.Text = xreader.ReadElementString("para_P0");
-                        parameter_k1_textbox.Text = xreader.ReadElementString("para_k1");
-                        parameter_k2_textbox.Text = xreader.ReadElementString("para_k2");
-                        parameter_Pa_textbox.Text = xreader.ReadElementString("para_Pa");
-                        rockweath_method_box.SelectedIndex = XmlConvert.ToInt32(xreader.ReadElementString("rockweath_method")); //AleG
-                        xreader.ReadEndElement();
-                    }
-                    catch { read_error = 1; Debug.WriteLine("failed reading weathering paras"); }
-
-                    try
-                    {
-                        xreader.ReadStartElement("Landsliding");
-                        Landslide_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("landsliding_active"));
-                        radio_ls_absolute.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("radio_ls_absolute"));
-                        radio_ls_fraction.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("radio_ls_fraction"));
-                        text_ls_abs_rain_intens.Text = xreader.ReadElementString("para_absolute_rain_intens");
-                        text_ls_rel_rain_intens.Text = xreader.ReadElementString("para_relative_rain_intens");
-                        textBox_ls_coh.Text = xreader.ReadElementString("para_cohesion");
-                        textBox_ls_ifr.Text = xreader.ReadElementString("para_friction");
-                        textBox_ls_bd.Text = xreader.ReadElementString("para_density");
-                        textBox_ls_trans.Text = xreader.ReadElementString("para_transmissivity");
-                        minimum_slope_for_movement_tan_textbox.Text = xreader.ReadElementString("minimum_slope_for_movement_tan"); //AleG
-                        xreader.ReadEndElement();
-                    }
-                    catch { read_error = 1; Debug.WriteLine("failed reading landsliding paras"); }
-
-                    try
-                    {
-                        xreader.ReadStartElement("Creep");
-                        creep_active_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("creep_active"));
-                        parameter_diffusivity_textbox.Text = xreader.ReadElementString("para_diffusivity");
-                        xreader.ReadEndElement();
-                    }
-                    catch { read_error = 1; Debug.WriteLine("failed reading creep paras"); }
-
-                    try
-                    {
-                        xreader.ReadStartElement("Tree_fall");
-                        treefall_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("treefall_active"));
-                        tf_W.Text = xreader.ReadElementString("tf_width");
-                        tf_D.Text = xreader.ReadElementString("tf_depth");
-                        tf_growth.Text = xreader.ReadElementString("tf_growth");
-                        tf_age.Text = xreader.ReadElementString("tf_age");
-                        tf_freq.Text = xreader.ReadElementString("tf_freq");
-                        xreader.ReadEndElement();
-                    }
-                    catch { read_error = 1; Debug.WriteLine("failed reading tree fall paras"); }
-
-                    try
-                    {
-                        xreader.ReadStartElement("Blocks");
-                        blocks_active_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("blocks_active"));
-                        hardlayerthickness_textbox.Text = xreader.ReadElementString("hardlayerthickness");
-                        hardlayerelevation_textbox.Text = xreader.ReadElementString("hardlayerelevation");
-                        hardlayerdensity_textbox.Text = xreader.ReadElementString("hardlayerdensity");
-                        hardlayerweath_textbox.Text = xreader.ReadElementString("hardlayerweath");
-                        blockweath_textbox.Text = xreader.ReadElementString("blockweath");
-                        blocksize_textbox.Text = xreader.ReadElementString("blockminsize");
-                        xreader.ReadEndElement();
-                    }
-                    catch { read_error = 1; Debug.WriteLine("failed reading block paras"); }
-
-                    try
-                    {
-                        xreader.ReadEndElement();
-                        xreader.ReadStartElement("Soil_forming_processes");
-                        xreader.ReadStartElement("Physical_weathering");
-                        soil_phys_weath_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("phys_weath_active"));
-                        Physical_weath_C1_textbox.Text = xreader.ReadElementString("weath_rate_constant");
-                        physical_weath_constant1.Text = xreader.ReadElementString("constant1");
-                        physical_weath_constant2.Text = xreader.ReadElementString("constant2");
-                        soildata.upper_particle_coarse_textbox.Text = xreader.ReadElementString("size_coarse");
-                        soildata.upper_particle_sand_textbox.Text = xreader.ReadElementString("size_sand");
-                        soildata.upper_particle_silt_textbox.Text = xreader.ReadElementString("size_silt");
-                        soildata.upper_particle_clay_textbox.Text = xreader.ReadElementString("size_clay");
-                        soildata.upper_particle_fine_clay_textbox.Text = xreader.ReadElementString("size_fine");
-                        xreader.ReadEndElement();
-                    }
-                    catch { read_error = 1; Debug.WriteLine("failed reading soil phys weath paras"); }
-
-                    try
-                    {
-                        xreader.ReadStartElement("Chemical_weathering");
-                        soil_chem_weath_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("chem_weath_active"));
-                        chem_weath_rate_constant_textbox.Text = xreader.ReadElementString("chemical_weathering_constant");
-                        chem_weath_depth_constant_textbox.Text = xreader.ReadElementString("constant3");
-                        chem_weath_specific_coefficient_textbox.Text = xreader.ReadElementString("constant4");
-                        soildata.specific_area_coarse_textbox.Text = xreader.ReadElementString("surface_coarse");
-                        soildata.specific_area_sand_textbox.Text = xreader.ReadElementString("surface_sand");
-                        soildata.specific_area_silt_textbox.Text = xreader.ReadElementString("surface_silt");
-                        soildata.specific_area_clay_textbox.Text = xreader.ReadElementString("surface_clay");
-                        soildata.specific_area_fine_clay_textbox.Text = xreader.ReadElementString("surface_fine_clay");
-                        xreader.ReadEndElement();
-                    }
-                    catch { read_error = 1; Debug.WriteLine("failed reading soil chemical weath paras"); }
-
-                    try
-                    {
-                        xreader.ReadStartElement("Clay_dynamics");
-                        soil_clay_transloc_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("clay_dynamics_active"));
-                        clay_neoform_constant_textbox.Text = xreader.ReadElementString("neoform_rate_constant");
-                        clay_neoform_C1_textbox.Text = xreader.ReadElementString("constant5");
-                        clay_neoform_C2_textbox.Text = xreader.ReadElementString("constant6");
-                        maximum_eluviation_textbox.Text = xreader.ReadElementString("max_eluviation");
-                        eluviation_coefficient_textbox.Text = xreader.ReadElementString("eluviation_coefficient");
-                        ct_Jagercikova.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("ct_Jagercikova_active"));
-                        ct_v0_Jagercikova.Text = xreader.ReadElementString("ct_v0_Jagercikova");
-                        ct_dd_Jagercikova.Text = xreader.ReadElementString("ct_dd_Jagercikova");
-                        xreader.ReadEndElement();
-                    }
-                    catch
-                    {
-                        read_error = 1; Debug.WriteLine("failed reading clay dynamics paras");
+                        d[name] = string.Empty;
+                        xr.Read();
+                        continue;
                     }
 
-                    try
+                    xr.Read(); // into content
+                    if (xr.NodeType == XmlNodeType.Text || xr.NodeType == XmlNodeType.CDATA)
                     {
-                        xreader.ReadStartElement("Bioturbation");
-                        soil_bioturb_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("bioturbation_active"));
-                        potential_bt_mixing_textbox.Text = xreader.ReadElementString("potential_bioturb");
-                        bt_depth_decay_textbox.Text = xreader.ReadElementString("bioturb_depth_decay");
-                        bt_depthfunction_box.SelectedIndex = XmlConvert.ToInt32(xreader.ReadElementString("bt_depth_function")); //AleG
-                        xreader.ReadEndElement();
+                        d[name] = xr.Value ?? string.Empty;
+                        xr.Read(); // should be EndElement
+                        if (!xr.EOF && xr.NodeType == XmlNodeType.EndElement) xr.Read();
+                        continue;
                     }
-                    catch { read_error = 1; Debug.WriteLine("failed reading water ero paras"); }
 
-                    try
+                    // Complex element; loop will traverse its children
+                }
+                return d;
+            }
+
+            bool TryGetBool(Dictionary<string, string> d, string key, bool current, out bool v)
+            {
+                v = current;
+                string s; bool parsed;
+                if (d.TryGetValue(key, out s) && bool.TryParse(s, out parsed)) { v = parsed; return true; }
+                return false;
+            }
+            bool TryGetInt(Dictionary<string, string> d, string key, int current, out int v)
+            {
+                v = current;
+                string s; int parsed;
+                if (d.TryGetValue(key, out s) && int.TryParse(s, out parsed)) { v = parsed; return true; }
+                return false;
+            }
+            string GetStr(Dictionary<string, string> d, string key, string current)
+            {
+                string s; return d.TryGetValue(key, out s) ? s : current;
+            }
+
+            // 1) One-pass scan: collect all sections by name (order/position independent)
+            // List every section name you ReadSection for:
+            var sectionNames = new HashSet<string>(StringComparer.Ordinal)
+    {
+        "Water_erosion","Tillage","Weathering","Landsliding","Creep","Tree_fall","Blocks",
+        "Physical_weathering","Chemical_weathering","Clay_dynamics","Bioturbation","Carboncycle",
+        "Geochronological_tracers","Proglacial","Coarsemap","Inputs","Run","Specialsettings",
+        "CalibrationSensitivity","File_Output","Type_of_Output","Maps_to_Output",
+        "Timeseries","Soilfractions","Landuse_parameters"
+    };
+
+            // Store the last occurrence of each section (there should be one)
+            var sections = new Dictionary<string, Dictionary<string, string>>(StringComparer.Ordinal);
+
+            try
+            {
+                using (var scan = XmlReader.Create(cfgname, settings))
+                {
+                    while (scan.Read())
                     {
-                        xreader.ReadStartElement("Carboncycle");
-                        soil_carbon_cycle_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("carboncycle_active"));
-                        som_cycle_algorithm_box.SelectedIndex = XmlConvert.ToInt32(xreader.ReadElementString("som_cycle_algorithm")); //AleG
-                        carbon_input_textbox.Text = xreader.ReadElementString("carbon_input");
-                        carbon_depth_decay_textbox.Text = xreader.ReadElementString("carbon_depth_decay");
-                        carbon_humification_fraction_textbox.Text = xreader.ReadElementString("carbon_hum_fraction");
-                        carbon_y_decomp_rate_textbox.Text = xreader.ReadElementString("carbon_y_decomp");
-                        carbon_y_depth_decay_textbox.Text = xreader.ReadElementString("carbon_y_depth_decay");
-                        carbon_o_decomp_rate_textbox.Text = xreader.ReadElementString("carbon_o_decomp");
-                        carbon_o_depth_decay_textbox.Text = xreader.ReadElementString("carbon_o_depth_decay");
-                        xreader.ReadEndElement();
-                        xreader.ReadEndElement();
+                        if (scan.NodeType != XmlNodeType.Element) continue;
+
+                        string name = scan.Name;
+                        if (!sectionNames.Contains(name)) continue;
+
+                        using (var sub = scan.ReadSubtree())
+                        {
+                            var d = ReadDict(sub);
+                            sections[name] = d;
+                        }
                     }
-                    catch { read_error = 1; Debug.WriteLine("failed reading carbon cycle paras"); }
-
-                    try
-                    {
-                        xreader.ReadStartElement("Geochronological_tracers");
-
-                        OSL_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("OSL_active"));
-                        ngrains_textbox.Text = xreader.ReadElementString("ngrains");
-                        bleachingdepth_textbox.Text = xreader.ReadElementString("bleachingdepth");
-                        OSL_inherited_textbox.Text = xreader.ReadElementString("inherited_age");
-                        CN_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("CN_active"));
-                        metBe10_input_textbox.Text = xreader.ReadElementString("metBe10_input_rate");
-                        met10Be_dd.Text = xreader.ReadElementString("metBe10_dd");
-                        Be10_decay_textbox.Text = xreader.ReadElementString("Be10_decay");
-                        met_10Be_clayfrac.Text = xreader.ReadElementString("metBe10_clay");
-                        metBe10_inherited_textbox.Text = xreader.ReadElementString("met10Be_inherited");
-
-                        isBe10_sp_input_textbox.Text = xreader.ReadElementString("isBe10_sp_input");
-                        isBe10_mu_input_textbox.Text = xreader.ReadElementString("isBe10_mu_input");
-                        isBe10_inherited_textbox.Text = xreader.ReadElementString("isBe10_inherited");
-
-                        attenuationlength_sp_textbox.Text = xreader.ReadElementString("attlength_sp");
-                        attenuationlength_mu_textbox.Text = xreader.ReadElementString("attlength_mu");
-
-                        isC14_sp_input_textbox.Text = xreader.ReadElementString("isC14_sp_input");
-                        isC14_mu_input_textbox.Text = xreader.ReadElementString("isC14_mu_input");
-                        C14_decay_textbox.Text = xreader.ReadElementString("C14_decay");
-                        isC14_inherited_textbox.Text = xreader.ReadElementString("isC14_inherited");
-
-                        xreader.ReadEndElement();
-                    }
-                    catch { read_error = 1; Debug.WriteLine("failed reading geochron paras"); }
-
-                    try
-                    {
-                        xreader.ReadStartElement("Proglacial");
-                        Proglacial_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("check_proglacial"));
-                        proglacial_input_filename_textbox.Text = xreader.ReadElementString("proglacial_input_filename");
-                        melt_rate_1971_textbox.Text = xreader.ReadElementString("melt_rate_m_1971");
-                        melt_rate_1972_textbox.Text = xreader.ReadElementString("melt_rate_m_1972");
-                        xreader.ReadEndElement();
-                    }
-                    catch { read_error = 1; Debug.WriteLine("failed reading proglacial paras"); }
-
-                    try
-                    {
-                        xreader.ReadStartElement("Coarsemap");
-                        coarsemap_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("check_coarsemap"));
-                        coarsemap_input_filename_textbox.Text = xreader.ReadElementString("coarsemap_input_filename");
-                        coarsemap_sand_ratio_box.Text = xreader.ReadElementString("sand_ratio");
-                        coarsemap_silt_ratio_box.Text = xreader.ReadElementString("silt_ratio");
-                        coarsemap_clay_ratio_box.Text = xreader.ReadElementString("clay_ratio");
-                        xreader.ReadEndElement();
-                    }
-                    catch { read_error = 1; Debug.WriteLine("failed reading coarsemap paras"); }
-
-                    try
-                    {
-                        xreader.ReadStartElement("Inputs");
-                        check_space_DTM.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("check_space_DTM"));
-                        check_space_soildepth.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("check_space_soil"));
-                        check_space_landuse.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("check_space_landuse"));
-                        check_space_till_fields.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("check_space_tillfields"));
-                        check_space_rain.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("check_space_rain"));
-                        check_space_infil.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("check_space_infil"));
-                        check_space_evap.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("check_space_evap"));
-                        check_time_landuse.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("check_time_landuse"));
-                        check_time_till_fields.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("check_time_tillfields"));
-                        check_time_rain.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("check_time_rain"));
-                        check_time_infil.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("check_time_infil"));
-                        check_time_evap.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("check_time_evap"));
-                    }
-                    catch { read_error = 1; Debug.WriteLine("failed reading input paras"); }
-
-                    try
-                    {
-                        daily_water.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("dailywater"));
-                        dailyP.Text = xreader.ReadElementString("dailyP");
-                        dailyET0.Text = xreader.ReadElementString("dailyET0");
-                        dailyD.Text = xreader.ReadElementString("dailyD");
-                        dailyT_avg.Text = xreader.ReadElementString("dailyT_avg");
-                        dailyT_min.Text = xreader.ReadElementString("dailyT_min");
-                        dailyT_max.Text = xreader.ReadElementString("dailyT_max");
-                        latitude_deg.Text = xreader.ReadElementString("latitude_deg");
-                        latitude_min.Text = xreader.ReadElementString("latitude_min");
-                        snowmelt_factor_textbox.Text = xreader.ReadElementString("snowmelt_factor");
-                        snow_threshold_textbox.Text = xreader.ReadElementString("snowmelt_threshold");
-                        daily_n.Text = xreader.ReadElementString("daily_n_years");
-                        check_scaling_daily_weather.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("scaledailyweather"));
-                    } //MMxml
-                    catch { read_error = 1; Debug.WriteLine("xml7.2"); Debug.WriteLine("failed reading hydrolorica paras"); }
-
-                    try
-                    {
-                        dtm_input_filename_textbox.Text = xreader.ReadElementString("dtm_input_filename");
-                        try { dtm_iterate_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("check_iterate_DTM")); }
-                        catch { }
-                        soildepth_input_filename_textbox.Text = xreader.ReadElementString("soildepth_input_filename");
-                        landuse_input_filename_textbox.Text = xreader.ReadElementString("landuse_input_filename");
-                        tillfields_input_filename_textbox.Text = xreader.ReadElementString("tillfields_input_filename");
-                        rain_input_filename_textbox.Text = xreader.ReadElementString("rain_input_filename");
-                        infil_input_filename_textbox.Text = xreader.ReadElementString("infil_input_filename");
-                        evap_input_filename_textbox.Text = xreader.ReadElementString("evap_input_filename");
-                        soildepth_constant_value_box.Text = xreader.ReadElementString("soildepth_constant_value");
-                        landuse_constant_value_box.Text = xreader.ReadElementString("landuse_constant_value");
-                        tillfields_constant_textbox.Text = xreader.ReadElementString("tillfields_constant_value");
-                        rainfall_constant_value_box.Text = xreader.ReadElementString("rain_constant_value");
-                        infil_constant_value_box.Text = xreader.ReadElementString("infil_constant_value");
-                        evap_constant_value_box.Text = xreader.ReadElementString("evap_constant_value");
-                        textbox_max_soil_layers.Text = xreader.ReadElementString("max_soil_layers");
-                        textbox_layer_thickness.Text = xreader.ReadElementString("layer_thickness");
-                        textbox_layer_thickness_increase.Text = xreader.ReadElementString("layer_thickness_increase");
-                        fill_sinks_before_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("check_fill_sinks_before"));
-                        fill_sinks_during_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("check_fill_sinks_during"));
-                        xreader.ReadEndElement();
-                    }
-                    catch { read_error = 1; Debug.WriteLine("failed reading more input paras"); }
-
-                    try
-                    {
-                        xreader.ReadStartElement("Run");
-                        runs_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("runs_radiobutton"));
-                        Number_runs_textbox.Text = xreader.ReadElementString("number_runs");
-                        xreader.ReadStartElement("Specialsettings");
-                        Spitsbergen_case_study.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("Spitsbergen"));
-                        version_lux_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("Luxembourg"));
-                        luxlitter_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("Luxlitter"));
-                        Proglacial_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("Proglacial"));
-                        version_Konza_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("Konza"));
-                        OSL_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("OSL_tracing"));
-                        CN_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("CN_tracing"));
-                        xreader.ReadEndElement();
-                    }
-                    catch { read_error = 1; Debug.WriteLine("xm29"); Debug.WriteLine("failed reading run paras"); }
-
-                    try
-                    {
-                        xreader.ReadStartElement("CalibrationSensitivity");
-
-                        Calibration_button.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("calibration_active_button"));
-                        num_cal_paras_textbox.Text = xreader.ReadElementString("calibration_num_paras_string");
-                        calibration_ratios_textbox.Text = xreader.ReadElementString("calibration_ratios_string");
-                        calibration_levels_textbox.Text = xreader.ReadElementString("calibration_levels");
-                        calibration_ratio_reduction_parameter_textbox.Text = xreader.ReadElementString("calibration_ratio_reduction_per_level");
-                        obsfile_textbox.Text = xreader.ReadElementString("calibration_observations_file");
-                        xreader.ReadEndElement();
-                    }
-                    catch { read_error = 2; Debug.WriteLine("failed reading calib paras"); }
-
-                    try
-                    {
-                        xreader.ReadEndElement();
-                        xreader.ReadStartElement("Output");
-                        xreader.ReadStartElement("File_Output");
-                        xreader.ReadStartElement("Moment_of_Output");
-                        Final_output_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("final_output_checkbox"));
-                        Regular_output_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("regular_output_checkbox"));
-                        Box_years_output.Text = xreader.ReadElementString("years_between_outputs");
-                        xreader.ReadEndElement();
-                        xreader.ReadStartElement("Type_of_Output");
-
-                        cumulative_output_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("cumulative"));
-                        annual_output_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("annual"));
-                        xreader.ReadEndElement();
-                        xreader.ReadStartElement("Maps_to_Output");
-                        Altitude_output_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("alti"));
-                        Alt_change_output_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("altichange"));
-                        Soildepth_output_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("soildepth"));
-                        all_process_output_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("all_processes"));
-                        water_output_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("waterflow"));
-                        depressions_output_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("depressions"));
-                        xreader.ReadEndElement();
-                        xreader.ReadEndElement();
-                        xreader.ReadStartElement("Other_outputs");
-                        xreader.ReadStartElement("Timeseries");
-                        timeseries.timeseries_total_ero_check.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("total_erosion"));
-                        timeseries.timeseries_total_dep_check.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("total_deposition"));
-                        timeseries.timeseries_net_ero_check.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("net_erosion"));
-                        timeseries.timeseries_sedexport_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("sed_export"));
-                        timeseries.timeseries_slide_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("slide"));
-                        timeseries.timeseries_SDR_check.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("SDR"));
-                        timeseries.timeseries_total_average_alt_check.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("total_average_alt"));
-                        timeseries.timeseries_total_rain_check.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("total_rain"));
-                        timeseries.timeseries_total_infil_check.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("total_infil"));
-                        timeseries.timeseries_total_evap_check.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("total_evap"));
-                        timeseries.timeseries_total_outflow_check.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("total_outflow"));
-                        timeseries.timeseries_number_waterflow_check.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("wet_cells"));
-                        timeseries.timeseries_number_erosion_check.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("eroded_cells"));
-                        timeseries.timeseries_number_dep_check.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("deposited_cells"));
-                        timeseries.timeseries_outflow_cells_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("outflow_cells"));
-                        timeseries.timeseries_cell_altitude_check.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("cell_altitude"));
-                        timeseries.timeseries_cell_waterflow_check.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("cell_waterflow"));
-                        timeseries.timeseries_textbox_waterflow_threshold.Text = xreader.ReadElementString("waterflow_threshold");
-                        timeseries.timeseries_textbox_erosion_threshold.Text = xreader.ReadElementString("erosion_threshold");
-                        timeseries.timeseries_textbox_deposition_threshold.Text = xreader.ReadElementString("deposition_threshold");
-                        timeseries.timeseries_textbox_cell_row.Text = xreader.ReadElementString("cell_row");
-                        timeseries.timeseries_textbox_cell_col.Text = xreader.ReadElementString("cell_col");
-                        timeseries.total_OM_input_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("total_OM_input"));
-                        timeseries.total_average_soilthickness_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("total_average_soil_thickness"));
-                        timeseries.total_phys_weath_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("total_phys_weath"));
-                        timeseries.total_chem_weath_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("total_chem_weath"));
-                        timeseries.total_fine_formed_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("total_fine_formed"));
-                        timeseries.total_fine_eluviated_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("total_fine_eluviated"));
-                        timeseries.total_mass_bioturbed_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("total_mass_bioturbed"));
-                        timeseries.timeseries_soil_depth_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("timeseries_soil_depth"));
-                        timeseries.timeseries_soil_mass_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("timeseries_soil_mass"));
-                        timeseries.timeseries_coarser_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("timeseries_coarser"));
-                        timeseries.timeseries_number_soil_thicker_checkbox.Checked = XmlConvert.ToBoolean(xreader.ReadElementString("timeseries_thicker"));
-                        timeseries.timeseries_soil_cell_col.Text = xreader.ReadElementString("soil_cell");
-                        timeseries.timeseries_soil_cell_row.Text = xreader.ReadElementString("soil_col");
-                        timeseries.timeseries_soil_coarser_fraction_textbox.Text = xreader.ReadElementString("coarser_fraction");
-                        timeseries.timeseries_soil_thicker_textbox.Text = xreader.ReadElementString("thicker_threshold");
-                        xreader.ReadEndElement();
-                        xreader.ReadEndElement();
-                    }
-                    catch { read_error = 1; Debug.WriteLine("failed reading output paras"); }
-
-                    try
-                    {
-                        xreader.ReadStartElement("Soilfractions");
-                        soildata.coarsebox.Text = xreader.ReadElementString("coarsefrac");
-                        soildata.sandbox.Text = xreader.ReadElementString("sandfrac");
-                        soildata.siltbox.Text = xreader.ReadElementString("siltfrac");
-                        soildata.claybox.Text = xreader.ReadElementString("clayfrac");
-                        soildata.fineclaybox.Text = xreader.ReadElementString("fclayfrac");
-                        soildata.yombox.Text = xreader.ReadElementString("yomfrac"); //AleG
-                        soildata.oombox.Text = xreader.ReadElementString("oomfrac"); //AleG
-                        xreader.ReadEndElement();
-                    }
-                    catch { read_error = 1; Debug.WriteLine("failed reading soil frac paras"); }
-
-                    try
-                    {
-                        xreader.ReadStartElement("Landuse_parameters");//AleG 
-                        landuse_determinator.LU1_Ero_textbox.Text = xreader.ReadElementString("LU1_Ero");
-                        landuse_determinator.LU1_Inf_textbox.Text = xreader.ReadElementString("LU1_Inf");
-                        landuse_determinator.LU1_Evap_textbox.Text = xreader.ReadElementString("LU1_Evap");
-                        landuse_determinator.LU1_RootC_textbox.Text = xreader.ReadElementString("LU1_RootC");
-
-                        landuse_determinator.LU2_Ero_textbox.Text = xreader.ReadElementString("LU2_Ero");
-                        landuse_determinator.LU2_Inf_textbox.Text = xreader.ReadElementString("LU2_Inf");
-                        landuse_determinator.LU2_Evap_textbox.Text = xreader.ReadElementString("LU2_Evap");
-                        landuse_determinator.LU2_RootC_textbox.Text = xreader.ReadElementString("LU2_RootC");
-
-                        landuse_determinator.LU3_Ero_textbox.Text = xreader.ReadElementString("LU3_Ero");
-                        landuse_determinator.LU3_Inf_textbox.Text = xreader.ReadElementString("LU3_Inf");
-                        landuse_determinator.LU3_Evap_textbox.Text = xreader.ReadElementString("LU3_Evap");
-                        landuse_determinator.LU3_RootC_textbox.Text = xreader.ReadElementString("LU3_RootC");
-
-                        landuse_determinator.LU4_Ero_textbox.Text = xreader.ReadElementString("LU4_Ero");
-                        landuse_determinator.LU4_Inf_textbox.Text = xreader.ReadElementString("LU4_Inf");
-                        landuse_determinator.LU4_Evap_textbox.Text = xreader.ReadElementString("LU4_Evap");
-                        landuse_determinator.LU4_RootC_textbox.Text = xreader.ReadElementString("LU4_RootC");
-
-                        landuse_determinator.LU5_Ero_textbox.Text = xreader.ReadElementString("LU5_Ero");
-                        landuse_determinator.LU5_Inf_textbox.Text = xreader.ReadElementString("LU5_Inf");
-                        landuse_determinator.LU5_Evap_textbox.Text = xreader.ReadElementString("LU5_Evap");
-                        landuse_determinator.LU5_RootC_textbox.Text = xreader.ReadElementString("LU5_RootC");
-
-                        landuse_determinator.LU6_Ero_textbox.Text = xreader.ReadElementString("LU6_Ero");
-                        landuse_determinator.LU6_Inf_textbox.Text = xreader.ReadElementString("LU6_Inf");
-                        landuse_determinator.LU6_Evap_textbox.Text = xreader.ReadElementString("LU6_Evap");
-                        landuse_determinator.LU6_RootC_textbox.Text = xreader.ReadElementString("LU6_RootC");
-
-                        landuse_determinator.LU7_Ero_textbox.Text = xreader.ReadElementString("LU7_Ero");
-                        landuse_determinator.LU7_Inf_textbox.Text = xreader.ReadElementString("LU7_Inf");
-                        landuse_determinator.LU7_Evap_textbox.Text = xreader.ReadElementString("LU7_Evap");
-                        landuse_determinator.LU7_RootC_textbox.Text = xreader.ReadElementString("LU7_RootC");
-
-                        landuse_determinator.LU8_Ero_textbox.Text = xreader.ReadElementString("LU8_Ero");
-                        landuse_determinator.LU8_Inf_textbox.Text = xreader.ReadElementString("LU8_Inf");
-                        landuse_determinator.LU8_Evap_textbox.Text = xreader.ReadElementString("LU8_Evap");
-                        landuse_determinator.LU8_RootC_textbox.Text = xreader.ReadElementString("LU8_RootC");
-
-                        landuse_determinator.LU9_Ero_textbox.Text = xreader.ReadElementString("LU9_Ero");
-                        landuse_determinator.LU9_Inf_textbox.Text = xreader.ReadElementString("LU9_Inf");
-                        landuse_determinator.LU9_Evap_textbox.Text = xreader.ReadElementString("LU9_Evap");
-                        landuse_determinator.LU9_RootC_textbox.Text = xreader.ReadElementString("LU9_RootC");
-
-                        landuse_determinator.LU10_Ero_textbox.Text = xreader.ReadElementString("LU10_Ero");
-                        landuse_determinator.LU10_Inf_textbox.Text = xreader.ReadElementString("LU10_Inf");
-                        landuse_determinator.LU10_Evap_textbox.Text = xreader.ReadElementString("LU10_Evap");
-                        landuse_determinator.LU10_RootC_textbox.Text = xreader.ReadElementString("LU10_RootC");
-                        xreader.ReadEndElement();
-                    }
-                    catch { read_error = 1; Debug.WriteLine("failed reading land use paras"); }
-
-
-                    if (read_error == 1) { MessageBox.Show("warning : not all runfile data could be read.\r\n LORICA can continue"); }
-                    if (read_error == 2) { MessageBox.Show("Error in new XML lines"); }
-
-                    xreader.Close();
-
-                    this.Text = basetext + " (" + Path.GetFileName(cfgname) + ")";
-                    start_button.Enabled = true;
-                    tabControl1.Visible = true;
-
                 }
             }
+            catch (XmlException xe)
+            {
+                Debug.WriteLine("XML error at line " + xe.LineNumber + ", pos " + xe.LinePosition + ": " + xe.Message);
+                MessageBox.Show("Failed to read configuration.\nLine " + xe.LineNumber + ", Pos " + xe.LinePosition + ".\n" + xe.Message,
+                                "Invalid XML");
+                return;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Unexpected error while scanning XML: " + ex);
+                MessageBox.Show("Unexpected error while reading configuration.", "Error");
+                return;
+            }
+
+            // 2) Helper: apply a section from the map and tally keys
+            void ApplySection(string name, IList<string> expectedKeys, Action<Dictionary<string, string>> apply, int errCode = 1)
+            {
+                totalExpected += expectedKeys.Count;
+
+                Dictionary<string, string> d;
+                if (sections.TryGetValue(name, out d))
+                {
+                    foreach (var key in expectedKeys)
+                        if (d.ContainsKey(key)) totalFound++;
+                    apply(d);
+                }
+                else
+                {
+                    read_error = Math.Max(read_error, errCode);
+                    string msg = "missing " + name;
+                    Debug.WriteLine(msg);
+                    missing.Add(msg);
+                }
+            }
+
+            // 3) Apply all sections (now order and missing no longer cascade)
+            ApplySection("Water_erosion", K(
+                "water_active", "para_m", "para_n", "para_p", "para_K",
+                "para_ero_threshold", "para_rock_protection_const", "para_bio_protection_const", "para_selectivity"
+            ), d =>
+            {
+                bool b;
+                if (TryGetBool(d, "water_active", Water_ero_checkbox.Checked, out b)) Water_ero_checkbox.Checked = b;
+                parameter_m_textbox.Text = GetStr(d, "para_m", parameter_m_textbox.Text);
+                parameter_n_textbox.Text = GetStr(d, "para_n", parameter_n_textbox.Text);
+                parameter_conv_textbox.Text = GetStr(d, "para_p", parameter_conv_textbox.Text);
+                parameter_K_textbox.Text = GetStr(d, "para_K", parameter_K_textbox.Text);
+                erosion_threshold_textbox.Text = GetStr(d, "para_ero_threshold", erosion_threshold_textbox.Text);
+                rock_protection_constant_textbox.Text = GetStr(d, "para_rock_protection_const", rock_protection_constant_textbox.Text);
+                bio_protection_constant_textbox.Text = GetStr(d, "para_bio_protection_const", bio_protection_constant_textbox.Text);
+                selectivity_constant_textbox.Text = GetStr(d, "para_selectivity", selectivity_constant_textbox.Text);
+            });
+
+            ApplySection("Tillage", K("tillage_active", "para_plough_depth", "para_tillage_constant"), d =>
+            {
+                bool b;
+                if (TryGetBool(d, "tillage_active", Tillage_checkbox.Checked, out b)) Tillage_checkbox.Checked = b;
+                parameter_ploughing_depth_textbox.Text = GetStr(d, "para_plough_depth", parameter_ploughing_depth_textbox.Text);
+                parameter_tillage_constant_textbox.Text = GetStr(d, "para_tillage_constant", parameter_tillage_constant_textbox.Text);
+            });
+
+            ApplySection("Weathering", K("bio_weathering_active", "para_P0", "para_k1", "para_k2", "para_Pa", "rockweath_method"), d =>
+            {
+                bool b; int i;
+                if (TryGetBool(d, "bio_weathering_active", Biological_weathering_checkbox.Checked, out b)) Biological_weathering_checkbox.Checked = b;
+                parameter_P0_textbox.Text = GetStr(d, "para_P0", parameter_P0_textbox.Text);
+                parameter_k1_textbox.Text = GetStr(d, "para_k1", parameter_k1_textbox.Text);
+                parameter_k2_textbox.Text = GetStr(d, "para_k2", parameter_k2_textbox.Text);
+                parameter_Pa_textbox.Text = GetStr(d, "para_Pa", parameter_Pa_textbox.Text);
+                if (TryGetInt(d, "rockweath_method", rockweath_method_box.SelectedIndex, out i)) rockweath_method_box.SelectedIndex = i;
+            });
+
+            ApplySection("Landsliding", K(
+                "landsliding_active", "radio_ls_absolute", "radio_ls_fraction",
+                "para_absolute_rain_intens", "para_relative_rain_intens",
+                "radio_ls_mix_1", "radio_ls_mix_2", "radio_ls_mix_3",
+                "minimum_slope_for_movement_tan"
+            ), d =>
+            {
+                bool b;
+                if (TryGetBool(d, "landsliding_active", Landslide_checkbox.Checked, out b)) Landslide_checkbox.Checked = b;
+                if (TryGetBool(d, "radio_ls_absolute", radio_ls_absolute.Checked, out b)) radio_ls_absolute.Checked = b;
+                if (TryGetBool(d, "radio_ls_fraction", radio_ls_fraction.Checked, out b)) radio_ls_fraction.Checked = b;
+                text_ls_abs_rain_intens.Text = GetStr(d, "para_absolute_rain_intens", text_ls_abs_rain_intens.Text);
+                text_ls_rel_rain_intens.Text = GetStr(d, "para_relative_rain_intens", text_ls_rel_rain_intens.Text);
+                if (TryGetBool(d, "radio_ls_mix_1", ls_mix_radio_1.Checked, out b)) ls_mix_radio_1.Checked = b;
+                if (TryGetBool(d, "radio_ls_mix_2", ls_mix_radio_2.Checked, out b)) ls_mix_radio_2.Checked = b;
+                if (TryGetBool(d, "radio_ls_mix_3", ls_mix_radio_3.Checked, out b)) ls_mix_radio_3.Checked = b;
+                minimum_slope_for_movement_tan_textbox.Text = GetStr(d, "minimum_slope_for_movement_tan", minimum_slope_for_movement_tan_textbox.Text);
+            });
+
+            ApplySection("Creep", K("creep_active", "para_diffusivity"), d =>
+            {
+                bool b;
+                if (TryGetBool(d, "creep_active", creep_active_checkbox.Checked, out b)) creep_active_checkbox.Checked = b;
+                parameter_diffusivity_textbox.Text = GetStr(d, "para_diffusivity", parameter_diffusivity_textbox.Text);
+            });
+
+            ApplySection("Tree_fall", K("treefall_active", "tf_width", "tf_depth", "tf_growth", "tf_age", "tf_freq"), d =>
+            {
+                bool b;
+                if (TryGetBool(d, "treefall_active", treefall_checkbox.Checked, out b)) treefall_checkbox.Checked = b;
+                tf_W.Text = GetStr(d, "tf_width", tf_W.Text);
+                tf_D.Text = GetStr(d, "tf_depth", tf_D.Text);
+                tf_growth.Text = GetStr(d, "tf_growth", tf_growth.Text);
+                tf_age.Text = GetStr(d, "tf_age", tf_age.Text);
+                tf_freq.Text = GetStr(d, "tf_freq", tf_freq.Text);
+            });
+
+            ApplySection("Blocks", K("blocks_active", "hardlayerthickness", "hardlayerelevation", "hardlayerdensity", "hardlayerweath", "blockweath", "blockminsize"), d =>
+            {
+                bool b;
+                if (TryGetBool(d, "blocks_active", blocks_active_checkbox.Checked, out b)) blocks_active_checkbox.Checked = b;
+                hardlayerthickness_textbox.Text = GetStr(d, "hardlayerthickness", hardlayerthickness_textbox.Text);
+                hardlayerelevation_textbox.Text = GetStr(d, "hardlayerelevation", hardlayerelevation_textbox.Text);
+                hardlayerdensity_textbox.Text = GetStr(d, "hardlayerdensity", hardlayerdensity_textbox.Text);
+                hardlayerweath_textbox.Text = GetStr(d, "hardlayerweath", hardlayerweath_textbox.Text);
+                blockweath_textbox.Text = GetStr(d, "blockweath", blockweath_textbox.Text);
+                blocksize_textbox.Text = GetStr(d, "blockminsize", blocksize_textbox.Text);
+            });
+
+            ApplySection("Physical_weathering", K("phys_weath_active", "weath_rate_constant", "constant1", "constant2", "size_coarse", "size_sand", "size_silt", "size_clay", "size_fine"), d =>
+            {
+                bool b;
+                if (TryGetBool(d, "phys_weath_active", soil_phys_weath_checkbox.Checked, out b)) soil_phys_weath_checkbox.Checked = b;
+                Physical_weath_C1_textbox.Text = GetStr(d, "weath_rate_constant", Physical_weath_C1_textbox.Text);
+                physical_weath_constant1.Text = GetStr(d, "constant1", physical_weath_constant1.Text);
+                physical_weath_constant2.Text = GetStr(d, "constant2", physical_weath_constant2.Text);
+                soildata.upper_particle_coarse_textbox.Text = GetStr(d, "size_coarse", soildata.upper_particle_coarse_textbox.Text);
+                soildata.upper_particle_sand_textbox.Text = GetStr(d, "size_sand", soildata.upper_particle_sand_textbox.Text);
+                soildata.upper_particle_silt_textbox.Text = GetStr(d, "size_silt", soildata.upper_particle_silt_textbox.Text);
+                soildata.upper_particle_clay_textbox.Text = GetStr(d, "size_clay", soildata.upper_particle_clay_textbox.Text);
+                soildata.upper_particle_fine_clay_textbox.Text = GetStr(d, "size_fine", soildata.upper_particle_fine_clay_textbox.Text);
+            });
+
+            ApplySection("Chemical_weathering", K("chem_weath_active", "chemical_weathering_constant", "constant3", "constant4", "surface_coarse", "surface_sand", "surface_silt", "surface_clay", "surface_fine_clay"), d =>
+            {
+                bool b;
+                if (TryGetBool(d, "chem_weath_active", soil_chem_weath_checkbox.Checked, out b)) soil_chem_weath_checkbox.Checked = b;
+                chem_weath_rate_constant_textbox.Text = GetStr(d, "chemical_weathering_constant", chem_weath_rate_constant_textbox.Text);
+                chem_weath_depth_constant_textbox.Text = GetStr(d, "constant3", chem_weath_depth_constant_textbox.Text);
+                chem_weath_specific_coefficient_textbox.Text = GetStr(d, "constant4", chem_weath_specific_coefficient_textbox.Text);
+                clay_neoform_constant_textbox.Text = GetStr(d, "neoform_rate_constant", clay_neoform_constant_textbox.Text);
+                clay_neoform_C1_textbox.Text = GetStr(d, "constant5", clay_neoform_C1_textbox.Text);
+                clay_neoform_C2_textbox.Text = GetStr(d, "constant6", clay_neoform_C2_textbox.Text);
+                soildata.specific_area_coarse_textbox.Text = GetStr(d, "surface_coarse", soildata.specific_area_coarse_textbox.Text);
+                soildata.specific_area_sand_textbox.Text = GetStr(d, "surface_sand", soildata.specific_area_sand_textbox.Text);
+                soildata.specific_area_silt_textbox.Text = GetStr(d, "surface_silt", soildata.specific_area_silt_textbox.Text);
+                soildata.specific_area_clay_textbox.Text = GetStr(d, "surface_clay", soildata.specific_area_clay_textbox.Text);
+                soildata.specific_area_fine_clay_textbox.Text = GetStr(d, "surface_fine_clay", soildata.specific_area_fine_clay_textbox.Text);
+            });
+
+            ApplySection("Clay_dynamics", K("clay_dynamics_active", "neoform_rate_constant", "constant5", "constant6", "max_eluviation", "eluviation_coefficient", "ct_Jagercikova_active", "ct_v0_Jagercikova", "ct_dd_Jagercikova"), d =>
+            {
+                bool b;
+                if (TryGetBool(d, "clay_dynamics_active", soil_clay_transloc_checkbox.Checked, out b)) soil_clay_transloc_checkbox.Checked = b;
+                                maximum_eluviation_textbox.Text = GetStr(d, "max_eluviation", maximum_eluviation_textbox.Text);
+                eluviation_coefficient_textbox.Text = GetStr(d, "eluviation_coefficient", eluviation_coefficient_textbox.Text);
+                if (TryGetBool(d, "ct_Jagercikova_active", ct_Jagercikova.Checked, out b)) ct_Jagercikova.Checked = b;
+                ct_v0_Jagercikova.Text = GetStr(d, "ct_v0_Jagercikova", ct_v0_Jagercikova.Text);
+                ct_dd_Jagercikova.Text = GetStr(d, "ct_dd_Jagercikova", ct_dd_Jagercikova.Text);
+            });
+
+            ApplySection("Bioturbation", K("bioturbation_active", "potential_bioturb", "bioturb_depth_decay", "bt_depth_function"), d =>
+            {
+                bool b; int i;
+                if (TryGetBool(d, "bioturbation_active", soil_bioturb_checkbox.Checked, out b)) soil_bioturb_checkbox.Checked = b;
+                potential_bt_mixing_textbox.Text = GetStr(d, "potential_bioturb", potential_bt_mixing_textbox.Text);
+                bt_depth_decay_textbox.Text = GetStr(d, "bioturb_depth_decay", bt_depth_decay_textbox.Text);
+                if (TryGetInt(d, "bt_depth_function", bt_depthfunction_box.SelectedIndex, out i)) bt_depthfunction_box.SelectedIndex = i;
+            });
+
+            ApplySection("Carboncycle", K("carboncycle_active", "som_cycle_algorithm", "carbon_input", "carbon_depth_decay", "carbon_hum_fraction", "carbon_y_decomp", "carbon_y_depth_decay", "carbon_o_decomp", "carbon_o_depth_decay"), d =>
+            {
+                bool b; int i;
+                if (TryGetBool(d, "carboncycle_active", soil_carbon_cycle_checkbox.Checked, out b)) soil_carbon_cycle_checkbox.Checked = b;
+                if (TryGetInt(d, "som_cycle_algorithm", som_cycle_algorithm_box.SelectedIndex, out i)) som_cycle_algorithm_box.SelectedIndex = i;
+                carbon_input_textbox.Text = GetStr(d, "carbon_input", carbon_input_textbox.Text);
+                carbon_depth_decay_textbox.Text = GetStr(d, "carbon_depth_decay", carbon_depth_decay_textbox.Text);
+                carbon_humification_fraction_textbox.Text = GetStr(d, "carbon_hum_fraction", carbon_humification_fraction_textbox.Text);
+                carbon_y_decomp_rate_textbox.Text = GetStr(d, "carbon_y_decomp", carbon_y_decomp_rate_textbox.Text);
+                carbon_y_depth_decay_textbox.Text = GetStr(d, "carbon_y_depth_decay", carbon_y_depth_decay_textbox.Text);
+                carbon_o_decomp_rate_textbox.Text = GetStr(d, "carbon_o_decomp", carbon_o_decomp_rate_textbox.Text);
+                carbon_o_depth_decay_textbox.Text = GetStr(d, "carbon_o_depth_decay", carbon_o_depth_decay_textbox.Text);
+            });
+
+            ApplySection("Geochronological_tracers", K(
+                "OSL_active", "ngrains", "bleachingdepth", "inherited_age",
+                "CN_active", "metBe10_input_rate", "metBe10_dd", "Be10_decay",
+                "metBe10_clay", "met10Be_inherited",
+                "isBe10_sp_input", "isBe10_mu_input", "isBe10_inherited",
+                "attlength_sp", "attlength_mu", "isC14_sp_input", "isC14_mu_input", "C14_decay", "isC14_inherited"
+            ), d =>
+            {
+                bool b;
+                if (TryGetBool(d, "OSL_active", OSL_checkbox.Checked, out b)) OSL_checkbox.Checked = b;
+                ngrains_textbox.Text = GetStr(d, "ngrains", ngrains_textbox.Text);
+                bleachingdepth_textbox.Text = GetStr(d, "bleachingdepth", bleachingdepth_textbox.Text);
+                OSL_inherited_textbox.Text = GetStr(d, "inherited_age", OSL_inherited_textbox.Text);
+                if (TryGetBool(d, "CN_active", CN_checkbox.Checked, out b)) CN_checkbox.Checked = b;
+
+                metBe10_input_textbox.Text = GetStr(d, "metBe10_input_rate", metBe10_input_textbox.Text);
+                met10Be_dd.Text = GetStr(d, "metBe10_dd", met10Be_dd.Text);
+                Be10_decay_textbox.Text = GetStr(d, "Be10_decay", Be10_decay_textbox.Text);
+                met_10Be_clayfrac.Text = GetStr(d, "metBe10_clay", met_10Be_clayfrac.Text);
+                metBe10_inherited_textbox.Text = GetStr(d, "met10Be_inherited", metBe10_inherited_textbox.Text);
+
+                isBe10_sp_input_textbox.Text = GetStr(d, "isBe10_sp_input", isBe10_sp_input_textbox.Text);
+                isBe10_mu_input_textbox.Text = GetStr(d, "isBe10_mu_input", isBe10_mu_input_textbox.Text);
+                isBe10_inherited_textbox.Text = GetStr(d, "isBe10_inherited", isBe10_inherited_textbox.Text);
+
+                attenuationlength_sp_textbox.Text = GetStr(d, "attlength_sp", attenuationlength_sp_textbox.Text);
+                attenuationlength_mu_textbox.Text = GetStr(d, "attlength_mu", attenuationlength_mu_textbox.Text);
+
+                isC14_sp_input_textbox.Text = GetStr(d, "isC14_sp_input", isC14_sp_input_textbox.Text);
+                isC14_mu_input_textbox.Text = GetStr(d, "isC14_mu_input", isC14_mu_input_textbox.Text);
+                C14_decay_textbox.Text = GetStr(d, "C14_decay", C14_decay_textbox.Text);
+                isC14_inherited_textbox.Text = GetStr(d, "isC14_inherited", isC14_inherited_textbox.Text);
+            });
+
+            ApplySection("Proglacial", K("check_proglacial", "proglacial_input_filename", "melt_rate_m_1971", "melt_rate_m_1972"), d =>
+            {
+                bool b;
+                if (TryGetBool(d, "check_proglacial", Proglacial_checkbox.Checked, out b)) Proglacial_checkbox.Checked = b;
+                proglacial_input_filename_textbox.Text = GetStr(d, "proglacial_input_filename", proglacial_input_filename_textbox.Text);
+                melt_rate_1971_textbox.Text = GetStr(d, "melt_rate_m_1971", melt_rate_1971_textbox.Text);
+                melt_rate_1972_textbox.Text = GetStr(d, "melt_rate_m_1972", melt_rate_1972_textbox.Text);
+            });
+
+            ApplySection("Coarsemap", K("check_coarsemap", "coarsemap_input_filename", "sand_ratio", "silt_ratio", "clay_ratio"), d =>
+            {
+                bool b;
+                if (TryGetBool(d, "check_coarsemap", coarsemap_checkbox.Checked, out b)) coarsemap_checkbox.Checked = b;
+                coarsemap_input_filename_textbox.Text = GetStr(d, "coarsemap_input_filename", coarsemap_input_filename_textbox.Text);
+                coarsemap_sand_ratio_box.Text = GetStr(d, "sand_ratio", coarsemap_sand_ratio_box.Text);
+                coarsemap_silt_ratio_box.Text = GetStr(d, "silt_ratio", coarsemap_silt_ratio_box.Text);
+                coarsemap_clay_ratio_box.Text = GetStr(d, "clay_ratio", coarsemap_clay_ratio_box.Text);
+            });
+
+            ApplySection("Inputs", K(
+                "check_space_DTM", "check_space_soil", "check_space_landuse", "check_space_tillfields",
+                "check_space_rain", "check_space_infil", "check_space_evap",
+                "check_time_landuse", "check_time_tillfields", "check_time_rain", "check_time_infil", "check_time_evap",
+                "dailywater", "dailyP", "dailyET0", "dailyD", "dailyT_avg", "dailyT_min", "dailyT_max",
+                "latitude_deg", "latitude_min", "snowmelt_factor", "snowmelt_threshold", "daily_n_years", "scaledailyweather",
+                "dtm_input_filename", "check_iterate_DTM", "soildepth_input_filename", "landuse_input_filename",
+                "tillfields_input_filename", "rain_input_filename", "infil_input_filename", "evap_input_filename",
+                "soildepth_constant_value", "landuse_constant_value", "tillfields_constant_value", "rain_constant_value",
+                "infil_constant_value", "evap_constant_value",
+                "max_soil_layers", "layer_thickness", "layer_thickness_increase",
+                "check_fill_sinks_before", "check_fill_sinks_during"
+            ), d =>
+            {
+                bool b;
+                if (TryGetBool(d, "check_space_DTM", check_space_DTM.Checked, out b)) check_space_DTM.Checked = b;
+                if (TryGetBool(d, "check_space_soil", check_space_soildepth.Checked, out b)) check_space_soildepth.Checked = b;
+                if (TryGetBool(d, "check_space_landuse", check_space_landuse.Checked, out b)) check_space_landuse.Checked = b;
+                if (TryGetBool(d, "check_space_tillfields", check_space_till_fields.Checked, out b)) check_space_till_fields.Checked = b;
+                if (TryGetBool(d, "check_space_rain", check_space_rain.Checked, out b)) check_space_rain.Checked = b;
+                if (TryGetBool(d, "check_space_infil", check_space_infil.Checked, out b)) check_space_infil.Checked = b;
+                if (TryGetBool(d, "check_space_evap", check_space_evap.Checked, out b)) check_space_evap.Checked = b;
+                if (TryGetBool(d, "check_time_landuse", check_time_landuse.Checked, out b)) check_time_landuse.Checked = b;
+                if (TryGetBool(d, "check_time_tillfields", check_time_till_fields.Checked, out b)) check_time_till_fields.Checked = b;
+                if (TryGetBool(d, "check_time_rain", check_time_rain.Checked, out b)) check_time_rain.Checked = b;
+                if (TryGetBool(d, "check_time_infil", check_time_infil.Checked, out b)) check_time_infil.Checked = b;
+                if (TryGetBool(d, "check_time_evap", check_time_evap.Checked, out b)) check_time_evap.Checked = b;
+
+                if (TryGetBool(d, "dailywater", daily_water.Checked, out b)) daily_water.Checked = b;
+                dailyP.Text = GetStr(d, "dailyP", dailyP.Text);
+                dailyET0.Text = GetStr(d, "dailyET0", dailyET0.Text);
+                dailyD.Text = GetStr(d, "dailyD", dailyD.Text);
+                dailyT_avg.Text = GetStr(d, "dailyT_avg", dailyT_avg.Text);
+                dailyT_min.Text = GetStr(d, "dailyT_min", dailyT_min.Text);
+                dailyT_max.Text = GetStr(d, "dailyT_max", dailyT_max.Text);
+                latitude_deg.Text = GetStr(d, "latitude_deg", latitude_deg.Text);
+                latitude_min.Text = GetStr(d, "latitude_min", latitude_min.Text);
+                snowmelt_factor_textbox.Text = GetStr(d, "snowmelt_factor", snowmelt_factor_textbox.Text);
+                snow_threshold_textbox.Text = GetStr(d, "snowmelt_threshold", snow_threshold_textbox.Text);
+                daily_n.Text = GetStr(d, "daily_n_years", daily_n.Text);
+                if (TryGetBool(d, "scaledailyweather", check_scaling_daily_weather.Checked, out b)) check_scaling_daily_weather.Checked = b;
+
+                dtm_input_filename_textbox.Text = GetStr(d, "dtm_input_filename", dtm_input_filename_textbox.Text);
+                if (TryGetBool(d, "check_iterate_DTM", dtm_iterate_checkbox.Checked, out b)) dtm_iterate_checkbox.Checked = b;
+                soildepth_input_filename_textbox.Text = GetStr(d, "soildepth_input_filename", soildepth_input_filename_textbox.Text);
+                landuse_input_filename_textbox.Text = GetStr(d, "landuse_input_filename", landuse_input_filename_textbox.Text);
+                tillfields_input_filename_textbox.Text = GetStr(d, "tillfields_input_filename", tillfields_input_filename_textbox.Text);
+                rain_input_filename_textbox.Text = GetStr(d, "rain_input_filename", rain_input_filename_textbox.Text);
+                infil_input_filename_textbox.Text = GetStr(d, "infil_input_filename", infil_input_filename_textbox.Text);
+                evap_input_filename_textbox.Text = GetStr(d, "evap_input_filename", evap_input_filename_textbox.Text);
+
+                soildepth_constant_value_box.Text = GetStr(d, "soildepth_constant_value", soildepth_constant_value_box.Text);
+                landuse_constant_value_box.Text = GetStr(d, "landuse_constant_value", landuse_constant_value_box.Text);
+                tillfields_constant_textbox.Text = GetStr(d, "tillfields_constant_value", tillfields_constant_textbox.Text);
+                rainfall_constant_value_box.Text = GetStr(d, "rain_constant_value", rainfall_constant_value_box.Text);
+                infil_constant_value_box.Text = GetStr(d, "infil_constant_value", infil_constant_value_box.Text);
+                evap_constant_value_box.Text = GetStr(d, "evap_constant_value", evap_constant_value_box.Text);
+
+                textbox_max_soil_layers.Text = GetStr(d, "max_soil_layers", textbox_max_soil_layers.Text);
+                textbox_layer_thickness.Text = GetStr(d, "layer_thickness", textbox_layer_thickness.Text);
+                textbox_layer_thickness_increase.Text = GetStr(d, "layer_thickness_increase", textbox_layer_thickness_increase.Text);
+                if (TryGetBool(d, "check_fill_sinks_before", fill_sinks_before_checkbox.Checked, out b)) fill_sinks_before_checkbox.Checked = b;
+                if (TryGetBool(d, "check_fill_sinks_during", fill_sinks_during_checkbox.Checked, out b)) fill_sinks_during_checkbox.Checked = b;
+            });
+
+            ApplySection("Run", K("runs_radiobutton", "number_runs"), d =>
+            {
+                bool b;
+                if (TryGetBool(d, "runs_radiobutton", runs_checkbox.Checked, out b)) runs_checkbox.Checked = b;
+                Number_runs_textbox.Text = GetStr(d, "number_runs", Number_runs_textbox.Text);
+            });
+
+            ApplySection("Specialsettings", K("Spitsbergen", "Luxembourg", "Luxlitter", "Proglacial", "Konza", "OSL_tracing", "CN_tracing"), d =>
+            {
+                bool b;
+                if (TryGetBool(d, "Spitsbergen", Spitsbergen_case_study.Checked, out b)) Spitsbergen_case_study.Checked = b;
+                if (TryGetBool(d, "Luxembourg", version_lux_checkbox.Checked, out b)) version_lux_checkbox.Checked = b;
+                if (TryGetBool(d, "Luxlitter", luxlitter_checkbox.Checked, out b)) luxlitter_checkbox.Checked = b;
+                if (TryGetBool(d, "Proglacial", Proglacial_checkbox.Checked, out b)) Proglacial_checkbox.Checked = b;
+                if (TryGetBool(d, "Konza", version_Konza_checkbox.Checked, out b)) version_Konza_checkbox.Checked = b;
+                if (TryGetBool(d, "OSL_tracing", OSL_checkbox.Checked, out b)) OSL_checkbox.Checked = b;
+                if (TryGetBool(d, "CN_tracing", CN_checkbox.Checked, out b)) CN_checkbox.Checked = b;
+            });
+
+            ApplySection("CalibrationSensitivity", K("calibration_active_button", "calibration_num_paras_string", "calibration_ratios_string", "calibration_levels", "calibration_ratio_reduction_per_level", "calibration_observations_file"), d =>
+            {
+                bool b;
+                if (TryGetBool(d, "calibration_active_button", Calibration_button.Checked, out b)) Calibration_button.Checked = b;
+                num_cal_paras_textbox.Text = GetStr(d, "calibration_num_paras_string", num_cal_paras_textbox.Text);
+                calibration_ratios_textbox.Text = GetStr(d, "calibration_ratios_string", calibration_ratios_textbox.Text);
+                calibration_levels_textbox.Text = GetStr(d, "calibration_levels", calibration_levels_textbox.Text);
+                calibration_ratio_reduction_parameter_textbox.Text = GetStr(d, "calibration_ratio_reduction_per_level", calibration_ratio_reduction_parameter_textbox.Text);
+                obsfile_textbox.Text = GetStr(d, "calibration_observations_file", obsfile_textbox.Text);
+            }, errCode: 2);
+
+            ApplySection("File_Output", K("final_output_checkbox", "regular_output_checkbox", "years_between_outputs"), d =>
+            {
+                bool b;
+                if (TryGetBool(d, "final_output_checkbox", Final_output_checkbox.Checked, out b)) Final_output_checkbox.Checked = b;
+                if (TryGetBool(d, "regular_output_checkbox", Regular_output_checkbox.Checked, out b)) Regular_output_checkbox.Checked = b;
+                Box_years_output.Text = GetStr(d, "years_between_outputs", Box_years_output.Text);
+            });
+
+            ApplySection("Type_of_Output", K("cumulative", "annual"), d =>
+            {
+                bool b;
+                if (TryGetBool(d, "cumulative", cumulative_output_checkbox.Checked, out b)) cumulative_output_checkbox.Checked = b;
+                if (TryGetBool(d, "annual", annual_output_checkbox.Checked, out b)) annual_output_checkbox.Checked = b;
+            });
+
+            ApplySection("Maps_to_Output", K("alti", "altichange", "soildepth", "all_processes", "waterflow", "depressions"), d =>
+            {
+                bool b;
+                if (TryGetBool(d, "alti", Altitude_output_checkbox.Checked, out b)) Altitude_output_checkbox.Checked = b;
+                if (TryGetBool(d, "altichange", Alt_change_output_checkbox.Checked, out b)) Alt_change_output_checkbox.Checked = b;
+                if (TryGetBool(d, "soildepth", Soildepth_output_checkbox.Checked, out b)) Soildepth_output_checkbox.Checked = b;
+                if (TryGetBool(d, "all_processes", all_process_output_checkbox.Checked, out b)) all_process_output_checkbox.Checked = b;
+                if (TryGetBool(d, "waterflow", water_output_checkbox.Checked, out b)) water_output_checkbox.Checked = b;
+                if (TryGetBool(d, "depressions", depressions_output_checkbox.Checked, out b)) depressions_output_checkbox.Checked = b;
+            });
+
+            ApplySection("Timeseries", K(
+                "total_erosion", "total_deposition", "net_erosion", "sed_export", "slide", "SDR",
+                "total_average_alt", "total_rain", "total_infil", "total_evap", "total_outflow",
+                "wet_cells", "eroded_cells", "deposited_cells", "outflow_cells", "cell_altitude", "cell_waterflow",
+                "waterflow_threshold", "erosion_threshold", "deposition_threshold", "cell_row", "cell_col",
+                "total_OM_input", "total_average_soil_thickness", "total_phys_weath", "total_chem_weath",
+                "total_fine_formed", "total_fine_eluviated", "total_mass_bioturbed",
+                "timeseries_soil_depth", "timeseries_soil_mass", "timeseries_coarser", "timeseries_thicker",
+                "soil_cell", "soil_col", "coarser_fraction", "thicker_threshold"
+            ), d =>
+            {
+                bool b;
+                if (TryGetBool(d, "total_erosion", timeseries.timeseries_total_ero_check.Checked, out b)) timeseries.timeseries_total_ero_check.Checked = b;
+                if (TryGetBool(d, "total_deposition", timeseries.timeseries_total_dep_check.Checked, out b)) timeseries.timeseries_total_dep_check.Checked = b;
+                if (TryGetBool(d, "net_erosion", timeseries.timeseries_net_ero_check.Checked, out b)) timeseries.timeseries_net_ero_check.Checked = b;
+                if (TryGetBool(d, "sed_export", timeseries.timeseries_sedexport_checkbox.Checked, out b)) timeseries.timeseries_sedexport_checkbox.Checked = b;
+                if (TryGetBool(d, "slide", timeseries.timeseries_slide_checkbox.Checked, out b)) timeseries.timeseries_slide_checkbox.Checked = b;
+                if (TryGetBool(d, "SDR", timeseries.timeseries_SDR_check.Checked, out b)) timeseries.timeseries_SDR_check.Checked = b;
+                if (TryGetBool(d, "total_average_alt", timeseries.timeseries_total_average_alt_check.Checked, out b)) timeseries.timeseries_total_average_alt_check.Checked = b;
+                if (TryGetBool(d, "total_rain", timeseries.timeseries_total_rain_check.Checked, out b)) timeseries.timeseries_total_rain_check.Checked = b;
+                if (TryGetBool(d, "total_infil", timeseries.timeseries_total_infil_check.Checked, out b)) timeseries.timeseries_total_infil_check.Checked = b;
+                if (TryGetBool(d, "total_evap", timeseries.timeseries_total_evap_check.Checked, out b)) timeseries.timeseries_total_evap_check.Checked = b;
+                if (TryGetBool(d, "total_outflow", timeseries.timeseries_total_outflow_check.Checked, out b)) timeseries.timeseries_total_outflow_check.Checked = b;
+                if (TryGetBool(d, "wet_cells", timeseries.timeseries_number_waterflow_check.Checked, out b)) timeseries.timeseries_number_waterflow_check.Checked = b;
+                if (TryGetBool(d, "eroded_cells", timeseries.timeseries_number_erosion_check.Checked, out b)) timeseries.timeseries_number_erosion_check.Checked = b;
+                if (TryGetBool(d, "deposited_cells", timeseries.timeseries_number_dep_check.Checked, out b)) timeseries.timeseries_number_dep_check.Checked = b;
+                if (TryGetBool(d, "outflow_cells", timeseries.timeseries_outflow_cells_checkbox.Checked, out b)) timeseries.timeseries_outflow_cells_checkbox.Checked = b;
+                if (TryGetBool(d, "cell_altitude", timeseries.timeseries_cell_altitude_check.Checked, out b)) timeseries.timeseries_cell_altitude_check.Checked = b;
+                if (TryGetBool(d, "cell_waterflow", timeseries.timeseries_cell_waterflow_check.Checked, out b)) timeseries.timeseries_cell_waterflow_check.Checked = b;
+
+                timeseries.timeseries_textbox_waterflow_threshold.Text = GetStr(d, "waterflow_threshold", timeseries.timeseries_textbox_waterflow_threshold.Text);
+                timeseries.timeseries_textbox_erosion_threshold.Text = GetStr(d, "erosion_threshold", timeseries.timeseries_textbox_erosion_threshold.Text);
+                timeseries.timeseries_textbox_deposition_threshold.Text = GetStr(d, "deposition_threshold", timeseries.timeseries_textbox_deposition_threshold.Text);
+                timeseries.timeseries_textbox_cell_row.Text = GetStr(d, "cell_row", timeseries.timeseries_textbox_cell_row.Text);
+                timeseries.timeseries_textbox_cell_col.Text = GetStr(d, "cell_col", timeseries.timeseries_textbox_cell_col.Text);
+
+                if (TryGetBool(d, "total_OM_input", timeseries.total_OM_input_checkbox.Checked, out b)) timeseries.total_OM_input_checkbox.Checked = b;
+                if (TryGetBool(d, "total_average_soil_thickness", timeseries.total_average_soilthickness_checkbox.Checked, out b)) timeseries.total_average_soilthickness_checkbox.Checked = b;
+                if (TryGetBool(d, "total_phys_weath", timeseries.total_phys_weath_checkbox.Checked, out b)) timeseries.total_phys_weath_checkbox.Checked = b;
+                if (TryGetBool(d, "total_chem_weath", timeseries.total_chem_weath_checkbox.Checked, out b)) timeseries.total_chem_weath_checkbox.Checked = b;
+                if (TryGetBool(d, "total_fine_formed", timeseries.total_fine_formed_checkbox.Checked, out b)) timeseries.total_fine_formed_checkbox.Checked = b;
+                if (TryGetBool(d, "total_fine_eluviated", timeseries.total_fine_eluviated_checkbox.Checked, out b)) timeseries.total_fine_eluviated_checkbox.Checked = b;
+
+                if (TryGetBool(d, "total_mass_bioturbed", timeseries.total_mass_bioturbed_checkbox.Checked, out b)) timeseries.total_mass_bioturbed_checkbox.Checked = b;
+                if (TryGetBool(d, "timeseries_soil_depth", timeseries.timeseries_soil_depth_checkbox.Checked, out b)) timeseries.timeseries_soil_depth_checkbox.Checked = b;
+                if (TryGetBool(d, "timeseries_soil_mass", timeseries.timeseries_soil_mass_checkbox.Checked, out b)) timeseries.timeseries_soil_mass_checkbox.Checked = b;
+                if (TryGetBool(d, "timeseries_coarser", timeseries.timeseries_coarser_checkbox.Checked, out b)) timeseries.timeseries_coarser_checkbox.Checked = b;
+                if (TryGetBool(d, "timeseries_thicker", timeseries.timeseries_number_soil_thicker_checkbox.Checked, out b)) timeseries.timeseries_number_soil_thicker_checkbox.Checked = b;
+
+                timeseries.timeseries_soil_cell_col.Text = GetStr(d, "soil_cell", timeseries.timeseries_soil_cell_col.Text);
+                timeseries.timeseries_soil_cell_row.Text = GetStr(d, "soil_col", timeseries.timeseries_soil_cell_row.Text);
+                timeseries.timeseries_soil_coarser_fraction_textbox.Text = GetStr(d, "coarser_fraction", timeseries.timeseries_soil_coarser_fraction_textbox.Text);
+                timeseries.timeseries_soil_thicker_textbox.Text = GetStr(d, "thicker_threshold", timeseries.timeseries_soil_thicker_textbox.Text);
+            });
+
+            ApplySection("Soilfractions", K("coarsefrac", "sandfrac", "siltfrac", "clayfrac", "fclayfrac", "yomfrac", "oomfrac"), d =>
+            {
+                soildata.coarsebox.Text = GetStr(d, "coarsefrac", soildata.coarsebox.Text);
+                soildata.sandbox.Text = GetStr(d, "sandfrac", soildata.sandbox.Text);
+                soildata.siltbox.Text = GetStr(d, "siltfrac", soildata.siltbox.Text);
+                soildata.claybox.Text = GetStr(d, "clayfrac", soildata.claybox.Text);
+                soildata.fineclaybox.Text = GetStr(d, "fclayfrac", soildata.fineclaybox.Text);
+                soildata.yombox.Text = GetStr(d, "yomfrac", soildata.yombox.Text);
+                soildata.oombox.Text = GetStr(d, "oomfrac", soildata.oombox.Text);
+            });
+
+            var luKeys = new List<string>();
+            for (int i = 1; i <= 10; i++)
+            {
+                luKeys.Add("LU" + i + "_Ero");
+                luKeys.Add("LU" + i + "_Inf");
+                luKeys.Add("LU" + i + "_Evap");
+                luKeys.Add("LU" + i + "_RootC");
+            }
+            ApplySection("Landuse_parameters", luKeys, d =>
+            {
+                for (int i = 1; i <= 10; i++)
+                {
+                    string eroder = GetStr(d, "LU" + i + "_Ero", null);
+                    string inf = GetStr(d, "LU" + i + "_Inf", null);
+                    string ev = GetStr(d, "LU" + i + "_Evap", null);
+                    string rc = GetStr(d, "LU" + i + "_RootC", null);
+                    if (eroder != null) (new[] { landuse_determinator.LU1_Ero_textbox, landuse_determinator.LU2_Ero_textbox, landuse_determinator.LU3_Ero_textbox, landuse_determinator.LU4_Ero_textbox, landuse_determinator.LU5_Ero_textbox, landuse_determinator.LU6_Ero_textbox, landuse_determinator.LU7_Ero_textbox, landuse_determinator.LU8_Ero_textbox, landuse_determinator.LU9_Ero_textbox, landuse_determinator.LU10_Ero_textbox })[i - 1].Text = eroder;
+                    if (inf != null) (new[] { landuse_determinator.LU1_Inf_textbox, landuse_determinator.LU2_Inf_textbox, landuse_determinator.LU3_Inf_textbox, landuse_determinator.LU4_Inf_textbox, landuse_determinator.LU5_Inf_textbox, landuse_determinator.LU6_Inf_textbox, landuse_determinator.LU7_Inf_textbox, landuse_determinator.LU8_Inf_textbox, landuse_determinator.LU9_Inf_textbox, landuse_determinator.LU10_Inf_textbox })[i - 1].Text = inf;
+                    if (ev != null) (new[] { landuse_determinator.LU1_Evap_textbox, landuse_determinator.LU2_Evap_textbox, landuse_determinator.LU3_Evap_textbox, landuse_determinator.LU4_Evap_textbox, landuse_determinator.LU5_Evap_textbox, landuse_determinator.LU6_Evap_textbox, landuse_determinator.LU7_Evap_textbox, landuse_determinator.LU8_Evap_textbox, landuse_determinator.LU9_Evap_textbox, landuse_determinator.LU10_Evap_textbox })[i - 1].Text = ev;
+                    if (rc != null) (new[] { landuse_determinator.LU1_RootC_textbox, landuse_determinator.LU2_RootC_textbox, landuse_determinator.LU3_RootC_textbox, landuse_determinator.LU4_RootC_textbox, landuse_determinator.LU5_RootC_textbox, landuse_determinator.LU6_RootC_textbox, landuse_determinator.LU7_RootC_textbox, landuse_determinator.LU8_RootC_textbox, landuse_determinator.LU9_RootC_textbox, landuse_determinator.LU10_RootC_textbox })[i - 1].Text = rc;
+                }
+            });
+
+            // UI updates
+            this.Text = basetext + " (" + Path.GetFileName(cfgname) + ")";
+            start_button.Enabled = true;
+            tabControl1.Visible = true;
+
+            // Summary box (no icon), always shown
+            double pct = totalExpected > 0 ? (100.0 * totalFound / totalExpected) : 100.0;
+            string summary = $"Read {totalFound} of {totalExpected} entries ({pct:F1}%).";
+            string details = missing.Count > 0 ? ("\n" + string.Join("\n", missing)) : "";
+            string text = summary;
+
+            if (read_error == 2) text = summary + "\nError in some XML lines (CalibrationSensitivity)." + details;
+            else if (read_error == 1) text = summary + "\nWarning: not all runfile data could be read.\r\nLORICA can continue" + details;
+
+            MessageBox.Show(this, text, "Configuration");
         }
         private void menuItemConfigFileSave_Click(object sender, System.EventArgs e)
         {
@@ -1874,12 +1956,13 @@ namespace LORICA4
             if ((sender == menuItemConfigFileSaveAs) || (cfgname == null))
             {
 
-                SaveFileDialog saveFileDialog1 = new SaveFileDialog();
-
-                saveFileDialog1.InitialDirectory = workdir;
-                saveFileDialog1.Filter = "cfg files (*.xml)|*.xml|All files (*.*)|*.*";
-                saveFileDialog1.FilterIndex = 1;
-                saveFileDialog1.RestoreDirectory = false;
+                SaveFileDialog saveFileDialog1 = new SaveFileDialog
+                {
+                    InitialDirectory = workdir,
+                    Filter = "cfg files (*.xml)|*.xml|All files (*.*)|*.*",
+                    FilterIndex = 1,
+                    RestoreDirectory = false
+                };
 
                 if (saveFileDialog1.ShowDialog() == DialogResult.OK)
                 {
@@ -1890,12 +1973,14 @@ namespace LORICA4
             {
 
                 //Create a new XmlTextWriter.
-                xwriter = new XmlTextWriter(cfgname, System.Text.Encoding.UTF8);
-                //Write the beginning of the document including the 
-                //document declaration. Standalone is true. 
-                //Use indentation for readability.
-                xwriter.Formatting = Formatting.Indented;
-                xwriter.Indentation = 4;
+                xwriter = new XmlTextWriter(cfgname, System.Text.Encoding.UTF8)
+                {
+                    //Write the beginning of the document including the 
+                    //document declaration. Standalone is true. 
+                    //Use indentation for readability.
+                    Formatting = Formatting.Indented,
+                    Indentation = 4
+                };
 
                 xwriter.WriteStartDocument(true);
 
@@ -1936,11 +2021,11 @@ namespace LORICA4
                 xwriter.WriteElementString("radio_ls_fraction", XmlConvert.ToString(radio_ls_fraction.Checked));
                 xwriter.WriteElementString("para_absolute_rain_intens", text_ls_abs_rain_intens.Text);
                 xwriter.WriteElementString("para_relative_rain_intens", text_ls_rel_rain_intens.Text);
-                xwriter.WriteElementString("para_cohesion", textBox_ls_coh.Text);
-                xwriter.WriteElementString("para_friction", textBox_ls_ifr.Text);
-                xwriter.WriteElementString("para_density", textBox_ls_bd.Text);
-                xwriter.WriteElementString("para_transmissivity", textBox_ls_trans.Text);
-                xwriter.WriteElementString("minimum_slope_for_movement_tan", minimum_slope_for_movement_tan_textbox.Text);//AleG
+                xwriter.WriteElementString("radio_ls_mix_1", XmlConvert.ToString(ls_mix_radio_1.Checked));
+                xwriter.WriteElementString("radio_ls_mix_2", XmlConvert.ToString(ls_mix_radio_2.Checked));
+                xwriter.WriteElementString("radio_ls_mix_3", XmlConvert.ToString(ls_mix_radio_3.Checked));
+                xwriter.WriteElementString("minimum_slope_for_movement_tan", minimum_slope_for_movement_tan_textbox.Text);
+                xwriter.WriteElementString("runout_ratio", runout_ratio_textbox.Text);
                 xwriter.WriteEndElement();
 
                 xwriter.WriteStartElement("Creep");
@@ -1958,7 +2043,7 @@ namespace LORICA4
                 xwriter.WriteEndElement();
 
                 xwriter.WriteStartElement("Blocks");
-                xwriter.WriteElementString("blocks_active", XmlConvert.ToString(treefall_checkbox.Checked));
+                xwriter.WriteElementString("blocks_active", XmlConvert.ToString(blocks_active_checkbox.Checked));
                 xwriter.WriteElementString("hardlayerthickness", hardlayerthickness_textbox.Text);
                 xwriter.WriteElementString("hardlayerelevation", hardlayerelevation_textbox.Text);
                 xwriter.WriteElementString("hardlayerdensity", hardlayerdensity_textbox.Text);
@@ -1988,6 +2073,9 @@ namespace LORICA4
                 xwriter.WriteElementString("constant3", chem_weath_depth_constant_textbox.Text);
                 xwriter.WriteElementString("constant4", chem_weath_specific_coefficient_textbox.Text);
                 xwriter.WriteElementString("surface_coarse", soildata.specific_area_coarse_textbox.Text);
+                xwriter.WriteElementString("neoform_rate_constant", clay_neoform_constant_textbox.Text);
+                xwriter.WriteElementString("constant5", clay_neoform_C1_textbox.Text);
+                xwriter.WriteElementString("constant6", clay_neoform_C2_textbox.Text);
                 xwriter.WriteElementString("surface_sand", soildata.specific_area_sand_textbox.Text);
                 xwriter.WriteElementString("surface_silt", soildata.specific_area_silt_textbox.Text);
                 xwriter.WriteElementString("surface_clay", soildata.specific_area_clay_textbox.Text);
@@ -1996,9 +2084,6 @@ namespace LORICA4
 
                 xwriter.WriteStartElement("Clay_dynamics");
                 xwriter.WriteElementString("clay_dynamics_active", XmlConvert.ToString(soil_clay_transloc_checkbox.Checked));
-                xwriter.WriteElementString("neoform_rate_constant", clay_neoform_constant_textbox.Text);
-                xwriter.WriteElementString("constant5", clay_neoform_C1_textbox.Text);
-                xwriter.WriteElementString("constant6", clay_neoform_C2_textbox.Text);
                 xwriter.WriteElementString("max_eluviation", maximum_eluviation_textbox.Text);
                 xwriter.WriteElementString("eluviation_coefficient", eluviation_coefficient_textbox.Text);
                 xwriter.WriteElementString("ct_Jagercikova_active", XmlConvert.ToString(ct_Jagercikova.Checked));
@@ -2094,7 +2179,7 @@ namespace LORICA4
                 xwriter.WriteElementString("scaledailyweather", XmlConvert.ToString(check_scaling_daily_weather.Checked));
 
                 xwriter.WriteElementString("dtm_input_filename", dtm_input_filename_textbox.Text);
-                if (("input[name='dtm_iterate_checkbox']").Length > 0) { xwriter.WriteElementString("check_iterate_DTM", XmlConvert.ToString(dtm_iterate_checkbox.Checked)); }
+                xwriter.WriteElementString("check_iterate_DTM", XmlConvert.ToString(dtm_iterate_checkbox.Checked));
                 xwriter.WriteElementString("soildepth_input_filename", soildepth_input_filename_textbox.Text);
                 xwriter.WriteElementString("landuse_input_filename", landuse_input_filename_textbox.Text);
                 xwriter.WriteElementString("tillfields_input_filename", tillfields_input_filename_textbox.Text);
@@ -2119,6 +2204,7 @@ namespace LORICA4
                 xwriter.WriteStartElement("Run");
                 xwriter.WriteElementString("runs_radiobutton", XmlConvert.ToString(runs_checkbox.Checked));
                 xwriter.WriteElementString("number_runs", Number_runs_textbox.Text);
+                xwriter.WriteEndElement();
 
                 xwriter.WriteStartElement("Specialsettings");
                 xwriter.WriteElementString("Spitsbergen", XmlConvert.ToString(Spitsbergen_case_study.Checked));
@@ -2128,7 +2214,6 @@ namespace LORICA4
                 xwriter.WriteElementString("Konza", XmlConvert.ToString(version_Konza_checkbox.Checked));
                 xwriter.WriteElementString("OSL_tracing", XmlConvert.ToString(OSL_checkbox.Checked));
                 xwriter.WriteElementString("CN_tracing", XmlConvert.ToString(CN_checkbox.Checked));
-                //xwriter.WriteElementString("other", XmlConvert.ToString(runs_checkbox.Checked));
                 xwriter.WriteEndElement();
 
                 xwriter.WriteStartElement("CalibrationSensitivity");
@@ -2140,8 +2225,6 @@ namespace LORICA4
                 xwriter.WriteElementString("calibration_observations_file", obsfile_textbox.Text);
                 xwriter.WriteEndElement();
 
-                xwriter.WriteEndElement();
-
                 xwriter.WriteStartElement("Output");
 
                 xwriter.WriteStartElement("File_Output");
@@ -2150,13 +2233,17 @@ namespace LORICA4
                 xwriter.WriteElementString("final_output_checkbox", XmlConvert.ToString(Final_output_checkbox.Checked));
                 xwriter.WriteElementString("regular_output_checkbox", XmlConvert.ToString(Regular_output_checkbox.Checked));
                 xwriter.WriteElementString("years_between_outputs", Box_years_output.Text);
-                xwriter.WriteEndElement();
+                xwriter.WriteEndElement(); // </Moment_of_Output>
 
+                xwriter.WriteEndElement(); // </File_Output>
+
+                // Type_of_Output (sibling of File_Output)
                 xwriter.WriteStartElement("Type_of_Output");
                 xwriter.WriteElementString("cumulative", XmlConvert.ToString(cumulative_output_checkbox.Checked));
                 xwriter.WriteElementString("annual", XmlConvert.ToString(annual_output_checkbox.Checked));
-                xwriter.WriteEndElement();
+                xwriter.WriteEndElement(); // </Type_of_Output>
 
+                // Maps_to_Output (sibling of File_Output)
                 xwriter.WriteStartElement("Maps_to_Output");
                 xwriter.WriteElementString("alti", XmlConvert.ToString(Altitude_output_checkbox.Checked));
                 xwriter.WriteElementString("altichange", XmlConvert.ToString(Alt_change_output_checkbox.Checked));
@@ -2164,9 +2251,9 @@ namespace LORICA4
                 xwriter.WriteElementString("all_processes", XmlConvert.ToString(all_process_output_checkbox.Checked));
                 xwriter.WriteElementString("waterflow", XmlConvert.ToString(water_output_checkbox.Checked));
                 xwriter.WriteElementString("depressions", XmlConvert.ToString(depressions_output_checkbox.Checked));
-                xwriter.WriteEndElement();
+                xwriter.WriteEndElement(); // </Maps_to_Output>
 
-                xwriter.WriteEndElement();
+                xwriter.WriteEndElement(); // </Output>
 
                 xwriter.WriteStartElement("Other_outputs");
 
@@ -2208,7 +2295,7 @@ namespace LORICA4
                 xwriter.WriteElementString("soil_col", timeseries.timeseries_soil_cell_row.Text);
                 xwriter.WriteElementString("coarser_fraction", timeseries.timeseries_soil_coarser_fraction_textbox.Text);
                 xwriter.WriteElementString("thicker_threshold", timeseries.timeseries_soil_thicker_textbox.Text);
-                
+
                 xwriter.WriteEndElement();
 
                 xwriter.WriteEndElement();
@@ -2223,7 +2310,7 @@ namespace LORICA4
                 xwriter.WriteElementString("oomfrac", soildata.oombox.Text); //AleG
                 xwriter.WriteEndElement();
 
-                xwriter.WriteStartElement("Landuse_parameters"); 
+                xwriter.WriteStartElement("Landuse_parameters");
                 xwriter.WriteElementString("LU1_Ero", landuse_determinator.LU1_Ero_textbox.Text);
                 xwriter.WriteElementString("LU1_Inf", landuse_determinator.LU1_Inf_textbox.Text);
                 xwriter.WriteElementString("LU1_Evap", landuse_determinator.LU1_Evap_textbox.Text);
@@ -2275,7 +2362,7 @@ namespace LORICA4
                 xwriter.WriteElementString("LU10_RootC", landuse_determinator.LU10_RootC_textbox.Text);
 
                 xwriter.WriteEndElement();
-                //End the document
+                xwriter.WriteEndElement();
                 xwriter.WriteEndDocument();
 
                 //Flush the xml document to the underlying stream and
@@ -2290,7 +2377,7 @@ namespace LORICA4
         private void read_soil_elevation_distance_from_output(int time, string dir)
         {
             // read latest output and start calculating from there
-            dir = dir + "\\";
+            dir += "\\";
 
             initialise_once();
 
@@ -2414,7 +2501,7 @@ namespace LORICA4
                         if (loopnr_min == 0)
                         {
                             min_val = rast_val;
-                            loopnr_min = loopnr_min + 1;
+                            loopnr_min++;
                         }
                         else
                         {
@@ -2455,7 +2542,7 @@ namespace LORICA4
                         if (loopnr_max == 0)
                         {
                             max_val = rast_val;
-                            loopnr_max = loopnr_max + 1;
+                            loopnr_max++;
                         }
                         else
                         {

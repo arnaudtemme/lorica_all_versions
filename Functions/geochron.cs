@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LORICA4
 {
@@ -91,7 +89,7 @@ namespace LORICA4
                             }
                         }
                         bleached_depth_m -= laythick; // subtract layer thickness from bleached depth
-                        depth = depth + layerthickness_m[row, col, layer];
+                        depth += layerthickness_m[row, col, layer];
                         //Debug.WriteLine("uboa6");
                     }
                 }

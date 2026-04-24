@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace LORICA4
@@ -89,7 +86,7 @@ namespace LORICA4
 
         void searchdepressions()
         {
-            
+
 
             int z;
             //this.InfoStatusPanel.Text = "searchdepressions has been entered";
@@ -122,7 +119,7 @@ namespace LORICA4
                 jupedge[z] = 0;
             }
 
-            
+
 
             totaldepressions = 0; totaldepressionsize = 0; maxsize = 0; totaldepressionvolume = 0; largestdepression = -1;
             depressionnumber = 0;
@@ -496,7 +493,7 @@ namespace LORICA4
 
             once_dtm_fill = 0;
 
-            
+
 
             for (int row = 0; row < nr; row++)
             {
@@ -532,7 +529,7 @@ namespace LORICA4
                                 {  //bnd
                                     if (t > 1000000) { diagnostic_mode = 1; } else { diagnostic_mode = 0; }
                                     if (diagnostic_mode == 1) { Debug.WriteLine("dtmfill_A of " + row + " " + col + " = " + dtmfill_A[row, col] + ", checking on behalf of depression " + depressiontt); }
-                                    if (dtmfill_A[row, col] == -1 && depression[row, col] == depressiontt) 
+                                    if (dtmfill_A[row, col] == -1 && depression[row, col] == depressiontt)
                                     {  // if this is a cell of the current depression that has not yet got a dtmfill
                                        // and remember that this is the only place where this cell could have gotten that DTMfill
                                         notyetdone++;       // then we are not yet ready
@@ -567,7 +564,7 @@ namespace LORICA4
                         } // end for
                     } // end while
                 } // end if they exist
-                
+
             } //end for all possible depressions
             //Debug.WriteLine("\n--dtmfill determination finished--");
         }
@@ -761,7 +758,7 @@ namespace LORICA4
                             for (size = 0; size < n_texture_classes; size++)
                             {
                                 texture_kg[fillrow, fillcol, 0, size] += fraction_sediment_used_for_this_dep * fraction_sediment_used_for_this_cell * depressionsum_texture_kg[size];
-                                
+
                             }
                             young_SOM_kg[fillrow, fillcol, 0] += fraction_sediment_used_for_this_dep * fraction_sediment_used_for_this_cell * depressionsum_YOM_kg;
                             old_SOM_kg[fillrow, fillcol, 0] += fraction_sediment_used_for_this_dep * fraction_sediment_used_for_this_cell * depressionsum_OOM_kg;
@@ -1401,14 +1398,14 @@ namespace LORICA4
                 }
                 if (deltasize > 0 && depression[rowlowestobnb, collowestobnb] != -this_depression)
                 {
-                    if (depression[rowlowestobnb + 1, collowestobnb + 1] == -this_depression) { rowlowestobnb = rowlowestobnb + 1; collowestobnb = collowestobnb + 1; }
-                    if (depression[rowlowestobnb + 1, collowestobnb] == -this_depression) { rowlowestobnb = rowlowestobnb + 1; }
-                    if (depression[rowlowestobnb + 1, collowestobnb - 1] == -this_depression) { rowlowestobnb = rowlowestobnb + 1; collowestobnb = collowestobnb - 1; }
-                    if (depression[rowlowestobnb, collowestobnb + 1] == -this_depression) { collowestobnb = collowestobnb + 1; }
-                    if (depression[rowlowestobnb, collowestobnb - 1] == -this_depression) { collowestobnb = collowestobnb - 1; }
-                    if (depression[rowlowestobnb - 1, collowestobnb + 1] == -this_depression) { rowlowestobnb = rowlowestobnb - 1; collowestobnb = collowestobnb + 1; }
-                    if (depression[rowlowestobnb - 1, collowestobnb] == -this_depression) { rowlowestobnb = rowlowestobnb - 1; }
-                    if (depression[rowlowestobnb - 1, collowestobnb - 1] == -this_depression) { rowlowestobnb = rowlowestobnb - 1; collowestobnb = collowestobnb - 1; }
+                    if (depression[rowlowestobnb + 1, collowestobnb + 1] == -this_depression) { rowlowestobnb++; collowestobnb++; }
+                    if (depression[rowlowestobnb + 1, collowestobnb] == -this_depression) { rowlowestobnb++; }
+                    if (depression[rowlowestobnb + 1, collowestobnb - 1] == -this_depression) { rowlowestobnb++; collowestobnb--; }
+                    if (depression[rowlowestobnb, collowestobnb + 1] == -this_depression) { collowestobnb++; }
+                    if (depression[rowlowestobnb, collowestobnb - 1] == -this_depression) { collowestobnb--; }
+                    if (depression[rowlowestobnb - 1, collowestobnb + 1] == -this_depression) { rowlowestobnb--; collowestobnb++; }
+                    if (depression[rowlowestobnb - 1, collowestobnb] == -this_depression) { rowlowestobnb--; }
+                    if (depression[rowlowestobnb - 1, collowestobnb - 1] == -this_depression) { rowlowestobnb--; collowestobnb--; }
                 }
                 if (deltasize > 0 && depression[rowlowestobnb, collowestobnb] == -this_depression)
                 {
