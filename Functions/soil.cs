@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace LORICA4
@@ -503,715 +504,405 @@ namespace LORICA4
 
         }
 
-        void soil_bioturbation_mixing()
+        // -------------------------
+        // Support types (add inside your class)
+        // -------------------------
+        private struct Target
+        {
+            public int Idx;
+            public double W;
+            public Target(int idx, double w) { Idx = idx; W = w; }
+        }
+
+        private sealed class BtScratch
+        {
+            public List<Target> Targets;
+            public double[] Mixture;            // length 7 (1..4 textures, 5 young SOM, 6 old SOM)
+            public double[,] TextureOutTotal;   // used only when OSL is enabled
+
+            // Per-cell precomputations
+            public bool[] Exists;
+            public double[] Thick, ZTop, ZBot, ZCtr, FineMass;
+
+            public const double EpsLocal = 1e-16;
+            public const double EpsPair = 1e-12;
+
+            public BtScratch(int maxLayers, int nTextureClasses, bool preallocOSL)
+            {
+                Targets = new List<Target>(64);
+                Mixture = new double[7];
+                Exists = new bool[maxLayers];
+                Thick = new double[maxLayers];
+                ZTop = new double[maxLayers];
+                ZBot = new double[maxLayers];
+                ZCtr = new double[maxLayers];
+                FineMass = new double[maxLayers];
+                if (preallocOSL)
+                    TextureOutTotal = new double[nTextureClasses, 4];
+            }
+        }
+
+        // -------------------------
+        // Optional tiny sequential fallback (small grids)
+        // -------------------------
+        private void RunBioturbationSequential()
+        {
+            bool proglacial = Proglacial_checkbox.Checked;
+            bool doCN = CN_checkbox.Checked;
+            bool doOSL = OSL_checkbox.Checked;
+
+            total_mass_bioturbed_kg = 0.0;
+
+            for (int r = 0; r < nr; r++)
+            {
+                for (int c = 0; c < nc; c++)
+                {
+                    if (proglacial && glacier_cell[r, c] == 1) continue;
+                    double local = 0.0;
+                    var scratch = new BtScratch(max_soil_layers, n_texture_classes, doOSL);
+                    ProcessCellParallel(r, c, doCN, doOSL, scratch, ref local);
+                    total_mass_bioturbed_kg += local;
+                }
+            }
+
+            if (timeseries.total_mass_bioturbed_checkbox.Checked)
+                timeseries_matrix[t, timeseries_order[27]] = total_mass_bioturbed_kg;
+        }
+
+        // -------------------------
+        // Per‑cell worker (Fix 1 + optimizations)
+        // -------------------------
+        private void ProcessCellParallel(int row, int col, bool doCN, bool doOSL, BtScratch s, ref double localTotalBtKg)
+        {
+            if (dtm[row, col] == nodata_value || soildepth_m[row, col] <= 0) return;
+
+            remove_empty_layers(row, col);
+            update_all_layer_thicknesses(row, col);
+
+            // Precompute per-cell layer properties
+            double total_soil_thickness_m = 0.0;
+            for (int k = 0; k < max_soil_layers; k++)
+            {
+                double mLayer = total_layer_mass_kg(row, col, k);
+                s.Exists[k] = mLayer > 0.0;
+                double th = layerthickness_m[row, col, k];
+                s.Thick[k] = th;
+
+                if (s.Exists[k])
+                {
+                    double fm =
+                        texture_kg[row, col, k, 1] + texture_kg[row, col, k, 2] +
+                        texture_kg[row, col, k, 3] + texture_kg[row, col, k, 4] +
+                        young_SOM_kg[row, col, k] + old_SOM_kg[row, col, k];
+                    s.FineMass[k] = fm;
+                    total_soil_thickness_m += th;
+                }
+                else s.FineMass[k] = 0.0;
+            }
+
+            // Build depths
+            double z = 0.0;
+            for (int k = 0; k < max_soil_layers; k++)
+            {
+                s.ZTop[k] = z;
+                s.ZBot[k] = z + s.Thick[k];
+                s.ZCtr[k] = z + 0.5 * s.Thick[k];
+                z = s.ZBot[k];
+            }
+
+            // Snapshot to temp buffers
+            double[,] temp = new double[max_soil_layers, 7];
+            for (int k = 0; k < max_soil_layers; k++)
+            {
+                if (!s.Exists[k]) continue;
+                for (int p = 0; p < 5; p++) temp[k, p] = texture_kg[row, col, k, p];
+                temp[k, 5] = young_SOM_kg[row, col, k];
+                temp[k, 6] = old_SOM_kg[row, col, k];
+            }
+
+            // Conservation baselines
+            decimal mass_before = total_soil_mass_kg_decimal(row, col);
+            double top_before = total_layer_mass_kg(row, col, 0);
+
+            // Total bioturbation mass for this cell
+            double local_bt =
+                potential_bt_mixing_kg_m2_y *
+                (1 - Math.Exp(-bioturbation_decay_depth_m * total_soil_thickness_m)) *
+                dx * dx * dt;
+
+            if (local_bt <= BtScratch.EpsLocal) goto Commit;
+
+            localTotalBtKg += local_bt;
+
+            // Secondary decay
+            double dd_bt_m = bioturbation_decay_depth_m * 2.0;
+            if (doOSL && s.TextureOutTotal == null)
+                s.TextureOutTotal = new double[n_texture_classes, 4];
+
+            // Source layer loop
+            for (int layer = 0; layer < max_soil_layers; layer++)
+            {
+                if (!s.Exists[layer] || s.FineMass[layer] <= 0.0) continue;
+
+                double layer_bt = activity_fraction(
+                    bioturbation_decay_depth_m, total_soil_thickness_m, s.ZTop[layer], s.ZBot[layer]) * local_bt;
+
+                if (layer_bt <= BtScratch.EpsLocal) continue;
+
+                double zc = s.ZCtr[layer];
+
+                // Global index (as in your original code)
+                double total_index =
+                    -1.0 / dd_bt_m * (Math.Exp(-dd_bt_m * (zc - 0.0)) - 1.0) +
+                    -1.0 / dd_bt_m * (Math.Exp(-dd_bt_m * (total_soil_thickness_m - zc)) - 1.0);
+
+                // Build weights for other layers (exclude self), normalize by total_index
+                s.Targets.Clear();
+                double wsum = 0.0;
+
+                for (int other = 0; other < max_soil_layers; other++)
+                {
+                    if (other == layer || !s.Exists[other] || s.FineMass[other] <= 0.0) continue;
+
+                    double w;
+                    if (other < layer)
+                        w = -1.0 / dd_bt_m * (Math.Exp(-(zc - s.ZTop[other]) / dd_bt_m) - Math.Exp(-(zc - s.ZBot[other]) / dd_bt_m));
+                    else
+                        w = -1.0 / dd_bt_m * (Math.Exp(-(s.ZBot[other] - zc) / dd_bt_m) - Math.Exp(-(s.ZTop[other] - zc) / dd_bt_m));
+
+                    if (w <= 0.0 || total_index <= 0.0) continue;
+
+                    double wn = w / total_index;
+                    if (wn <= 0.0) continue;
+
+                    s.Targets.Add(new Target(other, wn));
+                    wsum += wn;
+                }
+
+                if (wsum <= 0.0) continue;
+
+                // Fix 1: renormalize over actual targets so weights sum to 1
+                for (int i = 0; i < s.Targets.Count; i++)
+                {
+                    var t = s.Targets[i];
+                    t.W = t.W / wsum;
+                    s.Targets[i] = t;
+                }
+
+                // Pairwise exchanges
+                for (int ti = 0; ti < s.Targets.Count; ti++)
+                {
+                    int otherlayer = s.Targets[ti].Idx;
+                    double pij = s.Targets[ti].W;
+
+                    double inter_bt = layer_bt * pij;
+
+                    // Cap by available fine mass in each donor
+                    double from_l = Math.Min(s.FineMass[layer], inter_bt * 0.5);
+                    double from_ol = Math.Min(s.FineMass[otherlayer], inter_bt * 0.5);
+
+                    if ((from_l + from_ol) <= BtScratch.EpsPair) continue;
+
+                    // Reset mixture
+                    for (int p = 0; p < 7; p++) s.Mixture[p] = 0.0;
+                    if (doOSL)
+                        for (int p = 0; p < n_texture_classes; p++)
+                            for (int c = 0; c < 4; c++)
+                                s.TextureOutTotal[p, c] = 0.0;
+
+                    double mass_l = 0.0, mass_ol = 0.0;
+
+                    // Texture 1..4
+                    for (int prop = 1; prop < 5; prop++)
+                    {
+                        double d_l = (from_l / Math.Max(s.FineMass[layer], 1e-30)) * texture_kg[row, col, layer, prop];
+                        double d_ol = (from_ol / Math.Max(s.FineMass[otherlayer], 1e-30)) * texture_kg[row, col, otherlayer, prop];
+
+                        d_l = Math.Min(d_l, temp[layer, prop]);
+                        d_ol = Math.Min(d_ol, temp[otherlayer, prop]);
+
+                        s.Mixture[prop] += (d_l + d_ol);
+                        mass_l += d_l;
+                        mass_ol += d_ol;
+
+                        temp[layer, prop] -= d_l;
+                        temp[otherlayer, prop] -= d_ol;
+
+                        if (doOSL)
+                        {
+                            s.TextureOutTotal[prop, 0] = d_l;
+                            s.TextureOutTotal[prop, 1] = texture_kg[row, col, layer, prop];
+                            s.TextureOutTotal[prop, 2] = d_ol;
+                            s.TextureOutTotal[prop, 3] = texture_kg[row, col, otherlayer, prop];
+                        }
+                    }
+
+                    // Young SOM (5)
+                    {
+                        double d_l = (from_l / Math.Max(s.FineMass[layer], 1e-30)) * young_SOM_kg[row, col, layer];
+                        double d_ol = (from_ol / Math.Max(s.FineMass[otherlayer], 1e-30)) * young_SOM_kg[row, col, otherlayer];
+
+                        d_l = Math.Min(d_l, temp[layer, 5]);
+                        d_ol = Math.Min(d_ol, temp[otherlayer, 5]);
+
+                        s.Mixture[5] += (d_l + d_ol);
+                        mass_l += d_l;
+                        mass_ol += d_ol;
+
+                        temp[layer, 5] -= d_l;
+                        temp[otherlayer, 5] -= d_ol;
+                    }
+
+                    // Old SOM (6)
+                    {
+                        double d_l = (from_l / Math.Max(s.FineMass[layer], 1e-30)) * old_SOM_kg[row, col, layer];
+                        double d_ol = (from_ol / Math.Max(s.FineMass[otherlayer], 1e-30)) * old_SOM_kg[row, col, otherlayer];
+
+                        d_l = Math.Min(d_l, temp[layer, 6]);
+                        d_ol = Math.Min(d_ol, temp[otherlayer, 6]);
+
+                        s.Mixture[6] += (d_l + d_ol);
+                        mass_l += d_l;
+                        mass_ol += d_ol;
+
+                        temp[layer, 6] -= d_l;
+                        temp[otherlayer, 6] -= d_ol;
+                    }
+
+                    // Return mixture proportional to donations
+                    double pool = mass_l + mass_ol;
+                    if (pool > 0.0)
+                    {
+                        double w_to_l = mass_l / pool;
+                        double w_to_ol = mass_ol / pool;
+
+                        for (int prop = 1; prop < 7; prop++)
+                        {
+                            temp[layer, prop] += s.Mixture[prop] * w_to_l;
+                            temp[otherlayer, prop] += s.Mixture[prop] * w_to_ol;
+                        }
+
+                        if (doCN)
+                        {
+                            for (int cn = 0; cn < n_cosmo; cn++)
+                            {
+                                double d_CN_l = (mass_l / Math.Max(s.FineMass[layer], 1e-30)) * CN_atoms_cm2[row, col, layer, cn];
+                                double d_CN_ol = (mass_ol / Math.Max(s.FineMass[otherlayer], 1e-30)) * CN_atoms_cm2[row, col, otherlayer, cn];
+                                double cn_pool = d_CN_l + d_CN_ol;
+
+                                CN_atoms_cm2[row, col, layer, cn] += (-d_CN_l + cn_pool * w_to_l);
+                                CN_atoms_cm2[row, col, otherlayer, cn] += (-d_CN_ol + cn_pool * w_to_ol);
+                            }
+                        }
+
+                        if (doOSL)
+                        {
+                            double prob_layer = s.TextureOutTotal[1, 0] / Math.Max(s.TextureOutTotal[1, 1], 1e-30);
+                            double prob_otherlayer = s.TextureOutTotal[1, 2] / Math.Max(s.TextureOutTotal[1, 3], 1e-30);
+                            transfer_OSL_grains(row, col, layer, row, col, otherlayer, prob_layer, prob_otherlayer);
+                        }
+                    }
+                }
+            }
+
+        Commit:
+            // Write back
+            for (int k = 0; k < max_soil_layers; k++)
+            {
+                if (!s.Exists[k]) continue;
+                for (int p = 1; p < 5; p++)
+                    texture_kg[row, col, k, p] = temp[k, p];
+                young_SOM_kg[row, col, k] = temp[k, 5];
+                old_SOM_kg[row, col, k] = temp[k, 6];
+            }
+
+            // Conservation check
+            decimal mass_after = total_soil_mass_kg_decimal(row, col);
+            double top_after = total_layer_mass_kg(row, col, 0);
+
+            double dTop = Math.Abs(top_before - top_after);
+            double dTot = Math.Abs((double)(mass_before - mass_after));
+            double tolT = Math.Max(1e-9 * Math.Max(top_before, 1.0), 1e-8);
+            double tolM = Math.Max(1e-9 * Math.Max((double)mass_before, 1.0), 1e-8);
+
+            if (dTop > tolT || dTot > tolM)
+                Debug.WriteLine("Mass loss during bioturbation");
+        }
+
+        // -------------------------
+        // Public entry point with partitioner (Fix 1 + speedups)
+        // -------------------------
+        public void soil_bioturbation_mixing()
         {
             try
             {
-                //for bioturbation, we first calculate how much bioturbation (kg) this cell will experience, given its thickness
-                //shallower soils do not experience the same amount as deeper soils
-                //then we look at individual layers. Thicker layers, and layers closer to the surface, will experience more bioturbation kg
-                //then, per layer, we will exchange the required bioturbation kg with the surrounding layers. 
-                //Layers that are closer will exchange more than those that are further (regardless of whether they are deeper or closer to the surface)
+                bool proglacial = Proglacial_checkbox.Checked;
+                bool doCN = CN_checkbox.Checked;
+                bool doOSL = OSL_checkbox.Checked;
 
-                double local_bioturbation_kg, layer_bioturbation_kg, interlayer_bioturbation_kg;
-                int layer, otherlayer;
-                double fine_otherlayer_mass, fine_layer_mass;
-                double total_soil_thickness_m;
-                double depth, otherdepth, distance;
-                total_mass_bioturbed_kg = 0;
-                double[,] temp_tex_som_kg = new double[max_soil_layers, 7]; // this will hold temporary changed values of texture until all bioturbation is done
-                double[] layer_0 = new double[7], layer_0_after = new double[7];
-                double mass_top_before = 0, mass_top_after = 0;
-                decimal mass_soil_before = 0, mass_soil_after = 0;
-                double total_BT_transport_kgm = 0;
-                double total_young_som_kg, total_old_som_kg;
-                //if (CN_checkbox.Checked) { CN_before = total_CNs(); }
-                for (row = 0; row < nr; row++)
+                total_mass_bioturbed_kg = 0.0;
+
+                int cores = Environment.ProcessorCount;
+                var po = new ParallelOptions { MaxDegreeOfParallelism = Math.Max(1, cores - 1) };
+
+                // Choose chunkRows and clamp
+                int chunkRows = Math.Max(8, Math.Min(128, nr / (cores * 8)));
+                chunkRows = Math.Max(1, Math.Min(chunkRows, nr));
+
+                // Tiny grids: sequential is faster
+                if (nr * nc < 10000)
                 {
-                    for (col = 0; col < nc; col++)
+                    RunBioturbationSequential();
+                    return;
+                }
+
+                var rangePartitioner = System.Collections.Concurrent.Partitioner.Create(0, nr, chunkRows);
+                var threadTotals = new System.Threading.ThreadLocal<double>(() => 0.0);
+
+                Parallel.ForEach<System.Tuple<int, int>, BtScratch>(
+                    rangePartitioner,
+                    po,
+                    // localInit
+                    () => new BtScratch(max_soil_layers, n_texture_classes, doOSL),
+                    // body
+                    (range, state, scratch) =>
                     {
-                        if (Proglacial_checkbox.Checked)
+                        double localTotal = 0.0;
+
+                        for (int r = range.Item1; r < range.Item2; r++)
                         {
-                            if (glacier_cell[row, col] != 1)
+                            for (int c = 0; c < nc; c++)
                             {
-                                if (dtm[row, col] != nodata_value & soildepth_m[row, col] > 0)
-                                {
-                                    remove_empty_layers(row, col);
-                                    update_all_layer_thicknesses(row, col);
-                                    total_young_som_kg = 0; total_old_som_kg = 0;
-
-                                    mass_soil_before = total_soil_mass_kg_decimal(row, col);
-                                    mass_top_before = total_layer_mass_kg(row, col, 0);
-                                    total_soil_thickness_m = 0;
-                                    for (layer = 0; layer < max_soil_layers; layer++)
-                                    {
-                                        if (layer == 0)
-                                        {
-                                            for (int tex = 0; tex < 5; tex++)
-                                            {
-                                                layer_0[tex] = texture_kg[row, col, 0, tex];
-                                            }
-                                            layer_0[5] = young_SOM_kg[row, col, 0];
-                                            layer_0[6] = old_SOM_kg[row, col, 0];
-                                        }
-
-                                        if (total_layer_mass_kg(row, col, layer) > 0)  //this says: if the layer actually exists
-                                        {
-                                            for (int prop = 0; prop < 5; prop++) { temp_tex_som_kg[layer, prop] = texture_kg[row, col, layer, prop]; }
-                                            temp_tex_som_kg[layer, 5] = young_SOM_kg[row, col, layer];
-                                            temp_tex_som_kg[layer, 6] = old_SOM_kg[row, col, layer];
-                                            total_soil_thickness_m += layerthickness_m[row, col, layer];
-
-                                            total_young_som_kg += young_SOM_kg[row, col, layer];
-                                            total_old_som_kg += old_SOM_kg[row, col, layer];
-                                        }
-                                    }
-
-                                    //here we calculate the first quantity: how much bioturbation kg needs to happen in this location
-                                    local_bioturbation_kg = potential_bt_mixing_kg_m2_y * (1 - Math.Exp(-bioturbation_decay_depth_m * total_soil_thickness_m)) * dx * dx * dt;
-                                    if (local_bioturbation_kg < 0) // local_bt == 0 happens when soil is absent
-                                    {
-                                        Debug.WriteLine(" error in local_bioturbation calculation : zero mass");
-                                        Debug.WriteLine(" total soil thickness :" + total_soil_thickness_m + " at rc " + row + " " + col);
-                                        Debug.WriteLine("err_sbt1");
-
-                                    }
-
-                                    total_mass_bioturbed_kg += local_bioturbation_kg;
-
-                                    depth = 0;
-                                    for (layer = 0; layer < max_soil_layers; layer++)
-                                    {
-
-                                        if (total_layer_fine_earth_mass_kg(row, col, layer) > 0)  //this says: if the layer actually exists
-
-                                        {
-                                            double dd_bt_m = bioturbation_decay_depth_m * 2; // possible adjustments to second depth decay for bioturbation are possible here
-
-
-                                            //double total_BT_depth_decay_index = 
-                                            //    -1/dd_bt*(Math.Exp(-dd_bt*(z_toplayer - 0)) - Math.Exp(-dd_bt*(z_toplayer - z_toplayer))) +
-                                            //    -1/dd_bt*(Math.Exp(-dd_bt*(total_soil_thickness_m - z_bottomlayer)) - Math.Exp(-dd_bt*(z_bottomlayer - z_bottomlayer)));                                    
-
-
-                                            double check_BT_dd = 0;
-
-                                            //integration over the exponential decay function in JGR 2006 for the entire profile, and for the current layer.
-                                            //then calculate the fraction of bioturbation that will happen in this layer, and multiply with total bioturbation in this cell
-                                            fine_layer_mass = total_layer_fine_earth_mass_kg(row, col, layer);
-
-                                            layer_bioturbation_kg = activity_fraction(bioturbation_decay_depth_m, total_soil_thickness_m, depth, depth + layerthickness_m[row, col, layer]) * local_bioturbation_kg;
-                                            depth += layerthickness_m[row, col, layer] / 2;  ///ArT development needed
-
-                                            double total_BT_depth_decay_index =
-                                                -1 / dd_bt_m * (Math.Exp(-dd_bt_m * (depth - 0)) - 1) + // upper part of the curve //Should this also be changed since dd_bt_m is now m instead of 1/m? AleG
-                                                -1 / dd_bt_m * (Math.Exp(-dd_bt_m * (total_soil_thickness_m - depth)) - 1); // lower part of the curve //Should this also be changed since dd_bt_m is now m instead of 1/m? AleG
-
-
-                                            otherdepth = 0; distance = 0;
-
-                                            if (layerthickness_m[row, col, layer] <= 0) { Debug.WriteLine(" error: layer thickness is 0 at t " + t + " r " + row + " c " + col); }
-
-                                            //now that we know how much bioturbation originates in this layer,
-                                            //now look at all other layers and decide which one of them exchanges how much of that good stuff.
-                                            //Here we include the source layer as wel, to prevent errors and inconsistencies with different layer thicknesses
-                                            var mass_distances = new List<double>();
-                                            var depths = new List<double>();
-                                            var depthdecays = new List<double>();
-                                            var P_fromto_list = new List<double>();
-                                            var P_tofrom_list = new List<double>();
-
-                                            otherdepth = 0; distance = 0;
-                                            double layer_BT_depth_decay_index = 0;
-                                            for (otherlayer = 0; otherlayer < max_soil_layers; otherlayer++)
-                                            {
-                                                double z_topotherlayer = otherdepth;
-                                                double z_bottomotherlayer = otherdepth + layerthickness_m[row, col, otherlayer];
-
-                                                if (otherlayer < layer) // above the bioturbated layer
-                                                {
-                                                    layer_BT_depth_decay_index = -1 / dd_bt_m * (Math.Exp(-(depth - z_topotherlayer) / dd_bt_m) - Math.Exp(-(depth - z_bottomotherlayer) / dd_bt_m));
-
-                                                }
-                                                if (otherlayer == layer) // if layer is the same layer. Can it be excluded here and in the calculations? It should be included in calculating the depth profiles
-                                                {
-                                                    layer_BT_depth_decay_index = -1 / dd_bt_m * (Math.Exp(-(depth - z_topotherlayer) / dd_bt_m) - 1) +
-                                                    -1 / (Math.Exp(-dd_bt_m * (z_bottomotherlayer - depth) / dd_bt_m) - 1);
-
-                                                }
-                                                if (otherlayer > layer) // below the bioturbated layer
-                                                {
-                                                    layer_BT_depth_decay_index = -1 / dd_bt_m * (Math.Exp(-(z_bottomotherlayer - depth) / dd_bt_m) - Math.Exp(-(z_topotherlayer - depth) / dd_bt_m));
-                                                }
-
-                                                otherdepth += layerthickness_m[row, col, otherlayer] / 2; // MM moved out of if-function, otherwise distance is not calculated correctly
-                                                if (total_layer_fine_earth_mass_kg(row, col, otherlayer) > 0 & layer != otherlayer)  //this says: if the other layer actually exists
-                                                {
-                                                    depthdecays.Add(layer_BT_depth_decay_index / total_BT_depth_decay_index);
-                                                    depths.Add(otherdepth);
-
-                                                    check_BT_dd += layer_BT_depth_decay_index / total_BT_depth_decay_index;
-                                                    distance = Math.Abs(otherdepth - depth);
-
-
-                                                    //here we calculate the amount of material bioturbated between the current layer and the current otherlayer
-
-                                                    // interlayer_bioturbation_kg = layer_bioturbation_kg * (mass_distance_layer / mass_distance_sum);
-                                                    interlayer_bioturbation_kg = layer_bioturbation_kg * (layer_BT_depth_decay_index / total_BT_depth_decay_index);
-                                                    // check_mass_distance += mass_distance_layer / mass_distance_sum;
-                                                    // BT_fraction += mass_distance_layer / mass_distance_sum;
-
-                                                    fine_otherlayer_mass = texture_kg[row, col, otherlayer, 1] + texture_kg[row, col, otherlayer, 2] + texture_kg[row, col, otherlayer, 3] + texture_kg[row, col, otherlayer, 4] + young_SOM_kg[row, col, otherlayer] + old_SOM_kg[row, col, otherlayer];
-
-
-                                                    //weathered_mass_kg may be more than present in the other layer, the current layer, or both - in that case one or both of the layers will become mixtures of the original two layers
-                                                    double fromlayertomixture_kg = 0, fromotherlayertomixture_kg = 0, totalmixturemass_kg = 0, massfromlayer = 0, massfromotherlayer = 0, dmass_l, dmass_ol;
-                                                    double[] mixture_kg = new double[7];
-                                                    fromlayertomixture_kg = Math.Min(fine_layer_mass, (interlayer_bioturbation_kg / 2));
-                                                    fromotherlayertomixture_kg = Math.Min(fine_otherlayer_mass, (interlayer_bioturbation_kg / 2));
-                                                    // totalmixturemass_kg = fromlayertomixture_kg + fromotherlayertomixture_kg;
-
-                                                    if ((fromlayertomixture_kg + fromotherlayertomixture_kg) > 1E-6)  // if there is actual exchange (which is not the case when all fine material is removed)
-                                                    {
-                                                        //now add to mixture, and take from donors
-                                                        double massin_l = 0, massin_ol = 0, prob_layer = 0, prob_otherlayer = 0, d_CN_l, d_CN_ol, cn_pool;
-                                                        double[,] texture_out_total = new double[n_texture_classes, 4];
-                                                        // texture
-                                                        for (int prop = 1; prop < 5; prop++)
-                                                        {
-                                                            //determine how much mass can be exchanged,. Do not take more than is present in the temporary layer to prevent negative textures in the end
-                                                            //Should not happen, mass of top layer should stay constant, but happens anyway
-                                                            dmass_l = (fromlayertomixture_kg / fine_layer_mass) * texture_kg[row, col, layer, prop];
-                                                            dmass_ol = (fromotherlayertomixture_kg / fine_otherlayer_mass) * texture_kg[row, col, otherlayer, prop];
-
-                                                            if (dmass_l > temp_tex_som_kg[layer, prop]) { dmass_l = temp_tex_som_kg[layer, prop]; }
-                                                            if (dmass_ol > temp_tex_som_kg[otherlayer, prop]) { dmass_ol = temp_tex_som_kg[otherlayer, prop]; }
-
-                                                            total_BT_transport_kgm += (dmass_l * distance + dmass_ol * distance);
-                                                            //take mass from donors to mix
-                                                            mixture_kg[prop] += (dmass_l + dmass_ol);
-                                                            massfromlayer += dmass_l;
-                                                            massfromotherlayer += dmass_ol;
-
-                                                            temp_tex_som_kg[layer, prop] -= dmass_l;
-                                                            temp_tex_som_kg[otherlayer, prop] -= dmass_ol;
-
-                                                            // Fill the matrix of exported and total soil material
-                                                            texture_out_total[prop, 0] = dmass_l;
-                                                            texture_out_total[prop, 1] = texture_kg[row, col, layer, prop];
-                                                            texture_out_total[prop, 2] = dmass_ol;
-                                                            texture_out_total[prop, 3] = texture_kg[row, col, otherlayer, prop];
-
-
-                                                        }
-                                                        //young OM
-                                                        dmass_l = (fromlayertomixture_kg / fine_layer_mass) * (young_SOM_kg[row, col, layer]);
-                                                        dmass_ol = (fromotherlayertomixture_kg / fine_otherlayer_mass) * (young_SOM_kg[row, col, otherlayer]);
-
-                                                        if (dmass_l > temp_tex_som_kg[layer, 5]) { dmass_l = temp_tex_som_kg[layer, 5]; }
-                                                        if (dmass_ol > temp_tex_som_kg[otherlayer, 5]) { dmass_ol = temp_tex_som_kg[otherlayer, 5]; }
-
-                                                        //take mass from donors to mix
-                                                        mixture_kg[5] += (dmass_l + dmass_ol);
-                                                        massfromlayer += dmass_l;
-                                                        massfromotherlayer += dmass_ol;
-
-                                                        temp_tex_som_kg[layer, 5] -= dmass_l;
-                                                        temp_tex_som_kg[otherlayer, 5] -= dmass_ol;
-
-                                                        //old OM
-                                                        // if (layer == 0) { Debugger.Break(); }
-                                                        dmass_l = (fromlayertomixture_kg / fine_layer_mass) * (old_SOM_kg[row, col, layer]);
-                                                        dmass_ol = (fromotherlayertomixture_kg / fine_otherlayer_mass) * (old_SOM_kg[row, col, otherlayer]);
-
-                                                        if (dmass_l > temp_tex_som_kg[layer, 6]) { dmass_l = temp_tex_som_kg[layer, 6]; }
-                                                        if (dmass_ol > temp_tex_som_kg[otherlayer, 6]) { dmass_ol = temp_tex_som_kg[otherlayer, 6]; }
-
-                                                        //take mass from donors to mix
-                                                        mixture_kg[6] += (dmass_l + dmass_ol);
-                                                        massfromlayer += dmass_l;
-                                                        massfromotherlayer += dmass_ol;
-
-                                                        temp_tex_som_kg[layer, 6] -= dmass_l;
-                                                        temp_tex_som_kg[otherlayer, 6] -= dmass_ol;
-
-                                                        //now give from mixture to receivers
-                                                        totalmixturemass_kg = massfromlayer + massfromotherlayer;
-
-                                                        // if (findnegativetexture()) { Debugger.Break(); }
-
-                                                        for (int prop = 1; prop < 7; prop++)
-                                                        {
-                                                            temp_tex_som_kg[otherlayer, prop] += mixture_kg[prop] * (massfromotherlayer / totalmixturemass_kg);
-                                                            massin_ol += mixture_kg[prop] * (massfromotherlayer / totalmixturemass_kg);
-                                                            temp_tex_som_kg[layer, prop] += mixture_kg[prop] * (massfromlayer / totalmixturemass_kg);
-                                                            massin_l += mixture_kg[prop] * (massfromlayer / totalmixturemass_kg);
-
-                                                            //mixture_kg[prop] = 0;  // that's not perse needed, but feels clean
-
-                                                        }
-
-                                                        if (CN_checkbox.Checked)
-                                                        {
-                                                            // MvdM develop: change probabilities for sand and clay fractions. Should be the same as the current code, but will look nicer
-                                                            for (int cn = 0; cn < n_cosmo; cn++) // For all CNs. Mixing is independent of grain size, so all fractions get mixed evenly
-                                                            {
-                                                                d_CN_l = (massfromlayer / fine_layer_mass) * CN_atoms_cm2[row, col, layer, cn];
-                                                                d_CN_ol = (massfromotherlayer / fine_otherlayer_mass) * CN_atoms_cm2[row, col, otherlayer, cn];
-                                                                cn_pool = d_CN_l + d_CN_ol;
-
-                                                                CN_atoms_cm2[row, col, layer, cn] += (-d_CN_l + cn_pool * massfromlayer / totalmixturemass_kg);
-                                                                CN_atoms_cm2[row, col, otherlayer, cn] += (-d_CN_ol + cn_pool * massfromotherlayer / totalmixturemass_kg);
-                                                                //double test = 
-                                                            }
-
-                                                        }
-                                                        if (OSL_checkbox.Checked)
-                                                        {
-                                                            prob_layer = texture_out_total[1, 0] / texture_out_total[1, 1]; // sand fraction leaving the layer
-                                                            prob_otherlayer = texture_out_total[1, 2] / texture_out_total[1, 3]; // sand fraction leaving the other layer
-                                                            transfer_OSL_grains(row, col, layer, row, col, otherlayer, prob_layer, prob_otherlayer);
-
-                                                            P_fromto_list.Add(prob_layer);
-                                                            P_tofrom_list.Add(prob_otherlayer);
-                                                            if (layer == 0 & otherlayer == (max_soil_layers - 1))
-                                                            {
-                                                                // Debugger.Break();
-                                                            }
-                                                        }
-                                                    }
-
-                                                    //all sorts of checks - we should never have values under zero, or NotANumber NaN
-                                                    if (temp_tex_som_kg[otherlayer, 1] < 0)
-                                                    {
-                                                        Debug.WriteLine(" texture 1 null " + t + " rc " + row + "  " + col + " otherlayers " + layer + " (" + total_layer_mass_kg(row, col, layer) + "kg) " + otherlayer + " (" + total_layer_mass_kg(row, col, otherlayer) + "kg) ");
-                                                    }
-                                                    if (temp_tex_som_kg[otherlayer, 2] < 0) { Debug.WriteLine(" texture 2 null " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
-                                                    if (temp_tex_som_kg[otherlayer, 3] < 0) { Debug.WriteLine(" texture 3 null " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
-                                                    if (temp_tex_som_kg[otherlayer, 4] < 0) { Debug.WriteLine(" texture 4 null " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
-                                                    if (temp_tex_som_kg[otherlayer, 5] < 0) { Debug.WriteLine(" young som null " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
-                                                    if (temp_tex_som_kg[otherlayer, 6] < 0) { Debug.WriteLine(" old som null " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
-
-                                                    if (temp_tex_som_kg[layer, 1] < 0) { Debug.WriteLine(" texture 1 null " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-                                                    if (temp_tex_som_kg[layer, 2] < 0) { Debug.WriteLine(" texture 2 null " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-                                                    if (temp_tex_som_kg[layer, 3] < 0) { Debug.WriteLine(" texture 3 null " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-                                                    if (temp_tex_som_kg[layer, 4] < 0) { Debug.WriteLine(" texture 4 null " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-                                                    if (temp_tex_som_kg[layer, 5] < 0) { Debug.WriteLine(" young som null " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-                                                    if (temp_tex_som_kg[layer, 6] < 0) { Debug.WriteLine(" old som null " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-
-                                                    if (double.IsNaN(temp_tex_som_kg[otherlayer, 1])) { Debug.WriteLine(" texture 1 NaN " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
-
-                                                    if (double.IsNaN(temp_tex_som_kg[otherlayer, 2])) { Debug.WriteLine(" texture 2 NaN " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
-                                                    if (double.IsNaN(temp_tex_som_kg[otherlayer, 3])) { Debug.WriteLine(" texture 3 NaN " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
-                                                    if (double.IsNaN(temp_tex_som_kg[otherlayer, 4])) { Debug.WriteLine(" texture 4 NaN " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
-                                                    if (double.IsNaN(temp_tex_som_kg[otherlayer, 5])) { Debug.WriteLine(" young som NaN " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
-                                                    if (double.IsNaN(temp_tex_som_kg[otherlayer, 6])) { Debug.WriteLine(" old som NaN " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
-
-                                                    if (double.IsNaN(temp_tex_som_kg[layer, 1])) { Debug.WriteLine(" texture 1 NaN " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-                                                    if (double.IsNaN(temp_tex_som_kg[layer, 2])) { Debug.WriteLine(" texture 2 NaN " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-                                                    if (double.IsNaN(temp_tex_som_kg[layer, 3])) { Debug.WriteLine(" texture 3 NaN " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-                                                    if (double.IsNaN(temp_tex_som_kg[layer, 4])) { Debug.WriteLine(" texture 4 NaN " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-                                                    if (double.IsNaN(temp_tex_som_kg[layer, 5])) { Debug.WriteLine(" young som NaN " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-                                                    if (double.IsNaN(temp_tex_som_kg[layer, 6])) { Debug.WriteLine(" old som NaN " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-                                                }
-                                                otherdepth += layerthickness_m[row, col, otherlayer] / 2; // MM added, because only half other otherdepth was added in this version
-                                            }
-                                            //if (Math.Round(check_mass_distance,4) != 1) { Debugger.Break(); }
-                                            //if (findnegativetexture()) { Debugger.Break(); }
-
-                                            // if (Math.Round(BT_fraction, 6) != 1) { Debugger.Break(); }
-                                            depth += layerthickness_m[row, col, layer] / 2;
-                                        }
-                                    } // end for layer
-                                    total_BT_transport_kgm += 0;
-                                    // now we know the new, bioturbated amounts in every layer in this row col, let's store them in the main texture_kg variables
-                                    for (layer = 0; layer < max_soil_layers; layer++)
-                                    {
-                                        // if (layer == 0 & temp_tex_som_kg[0, 2] == 0)
-                                        // {
-                                        //     Debug.WriteLine("err_sbt_16a. empty top layer after BT 0: {0}, {1}, {2}, {3}, {4}, {5}, {6}. t {7}, row {8}, col {9}, dlayer {10}", layer_0[0], layer_0[1], layer_0[2], layer_0[3], layer_0[4], layer_0[5], layer_0[6], t, row, col, layerthickness_m[row, col, 0]);
-                                        // 
-                                        // }
-                                        for (int prop = 1; prop < 5; prop++)
-                                        {
-                                            if (temp_tex_som_kg[layer, prop] < 0)
-                                            {
-                                                Debug.WriteLine("err_sbt17");
-                                            }
-                                            texture_kg[row, col, layer, prop] = temp_tex_som_kg[layer, prop];
-                                            layer_0_after[prop] = temp_tex_som_kg[layer, prop];
-                                            temp_tex_som_kg[layer, prop] = 0;
-                                        }
-                                        young_SOM_kg[row, col, layer] = temp_tex_som_kg[layer, 5];
-                                        old_SOM_kg[row, col, layer] = temp_tex_som_kg[layer, 6];
-                                        layer_0_after[5] = temp_tex_som_kg[layer, 5];
-                                        layer_0_after[6] = temp_tex_som_kg[layer, 6];
-                                        temp_tex_som_kg[layer, 5] = 0;
-                                        temp_tex_som_kg[layer, 6] = 0;
-                                    } //end for layer
-                                      // if (findnegativetexture()) { Debugger.Break(); }
-
-                                    mass_soil_after = total_soil_mass_kg_decimal(row, col);
-                                    mass_top_after = total_layer_mass_kg(row, col, 0);
-
-                                    if (Math.Abs(mass_soil_before - mass_soil_after) > Convert.ToDecimal(1E-8) | Math.Abs(mass_top_before - mass_top_after) > 1E-8)
-                                    {
-                                        Debug.WriteLine("Mass loss during bioturbation");
-                                        // Debugger.Break(); 
-                                    }
-
-                                } // end dtm!=nodata_value
+                                if (proglacial && glacier_cell[r, c] == 1) continue;
+                                ProcessCellParallel(r, c, doCN, doOSL, scratch, ref localTotal);
                             }
                         }
-                        else
-                        {
-                            if (dtm[row, col] != nodata_value & soildepth_m[row, col] > 0)
-                            {
-                                remove_empty_layers(row, col);
-                                update_all_layer_thicknesses(row, col);
-                                total_young_som_kg = 0; total_old_som_kg = 0;
 
-                                mass_soil_before = total_soil_mass_kg_decimal(row, col);
-                                mass_top_before = total_layer_mass_kg(row, col, 0);
-                                total_soil_thickness_m = 0;
-                                for (layer = 0; layer < max_soil_layers; layer++)
-                                {
-                                    if (layer == 0)
-                                    {
-                                        for (int tex = 0; tex < 5; tex++)
-                                        {
-                                            layer_0[tex] = texture_kg[row, col, 0, tex];
-                                        }
-                                        layer_0[5] = young_SOM_kg[row, col, 0];
-                                        layer_0[6] = old_SOM_kg[row, col, 0];
-                                    }
-
-                                    if (total_layer_mass_kg(row, col, layer) > 0)  //this says: if the layer actually exists
-                                    {
-                                        for (int prop = 0; prop < 5; prop++) { temp_tex_som_kg[layer, prop] = texture_kg[row, col, layer, prop]; }
-                                        temp_tex_som_kg[layer, 5] = young_SOM_kg[row, col, layer];
-                                        temp_tex_som_kg[layer, 6] = old_SOM_kg[row, col, layer];
-                                        total_soil_thickness_m += layerthickness_m[row, col, layer];
-
-                                        total_young_som_kg += young_SOM_kg[row, col, layer];
-                                        total_old_som_kg += old_SOM_kg[row, col, layer];
-                                    }
-                                }
-
-                                //here we calculate the first quantity: how much bioturbation kg needs to happen in this location
-                                local_bioturbation_kg = potential_bt_mixing_kg_m2_y * (1 - Math.Exp(-bioturbation_decay_depth_m * total_soil_thickness_m)) * dx * dx * dt;
-                                if (local_bioturbation_kg < 0) // local_bt == 0 happens when soil is absent
-                                {
-                                    Debug.WriteLine(" error in local_bioturbation calculation : zero mass");
-                                    Debug.WriteLine(" total soil thickness :" + total_soil_thickness_m + " at rc " + row + " " + col);
-                                    Debug.WriteLine("err_sbt1");
-
-                                }
-
-                                total_mass_bioturbed_kg += local_bioturbation_kg;
-
-                                depth = 0;
-                                for (layer = 0; layer < max_soil_layers; layer++)
-                                {
-
-                                    if (total_layer_fine_earth_mass_kg(row, col, layer) > 0)  //this says: if the layer actually exists
-
-                                    {
-                                        double dd_bt_m = bioturbation_decay_depth_m * 2; // possible adjustments to second depth decay for bioturbation are possible here
-
-
-                                        //double total_BT_depth_decay_index = 
-                                        //    -1/dd_bt*(Math.Exp(-dd_bt*(z_toplayer - 0)) - Math.Exp(-dd_bt*(z_toplayer - z_toplayer))) +
-                                        //    -1/dd_bt*(Math.Exp(-dd_bt*(total_soil_thickness_m - z_bottomlayer)) - Math.Exp(-dd_bt*(z_bottomlayer - z_bottomlayer)));                                    
-
-
-                                        double check_BT_dd = 0;
-
-                                        //integration over the exponential decay function in JGR 2006 for the entire profile, and for the current layer.
-                                        //then calculate the fraction of bioturbation that will happen in this layer, and multiply with total bioturbation in this cell
-                                        fine_layer_mass = total_layer_fine_earth_mass_kg(row, col, layer);
-
-                                        layer_bioturbation_kg = activity_fraction(bioturbation_decay_depth_m, total_soil_thickness_m, depth, depth + layerthickness_m[row, col, layer]) * local_bioturbation_kg;
-                                        depth += layerthickness_m[row, col, layer] / 2;  ///ArT development needed
-
-                                        double total_BT_depth_decay_index =
-                                            -1 / dd_bt_m * (Math.Exp(-dd_bt_m * (depth - 0)) - 1) + // upper part of the curve //Should this also be changed since dd_bt_m is now m instead of 1/m? AleG
-                                            -1 / dd_bt_m * (Math.Exp(-dd_bt_m * (total_soil_thickness_m - depth)) - 1); // lower part of the curve //Should this also be changed since dd_bt_m is now m instead of 1/m? AleG
-
-
-                                        otherdepth = 0; distance = 0;
-
-                                        if (layerthickness_m[row, col, layer] <= 0) { Debug.WriteLine(" error: layer thickness is 0 at t " + t + " r " + row + " c " + col); }
-
-                                        //now that we know how much bioturbation originates in this layer,
-                                        //now look at all other layers and decide which one of them exchanges how much of that good stuff.
-                                        //Here we include the source layer as wel, to prevent errors and inconsistencies with different layer thicknesses
-                                        var mass_distances = new List<double>();
-                                        var depths = new List<double>();
-                                        var depthdecays = new List<double>();
-                                        var P_fromto_list = new List<double>();
-                                        var P_tofrom_list = new List<double>();
-
-                                        otherdepth = 0; distance = 0;
-                                        double layer_BT_depth_decay_index = 0;
-                                        for (otherlayer = 0; otherlayer < max_soil_layers; otherlayer++)
-                                        {
-                                            double z_topotherlayer = otherdepth;
-                                            double z_bottomotherlayer = otherdepth + layerthickness_m[row, col, otherlayer];
-
-                                            if (otherlayer < layer) // above the bioturbated layer
-                                            {
-                                                layer_BT_depth_decay_index = -1 / dd_bt_m * (Math.Exp(-(depth - z_topotherlayer) / dd_bt_m) - Math.Exp(-(depth - z_bottomotherlayer) / dd_bt_m));
-
-                                            }
-                                            if (otherlayer == layer) // if layer is the same layer. Can it be excluded here and in the calculations? It should be included in calculating the depth profiles
-                                            {
-                                                layer_BT_depth_decay_index = -1 / dd_bt_m * (Math.Exp(-(depth - z_topotherlayer) / dd_bt_m) - 1) +
-                                                -1 / (Math.Exp(-dd_bt_m * (z_bottomotherlayer - depth) / dd_bt_m) - 1);
-
-                                            }
-                                            if (otherlayer > layer) // below the bioturbated layer
-                                            {
-                                                layer_BT_depth_decay_index = -1 / dd_bt_m * (Math.Exp(-(z_bottomotherlayer - depth) / dd_bt_m) - Math.Exp(-(z_topotherlayer - depth) / dd_bt_m));
-                                            }
-
-                                            otherdepth += layerthickness_m[row, col, otherlayer] / 2; // MM moved out of if-function, otherwise distance is not calculated correctly
-                                            if (total_layer_fine_earth_mass_kg(row, col, otherlayer) > 0 & layer != otherlayer)  //this says: if the other layer actually exists
-                                            {
-                                                depthdecays.Add(layer_BT_depth_decay_index / total_BT_depth_decay_index);
-                                                depths.Add(otherdepth);
-
-                                                check_BT_dd += layer_BT_depth_decay_index / total_BT_depth_decay_index;
-                                                distance = Math.Abs(otherdepth - depth);
-
-
-                                                //here we calculate the amount of material bioturbated between the current layer and the current otherlayer
-
-                                                // interlayer_bioturbation_kg = layer_bioturbation_kg * (mass_distance_layer / mass_distance_sum);
-                                                interlayer_bioturbation_kg = layer_bioturbation_kg * (layer_BT_depth_decay_index / total_BT_depth_decay_index);
-                                                // check_mass_distance += mass_distance_layer / mass_distance_sum;
-                                                // BT_fraction += mass_distance_layer / mass_distance_sum;
-
-                                                fine_otherlayer_mass = texture_kg[row, col, otherlayer, 1] + texture_kg[row, col, otherlayer, 2] + texture_kg[row, col, otherlayer, 3] + texture_kg[row, col, otherlayer, 4] + young_SOM_kg[row, col, otherlayer] + old_SOM_kg[row, col, otherlayer];
-
-
-                                                //weathered_mass_kg may be more than present in the other layer, the current layer, or both - in that case one or both of the layers will become mixtures of the original two layers
-                                                double fromlayertomixture_kg = 0, fromotherlayertomixture_kg = 0, totalmixturemass_kg = 0, massfromlayer = 0, massfromotherlayer = 0, dmass_l, dmass_ol;
-                                                double[] mixture_kg = new double[7];
-                                                fromlayertomixture_kg = Math.Min(fine_layer_mass, (interlayer_bioturbation_kg / 2));
-                                                fromotherlayertomixture_kg = Math.Min(fine_otherlayer_mass, (interlayer_bioturbation_kg / 2));
-                                                // totalmixturemass_kg = fromlayertomixture_kg + fromotherlayertomixture_kg;
-
-                                                if ((fromlayertomixture_kg + fromotherlayertomixture_kg) > 1E-6)  // if there is actual exchange (which is not the case when all fine material is removed)
-                                                {
-                                                    //now add to mixture, and take from donors
-                                                    double massin_l = 0, massin_ol = 0, prob_layer = 0, prob_otherlayer = 0, d_CN_l, d_CN_ol, cn_pool;
-                                                    double[,] texture_out_total = new double[n_texture_classes, 4];
-                                                    // texture
-                                                    for (int prop = 1; prop < 5; prop++)
-                                                    {
-                                                        //determine how much mass can be exchanged,. Do not take more than is present in the temporary layer to prevent negative textures in the end
-                                                        //Should not happen, mass of top layer should stay constant, but happens anyway
-                                                        dmass_l = (fromlayertomixture_kg / fine_layer_mass) * texture_kg[row, col, layer, prop];
-                                                        dmass_ol = (fromotherlayertomixture_kg / fine_otherlayer_mass) * texture_kg[row, col, otherlayer, prop];
-
-                                                        if (dmass_l > temp_tex_som_kg[layer, prop]) { dmass_l = temp_tex_som_kg[layer, prop]; }
-                                                        if (dmass_ol > temp_tex_som_kg[otherlayer, prop]) { dmass_ol = temp_tex_som_kg[otherlayer, prop]; }
-
-                                                        total_BT_transport_kgm += (dmass_l * distance + dmass_ol * distance);
-                                                        //take mass from donors to mix
-                                                        mixture_kg[prop] += (dmass_l + dmass_ol);
-                                                        massfromlayer += dmass_l;
-                                                        massfromotherlayer += dmass_ol;
-
-                                                        temp_tex_som_kg[layer, prop] -= dmass_l;
-                                                        temp_tex_som_kg[otherlayer, prop] -= dmass_ol;
-
-                                                        // Fill the matrix of exported and total soil material
-                                                        texture_out_total[prop, 0] = dmass_l;
-                                                        texture_out_total[prop, 1] = texture_kg[row, col, layer, prop];
-                                                        texture_out_total[prop, 2] = dmass_ol;
-                                                        texture_out_total[prop, 3] = texture_kg[row, col, otherlayer, prop];
-
-
-                                                    }
-                                                    //young OM
-                                                    dmass_l = (fromlayertomixture_kg / fine_layer_mass) * (young_SOM_kg[row, col, layer]);
-                                                    dmass_ol = (fromotherlayertomixture_kg / fine_otherlayer_mass) * (young_SOM_kg[row, col, otherlayer]);
-
-                                                    if (dmass_l > temp_tex_som_kg[layer, 5]) { dmass_l = temp_tex_som_kg[layer, 5]; }
-                                                    if (dmass_ol > temp_tex_som_kg[otherlayer, 5]) { dmass_ol = temp_tex_som_kg[otherlayer, 5]; }
-
-                                                    //take mass from donors to mix
-                                                    mixture_kg[5] += (dmass_l + dmass_ol);
-                                                    massfromlayer += dmass_l;
-                                                    massfromotherlayer += dmass_ol;
-
-                                                    temp_tex_som_kg[layer, 5] -= dmass_l;
-                                                    temp_tex_som_kg[otherlayer, 5] -= dmass_ol;
-
-                                                    //old OM
-                                                    // if (layer == 0) { Debugger.Break(); }
-                                                    dmass_l = (fromlayertomixture_kg / fine_layer_mass) * (old_SOM_kg[row, col, layer]);
-                                                    dmass_ol = (fromotherlayertomixture_kg / fine_otherlayer_mass) * (old_SOM_kg[row, col, otherlayer]);
-
-                                                    if (dmass_l > temp_tex_som_kg[layer, 6]) { dmass_l = temp_tex_som_kg[layer, 6]; }
-                                                    if (dmass_ol > temp_tex_som_kg[otherlayer, 6]) { dmass_ol = temp_tex_som_kg[otherlayer, 6]; }
-
-                                                    //take mass from donors to mix
-                                                    mixture_kg[6] += (dmass_l + dmass_ol);
-                                                    massfromlayer += dmass_l;
-                                                    massfromotherlayer += dmass_ol;
-
-                                                    temp_tex_som_kg[layer, 6] -= dmass_l;
-                                                    temp_tex_som_kg[otherlayer, 6] -= dmass_ol;
-
-                                                    //now give from mixture to receivers
-                                                    totalmixturemass_kg = massfromlayer + massfromotherlayer;
-
-                                                    // if (findnegativetexture()) { Debugger.Break(); }
-
-                                                    for (int prop = 1; prop < 7; prop++)
-                                                    {
-                                                        temp_tex_som_kg[otherlayer, prop] += mixture_kg[prop] * (massfromotherlayer / totalmixturemass_kg);
-                                                        massin_ol += mixture_kg[prop] * (massfromotherlayer / totalmixturemass_kg);
-                                                        temp_tex_som_kg[layer, prop] += mixture_kg[prop] * (massfromlayer / totalmixturemass_kg);
-                                                        massin_l += mixture_kg[prop] * (massfromlayer / totalmixturemass_kg);
-
-                                                        //mixture_kg[prop] = 0;  // that's not perse needed, but feels clean
-
-                                                    }
-
-                                                    if (CN_checkbox.Checked)
-                                                    {
-                                                        // MvdM develop: change probabilities for sand and clay fractions. Should be the same as the current code, but will look nicer
-                                                        for (int cn = 0; cn < n_cosmo; cn++) // For all CNs. Mixing is independent of grain size, so all fractions get mixed evenly
-                                                        {
-                                                            d_CN_l = (massfromlayer / fine_layer_mass) * CN_atoms_cm2[row, col, layer, cn];
-                                                            d_CN_ol = (massfromotherlayer / fine_otherlayer_mass) * CN_atoms_cm2[row, col, otherlayer, cn];
-                                                            cn_pool = d_CN_l + d_CN_ol;
-
-                                                            CN_atoms_cm2[row, col, layer, cn] += (-d_CN_l + cn_pool * massfromlayer / totalmixturemass_kg);
-                                                            CN_atoms_cm2[row, col, otherlayer, cn] += (-d_CN_ol + cn_pool * massfromotherlayer / totalmixturemass_kg);
-                                                            //double test = 
-                                                        }
-
-                                                    }
-                                                    if (OSL_checkbox.Checked)
-                                                    {
-                                                        prob_layer = texture_out_total[1, 0] / texture_out_total[1, 1]; // sand fraction leaving the layer
-                                                        prob_otherlayer = texture_out_total[1, 2] / texture_out_total[1, 3]; // sand fraction leaving the other layer
-                                                        transfer_OSL_grains(row, col, layer, row, col, otherlayer, prob_layer, prob_otherlayer);
-
-                                                        P_fromto_list.Add(prob_layer);
-                                                        P_tofrom_list.Add(prob_otherlayer);
-                                                        if (layer == 0 & otherlayer == (max_soil_layers - 1))
-                                                        {
-                                                            // Debugger.Break();
-                                                        }
-                                                    }
-                                                }
-
-                                                //all sorts of checks - we should never have values under zero, or NotANumber NaN
-                                                if (temp_tex_som_kg[otherlayer, 1] < 0)
-                                                {
-                                                    Debug.WriteLine(" texture 1 null " + t + " rc " + row + "  " + col + " otherlayers " + layer + " (" + total_layer_mass_kg(row, col, layer) + "kg) " + otherlayer + " (" + total_layer_mass_kg(row, col, otherlayer) + "kg) ");
-                                                }
-                                                if (temp_tex_som_kg[otherlayer, 2] < 0) { Debug.WriteLine(" texture 2 null " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
-                                                if (temp_tex_som_kg[otherlayer, 3] < 0) { Debug.WriteLine(" texture 3 null " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
-                                                if (temp_tex_som_kg[otherlayer, 4] < 0) { Debug.WriteLine(" texture 4 null " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
-                                                if (temp_tex_som_kg[otherlayer, 5] < 0) { Debug.WriteLine(" young som null " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
-                                                if (temp_tex_som_kg[otherlayer, 6] < 0) { Debug.WriteLine(" old som null " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
-
-                                                if (temp_tex_som_kg[layer, 1] < 0) { Debug.WriteLine(" texture 1 null " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-                                                if (temp_tex_som_kg[layer, 2] < 0) { Debug.WriteLine(" texture 2 null " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-                                                if (temp_tex_som_kg[layer, 3] < 0) { Debug.WriteLine(" texture 3 null " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-                                                if (temp_tex_som_kg[layer, 4] < 0) { Debug.WriteLine(" texture 4 null " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-                                                if (temp_tex_som_kg[layer, 5] < 0) { Debug.WriteLine(" young som null " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-                                                if (temp_tex_som_kg[layer, 6] < 0) { Debug.WriteLine(" old som null " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-
-                                                if (double.IsNaN(temp_tex_som_kg[otherlayer, 1])) { Debug.WriteLine(" texture 1 NaN " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
-
-                                                if (double.IsNaN(temp_tex_som_kg[otherlayer, 2])) { Debug.WriteLine(" texture 2 NaN " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
-                                                if (double.IsNaN(temp_tex_som_kg[otherlayer, 3])) { Debug.WriteLine(" texture 3 NaN " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
-                                                if (double.IsNaN(temp_tex_som_kg[otherlayer, 4])) { Debug.WriteLine(" texture 4 NaN " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
-                                                if (double.IsNaN(temp_tex_som_kg[otherlayer, 5])) { Debug.WriteLine(" young som NaN " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
-                                                if (double.IsNaN(temp_tex_som_kg[otherlayer, 6])) { Debug.WriteLine(" old som NaN " + t + " rc " + row + "  " + col + " otherlayers " + layer + " " + otherlayer); }
-
-                                                if (double.IsNaN(temp_tex_som_kg[layer, 1])) { Debug.WriteLine(" texture 1 NaN " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-                                                if (double.IsNaN(temp_tex_som_kg[layer, 2])) { Debug.WriteLine(" texture 2 NaN " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-                                                if (double.IsNaN(temp_tex_som_kg[layer, 3])) { Debug.WriteLine(" texture 3 NaN " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-                                                if (double.IsNaN(temp_tex_som_kg[layer, 4])) { Debug.WriteLine(" texture 4 NaN " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-                                                if (double.IsNaN(temp_tex_som_kg[layer, 5])) { Debug.WriteLine(" young som NaN " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-                                                if (double.IsNaN(temp_tex_som_kg[layer, 6])) { Debug.WriteLine(" old som NaN " + t + " rc " + row + "  " + col + " layer " + layer + " " + otherlayer); }
-                                            }
-                                            otherdepth += layerthickness_m[row, col, otherlayer] / 2; // MM added, because only half other otherdepth was added in this version
-                                        }
-                                        //if (Math.Round(check_mass_distance,4) != 1) { Debugger.Break(); }
-                                        //if (findnegativetexture()) { Debugger.Break(); }
-
-                                        // if (Math.Round(BT_fraction, 6) != 1) { Debugger.Break(); }
-                                        depth += layerthickness_m[row, col, layer] / 2;
-                                    }
-                                } // end for layer
-                                total_BT_transport_kgm += 0;
-                                // now we know the new, bioturbated amounts in every layer in this row col, let's store them in the main texture_kg variables
-                                for (layer = 0; layer < max_soil_layers; layer++)
-                                {
-                                    // if (layer == 0 & temp_tex_som_kg[0, 2] == 0)
-                                    // {
-                                    //     Debug.WriteLine("err_sbt_16a. empty top layer after BT 0: {0}, {1}, {2}, {3}, {4}, {5}, {6}. t {7}, row {8}, col {9}, dlayer {10}", layer_0[0], layer_0[1], layer_0[2], layer_0[3], layer_0[4], layer_0[5], layer_0[6], t, row, col, layerthickness_m[row, col, 0]);
-                                    // 
-                                    // }
-                                    for (int prop = 1; prop < 5; prop++)
-                                    {
-                                        if (temp_tex_som_kg[layer, prop] < 0)
-                                        {
-                                            Debug.WriteLine("err_sbt17");
-                                        }
-                                        texture_kg[row, col, layer, prop] = temp_tex_som_kg[layer, prop];
-                                        layer_0_after[prop] = temp_tex_som_kg[layer, prop];
-                                        temp_tex_som_kg[layer, prop] = 0;
-                                    }
-                                    young_SOM_kg[row, col, layer] = temp_tex_som_kg[layer, 5];
-                                    old_SOM_kg[row, col, layer] = temp_tex_som_kg[layer, 6];
-                                    layer_0_after[5] = temp_tex_som_kg[layer, 5];
-                                    layer_0_after[6] = temp_tex_som_kg[layer, 6];
-                                    temp_tex_som_kg[layer, 5] = 0;
-                                    temp_tex_som_kg[layer, 6] = 0;
-                                } //end for layer
-                                  // if (findnegativetexture()) { Debugger.Break(); }
-
-                                mass_soil_after = total_soil_mass_kg_decimal(row, col);
-                                mass_top_after = total_layer_mass_kg(row, col, 0);
-
-                                if (Math.Abs(mass_soil_before - mass_soil_after) > Convert.ToDecimal(1E-8) | Math.Abs(mass_top_before - mass_top_after) > 1E-8)
-                                {
-                                    Debug.WriteLine("Mass loss during bioturbation");
-                                    // Debugger.Break(); 
-                                }
-
-                            } // end dtm!=nodata_value
-                        }
-
-                    }// for col
-                } // end for row
-                  // if (findnegativetexture()) { Debugger.Break(); }
-
+                        threadTotals.Value += localTotal;
+                        return scratch;
+                    },
+                    // localFinally
+                    scratch => { /* no-op */ }
+                );
+
+                // Combine thread locals
+                double sum = 0.0;
+                foreach (double v in threadTotals.Values) sum += v;
+                total_mass_bioturbed_kg = sum;
+
+                // Timeseries writeback
                 if (timeseries.total_mass_bioturbed_checkbox.Checked)
-                {
                     timeseries_matrix[t, timeseries_order[27]] = total_mass_bioturbed_kg;
-                }
+
                 if (NA_in_map(dtm) > 0 | NA_in_map(soildepth_m) > 0)
-                {
                     Debug.WriteLine("err_sbt20");
-                }
-
             }
-            catch { Debug.WriteLine(" Error in bioturbation calculations in timestep {)}", t); }
-
-        } // nieuwe code van Arnaud
-
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Error in bioturbation calculations (parallel): " + ex.Message);
+            }
+        }
+        
         void soil_bioturbation_mounding()
         {
             try
