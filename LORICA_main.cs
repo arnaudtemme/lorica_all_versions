@@ -255,8 +255,8 @@ namespace LORICA4
         double bleaching_depth_m;
 
         int[,]
-        drainingoutlet_row = new int[numberofsinks, 5],
-        drainingoutlet_col = new int[numberofsinks, 5];
+        drainingoutlet_row = new int[numberofsinks, 10],
+        drainingoutlet_col = new int[numberofsinks, 10];
 
         int[] row_index, col_index;  // for sorting the DEM from high to low
         string[] rowcol_index;
@@ -7394,7 +7394,6 @@ namespace LORICA4
                 }
                 else
                 {
-                    Debug.WriteLine("before annual WE2");
                     findsinks();
                     searchdepressions();
                     define_fillheight_new(epsilon);
@@ -7402,10 +7401,8 @@ namespace LORICA4
                     //Debug.WriteLine("before annual calc WE2");
                     calculate_water_ero_sed();
                     soil_update_split_and_combine_layers();
-
                     if (NA_anywhere_in_soil() == true) { Debug.WriteLine("NA found after erosed"); }
                     if (crashed) { Debug.WriteLine("crashed while calculating water erosion"); }
-
                 }
             }
 

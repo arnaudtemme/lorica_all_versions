@@ -779,14 +779,12 @@ namespace LORICA4
             domain_OOM_export_kg = 0;
             domain_YOM_export_kg = 0;
 
-
-
             double powered_slope_sum, flow_between_cells_m3_per_m;
             int size;
             for (alpha = 1; alpha <= maxdepressionnumber; alpha++)  // zeroing all waterflow at outlets of depressions
             {
                 depressionconsidered[alpha] = 0;
-                for (int outletcounter = 0; outletcounter < 5; outletcounter++)
+                for (int outletcounter = 0; outletcounter < 10; outletcounter++)
                 {
                     if (drainingoutlet_row[alpha, outletcounter] != -1)
                     {
@@ -826,7 +824,12 @@ namespace LORICA4
                                     (drainingoutlet_row[depression[row, col], 1] == row && drainingoutlet_col[depression[row, col], 1] == col) ||
                                     (drainingoutlet_row[depression[row, col], 2] == row && drainingoutlet_col[depression[row, col], 2] == col) ||
                                     (drainingoutlet_row[depression[row, col], 3] == row && drainingoutlet_col[depression[row, col], 3] == col) ||
-                                    (drainingoutlet_row[depression[row, col], 4] == row && drainingoutlet_col[depression[row, col], 4] == col))
+                                    (drainingoutlet_row[depression[row, col], 4] == row && drainingoutlet_col[depression[row, col], 4] == col) ||
+                                    (drainingoutlet_row[depression[row, col], 0] == row && drainingoutlet_col[depression[row, col], 5] == col) ||
+                                    (drainingoutlet_row[depression[row, col], 1] == row && drainingoutlet_col[depression[row, col], 6] == col) ||
+                                    (drainingoutlet_row[depression[row, col], 2] == row && drainingoutlet_col[depression[row, col], 7] == col) ||
+                                    (drainingoutlet_row[depression[row, col], 3] == row && drainingoutlet_col[depression[row, col], 8] == col) ||
+                                    (drainingoutlet_row[depression[row, col], 3] == row && drainingoutlet_col[depression[row, col], 9] == col)) 
                                 {
                                     if (check_space_evap.Checked == true) { evap_value_m = evapotranspiration[row, col]; }
                                     if (check_space_rain.Checked == true) { rain_value_m = rain_m[row, col]; }
@@ -859,7 +862,7 @@ namespace LORICA4
                                     while (drainingoutlet_col[depression[row, col], outletcounter] != -1)
                                     {
                                         outletcounter++;
-                                        if (outletcounter == 5) { break; }
+                                        if (outletcounter == 10) { break; }
                                     }
 
                                     for (int i = 0; i < outletcounter; i++)
@@ -927,7 +930,12 @@ namespace LORICA4
                                 (drainingoutlet_row[depression[row, col], 1] == row && drainingoutlet_col[depression[row, col], 1] == col) ||
                                 (drainingoutlet_row[depression[row, col], 2] == row && drainingoutlet_col[depression[row, col], 2] == col) ||
                                 (drainingoutlet_row[depression[row, col], 3] == row && drainingoutlet_col[depression[row, col], 3] == col) ||
-                                (drainingoutlet_row[depression[row, col], 4] == row && drainingoutlet_col[depression[row, col], 4] == col))
+                                (drainingoutlet_row[depression[row, col], 0] == row && drainingoutlet_col[depression[row, col], 4] == col) ||
+                                (drainingoutlet_row[depression[row, col], 1] == row && drainingoutlet_col[depression[row, col], 5] == col) ||
+                                (drainingoutlet_row[depression[row, col], 2] == row && drainingoutlet_col[depression[row, col], 6] == col) ||
+                                (drainingoutlet_row[depression[row, col], 3] == row && drainingoutlet_col[depression[row, col], 7] == col) ||
+                                (drainingoutlet_row[depression[row, col], 0] == row && drainingoutlet_col[depression[row, col], 8] == col) ||
+                                (drainingoutlet_row[depression[row, col], 1] == row && drainingoutlet_col[depression[row, col], 9] == col))
                             {
                                 if (check_space_evap.Checked == true) { evap_value_m = evapotranspiration[row, col]; }//AleG 
                                 if (check_space_rain.Checked == true) { rain_value_m = rain_m[row, col]; }//AleG 
@@ -954,7 +962,7 @@ namespace LORICA4
                                 while (drainingoutlet_col[depression[row, col], outletcounter] != -1)
                                 {
                                     outletcounter++;
-                                    if (outletcounter == 5) { break; }
+                                    if (outletcounter == 10) { break; }
                                 }
                                 for (i = 0; i < outletcounter; i++)
                                 {
@@ -1033,7 +1041,12 @@ namespace LORICA4
                         (drainingoutlet_row[depression[row, col], 1] == row && drainingoutlet_col[depression[row, col], 1] == col) ||
                         (drainingoutlet_row[depression[row, col], 2] == row && drainingoutlet_col[depression[row, col], 2] == col) ||
                         (drainingoutlet_row[depression[row, col], 3] == row && drainingoutlet_col[depression[row, col], 3] == col) ||
-                        (drainingoutlet_row[depression[row, col], 4] == row && drainingoutlet_col[depression[row, col], 4] == col))
+                        (drainingoutlet_row[depression[row, col], 0] == row && drainingoutlet_col[depression[row, col], 4] == col) ||
+                        (drainingoutlet_row[depression[row, col], 1] == row && drainingoutlet_col[depression[row, col], 5] == col) ||
+                        (drainingoutlet_row[depression[row, col], 2] == row && drainingoutlet_col[depression[row, col], 6] == col) ||
+                        (drainingoutlet_row[depression[row, col], 3] == row && drainingoutlet_col[depression[row, col], 7] == col) ||
+                        (drainingoutlet_row[depression[row, col], 0] == row && drainingoutlet_col[depression[row, col], 8] == col) ||
+                        (drainingoutlet_row[depression[row, col], 1] == row && drainingoutlet_col[depression[row, col], 9] == col))
                     {
                         if (depressionconsidered[depression[row, col]] == 0)
                         {
@@ -1062,7 +1075,12 @@ namespace LORICA4
                                                 (drainingoutlet_row[depression[row, col], 1] == row && drainingoutlet_col[depression[row, col], 1] == col) ||
                                                 (drainingoutlet_row[depression[row, col], 2] == row && drainingoutlet_col[depression[row, col], 2] == col) ||
                                                 (drainingoutlet_row[depression[row, col], 3] == row && drainingoutlet_col[depression[row, col], 3] == col) ||
-                                                (drainingoutlet_row[depression[row, col], 4] == row && drainingoutlet_col[depression[row, col], 4] == col))
+                                                (drainingoutlet_row[depression[row, col], 0] == row && drainingoutlet_col[depression[row, col], 4] == col) ||
+                                                (drainingoutlet_row[depression[row, col], 1] == row && drainingoutlet_col[depression[row, col], 5] == col) ||
+                                                (drainingoutlet_row[depression[row, col], 2] == row && drainingoutlet_col[depression[row, col], 6] == col) ||
+                                                (drainingoutlet_row[depression[row, col], 3] == row && drainingoutlet_col[depression[row, col], 7] == col) ||
+                                                (drainingoutlet_row[depression[row, col], 3] == row && drainingoutlet_col[depression[row, col], 8] == col) ||
+                                                (drainingoutlet_row[depression[row, col], 4] == row && drainingoutlet_col[depression[row, col], 9] == col))
                     { //for all cells outside a depression and for outlets, we use the stream power equations based on a multiple flow (D8) template
                       //if (row == 24 && col == 81) { Debug.WriteLine(" looking around cell " + row + " " + col); minimaps(row, col); }
                         for (sbyte i = (-1); i <= 1; i++)
@@ -1153,7 +1171,12 @@ namespace LORICA4
                                         || (drainingoutlet_row[depression[row, col], 1] == row && drainingoutlet_col[depression[row, col], 1] == col)
                                         || (drainingoutlet_row[depression[row, col], 2] == row && drainingoutlet_col[depression[row, col], 2] == col)
                                         || (drainingoutlet_row[depression[row, col], 3] == row && drainingoutlet_col[depression[row, col], 3] == col)
-                                        || (drainingoutlet_row[depression[row, col], 4] == row && drainingoutlet_col[depression[row, col], 4] == col))
+                                        || (drainingoutlet_row[depression[row, col], 4] == row && drainingoutlet_col[depression[row, col], 4] == col)
+                                        || (drainingoutlet_row[depression[row, col], 1] == row && drainingoutlet_col[depression[row, col], 5] == col)
+                                        || (drainingoutlet_row[depression[row, col], 2] == row && drainingoutlet_col[depression[row, col], 6] == col)
+                                        || (drainingoutlet_row[depression[row, col], 3] == row && drainingoutlet_col[depression[row, col], 7] == col)
+                                        || (drainingoutlet_row[depression[row, col], 4] == row && drainingoutlet_col[depression[row, col], 8] == col)
+                                        || (drainingoutlet_row[depression[row, col], 4] == row && drainingoutlet_col[depression[row, col], 9] == col))
                                     {    // this cell is one of the draining outlets and is only allowed to drain to cells not in the lake																											
                                          // if the lake has been filled at this time, then all its (by now non-lake) cells have an altitude > outlet, and will not be considered for that reason
                                         if (depression[row + i, col + j] != depression[row, col])
@@ -1261,7 +1284,7 @@ namespace LORICA4
                                                         while (drainingoutlet_col[currentdepression, outletcounter] != -1)
                                                         {
                                                             outletcounter++;
-                                                            if (outletcounter == 5) { break; }
+                                                            if (outletcounter == 10) { break; }
                                                         }
                                                         for (int iter = 0; iter < outletcounter; iter++) // for all outlets of this depression, divide that amount of water over them
                                                         {

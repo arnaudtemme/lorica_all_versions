@@ -39,7 +39,7 @@ namespace LORICA4
 
             decimal old_mass_kg = total_catchment_mass_decimal();
 
-            Debug.WriteLine("phys weath started");
+            Debug.WriteLine("phys weath of soil started");
 
             // -----------------------------------------------------------
             // Precompute per-class constants to avoid repeated Log10 calls
@@ -318,6 +318,7 @@ namespace LORICA4
             double depth, weathered_mass_kg, total_weath_mass, fraction_neoform;
             total_chem_weathered_mass_kg = 0;
             total_fine_neoformed_mass_kg = 0;
+            Debug.WriteLine("chem weath of soil started");
             for (row = 0; row < nr; row++)
             {
                 for (col = 0; col < nc; col++)
@@ -839,7 +840,7 @@ namespace LORICA4
                 bool proglacial = Proglacial_checkbox.Checked;
                 bool doCN = CN_checkbox.Checked;
                 bool doOSL = OSL_checkbox.Checked;
-
+                Debug.WriteLine("mixing bioturbation started");
                 total_mass_bioturbed_kg = 0.0;
 
                 int cores = Environment.ProcessorCount;
@@ -857,7 +858,7 @@ namespace LORICA4
                 }
 
                 var rangePartitioner = System.Collections.Concurrent.Partitioner.Create(0, nr, chunkRows);
-                var threadTotals = new System.Threading.ThreadLocal<double>(() => 0.0);
+                var threadTotals = new System.Threading.ThreadLocal<double>(() => 0.0, true);
 
                 Parallel.ForEach<System.Tuple<int, int>, BtScratch>(
                     rangePartitioner,

@@ -128,7 +128,6 @@ namespace LORICA4
             for (int r = 0; r < nr; r++)
                 for (int c = 0; c < nc; c++)
                     depression[r, c] = 0;
-
             // Reset per-depression arrays (respect MAX_OUTLETS)
             for (int z = 0; z < numberofsinks; z++)
             {
@@ -145,7 +144,6 @@ namespace LORICA4
 
             totaldepressions = 0; totaldepressionsize = 0; maxsize = 0; totaldepressionvolume = 0; largestdepression = -1;
             depressionnumber = 0;
-
             for (int row = 0; row < nr; row++)
             {
                 for (int col = 0; col < nc; col++)
@@ -183,10 +181,10 @@ namespace LORICA4
                             Array.Clear(rowlowestnb, 0, maxlowestnbs);
                             Array.Clear(collowestnb, 0, maxlowestnbs);
 
-                            int r0 = Clamp(row - iloradius, 0, nr - 1);
-                            int r1 = Clamp(row + iupradius, 0, nr - 1);
-                            int c0 = Clamp(col - jloradius, 0, nc - 1);
-                            int c1 = Clamp(col + jupradius, 0, nc - 1);
+                            int r0 = Math.Max(0, iloedge[depressionnumber]);
+                            int r1 = Math.Min(nr - 1, iupedge[depressionnumber]);
+                            int c0 = Math.Max(0, jloedge[depressionnumber]);
+                            int c1 = Math.Min(nc - 1, jupedge[depressionnumber]);
 
                             // Find all lowest boundary neighbors relative to current lake level
                             for (int i = r0; i <= r1; i++)
