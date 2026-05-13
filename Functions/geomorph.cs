@@ -503,8 +503,7 @@ namespace LORICA4
             {
                 for (int col = 0; col < nc; col++)
                 {
-                    {
-                        if (only_waterflow_checkbox.Checked == false)
+                    if (only_waterflow_checkbox.Checked == false)
                         {
 
                             for (size = 0; size < n_texture_classes; size++)
@@ -532,8 +531,8 @@ namespace LORICA4
 
                             }
 
-                        }
                     }
+                    
                 }  // end for col
             }  //end for row
                //Debug.WriteLine("WE2");
@@ -728,9 +727,8 @@ namespace LORICA4
                                 total_infil_m += infil[row, col];
                                 total_evap_m += evapotranspiration[row, col];
                                 erodibility_value_m = K_fac[row, col];
-                                bio_protection_constant = 0.1 * root_cohesion_kPa_new[row, col];
+                                bio_protection_constant = bio_protection[row, col];
                             }
-
 
 
                         } // end for nodata
@@ -839,7 +837,7 @@ namespace LORICA4
                                         infil_value_m = infil[row, col];
                                         evap_value_m = evapotranspiration[row, col];
                                         erodibility_value_m = K_fac[row, col]; // Adjust for erosion
-                                        bio_protection_constant = 0.1 * root_cohesion_kPa_new[row, col];
+                                        bio_protection_constant = bio_protection[row, col];
                                     }
 
                                     // Water flow for non-glacier areas considering rain, evapotranspiration, and infiltration
@@ -875,7 +873,7 @@ namespace LORICA4
                                             infil_value_m = infil[row, col];
                                             evap_value_m = evapotranspiration[row, col];
                                             erodibility_value_m = K_fac[row, col];
-                                            bio_protection_constant = 0.1 * root_cohesion_kPa_new[row, col];
+                                            bio_protection_constant = bio_protection[row, col];
                                         }
 
                                         // Distribute water equally across lake outlets
@@ -939,7 +937,7 @@ namespace LORICA4
                                     infil_value_m = infil[row, col];//AleG 
                                     evap_value_m = evapotranspiration[row, col];//AleG 
                                     erodibility_value_m = K_fac[row, col]; //AleG  
-                                    bio_protection_constant = root_cohesion_kPa_new[row, col] * 0.1;//AleG 
+                                    bio_protection_constant = bio_protection[row, col];//AleG 
                                 }
                                 //ArT // development required to account for f(t) situations
                                 waterflow_m3[row, col] += (rain_value_m - infil_value_m - evap_value_m) * dx * dx;
@@ -969,7 +967,7 @@ namespace LORICA4
                                         infil_value_m = infil[row, col];//AleG 
                                         evap_value_m = evapotranspiration[row, col];//AleG 
                                         erodibility_value_m = K_fac[row, col]; //AleG  
-                                        bio_protection_constant = root_cohesion_kPa_new[row, col] * 0.1;//AleG 
+                                        bio_protection_constant = bio_protection[row, col];//AleG 
                                     }
                                     //ArT // development required to account for f(t) situations
                                     //ArT remember to check for negative lake outflow once it happens
@@ -2519,8 +2517,10 @@ namespace LORICA4
             try {  minimum_slope_for_movement_tan =  Convert.ToDouble(minimum_slope_for_movement_tan_textbox.Text); }
             catch { Debug.WriteLine("invalid value for tangent of minimum slope for momvement, using safety value of " + minimum_slope_for_movement_tan); }
             //runout ratio in horizontal meters covered by the deposit PER vertical meters of the eroding part of a landslide. Ratio is static, hordist can grow and shrink repeatedly with topography
-            try { runout_ratio = Convert.ToDouble(minimum_slope_for_movement_tan_textbox.Text); }
+            try { runout_ratio = Convert.ToDouble(runout_ratio_textbox.Text); }  //AleG
             catch { Debug.WriteLine("invalid value for runout ratio, using safety value of " + runout_ratio); }
+
+            
             double LS_conv_fac = 1.75; // determines how much eroding material is distributed sideways
 
             double initiation_volume_m3 = 0, continuation_volume_m3 = 0, deposition_volume_m3 = 0;

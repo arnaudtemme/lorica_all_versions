@@ -236,6 +236,7 @@ namespace LORICA4
                     observations,
                     root_cohesion_kPa_new,
                     coarsemap_perc, //coarsemap
+                    bio_protection, //AleG
                     remaining_vertical_size_m;  //for landslides
 
         int[,]  // integer matrices
@@ -521,6 +522,8 @@ namespace LORICA4
         private TextBox clay_neoform_C2_textbox;
         private TextBox clay_neoform_C1_textbox;
         private TextBox clay_neoform_constant_textbox;
+        private Label label36;
+        private TextBox root_coh_box;
         private Label label45;
 
 
@@ -1208,6 +1211,8 @@ namespace LORICA4
             System.Windows.Forms.Label label31;
             System.Windows.Forms.Label label32;
             System.Windows.Forms.Label label60;
+            this.label36 = new System.Windows.Forms.Label();
+            this.root_coh_box = new System.Windows.Forms.TextBox();
             this.label22 = new System.Windows.Forms.Label();
             this.runout_ratio_textbox = new System.Windows.Forms.TextBox();
             this.groupBox18 = new System.Windows.Forms.GroupBox();
@@ -1925,6 +1930,8 @@ namespace LORICA4
             // 
             // Landsliding
             // 
+            Landsliding.Controls.Add(this.label36);
+            Landsliding.Controls.Add(this.root_coh_box);
             Landsliding.Controls.Add(this.label22);
             Landsliding.Controls.Add(this.runout_ratio_textbox);
             Landsliding.Controls.Add(this.groupBox18);
@@ -1946,10 +1953,27 @@ namespace LORICA4
             Landsliding.Text = "Landsliding";
             Landsliding.UseVisualStyleBackColor = true;
             // 
+            // label36
+            // 
+            this.label36.AutoSize = true;
+            this.label36.Location = new System.Drawing.Point(488, 83);
+            this.label36.Name = "label36";
+            this.label36.Size = new System.Drawing.Size(159, 20);
+            this.label36.TabIndex = 37;
+            this.label36.Text = "Root cohesion (K/Pa)";
+            // 
+            // root_coh_box
+            // 
+            this.root_coh_box.Location = new System.Drawing.Point(429, 79);
+            this.root_coh_box.Name = "root_coh_box";
+            this.root_coh_box.Size = new System.Drawing.Size(53, 26);
+            this.root_coh_box.TabIndex = 36;
+            this.root_coh_box.Text = "1";
+            // 
             // label22
             // 
             this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(461, 28);
+            this.label22.Location = new System.Drawing.Point(488, 23);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(116, 20);
             this.label22.TabIndex = 35;
@@ -1957,7 +1981,7 @@ namespace LORICA4
             // 
             // runout_ratio_textbox
             // 
-            this.runout_ratio_textbox.Location = new System.Drawing.Point(402, 24);
+            this.runout_ratio_textbox.Location = new System.Drawing.Point(429, 19);
             this.runout_ratio_textbox.Name = "runout_ratio_textbox";
             this.runout_ratio_textbox.Size = new System.Drawing.Size(53, 26);
             this.runout_ratio_textbox.TabIndex = 34;
@@ -2011,7 +2035,7 @@ namespace LORICA4
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(461, 57);
+            this.label7.Location = new System.Drawing.Point(488, 52);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(252, 20);
             this.label7.TabIndex = 32;
@@ -2020,7 +2044,7 @@ namespace LORICA4
             // 
             // minimum_slope_for_movement_tan_textbox
             // 
-            this.minimum_slope_for_movement_tan_textbox.Location = new System.Drawing.Point(402, 53);
+            this.minimum_slope_for_movement_tan_textbox.Location = new System.Drawing.Point(429, 48);
             this.minimum_slope_for_movement_tan_textbox.Name = "minimum_slope_for_movement_tan_textbox";
             this.minimum_slope_for_movement_tan_textbox.Size = new System.Drawing.Size(53, 26);
             this.minimum_slope_for_movement_tan_textbox.TabIndex = 31;
@@ -2095,7 +2119,7 @@ namespace LORICA4
             // pictureBox4
             // 
             this.pictureBox4.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox4.Image")));
-            this.pictureBox4.Location = new System.Drawing.Point(533, 93);
+            this.pictureBox4.Location = new System.Drawing.Point(539, 107);
             this.pictureBox4.Name = "pictureBox4";
             this.pictureBox4.Size = new System.Drawing.Size(180, 137);
             this.pictureBox4.TabIndex = 14;
@@ -6058,6 +6082,7 @@ namespace LORICA4
                 //if (check_space_landuse.Checked == true) { Array.Clear(Till_LU, 0, Till_LU.Length); }
                 //if (check_space_landuse.Checked == true) { Array.Clear(BiotRate_LU, 0, BiotRate_LU.Length); }
                 if (check_space_landuse.Checked == true) { Array.Clear(K_fac, 0, K_fac.Length); }
+                if (check_space_landuse.Checked == true) { Array.Clear(bio_protection, 0, bio_protection.Length); }
 
             }
             Array.Clear(status_map, 0, status_map.Length);
@@ -6124,7 +6149,8 @@ namespace LORICA4
                     Array.Clear(waterflow_m3, 0, waterflow_m3.Length);
                     if (only_waterflow_checkbox.Checked == false)
                     {
-                        Array.Clear(K_fac, 0, K_fac.Length);
+                        Array.Clear(K_fac, 0, K_fac.Length); 
+                        Array.Clear(bio_protection, 0, bio_protection.Length);
                         Array.Clear(sediment_in_transport_kg, 0, sediment_in_transport_kg.Length);
                         Array.Clear(young_SOM_in_transport_kg, 0, young_SOM_in_transport_kg.Length);
                         Array.Clear(old_SOM_in_transport_kg, 0, old_SOM_in_transport_kg.Length);
@@ -6232,6 +6258,7 @@ namespace LORICA4
                 if (check_space_landuse.Checked == true)
                 {
                     Array.Clear(K_fac, 0, K_fac.Length); //AleG
+                    Array.Clear(bio_protection, 0, bio_protection.Length);
                     Array.Clear(infil, 0, infil.Length);
                     Array.Clear(evapotranspiration, 0, evapotranspiration.Length);
                     //Array.Clear(OM_LU, 0, OM_LU.Length);
@@ -6315,6 +6342,7 @@ namespace LORICA4
                     if (only_waterflow_checkbox.Checked == false)
                     {
                         K_fac = new double[nr, nc];
+                        bio_protection = new double[nr, nc];
                         sediment_in_transport_kg = new double[nr, nc, n_texture_classes];
                         young_SOM_in_transport_kg = new double[nr, nc];
                         old_SOM_in_transport_kg = new double[nr, nc];
@@ -6409,6 +6437,7 @@ namespace LORICA4
                     root_cohesion_kPa_new = new double[nr, nc]; //AleG
                     infil = new double[nr, nc]; //AleG
                     evapotranspiration = new double[nr, nc]; //AleG
+                    bio_protection = new double[nr, nc];
                     K_fac = new double[nr, nc]; //AleG
                 }
 

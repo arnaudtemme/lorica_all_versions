@@ -519,13 +519,15 @@ namespace LORICA4
                                 sed_slid_m[row, col] = 0;
                                 slidestatus[row, col] = 0;
                                 young_SOM_in_transport_kg[row, col] = 0;
+
                                 for (int material = 0; material < 5; material++)
                                 {
                                     sediment_in_transport_kg[row, col, material] = 0;
                                 }
 
-                                //sum_landsliding[row, col] = 0; 
-                            } //AleG total_sum_tillage = 0;
+                                root_cohesion_kPa_new[row, col]= Convert.ToDouble(root_coh_box.Text); //AleG 
+
+                            }
                             if (soildepth_m[row, col] < 0.0 && soildepth_m[row, col] != nodata_value) { soildepth_error += soildepth_m[row, col]; soildepth_m[row, col] = 2; }
                             if (uplift_active_checkbox.Checked) { sum_uplift[row, col] = 0; total_sum_uplift = 0; }
                             if (tilting_active_checkbox.Checked) { sum_tilting[row, col] = 0; total_sum_tilting = 0; }
@@ -546,57 +548,97 @@ namespace LORICA4
                         }
                     }
                 }
-                if (Water_ero_checkbox.Checked && check_space_landuse.Checked == true)
+                if (check_space_landuse.Checked == true)  //AleG
                 {
                     // we will first once read the values from the interface, then assign them to the rows and cols. This saves time
                     double infil1 = System.Convert.ToDouble(landuse_determinator.LU1_Inf_textbox.Text);
                     double evap1 = System.Convert.ToDouble(landuse_determinator.LU1_Evap_textbox.Text);
                     double kfac1 = System.Convert.ToDouble(landuse_determinator.LU1_Ero_textbox.Text);
+                    double bioprot1 = System.Convert.ToDouble(landuse_determinator.LU1_BioProt_textbox.Text);
+                    double OM1 = System.Convert.ToDouble(landuse_determinator.LU1_OM_textbox.Text);
+                    double till1 = System.Convert.ToDouble(landuse_determinator.LU1_Till_textbox.Text);
+                    double biotrate1 = System.Convert.ToDouble(landuse_determinator.LU1_BiotR_textbox.Text);
                     double rootcoh1 = System.Convert.ToDouble(landuse_determinator.LU1_RootC_textbox.Text);
 
                     double infil2 = System.Convert.ToDouble(landuse_determinator.LU2_Inf_textbox.Text);
                     double evap2 = System.Convert.ToDouble(landuse_determinator.LU2_Evap_textbox.Text);
                     double kfac2 = System.Convert.ToDouble(landuse_determinator.LU2_Ero_textbox.Text);
+                    double bioprot2 = System.Convert.ToDouble(landuse_determinator.LU2_BioProt_textbox.Text);
+                    double OM2 = System.Convert.ToDouble(landuse_determinator.LU2_OM_textbox.Text);
+                    double till2 = System.Convert.ToDouble(landuse_determinator.LU2_Till_textbox.Text);
+                    double biotrate2 = System.Convert.ToDouble(landuse_determinator.LU2_BiotR_textbox.Text);
                     double rootcoh2 = System.Convert.ToDouble(landuse_determinator.LU2_RootC_textbox.Text);
 
                     double infil3 = System.Convert.ToDouble(landuse_determinator.LU3_Inf_textbox.Text);
                     double evap3 = System.Convert.ToDouble(landuse_determinator.LU3_Evap_textbox.Text);
                     double kfac3 = System.Convert.ToDouble(landuse_determinator.LU3_Ero_textbox.Text);
+                    double bioprot3 = System.Convert.ToDouble(landuse_determinator.LU3_BioProt_textbox.Text);
+                    double OM3 = System.Convert.ToDouble(landuse_determinator.LU3_OM_textbox.Text);
+                    double till3 = System.Convert.ToDouble(landuse_determinator.LU3_Till_textbox.Text);
+                    double biotrate3 = System.Convert.ToDouble(landuse_determinator.LU3_BiotR_textbox.Text);
                     double rootcoh3 = System.Convert.ToDouble(landuse_determinator.LU3_RootC_textbox.Text);
 
                     double infil4 = System.Convert.ToDouble(landuse_determinator.LU4_Inf_textbox.Text);
                     double evap4 = System.Convert.ToDouble(landuse_determinator.LU4_Evap_textbox.Text);
                     double kfac4 = System.Convert.ToDouble(landuse_determinator.LU4_Ero_textbox.Text);
+                    double bioprot4 = System.Convert.ToDouble(landuse_determinator.LU4_BioProt_textbox.Text);
+                    double OM4 = System.Convert.ToDouble(landuse_determinator.LU4_OM_textbox.Text);
+                    double till4 = System.Convert.ToDouble(landuse_determinator.LU4_Till_textbox.Text);
+                    double biotrate4 = System.Convert.ToDouble(landuse_determinator.LU4_BiotR_textbox.Text);
                     double rootcoh4 = System.Convert.ToDouble(landuse_determinator.LU4_RootC_textbox.Text);
 
                     double infil5 = System.Convert.ToDouble(landuse_determinator.LU5_Inf_textbox.Text);
                     double evap5 = System.Convert.ToDouble(landuse_determinator.LU5_Evap_textbox.Text);
                     double kfac5 = System.Convert.ToDouble(landuse_determinator.LU5_Ero_textbox.Text);
+                    double bioprot5 = System.Convert.ToDouble(landuse_determinator.LU5_BioProt_textbox.Text);
+                    double OM5 = System.Convert.ToDouble(landuse_determinator.LU5_OM_textbox.Text);
+                    double till5 = System.Convert.ToDouble(landuse_determinator.LU5_Till_textbox.Text);
+                    double biotrate5 = System.Convert.ToDouble(landuse_determinator.LU5_BiotR_textbox.Text);
                     double rootcoh5 = System.Convert.ToDouble(landuse_determinator.LU5_RootC_textbox.Text);
 
                     double infil6 = System.Convert.ToDouble(landuse_determinator.LU6_Inf_textbox.Text);
                     double evap6 = System.Convert.ToDouble(landuse_determinator.LU6_Evap_textbox.Text);
                     double kfac6 = System.Convert.ToDouble(landuse_determinator.LU6_Ero_textbox.Text);
+                    double bioprot6 = System.Convert.ToDouble(landuse_determinator.LU6_BioProt_textbox.Text);
+                    double OM6 = System.Convert.ToDouble(landuse_determinator.LU6_OM_textbox.Text);
+                    double till6 = System.Convert.ToDouble(landuse_determinator.LU6_Till_textbox.Text);
+                    double biotrate6 = System.Convert.ToDouble(landuse_determinator.LU6_BiotR_textbox.Text);
                     double rootcoh6 = System.Convert.ToDouble(landuse_determinator.LU6_RootC_textbox.Text);
 
                     double infil7 = System.Convert.ToDouble(landuse_determinator.LU7_Inf_textbox.Text);
                     double evap7 = System.Convert.ToDouble(landuse_determinator.LU7_Evap_textbox.Text);
                     double kfac7 = System.Convert.ToDouble(landuse_determinator.LU7_Ero_textbox.Text);
+                    double bioprot7 = System.Convert.ToDouble(landuse_determinator.LU7_BioProt_textbox.Text);
+                    double OM7 = System.Convert.ToDouble(landuse_determinator.LU7_OM_textbox.Text);
+                    double till7 = System.Convert.ToDouble(landuse_determinator.LU7_Till_textbox.Text);
+                    double biotrate7 = System.Convert.ToDouble(landuse_determinator.LU7_BiotR_textbox.Text);
                     double rootcoh7 = System.Convert.ToDouble(landuse_determinator.LU7_RootC_textbox.Text);
 
                     double infil8 = System.Convert.ToDouble(landuse_determinator.LU8_Inf_textbox.Text);
                     double evap8 = System.Convert.ToDouble(landuse_determinator.LU8_Evap_textbox.Text);
                     double kfac8 = System.Convert.ToDouble(landuse_determinator.LU8_Ero_textbox.Text);
+                    double bioprot8 = System.Convert.ToDouble(landuse_determinator.LU8_BioProt_textbox.Text);
+                    double OM8 = System.Convert.ToDouble(landuse_determinator.LU8_OM_textbox.Text);
+                    double till8 = System.Convert.ToDouble(landuse_determinator.LU8_Till_textbox.Text);
+                    double biotrate8 = System.Convert.ToDouble(landuse_determinator.LU8_BiotR_textbox.Text);
                     double rootcoh8 = System.Convert.ToDouble(landuse_determinator.LU8_RootC_textbox.Text);
 
                     double infil9 = System.Convert.ToDouble(landuse_determinator.LU9_Inf_textbox.Text);
                     double evap9 = System.Convert.ToDouble(landuse_determinator.LU9_Evap_textbox.Text);
                     double kfac9 = System.Convert.ToDouble(landuse_determinator.LU9_Ero_textbox.Text);
+                    double bioprot9 = System.Convert.ToDouble(landuse_determinator.LU9_BioProt_textbox.Text);
+                    double OM9 = System.Convert.ToDouble(landuse_determinator.LU9_OM_textbox.Text);
+                    double till9 = System.Convert.ToDouble(landuse_determinator.LU9_Till_textbox.Text);
+                    double biotrate9 = System.Convert.ToDouble(landuse_determinator.LU9_BiotR_textbox.Text);
                     double rootcoh9 = System.Convert.ToDouble(landuse_determinator.LU9_RootC_textbox.Text);
 
                     double infil10 = System.Convert.ToDouble(landuse_determinator.LU10_Inf_textbox.Text);
                     double evap10 = System.Convert.ToDouble(landuse_determinator.LU10_Evap_textbox.Text);
                     double kfac10 = System.Convert.ToDouble(landuse_determinator.LU10_Ero_textbox.Text);
+                    double bioprot10 = System.Convert.ToDouble(landuse_determinator.LU10_BioProt_textbox.Text);
+                    double OM10 = System.Convert.ToDouble(landuse_determinator.LU10_OM_textbox.Text);
+                    double till10 = System.Convert.ToDouble(landuse_determinator.LU10_Till_textbox.Text);
+                    double biotrate10 = System.Convert.ToDouble(landuse_determinator.LU10_BiotR_textbox.Text);
                     double rootcoh10 = System.Convert.ToDouble(landuse_determinator.LU10_RootC_textbox.Text);
 
 
@@ -613,70 +655,80 @@ namespace LORICA4
                                         infil[row, col] *= infil1;
                                         evapotranspiration[row, col] *= evap1;
                                         K_fac[row, col] *= kfac1;
-                                        root_cohesion_kPa_new[row, col] = rootcoh1;
+                                        bio_protection[row, col] *= bioprot1;
+                                        root_cohesion_kPa_new[row, col] *= rootcoh1;
                                     }
                                     if (landuse[row, col] == 2)
                                     {
                                         infil[row, col] *= infil2;
                                         evapotranspiration[row, col] *= evap2;
                                         K_fac[row, col] *= kfac2;
-                                        root_cohesion_kPa_new[row, col] = rootcoh2;
+                                        bio_protection[row, col] *= bioprot2;
+                                        root_cohesion_kPa_new[row, col] *= rootcoh2;
                                     }
                                     if (landuse[row, col] == 3)
                                     {
                                         infil[row, col] *= infil3;
                                         evapotranspiration[row, col] *= evap3;
                                         K_fac[row, col] *= kfac3;
-                                        root_cohesion_kPa_new[row, col] = rootcoh3;
+                                        bio_protection[row, col] *= bioprot3;
+                                        root_cohesion_kPa_new[row, col] *= rootcoh3;
                                     }
                                     if (landuse[row, col] == 4)
                                     {
                                         infil[row, col] *= infil4;
                                         evapotranspiration[row, col] *= evap4;
                                         K_fac[row, col] *= kfac4;
-                                        root_cohesion_kPa_new[row, col] = rootcoh4;
+                                        bio_protection[row, col] *= bioprot4;
+                                        root_cohesion_kPa_new[row, col] *= rootcoh4;
                                     }
                                     if (landuse[row, col] == 5)
                                     {
                                         infil[row, col] *= infil5;
                                         evapotranspiration[row, col] *= evap5;
                                         K_fac[row, col] *= kfac5;
-                                        root_cohesion_kPa_new[row, col] = rootcoh5;
+                                        bio_protection[row, col] *= bioprot5;
+                                        root_cohesion_kPa_new[row, col] *= rootcoh5;
                                     }
                                     if (landuse[row, col] == 6)
                                     {
                                         infil[row, col] *= infil6;
                                         evapotranspiration[row, col] *= evap6;
                                         K_fac[row, col] *= kfac6;
-                                        root_cohesion_kPa_new[row, col] = rootcoh6;
+                                        bio_protection[row, col] *= bioprot6;
+                                        root_cohesion_kPa_new[row, col] *= rootcoh6;
                                     }
                                     if (landuse[row, col] == 7)
                                     {
                                         infil[row, col] *= infil7;
                                         evapotranspiration[row, col] *= evap7;
                                         K_fac[row, col] *= kfac7;
-                                        root_cohesion_kPa_new[row, col] = rootcoh7;
+                                        bio_protection[row, col] *= bioprot7;
+                                        root_cohesion_kPa_new[row, col] *= rootcoh7;
                                     }
                                     if (landuse[row, col] == 8)
                                     {
                                         infil[row, col] *= infil8;
                                         evapotranspiration[row, col] *= evap8;
                                         K_fac[row, col] *= kfac8;
-                                        root_cohesion_kPa_new[row, col] = rootcoh8;
+                                        bio_protection[row, col] *= bioprot8;
+                                        root_cohesion_kPa_new[row, col] *= rootcoh8;
                                     }
                                     if (landuse[row, col] == 9)
                                     {
                                         infil[row, col] *= infil9;
                                         evapotranspiration[row, col] *= evap9;
                                         K_fac[row, col] *= kfac9;
-                                        root_cohesion_kPa_new[row, col] = rootcoh9;
+                                        bio_protection[row, col] *= bioprot9;
+                                        root_cohesion_kPa_new[row, col] *= rootcoh9;
                                     }
                                     if (landuse[row, col] == 10)
                                     {
                                         infil[row, col] *= infil10;
                                         evapotranspiration[row, col] *= evap10;
                                         K_fac[row, col] *= kfac10;
-                                        root_cohesion_kPa_new[row, col] = rootcoh10;
+                                        bio_protection[row, col] *= bioprot10;
+                                        root_cohesion_kPa_new[row, col] *= rootcoh10;
                                     }
                                 }
                             } //nodata
@@ -685,6 +737,7 @@ namespace LORICA4
                 } //if
                   // Debug.WriteLine(" assigned starting values for geomorph  ");
                   // Debug.WriteLine("before initialise soil {0}", texture_kg[0, 0, 0, 2]);
+
 
                 initialise_soil();
                 //Debug.WriteLine("after initialise soil {0}", texture_kg[0, 0, 0, 2]);
