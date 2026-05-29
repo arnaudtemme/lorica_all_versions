@@ -1405,9 +1405,9 @@ namespace LORICA4
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.Rock_weathering = new System.Windows.Forms.TabPage();
             this.rockweath_method_box = new System.Windows.Forms.ComboBox();
-            this.pictureBox6 = new System.Windows.Forms.PictureBox();
             this.groupBox10 = new System.Windows.Forms.GroupBox();
             this.Frost_weathering_checkbox = new System.Windows.Forms.CheckBox();
+            this.pictureBox6 = new System.Windows.Forms.PictureBox();
             this.physical = new System.Windows.Forms.TabPage();
             this.physical_weath_constant2 = new System.Windows.Forms.TextBox();
             this.physical_weath_constant1 = new System.Windows.Forms.TextBox();
@@ -1661,8 +1661,8 @@ namespace LORICA4
             this.Soil.SuspendLayout();
             this.tabControl2.SuspendLayout();
             this.Rock_weathering.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).BeginInit();
             this.groupBox10.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).BeginInit();
             this.physical.SuspendLayout();
             this.chemical.SuspendLayout();
             this.clay.SuspendLayout();
@@ -2404,7 +2404,7 @@ namespace LORICA4
             this.parameter_k1_textbox.Name = "parameter_k1_textbox";
             this.parameter_k1_textbox.Size = new System.Drawing.Size(53, 20);
             this.parameter_k1_textbox.TabIndex = 20;
-            this.parameter_k1_textbox.Text = "0.1";
+            this.parameter_k1_textbox.Text = "10";
             // 
             // label24
             // 
@@ -2420,18 +2420,18 @@ namespace LORICA4
             this.label26.AutoSize = true;
             this.label26.Location = new System.Drawing.Point(89, 109);
             this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(40, 13);
+            this.label26.Size = new System.Drawing.Size(124, 13);
             this.label26.TabIndex = 18;
-            this.label26.Text = "k2 (t-1)";
+            this.label26.Text = "k2 (m)  -> ( k2 must < k1)";
             // 
             // label27
             // 
             this.label27.AutoSize = true;
             this.label27.Location = new System.Drawing.Point(89, 83);
             this.label27.Name = "label27";
-            this.label27.Size = new System.Drawing.Size(40, 13);
+            this.label27.Size = new System.Drawing.Size(42, 13);
             this.label27.TabIndex = 17;
-            this.label27.Text = "k1 (t-1)";
+            this.label27.Text = "k1 (m) !";
             // 
             // label28
             // 
@@ -2448,7 +2448,7 @@ namespace LORICA4
             this.parameter_k2_textbox.Name = "parameter_k2_textbox";
             this.parameter_k2_textbox.Size = new System.Drawing.Size(53, 20);
             this.parameter_k2_textbox.TabIndex = 14;
-            this.parameter_k2_textbox.Text = "6";
+            this.parameter_k2_textbox.Text = "0.25";
             // 
             // parameter_Pa_textbox
             // 
@@ -4026,7 +4026,6 @@ namespace LORICA4
             // Rock_weathering
             // 
             this.Rock_weathering.Controls.Add(this.rockweath_method_box);
-            this.Rock_weathering.Controls.Add(this.pictureBox6);
             this.Rock_weathering.Controls.Add(this.groupBox10);
             this.Rock_weathering.Controls.Add(this.groupBox9);
             this.Rock_weathering.Location = new System.Drawing.Point(4, 22);
@@ -4041,28 +4040,20 @@ namespace LORICA4
             this.rockweath_method_box.AllowDrop = true;
             this.rockweath_method_box.FormattingEnabled = true;
             this.rockweath_method_box.Items.AddRange(new object[] {
-            "Humped",
-            "Exponential (-P0 exp(-k1*dsoil))",
+            "Humped (Minasny McBratney double exponential)",
+            "Single exponential (P0 exp(-dsoil/k1))",
             "Function of infiltration (only with daily water flow)",
-            "Limestone"});
+            "Limestone (P0 exp(-dsoil/k1)* clayfraction)"});
             this.rockweath_method_box.Location = new System.Drawing.Point(26, 200);
             this.rockweath_method_box.Name = "rockweath_method_box";
-            this.rockweath_method_box.Size = new System.Drawing.Size(121, 21);
+            this.rockweath_method_box.Size = new System.Drawing.Size(248, 21);
             this.rockweath_method_box.TabIndex = 15;
-            this.rockweath_method_box.Text = "Humped";
-            // 
-            // pictureBox6
-            // 
-            this.pictureBox6.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox6.Image")));
-            this.pictureBox6.Location = new System.Drawing.Point(276, 57);
-            this.pictureBox6.Name = "pictureBox6";
-            this.pictureBox6.Size = new System.Drawing.Size(180, 137);
-            this.pictureBox6.TabIndex = 14;
-            this.pictureBox6.TabStop = false;
+            this.rockweath_method_box.Text = "Humped (Minasny McBratney double expon)";
             // 
             // groupBox10
             // 
             this.groupBox10.Controls.Add(this.Frost_weathering_checkbox);
+            this.groupBox10.Controls.Add(this.pictureBox6);
             this.groupBox10.Enabled = false;
             this.groupBox10.Location = new System.Drawing.Point(250, 14);
             this.groupBox10.Name = "groupBox10";
@@ -4083,6 +4074,15 @@ namespace LORICA4
             this.Frost_weathering_checkbox.TabIndex = 3;
             this.Frost_weathering_checkbox.Text = "Activate this process";
             this.Frost_weathering_checkbox.UseVisualStyleBackColor = true;
+            // 
+            // pictureBox6
+            // 
+            this.pictureBox6.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox6.Image")));
+            this.pictureBox6.Location = new System.Drawing.Point(14, 19);
+            this.pictureBox6.Name = "pictureBox6";
+            this.pictureBox6.Size = new System.Drawing.Size(180, 137);
+            this.pictureBox6.TabIndex = 14;
+            this.pictureBox6.TabStop = false;
             // 
             // physical
             // 
@@ -5973,9 +5973,9 @@ namespace LORICA4
             this.Soil.ResumeLayout(false);
             this.tabControl2.ResumeLayout(false);
             this.Rock_weathering.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).EndInit();
             this.groupBox10.ResumeLayout(false);
             this.groupBox10.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).EndInit();
             this.physical.ResumeLayout(false);
             this.physical.PerformLayout();
             this.chemical.ResumeLayout(false);

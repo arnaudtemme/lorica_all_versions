@@ -4466,13 +4466,13 @@ namespace LORICA4
                             weatheringdepth = soildepth_m[row, col];
 
                             if (rockweath_method == 0)
-                                bedrock_weathering_m[row, col] = P0 * (Math.Exp(-k1 * weatheringdepth) - Math.Exp(-k2 * weatheringdepth)) + Pa;
+                                bedrock_weathering_m[row, col] = P0 * (Math.Exp(- weatheringdepth/k1) - Math.Exp(-weatheringdepth/k2)) + Pa;
                             if (rockweath_method == 1)
-                                bedrock_weathering_m[row, col] = P0 * Math.Exp(-k1 * weatheringdepth);
+                                bedrock_weathering_m[row, col] = P0 * Math.Exp(- weatheringdepth/k1);
                             if (rockweath_method == 2 && daily_water.Checked)
-                                bedrock_weathering_m[row, col] = P0 * -k1 * (Iy[row, col] - Imin) / (Imax - Imin);
+                                bedrock_weathering_m[row, col] = P0 * - ((Iy[row, col] - Imin) / (Imax - Imin)) / k1;
                             if (rockweath_method == 3)
-                                bedrock_weathering_m[row, col] = P0 * Math.Exp(-k1 * weatheringdepth);
+                                bedrock_weathering_m[row, col] = P0 * Math.Exp(-weatheringdepth/k1);
 
                             if (blocks_active == 1)
                             {
