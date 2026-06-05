@@ -236,6 +236,7 @@ namespace LORICA4
                     observations,
                     root_cohesion_kPa_new,
                     coarsemap_perc, //coarsemap
+                    bio_protection, //AleG
                     remaining_vertical_size_m;  //for landslides
 
         int[,]  // integer matrices
@@ -521,6 +522,8 @@ namespace LORICA4
         private TextBox clay_neoform_C2_textbox;
         private TextBox clay_neoform_C1_textbox;
         private TextBox clay_neoform_constant_textbox;
+        private Label label36;
+        private TextBox root_coh_box;
         private Label label45;
 
 
@@ -1206,6 +1209,8 @@ namespace LORICA4
             System.Windows.Forms.Label label31;
             System.Windows.Forms.Label label32;
             System.Windows.Forms.Label label60;
+            this.label36 = new System.Windows.Forms.Label();
+            this.root_coh_box = new System.Windows.Forms.TextBox();
             this.label22 = new System.Windows.Forms.Label();
             this.runout_ratio_textbox = new System.Windows.Forms.TextBox();
             this.groupBox18 = new System.Windows.Forms.GroupBox();
@@ -1923,6 +1928,8 @@ namespace LORICA4
             // 
             // Landsliding
             // 
+            Landsliding.Controls.Add(this.label36);
+            Landsliding.Controls.Add(this.root_coh_box);
             Landsliding.Controls.Add(this.label22);
             Landsliding.Controls.Add(this.runout_ratio_textbox);
             Landsliding.Controls.Add(this.groupBox18);
@@ -1944,10 +1951,27 @@ namespace LORICA4
             Landsliding.Text = "Landsliding";
             Landsliding.UseVisualStyleBackColor = true;
             // 
+            // label36
+            // 
+            this.label36.AutoSize = true;
+            this.label36.Location = new System.Drawing.Point(488, 83);
+            this.label36.Name = "label36";
+            this.label36.Size = new System.Drawing.Size(159, 20);
+            this.label36.TabIndex = 37;
+            this.label36.Text = "Root cohesion (K/Pa)";
+            // 
+            // root_coh_box
+            // 
+            this.root_coh_box.Location = new System.Drawing.Point(429, 79);
+            this.root_coh_box.Name = "root_coh_box";
+            this.root_coh_box.Size = new System.Drawing.Size(53, 26);
+            this.root_coh_box.TabIndex = 36;
+            this.root_coh_box.Text = "1";
+            // 
             // label22
             // 
             this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(461, 28);
+            this.label22.Location = new System.Drawing.Point(488, 23);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(77, 13);
             this.label22.TabIndex = 35;
@@ -1955,7 +1979,7 @@ namespace LORICA4
             // 
             // runout_ratio_textbox
             // 
-            this.runout_ratio_textbox.Location = new System.Drawing.Point(402, 24);
+            this.runout_ratio_textbox.Location = new System.Drawing.Point(429, 19);
             this.runout_ratio_textbox.Name = "runout_ratio_textbox";
             this.runout_ratio_textbox.Size = new System.Drawing.Size(53, 20);
             this.runout_ratio_textbox.TabIndex = 34;
@@ -2009,7 +2033,7 @@ namespace LORICA4
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(461, 57);
+            this.label7.Location = new System.Drawing.Point(488, 52);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(167, 13);
             this.label7.TabIndex = 32;
@@ -2018,7 +2042,7 @@ namespace LORICA4
             // 
             // minimum_slope_for_movement_tan_textbox
             // 
-            this.minimum_slope_for_movement_tan_textbox.Location = new System.Drawing.Point(402, 53);
+            this.minimum_slope_for_movement_tan_textbox.Location = new System.Drawing.Point(429, 48);
             this.minimum_slope_for_movement_tan_textbox.Name = "minimum_slope_for_movement_tan_textbox";
             this.minimum_slope_for_movement_tan_textbox.Size = new System.Drawing.Size(53, 20);
             this.minimum_slope_for_movement_tan_textbox.TabIndex = 31;
@@ -2093,7 +2117,7 @@ namespace LORICA4
             // pictureBox4
             // 
             this.pictureBox4.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox4.Image")));
-            this.pictureBox4.Location = new System.Drawing.Point(533, 93);
+            this.pictureBox4.Location = new System.Drawing.Point(539, 107);
             this.pictureBox4.Name = "pictureBox4";
             this.pictureBox4.Size = new System.Drawing.Size(180, 137);
             this.pictureBox4.TabIndex = 14;
@@ -6026,6 +6050,231 @@ namespace LORICA4
         LORICA4.Landuse_determinator landuse_determinator = new LORICA4.Landuse_determinator();
         public LORICA4.Soil_specifier soildata = new LORICA4.Soil_specifier();
         
+        int clearmatrices_test()
+        {
+            // Reseting values of existing memory instead of Re-allocating (saves memory)
+            // Re-allocating, while faster, still keeps the previous memory until Garbage Collection (GC) decides to clear it up
+
+            //Another potentially faster way is to for-loop through each array position and reset to its default value.
+            //While it does require so extra coding logic it would be good for larger arrays and can implement Parallel.For()
+
+            if (this.Spitsbergen_case_study.Checked == true) { Array.Clear(original_dtm, 0, original_dtm.Length); }
+            Array.Clear(dtm, 0, dtm.Length);
+            if (merely_calculating_derivatives == false)
+            {
+                //Array.Clear(OSL_age, 0, OSL_age.Length);
+                Array.Clear(soildepth_m, 0, soildepth_m.Length);
+                Array.Clear(dtmchange_m, 0, dtmchange_m.Length);
+                Array.Clear(dz_soil, 0, dz_soil.Length);
+                // climate grids
+                if (check_space_evap.Checked == true) { Array.Clear(evapotranspiration, 0, evapotranspiration.Length); }
+                if (check_space_infil.Checked == true) { Array.Clear(infil, 0, infil.Length); }
+                if (check_space_rain.Checked == true) { Array.Clear(rain_m, 0, rain_m.Length); }
+
+                Array.Clear(veg, 0, veg.Length);
+                //Array.Clear(veg_correction_factor, 0, veg.Length);
+                // categorical grids
+                if (check_space_landuse.Checked == true) { Array.Clear(landuse, 0, landuse.Length); }
+                if (check_space_landuse.Checked == true) { Array.Clear(evapotranspiration, 0, evapotranspiration.Length); }
+                if (check_space_landuse.Checked == true) { Array.Clear(infil, 0, infil.Length); }
+                if (check_space_landuse.Checked == true) { Array.Clear(root_cohesion_kPa_new, 0, root_cohesion_kPa_new.Length); }
+                //if (check_space_landuse.Checked == true) { Array.Clear(OM_LU, 0, OM_LU.Length); }
+                //if (check_space_landuse.Checked == true) { Array.Clear(Till_LU, 0, Till_LU.Length); }
+                //if (check_space_landuse.Checked == true) { Array.Clear(BiotRate_LU, 0, BiotRate_LU.Length); }
+                if (check_space_landuse.Checked == true) { Array.Clear(K_fac, 0, K_fac.Length); }
+                if (check_space_landuse.Checked == true) { Array.Clear(bio_protection, 0, bio_protection.Length); }
+
+            }
+            Array.Clear(status_map, 0, status_map.Length);
+            //sorting arrays
+            Array.Clear(index, 0, index.Length);
+            Array.Clear(row_index, 0, row_index.Length);
+            Array.Clear(col_index, 0, col_index.Length);
+            Array.Clear(rowcol_index, 0, rowcol_index.Length);
+            //others
+            Array.Clear(depression, 0, depression.Length);
+            Array.Clear(dtmfill_A, 0, dtmfill_A.Length);
+            if (merely_calculating_derivatives == false)
+            {
+                if (1 == 1)
+                {
+                    Array.Clear(texture_kg, 0, texture_kg.Length);   //: mass in kg (per voxel = layer * thickness)
+                    Array.Clear(layerthickness_m, 0, layerthickness_m.Length);      // : thickness in m 
+                    Array.Clear(young_SOM_kg, 0, young_SOM_kg.Length);   // : OM mass in kg (per voxel = layer * thickness)
+                    Array.Clear(old_SOM_kg, 0, old_SOM_kg.Length);
+                    Array.Clear(bulkdensity, 0, bulkdensity.Length);           // : bulkdensity in kg/m3 (over the voxel = layer * thickness)
+                }
+                if (CN_checkbox.Checked)
+                {
+                    CN_atoms_cm2 = new double[nr, nc, max_soil_layers, n_cosmo];
+                    //for (row = 0; row < nr; row++)
+                    //{
+                    //    for (col = 0; col < nc; col++)
+                    //    {
+                    //        for (int lay = 0; lay < max_soil_layers; lay++)
+                    //        {
+                    //            CN_atoms_cm2[row, col, lay, 0] = Convert.ToInt64(8E8);
+                    //        }
+                    //    }
+                    //}
+                    // dim[,,,0] = Meteoric 10-Be (dynamics linked to both clay fractions)
+                    // dim[,,,1] = In-situ 10-Be (dynamics linked to sand fraction)
+                    // dim[,,,2] = In-situ 14-C (dynamics linked to sand fraction)
+                    // dim[,,,3] = 137-Cs
+                    // Other nuclides can be included at a later stage (e.g., 14-C, 137-Cs, 210-Pb)
+                }
+                if (OSL_checkbox.Checked)
+                {
+                    int ngrains = System.Convert.ToInt32(ngrains_textbox.Text);
+                    // OSL_age = new int[nr * nc * max_soil_layers * ngrains, 5];
+                    OSL_grainages = new int[nr, nc, max_soil_layers][];
+                    OSL_depositionages = new int[nr, nc, max_soil_layers][];
+                    OSL_surfacedcount = new int[nr, nc, max_soil_layers][];
+                    for (int row = 0; row < nr; row++)
+                    {
+                        for (int col = 0; col < nc; col++)
+                        {
+                            for (int lay = 0; lay < max_soil_layers; lay++)
+                            {
+                                OSL_grainages[row, col, lay] = new int[ngrains];
+                                OSL_depositionages[row, col, lay] = new int[ngrains];
+                                OSL_surfacedcount[row, col, lay] = new int[ngrains];
+                            }
+                        }
+                    }
+                }
+                if (Water_ero_checkbox.Checked)
+                {
+                    //doubles
+                    Array.Clear(waterflow_m3, 0, waterflow_m3.Length);
+                    if (only_waterflow_checkbox.Checked == false)
+                    {
+                        Array.Clear(K_fac, 0, K_fac.Length); 
+                        Array.Clear(bio_protection, 0, bio_protection.Length);
+                        Array.Clear(sediment_in_transport_kg, 0, sediment_in_transport_kg.Length);
+                        Array.Clear(young_SOM_in_transport_kg, 0, young_SOM_in_transport_kg.Length);
+                        Array.Clear(old_SOM_in_transport_kg, 0, old_SOM_in_transport_kg.Length);
+                        Array.Clear(sum_water_erosion, 0, sum_water_erosion.Length);
+                        Array.Clear(dz_ero_m, 0, dz_ero_m.Length);
+                        Array.Clear(dz_sed_m, 0, dz_sed_m.Length);
+                        Array.Clear(lake_sed_m, 0, lake_sed_m.Length);
+                        Array.Clear(depressionsum_texture_kg, 0, depressionsum_texture_kg.Length);
+                        if (CN_checkbox.Checked) { CN_in_transport = new double[nr, nc, n_cosmo]; }
+                        if (OSL_checkbox.Checked)
+                        {
+                            OSL_grainages_in_transport = new int[nr, nc][];
+                            OSL_depositionages_in_transport = new int[nr, nc][];
+                            OSL_surfacedcount_in_transport = new int[nr, nc][];
+                        }
+                    }
+                }
+
+                if (Tillage_checkbox.Checked)
+                {
+                    Array.Clear(till_result, 0, till_result.Length);
+                    Array.Clear(sum_tillage, 0, sum_tillage.Length);
+                    Array.Clear(tillfields, 0, tillfields.Length);
+                    Array.Clear(dz_till_bd, 0, dz_till_bd.Length);
+                }
+
+                if (treefall_checkbox.Checked)
+                {
+                    Array.Clear(treefall_count, 0, treefall_count.Length);
+                    Array.Clear(dz_treefall, 0, dz_treefall.Length);
+                }
+
+                if (version_lux_checkbox.Checked)
+                {
+                    Array.Clear(tpi, 0, tpi.Length);
+                    Array.Clear(hornbeam_cover_fraction, 0, hornbeam_cover_fraction.Length);
+                    Array.Clear(litter_kg, 0, litter_kg.Length);
+                }
+
+                if (creep_active_checkbox.Checked)
+                {
+                    Array.Clear(creep, 0, creep.Length);
+                    Array.Clear(sum_creep_grid, 0, sum_creep_grid.Length);
+                }
+                if (Landslide_checkbox.Checked)
+                {
+                    //doubles
+                    Array.Clear(stslope_radians, 0, stslope_radians.Length);
+                    Array.Clear(crrain_m_d, 0, crrain_m_d.Length);
+                    Array.Clear(contributing_cells, 0, contributing_cells.Length);
+                    Array.Clear(transmissiv_m2_d, 0, transmissiv_m2_d.Length);
+                    Array.Clear(Cohesion_factor, 0, Cohesion_factor.Length);
+                    Array.Clear(sat_bd_kg_m3, 0, sat_bd_kg_m3.Length);
+                    Array.Clear(peak_friction_angle_radians, 0, peak_friction_angle_radians.Length);
+                    Array.Clear(resid_friction_angle_radians, 0, resid_friction_angle_radians.Length);
+                    Array.Clear(ero_slid_m, 0, ero_slid_m.Length);
+                    Array.Clear(root_cohesion_kPa_new, 0, root_cohesion_kPa_new.Length);
+                    //Array.Clear(cel_dist, 0, cel_dist.Length); //Aleg
+                    //Array.Clear(sed_slid_m, 0, sed_slid_m.Length);
+                    //Array.Clear(sed_bud_m, 0, sed_bud_m.Length);
+                    //Array.Clear(dh_slid, 0, dh_slid.Length);
+                    //Array.Clear(sum_landsliding, 0, sum_landsliding.Length);
+                    //Array.Clear(landslidesum_texture_kg, 0, landslidesum_texture_kg.Length);
+                    //Array.Clear(landslidesum_thickness_m, 0, landslidesum_thickness_m.Length);
+                    //Array.Clear(landslidesum_OM_kg, 0, landslidesum_OM_kg.Length);
+
+                    //integers
+                    //Array.Clear(slidenr, 0, slidenr.Length);
+                }
+                if (Biological_weathering_checkbox.Checked)
+                {
+                    Array.Clear(bedrock_weathering_m, 0, bedrock_weathering_m.Length);
+                    Array.Clear(sum_biological_weathering, 0, sum_biological_weathering.Length);
+                }
+                if (Frost_weathering_checkbox.Checked)
+                {
+                    Array.Clear(frost_weathering, 0, frost_weathering.Length);
+                    Array.Clear(sum_frost_weathering, 0, sum_frost_weathering.Length);
+                }
+                if (tilting_active_checkbox.Checked)
+                {
+                    Array.Clear(sum_tilting, 0, sum_tilting.Length);
+                }
+                if (uplift_active_checkbox.Checked)
+                {
+                    Array.Clear(sum_uplift, 0, sum_uplift.Length);
+                }
+                if (blocks_active == 1)
+                {
+                    Array.Clear(hardlayeropenness_fraction, 0, hardlayeropenness_fraction.Length);
+                }
+
+                if (this.Proglacial_checkbox.Checked)
+                {
+                    Array.Clear(age_rast_yr, 0, age_rast_yr.Length);
+                    Array.Clear(glacier_cell, 0, glacier_cell.Length);
+                    Array.Clear(meltwater_m, 0, meltwater_m.Length);
+                    Array.Clear(sum_meltwater_m, 0, sum_meltwater_m.Length);
+                }
+                if (this.coarsemap_checkbox.Checked)
+                {
+                    Array.Clear(coarsemap_perc, 0, coarsemap_perc.Length); //coarsemap
+                }
+
+                if (check_space_landuse.Checked == true)
+                {
+                    Array.Clear(K_fac, 0, K_fac.Length); //AleG
+                    Array.Clear(bio_protection, 0, bio_protection.Length);
+                    Array.Clear(infil, 0, infil.Length);
+                    Array.Clear(evapotranspiration, 0, evapotranspiration.Length);
+                    //Array.Clear(OM_LU, 0, OM_LU.Length);
+                    //Array.Clear(Till_LU, 0, Till_LU.Length);
+                    //Array.Clear(BiotRate_LU, 0, BiotRate_LU.Length);
+                    Array.Clear(root_cohesion_kPa_new, 0, root_cohesion_kPa_new.Length);
+
+                }
+            }
+            Array.Clear(aspect, 0, aspect.Length);
+            Array.Clear(slopeAnalysis, 0, slopeAnalysis.Length);
+            Array.Clear(hillshade, 0, hillshade.Length);
+            Array.Clear(Tau, 0, Tau.Length);
+            // Debug.WriteLine("memory assigned succesfully");
+            return 1;
+        }
         int makematrices()
         {
             // Debug.WriteLine("assigning memory");
@@ -6093,6 +6342,7 @@ namespace LORICA4
                     if (only_waterflow_checkbox.Checked == false)
                     {
                         K_fac = new double[nr, nc];
+                        bio_protection = new double[nr, nc];
                         sediment_in_transport_kg = new double[nr, nc, n_texture_classes];
                         young_SOM_in_transport_kg = new double[nr, nc];
                         old_SOM_in_transport_kg = new double[nr, nc];
@@ -6188,6 +6438,8 @@ namespace LORICA4
                     infil = new double[nr, nc]; //AleG
                     evapotranspiration = new double[nr, nc]; //AleG
                     K_fac = new double[nr, nc]; //AleG   --> but this already existed? Why make an indentical one again???
+                    bio_protection = new double[nr, nc];
+                    K_fac = new double[nr, nc]; //AleG
                 }
 
                 if (Proglacial_checkbox.Checked)

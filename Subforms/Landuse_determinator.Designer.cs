@@ -119,22 +119,49 @@
             this.label_tillage = new System.Windows.Forms.Label();
             this.label_biot = new System.Windows.Forms.Label();
             this.LU1_OM_textbox = new System.Windows.Forms.TextBox();
+            this.LU10_BioProt_textbox = new System.Windows.Forms.TextBox();
+            this.LU9_BioProt_textbox = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.LU3_BioProt_textbox = new System.Windows.Forms.TextBox();
+            this.LU4_BioProt_textbox = new System.Windows.Forms.TextBox();
+            this.LU5_BioProt_textbox = new System.Windows.Forms.TextBox();
+            this.LU6_BioProt_textbox = new System.Windows.Forms.TextBox();
+            this.LU7_BioProt_textbox = new System.Windows.Forms.TextBox();
+            this.LU8_BioProt_textbox = new System.Windows.Forms.TextBox();
+            this.LU2_BioProt_textbox = new System.Windows.Forms.TextBox();
+            this.LU1_BioProt_textbox = new System.Windows.Forms.TextBox();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.panel3 = new System.Windows.Forms.Panel();
+            this.panel4 = new System.Windows.Forms.Panel();
+            this.panel5 = new System.Windows.Forms.Panel();
+            this.label14 = new System.Windows.Forms.Label();
+            this.label18 = new System.Windows.Forms.Label();
+            this.label19 = new System.Windows.Forms.Label();
+            this.label20 = new System.Windows.Forms.Label();
+            this.label21 = new System.Windows.Forms.Label();
+            this.label22 = new System.Windows.Forms.Label();
+            this.panel1.SuspendLayout();
+            this.panel2.SuspendLayout();
+            this.panel3.SuspendLayout();
+            this.panel4.SuspendLayout();
+            this.panel5.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(57, 38);
+            this.label1.Location = new System.Drawing.Point(62, 38);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(676, 80);
+            this.label1.Size = new System.Drawing.Size(676, 60);
             this.label1.TabIndex = 0;
             this.label1.Text = resources.GetString("label1.Text");
             this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // LU1_Ero_textbox
             // 
-            this.LU1_Ero_textbox.Location = new System.Drawing.Point(186, 188);
+            this.LU1_Ero_textbox.Location = new System.Drawing.Point(14, 51);
             this.LU1_Ero_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU1_Ero_textbox.Name = "LU1_Ero_textbox";
             this.LU1_Ero_textbox.Size = new System.Drawing.Size(86, 26);
@@ -144,7 +171,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(57, 148);
+            this.label2.Location = new System.Drawing.Point(57, 159);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(105, 20);
@@ -154,7 +181,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(300, 148);
+            this.label3.Location = new System.Drawing.Point(128, 11);
             this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(79, 20);
@@ -164,7 +191,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(182, 148);
+            this.label5.Location = new System.Drawing.Point(10, 11);
             this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(100, 20);
@@ -174,7 +201,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(57, 232);
+            this.label6.Location = new System.Drawing.Point(57, 243);
             this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(18, 20);
@@ -184,7 +211,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(57, 192);
+            this.label7.Location = new System.Drawing.Point(57, 203);
             this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(18, 20);
@@ -193,7 +220,7 @@
             // 
             // LU2_Ero_textbox
             // 
-            this.LU2_Ero_textbox.Location = new System.Drawing.Point(186, 228);
+            this.LU2_Ero_textbox.Location = new System.Drawing.Point(14, 91);
             this.LU2_Ero_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU2_Ero_textbox.Name = "LU2_Ero_textbox";
             this.LU2_Ero_textbox.Size = new System.Drawing.Size(86, 26);
@@ -202,7 +229,7 @@
             // 
             // LU8_Ero_textbox
             // 
-            this.LU8_Ero_textbox.Location = new System.Drawing.Point(186, 468);
+            this.LU8_Ero_textbox.Location = new System.Drawing.Point(14, 331);
             this.LU8_Ero_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU8_Ero_textbox.Name = "LU8_Ero_textbox";
             this.LU8_Ero_textbox.Size = new System.Drawing.Size(86, 26);
@@ -211,7 +238,7 @@
             // 
             // LU7_Ero_textbox
             // 
-            this.LU7_Ero_textbox.Location = new System.Drawing.Point(186, 428);
+            this.LU7_Ero_textbox.Location = new System.Drawing.Point(14, 291);
             this.LU7_Ero_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU7_Ero_textbox.Name = "LU7_Ero_textbox";
             this.LU7_Ero_textbox.Size = new System.Drawing.Size(86, 26);
@@ -220,7 +247,7 @@
             // 
             // LU6_Ero_textbox
             // 
-            this.LU6_Ero_textbox.Location = new System.Drawing.Point(186, 388);
+            this.LU6_Ero_textbox.Location = new System.Drawing.Point(14, 251);
             this.LU6_Ero_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU6_Ero_textbox.Name = "LU6_Ero_textbox";
             this.LU6_Ero_textbox.Size = new System.Drawing.Size(86, 26);
@@ -229,7 +256,7 @@
             // 
             // LU5_Ero_textbox
             // 
-            this.LU5_Ero_textbox.Location = new System.Drawing.Point(186, 348);
+            this.LU5_Ero_textbox.Location = new System.Drawing.Point(14, 211);
             this.LU5_Ero_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU5_Ero_textbox.Name = "LU5_Ero_textbox";
             this.LU5_Ero_textbox.Size = new System.Drawing.Size(86, 26);
@@ -238,7 +265,7 @@
             // 
             // LU4_Ero_textbox
             // 
-            this.LU4_Ero_textbox.Location = new System.Drawing.Point(186, 308);
+            this.LU4_Ero_textbox.Location = new System.Drawing.Point(14, 171);
             this.LU4_Ero_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU4_Ero_textbox.Name = "LU4_Ero_textbox";
             this.LU4_Ero_textbox.Size = new System.Drawing.Size(86, 26);
@@ -247,7 +274,7 @@
             // 
             // LU3_Ero_textbox
             // 
-            this.LU3_Ero_textbox.Location = new System.Drawing.Point(186, 268);
+            this.LU3_Ero_textbox.Location = new System.Drawing.Point(14, 131);
             this.LU3_Ero_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU3_Ero_textbox.Name = "LU3_Ero_textbox";
             this.LU3_Ero_textbox.Size = new System.Drawing.Size(86, 26);
@@ -257,7 +284,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(57, 432);
+            this.label8.Location = new System.Drawing.Point(57, 443);
             this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(18, 20);
@@ -267,7 +294,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(57, 392);
+            this.label9.Location = new System.Drawing.Point(57, 403);
             this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(18, 20);
@@ -277,7 +304,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(57, 355);
+            this.label10.Location = new System.Drawing.Point(57, 366);
             this.label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(18, 20);
@@ -287,7 +314,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(57, 312);
+            this.label11.Location = new System.Drawing.Point(57, 323);
             this.label11.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(18, 20);
@@ -297,7 +324,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(57, 272);
+            this.label12.Location = new System.Drawing.Point(57, 283);
             this.label12.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(18, 20);
@@ -306,7 +333,7 @@
             // 
             // LU3_Inf_textbox
             // 
-            this.LU3_Inf_textbox.Location = new System.Drawing.Point(305, 268);
+            this.LU3_Inf_textbox.Location = new System.Drawing.Point(132, 131);
             this.LU3_Inf_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU3_Inf_textbox.Name = "LU3_Inf_textbox";
             this.LU3_Inf_textbox.Size = new System.Drawing.Size(86, 26);
@@ -315,7 +342,7 @@
             // 
             // LU4_Inf_textbox
             // 
-            this.LU4_Inf_textbox.Location = new System.Drawing.Point(305, 308);
+            this.LU4_Inf_textbox.Location = new System.Drawing.Point(132, 171);
             this.LU4_Inf_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU4_Inf_textbox.Name = "LU4_Inf_textbox";
             this.LU4_Inf_textbox.Size = new System.Drawing.Size(86, 26);
@@ -324,7 +351,7 @@
             // 
             // LU5_Inf_textbox
             // 
-            this.LU5_Inf_textbox.Location = new System.Drawing.Point(305, 348);
+            this.LU5_Inf_textbox.Location = new System.Drawing.Point(132, 211);
             this.LU5_Inf_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU5_Inf_textbox.Name = "LU5_Inf_textbox";
             this.LU5_Inf_textbox.Size = new System.Drawing.Size(86, 26);
@@ -333,7 +360,7 @@
             // 
             // LU6_Inf_textbox
             // 
-            this.LU6_Inf_textbox.Location = new System.Drawing.Point(305, 388);
+            this.LU6_Inf_textbox.Location = new System.Drawing.Point(132, 251);
             this.LU6_Inf_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU6_Inf_textbox.Name = "LU6_Inf_textbox";
             this.LU6_Inf_textbox.Size = new System.Drawing.Size(86, 26);
@@ -342,7 +369,7 @@
             // 
             // LU7_Inf_textbox
             // 
-            this.LU7_Inf_textbox.Location = new System.Drawing.Point(305, 428);
+            this.LU7_Inf_textbox.Location = new System.Drawing.Point(132, 291);
             this.LU7_Inf_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU7_Inf_textbox.Name = "LU7_Inf_textbox";
             this.LU7_Inf_textbox.Size = new System.Drawing.Size(86, 26);
@@ -351,7 +378,7 @@
             // 
             // LU8_Inf_textbox
             // 
-            this.LU8_Inf_textbox.Location = new System.Drawing.Point(305, 468);
+            this.LU8_Inf_textbox.Location = new System.Drawing.Point(132, 331);
             this.LU8_Inf_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU8_Inf_textbox.Name = "LU8_Inf_textbox";
             this.LU8_Inf_textbox.Size = new System.Drawing.Size(86, 26);
@@ -360,7 +387,7 @@
             // 
             // LU2_Inf_textbox
             // 
-            this.LU2_Inf_textbox.Location = new System.Drawing.Point(305, 228);
+            this.LU2_Inf_textbox.Location = new System.Drawing.Point(132, 91);
             this.LU2_Inf_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU2_Inf_textbox.Name = "LU2_Inf_textbox";
             this.LU2_Inf_textbox.Size = new System.Drawing.Size(86, 26);
@@ -369,7 +396,7 @@
             // 
             // LU1_Inf_textbox
             // 
-            this.LU1_Inf_textbox.Location = new System.Drawing.Point(305, 188);
+            this.LU1_Inf_textbox.Location = new System.Drawing.Point(132, 51);
             this.LU1_Inf_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU1_Inf_textbox.Name = "LU1_Inf_textbox";
             this.LU1_Inf_textbox.Size = new System.Drawing.Size(86, 26);
@@ -378,7 +405,7 @@
             // 
             // LU3_Evap_textbox
             // 
-            this.LU3_Evap_textbox.Location = new System.Drawing.Point(424, 268);
+            this.LU3_Evap_textbox.Location = new System.Drawing.Point(252, 131);
             this.LU3_Evap_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU3_Evap_textbox.Name = "LU3_Evap_textbox";
             this.LU3_Evap_textbox.Size = new System.Drawing.Size(86, 26);
@@ -387,7 +414,7 @@
             // 
             // LU4_Evap_textbox
             // 
-            this.LU4_Evap_textbox.Location = new System.Drawing.Point(424, 308);
+            this.LU4_Evap_textbox.Location = new System.Drawing.Point(252, 171);
             this.LU4_Evap_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU4_Evap_textbox.Name = "LU4_Evap_textbox";
             this.LU4_Evap_textbox.Size = new System.Drawing.Size(86, 26);
@@ -396,7 +423,7 @@
             // 
             // LU5_Evap_textbox
             // 
-            this.LU5_Evap_textbox.Location = new System.Drawing.Point(424, 348);
+            this.LU5_Evap_textbox.Location = new System.Drawing.Point(252, 211);
             this.LU5_Evap_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU5_Evap_textbox.Name = "LU5_Evap_textbox";
             this.LU5_Evap_textbox.Size = new System.Drawing.Size(86, 26);
@@ -405,7 +432,7 @@
             // 
             // LU6_Evap_textbox
             // 
-            this.LU6_Evap_textbox.Location = new System.Drawing.Point(424, 388);
+            this.LU6_Evap_textbox.Location = new System.Drawing.Point(252, 251);
             this.LU6_Evap_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU6_Evap_textbox.Name = "LU6_Evap_textbox";
             this.LU6_Evap_textbox.Size = new System.Drawing.Size(86, 26);
@@ -414,7 +441,7 @@
             // 
             // LU7_Evap_textbox
             // 
-            this.LU7_Evap_textbox.Location = new System.Drawing.Point(424, 428);
+            this.LU7_Evap_textbox.Location = new System.Drawing.Point(252, 291);
             this.LU7_Evap_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU7_Evap_textbox.Name = "LU7_Evap_textbox";
             this.LU7_Evap_textbox.Size = new System.Drawing.Size(86, 26);
@@ -423,7 +450,7 @@
             // 
             // LU8_Evap_textbox
             // 
-            this.LU8_Evap_textbox.Location = new System.Drawing.Point(424, 468);
+            this.LU8_Evap_textbox.Location = new System.Drawing.Point(252, 331);
             this.LU8_Evap_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU8_Evap_textbox.Name = "LU8_Evap_textbox";
             this.LU8_Evap_textbox.Size = new System.Drawing.Size(86, 26);
@@ -432,7 +459,7 @@
             // 
             // LU2_Evap_textbox
             // 
-            this.LU2_Evap_textbox.Location = new System.Drawing.Point(424, 228);
+            this.LU2_Evap_textbox.Location = new System.Drawing.Point(252, 91);
             this.LU2_Evap_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU2_Evap_textbox.Name = "LU2_Evap_textbox";
             this.LU2_Evap_textbox.Size = new System.Drawing.Size(86, 26);
@@ -441,7 +468,7 @@
             // 
             // LU1_Evap_textbox
             // 
-            this.LU1_Evap_textbox.Location = new System.Drawing.Point(424, 188);
+            this.LU1_Evap_textbox.Location = new System.Drawing.Point(252, 51);
             this.LU1_Evap_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU1_Evap_textbox.Name = "LU1_Evap_textbox";
             this.LU1_Evap_textbox.Size = new System.Drawing.Size(86, 26);
@@ -451,7 +478,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(419, 148);
+            this.label13.Location = new System.Drawing.Point(246, 11);
             this.label13.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(94, 20);
@@ -461,7 +488,7 @@
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(57, 552);
+            this.label15.Location = new System.Drawing.Point(57, 563);
             this.label15.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(27, 20);
@@ -471,7 +498,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(57, 512);
+            this.label16.Location = new System.Drawing.Point(57, 523);
             this.label16.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(18, 20);
@@ -481,7 +508,7 @@
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(57, 472);
+            this.label17.Location = new System.Drawing.Point(57, 483);
             this.label17.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(18, 20);
@@ -490,7 +517,7 @@
             // 
             // LU9_Evap_textbox
             // 
-            this.LU9_Evap_textbox.Location = new System.Drawing.Point(424, 508);
+            this.LU9_Evap_textbox.Location = new System.Drawing.Point(252, 371);
             this.LU9_Evap_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU9_Evap_textbox.Name = "LU9_Evap_textbox";
             this.LU9_Evap_textbox.Size = new System.Drawing.Size(86, 26);
@@ -499,7 +526,7 @@
             // 
             // LU9_Inf_textbox
             // 
-            this.LU9_Inf_textbox.Location = new System.Drawing.Point(305, 508);
+            this.LU9_Inf_textbox.Location = new System.Drawing.Point(132, 371);
             this.LU9_Inf_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU9_Inf_textbox.Name = "LU9_Inf_textbox";
             this.LU9_Inf_textbox.Size = new System.Drawing.Size(86, 26);
@@ -508,7 +535,7 @@
             // 
             // LU9_Ero_textbox
             // 
-            this.LU9_Ero_textbox.Location = new System.Drawing.Point(186, 508);
+            this.LU9_Ero_textbox.Location = new System.Drawing.Point(14, 371);
             this.LU9_Ero_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU9_Ero_textbox.Name = "LU9_Ero_textbox";
             this.LU9_Ero_textbox.Size = new System.Drawing.Size(86, 26);
@@ -517,7 +544,7 @@
             // 
             // LU10_Evap_textbox
             // 
-            this.LU10_Evap_textbox.Location = new System.Drawing.Point(424, 548);
+            this.LU10_Evap_textbox.Location = new System.Drawing.Point(252, 411);
             this.LU10_Evap_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU10_Evap_textbox.Name = "LU10_Evap_textbox";
             this.LU10_Evap_textbox.Size = new System.Drawing.Size(86, 26);
@@ -526,7 +553,7 @@
             // 
             // LU10_Inf_textbox
             // 
-            this.LU10_Inf_textbox.Location = new System.Drawing.Point(305, 548);
+            this.LU10_Inf_textbox.Location = new System.Drawing.Point(132, 411);
             this.LU10_Inf_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU10_Inf_textbox.Name = "LU10_Inf_textbox";
             this.LU10_Inf_textbox.Size = new System.Drawing.Size(86, 26);
@@ -535,7 +562,7 @@
             // 
             // LU10_Ero_textbox
             // 
-            this.LU10_Ero_textbox.Location = new System.Drawing.Point(186, 548);
+            this.LU10_Ero_textbox.Location = new System.Drawing.Point(14, 411);
             this.LU10_Ero_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU10_Ero_textbox.Name = "LU10_Ero_textbox";
             this.LU10_Ero_textbox.Size = new System.Drawing.Size(86, 26);
@@ -555,7 +582,7 @@
             // 
             // LU10_RootC_textbox
             // 
-            this.LU10_RootC_textbox.Location = new System.Drawing.Point(887, 548);
+            this.LU10_RootC_textbox.Location = new System.Drawing.Point(16, 414);
             this.LU10_RootC_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU10_RootC_textbox.Name = "LU10_RootC_textbox";
             this.LU10_RootC_textbox.Size = new System.Drawing.Size(86, 26);
@@ -564,7 +591,8 @@
             // 
             // LU10_BiotR_textbox
             // 
-            this.LU10_BiotR_textbox.Location = new System.Drawing.Point(768, 548);
+            this.LU10_BiotR_textbox.Enabled = false;
+            this.LU10_BiotR_textbox.Location = new System.Drawing.Point(14, 412);
             this.LU10_BiotR_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU10_BiotR_textbox.Name = "LU10_BiotR_textbox";
             this.LU10_BiotR_textbox.Size = new System.Drawing.Size(86, 26);
@@ -573,7 +601,8 @@
             // 
             // LU10_Till_textbox
             // 
-            this.LU10_Till_textbox.Location = new System.Drawing.Point(653, 548);
+            this.LU10_Till_textbox.Enabled = false;
+            this.LU10_Till_textbox.Location = new System.Drawing.Point(13, 415);
             this.LU10_Till_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU10_Till_textbox.Name = "LU10_Till_textbox";
             this.LU10_Till_textbox.Size = new System.Drawing.Size(86, 26);
@@ -582,7 +611,8 @@
             // 
             // LU10_OM_textbox
             // 
-            this.LU10_OM_textbox.Location = new System.Drawing.Point(538, 548);
+            this.LU10_OM_textbox.Enabled = false;
+            this.LU10_OM_textbox.Location = new System.Drawing.Point(15, 413);
             this.LU10_OM_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU10_OM_textbox.Name = "LU10_OM_textbox";
             this.LU10_OM_textbox.Size = new System.Drawing.Size(86, 26);
@@ -591,7 +621,7 @@
             // 
             // LU9_RootC_textbox
             // 
-            this.LU9_RootC_textbox.Location = new System.Drawing.Point(887, 508);
+            this.LU9_RootC_textbox.Location = new System.Drawing.Point(16, 374);
             this.LU9_RootC_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU9_RootC_textbox.Name = "LU9_RootC_textbox";
             this.LU9_RootC_textbox.Size = new System.Drawing.Size(86, 26);
@@ -600,7 +630,8 @@
             // 
             // LU9_BiotR_textbox
             // 
-            this.LU9_BiotR_textbox.Location = new System.Drawing.Point(768, 508);
+            this.LU9_BiotR_textbox.Enabled = false;
+            this.LU9_BiotR_textbox.Location = new System.Drawing.Point(14, 372);
             this.LU9_BiotR_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU9_BiotR_textbox.Name = "LU9_BiotR_textbox";
             this.LU9_BiotR_textbox.Size = new System.Drawing.Size(86, 26);
@@ -609,7 +640,8 @@
             // 
             // LU9_Till_textbox
             // 
-            this.LU9_Till_textbox.Location = new System.Drawing.Point(653, 508);
+            this.LU9_Till_textbox.Enabled = false;
+            this.LU9_Till_textbox.Location = new System.Drawing.Point(13, 375);
             this.LU9_Till_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU9_Till_textbox.Name = "LU9_Till_textbox";
             this.LU9_Till_textbox.Size = new System.Drawing.Size(86, 26);
@@ -618,7 +650,8 @@
             // 
             // LU9_OM_textbox
             // 
-            this.LU9_OM_textbox.Location = new System.Drawing.Point(538, 508);
+            this.LU9_OM_textbox.Enabled = false;
+            this.LU9_OM_textbox.Location = new System.Drawing.Point(15, 373);
             this.LU9_OM_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU9_OM_textbox.Name = "LU9_OM_textbox";
             this.LU9_OM_textbox.Size = new System.Drawing.Size(86, 26);
@@ -628,16 +661,16 @@
             // label_RC
             // 
             this.label_RC.AutoSize = true;
-            this.label_RC.Location = new System.Drawing.Point(882, 148);
+            this.label_RC.Location = new System.Drawing.Point(11, 14);
             this.label_RC.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label_RC.Name = "label_RC";
-            this.label_RC.Size = new System.Drawing.Size(122, 20);
+            this.label_RC.Size = new System.Drawing.Size(85, 20);
             this.label_RC.TabIndex = 93;
-            this.label_RC.Text = "Root Coh. (kPa)";
+            this.label_RC.Text = "Root Coh. ";
             // 
             // LU3_RootC_textbox
             // 
-            this.LU3_RootC_textbox.Location = new System.Drawing.Point(887, 268);
+            this.LU3_RootC_textbox.Location = new System.Drawing.Point(16, 134);
             this.LU3_RootC_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU3_RootC_textbox.Name = "LU3_RootC_textbox";
             this.LU3_RootC_textbox.Size = new System.Drawing.Size(86, 26);
@@ -646,7 +679,7 @@
             // 
             // LU4_RootC_textbox
             // 
-            this.LU4_RootC_textbox.Location = new System.Drawing.Point(887, 308);
+            this.LU4_RootC_textbox.Location = new System.Drawing.Point(16, 174);
             this.LU4_RootC_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU4_RootC_textbox.Name = "LU4_RootC_textbox";
             this.LU4_RootC_textbox.Size = new System.Drawing.Size(86, 26);
@@ -655,7 +688,7 @@
             // 
             // LU5_RootC_textbox
             // 
-            this.LU5_RootC_textbox.Location = new System.Drawing.Point(887, 348);
+            this.LU5_RootC_textbox.Location = new System.Drawing.Point(16, 214);
             this.LU5_RootC_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU5_RootC_textbox.Name = "LU5_RootC_textbox";
             this.LU5_RootC_textbox.Size = new System.Drawing.Size(86, 26);
@@ -664,7 +697,7 @@
             // 
             // LU6_RootC_textbox
             // 
-            this.LU6_RootC_textbox.Location = new System.Drawing.Point(887, 388);
+            this.LU6_RootC_textbox.Location = new System.Drawing.Point(16, 254);
             this.LU6_RootC_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU6_RootC_textbox.Name = "LU6_RootC_textbox";
             this.LU6_RootC_textbox.Size = new System.Drawing.Size(86, 26);
@@ -673,7 +706,7 @@
             // 
             // LU7_RootC_textbox
             // 
-            this.LU7_RootC_textbox.Location = new System.Drawing.Point(887, 428);
+            this.LU7_RootC_textbox.Location = new System.Drawing.Point(16, 294);
             this.LU7_RootC_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU7_RootC_textbox.Name = "LU7_RootC_textbox";
             this.LU7_RootC_textbox.Size = new System.Drawing.Size(86, 26);
@@ -682,7 +715,7 @@
             // 
             // LU8_RootC_textbox
             // 
-            this.LU8_RootC_textbox.Location = new System.Drawing.Point(887, 468);
+            this.LU8_RootC_textbox.Location = new System.Drawing.Point(16, 334);
             this.LU8_RootC_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU8_RootC_textbox.Name = "LU8_RootC_textbox";
             this.LU8_RootC_textbox.Size = new System.Drawing.Size(86, 26);
@@ -691,7 +724,7 @@
             // 
             // LU2_RootC_textbox
             // 
-            this.LU2_RootC_textbox.Location = new System.Drawing.Point(887, 228);
+            this.LU2_RootC_textbox.Location = new System.Drawing.Point(16, 94);
             this.LU2_RootC_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU2_RootC_textbox.Name = "LU2_RootC_textbox";
             this.LU2_RootC_textbox.Size = new System.Drawing.Size(86, 26);
@@ -700,7 +733,7 @@
             // 
             // LU1_RootC_textbox
             // 
-            this.LU1_RootC_textbox.Location = new System.Drawing.Point(887, 188);
+            this.LU1_RootC_textbox.Location = new System.Drawing.Point(16, 54);
             this.LU1_RootC_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU1_RootC_textbox.Name = "LU1_RootC_textbox";
             this.LU1_RootC_textbox.Size = new System.Drawing.Size(86, 26);
@@ -709,7 +742,8 @@
             // 
             // LU3_BiotR_textbox
             // 
-            this.LU3_BiotR_textbox.Location = new System.Drawing.Point(768, 268);
+            this.LU3_BiotR_textbox.Enabled = false;
+            this.LU3_BiotR_textbox.Location = new System.Drawing.Point(14, 132);
             this.LU3_BiotR_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU3_BiotR_textbox.Name = "LU3_BiotR_textbox";
             this.LU3_BiotR_textbox.Size = new System.Drawing.Size(86, 26);
@@ -718,7 +752,8 @@
             // 
             // LU4_BiotR_textbox
             // 
-            this.LU4_BiotR_textbox.Location = new System.Drawing.Point(768, 308);
+            this.LU4_BiotR_textbox.Enabled = false;
+            this.LU4_BiotR_textbox.Location = new System.Drawing.Point(14, 172);
             this.LU4_BiotR_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU4_BiotR_textbox.Name = "LU4_BiotR_textbox";
             this.LU4_BiotR_textbox.Size = new System.Drawing.Size(86, 26);
@@ -727,7 +762,8 @@
             // 
             // LU5_BiotR_textbox
             // 
-            this.LU5_BiotR_textbox.Location = new System.Drawing.Point(768, 348);
+            this.LU5_BiotR_textbox.Enabled = false;
+            this.LU5_BiotR_textbox.Location = new System.Drawing.Point(14, 212);
             this.LU5_BiotR_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU5_BiotR_textbox.Name = "LU5_BiotR_textbox";
             this.LU5_BiotR_textbox.Size = new System.Drawing.Size(86, 26);
@@ -736,7 +772,8 @@
             // 
             // LU6_BiotR_textbox
             // 
-            this.LU6_BiotR_textbox.Location = new System.Drawing.Point(768, 388);
+            this.LU6_BiotR_textbox.Enabled = false;
+            this.LU6_BiotR_textbox.Location = new System.Drawing.Point(14, 252);
             this.LU6_BiotR_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU6_BiotR_textbox.Name = "LU6_BiotR_textbox";
             this.LU6_BiotR_textbox.Size = new System.Drawing.Size(86, 26);
@@ -745,7 +782,8 @@
             // 
             // LU7_BiotR_textbox
             // 
-            this.LU7_BiotR_textbox.Location = new System.Drawing.Point(768, 428);
+            this.LU7_BiotR_textbox.Enabled = false;
+            this.LU7_BiotR_textbox.Location = new System.Drawing.Point(14, 292);
             this.LU7_BiotR_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU7_BiotR_textbox.Name = "LU7_BiotR_textbox";
             this.LU7_BiotR_textbox.Size = new System.Drawing.Size(86, 26);
@@ -754,7 +792,8 @@
             // 
             // LU8_BiotR_textbox
             // 
-            this.LU8_BiotR_textbox.Location = new System.Drawing.Point(768, 468);
+            this.LU8_BiotR_textbox.Enabled = false;
+            this.LU8_BiotR_textbox.Location = new System.Drawing.Point(14, 332);
             this.LU8_BiotR_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU8_BiotR_textbox.Name = "LU8_BiotR_textbox";
             this.LU8_BiotR_textbox.Size = new System.Drawing.Size(86, 26);
@@ -763,7 +802,8 @@
             // 
             // LU2_BiotR_textbox
             // 
-            this.LU2_BiotR_textbox.Location = new System.Drawing.Point(768, 228);
+            this.LU2_BiotR_textbox.Enabled = false;
+            this.LU2_BiotR_textbox.Location = new System.Drawing.Point(14, 92);
             this.LU2_BiotR_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU2_BiotR_textbox.Name = "LU2_BiotR_textbox";
             this.LU2_BiotR_textbox.Size = new System.Drawing.Size(86, 26);
@@ -772,7 +812,8 @@
             // 
             // LU1_BiotR_textbox
             // 
-            this.LU1_BiotR_textbox.Location = new System.Drawing.Point(768, 188);
+            this.LU1_BiotR_textbox.Enabled = false;
+            this.LU1_BiotR_textbox.Location = new System.Drawing.Point(14, 52);
             this.LU1_BiotR_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU1_BiotR_textbox.Name = "LU1_BiotR_textbox";
             this.LU1_BiotR_textbox.Size = new System.Drawing.Size(86, 26);
@@ -781,7 +822,8 @@
             // 
             // LU3_Till_textbox
             // 
-            this.LU3_Till_textbox.Location = new System.Drawing.Point(653, 268);
+            this.LU3_Till_textbox.Enabled = false;
+            this.LU3_Till_textbox.Location = new System.Drawing.Point(13, 135);
             this.LU3_Till_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU3_Till_textbox.Name = "LU3_Till_textbox";
             this.LU3_Till_textbox.Size = new System.Drawing.Size(86, 26);
@@ -790,7 +832,8 @@
             // 
             // LU4_Till_textbox
             // 
-            this.LU4_Till_textbox.Location = new System.Drawing.Point(653, 308);
+            this.LU4_Till_textbox.Enabled = false;
+            this.LU4_Till_textbox.Location = new System.Drawing.Point(13, 175);
             this.LU4_Till_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU4_Till_textbox.Name = "LU4_Till_textbox";
             this.LU4_Till_textbox.Size = new System.Drawing.Size(86, 26);
@@ -799,7 +842,8 @@
             // 
             // LU5_Till_textbox
             // 
-            this.LU5_Till_textbox.Location = new System.Drawing.Point(653, 348);
+            this.LU5_Till_textbox.Enabled = false;
+            this.LU5_Till_textbox.Location = new System.Drawing.Point(13, 215);
             this.LU5_Till_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU5_Till_textbox.Name = "LU5_Till_textbox";
             this.LU5_Till_textbox.Size = new System.Drawing.Size(86, 26);
@@ -808,7 +852,8 @@
             // 
             // LU6_Till_textbox
             // 
-            this.LU6_Till_textbox.Location = new System.Drawing.Point(653, 388);
+            this.LU6_Till_textbox.Enabled = false;
+            this.LU6_Till_textbox.Location = new System.Drawing.Point(13, 255);
             this.LU6_Till_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU6_Till_textbox.Name = "LU6_Till_textbox";
             this.LU6_Till_textbox.Size = new System.Drawing.Size(86, 26);
@@ -817,7 +862,8 @@
             // 
             // LU7_Till_textbox
             // 
-            this.LU7_Till_textbox.Location = new System.Drawing.Point(653, 428);
+            this.LU7_Till_textbox.Enabled = false;
+            this.LU7_Till_textbox.Location = new System.Drawing.Point(13, 295);
             this.LU7_Till_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU7_Till_textbox.Name = "LU7_Till_textbox";
             this.LU7_Till_textbox.Size = new System.Drawing.Size(86, 26);
@@ -826,7 +872,8 @@
             // 
             // LU8_Till_textbox
             // 
-            this.LU8_Till_textbox.Location = new System.Drawing.Point(653, 468);
+            this.LU8_Till_textbox.Enabled = false;
+            this.LU8_Till_textbox.Location = new System.Drawing.Point(13, 335);
             this.LU8_Till_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU8_Till_textbox.Name = "LU8_Till_textbox";
             this.LU8_Till_textbox.Size = new System.Drawing.Size(86, 26);
@@ -835,7 +882,8 @@
             // 
             // LU2_Till_textbox
             // 
-            this.LU2_Till_textbox.Location = new System.Drawing.Point(653, 228);
+            this.LU2_Till_textbox.Enabled = false;
+            this.LU2_Till_textbox.Location = new System.Drawing.Point(13, 95);
             this.LU2_Till_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU2_Till_textbox.Name = "LU2_Till_textbox";
             this.LU2_Till_textbox.Size = new System.Drawing.Size(86, 26);
@@ -844,7 +892,8 @@
             // 
             // LU1_Till_textbox
             // 
-            this.LU1_Till_textbox.Location = new System.Drawing.Point(653, 188);
+            this.LU1_Till_textbox.Enabled = false;
+            this.LU1_Till_textbox.Location = new System.Drawing.Point(13, 55);
             this.LU1_Till_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU1_Till_textbox.Name = "LU1_Till_textbox";
             this.LU1_Till_textbox.Size = new System.Drawing.Size(86, 26);
@@ -853,7 +902,8 @@
             // 
             // LU3_OM_textbox
             // 
-            this.LU3_OM_textbox.Location = new System.Drawing.Point(538, 268);
+            this.LU3_OM_textbox.Enabled = false;
+            this.LU3_OM_textbox.Location = new System.Drawing.Point(15, 133);
             this.LU3_OM_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU3_OM_textbox.Name = "LU3_OM_textbox";
             this.LU3_OM_textbox.Size = new System.Drawing.Size(86, 26);
@@ -862,7 +912,8 @@
             // 
             // LU4_OM_textbox
             // 
-            this.LU4_OM_textbox.Location = new System.Drawing.Point(538, 308);
+            this.LU4_OM_textbox.Enabled = false;
+            this.LU4_OM_textbox.Location = new System.Drawing.Point(15, 173);
             this.LU4_OM_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU4_OM_textbox.Name = "LU4_OM_textbox";
             this.LU4_OM_textbox.Size = new System.Drawing.Size(86, 26);
@@ -871,7 +922,8 @@
             // 
             // LU5_OM_textbox
             // 
-            this.LU5_OM_textbox.Location = new System.Drawing.Point(538, 348);
+            this.LU5_OM_textbox.Enabled = false;
+            this.LU5_OM_textbox.Location = new System.Drawing.Point(15, 213);
             this.LU5_OM_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU5_OM_textbox.Name = "LU5_OM_textbox";
             this.LU5_OM_textbox.Size = new System.Drawing.Size(86, 26);
@@ -880,7 +932,8 @@
             // 
             // LU6_OM_textbox
             // 
-            this.LU6_OM_textbox.Location = new System.Drawing.Point(538, 388);
+            this.LU6_OM_textbox.Enabled = false;
+            this.LU6_OM_textbox.Location = new System.Drawing.Point(15, 253);
             this.LU6_OM_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU6_OM_textbox.Name = "LU6_OM_textbox";
             this.LU6_OM_textbox.Size = new System.Drawing.Size(86, 26);
@@ -889,7 +942,8 @@
             // 
             // LU7_OM_textbox
             // 
-            this.LU7_OM_textbox.Location = new System.Drawing.Point(538, 428);
+            this.LU7_OM_textbox.Enabled = false;
+            this.LU7_OM_textbox.Location = new System.Drawing.Point(15, 293);
             this.LU7_OM_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU7_OM_textbox.Name = "LU7_OM_textbox";
             this.LU7_OM_textbox.Size = new System.Drawing.Size(86, 26);
@@ -898,7 +952,8 @@
             // 
             // LU8_OM_textbox
             // 
-            this.LU8_OM_textbox.Location = new System.Drawing.Point(538, 468);
+            this.LU8_OM_textbox.Enabled = false;
+            this.LU8_OM_textbox.Location = new System.Drawing.Point(15, 333);
             this.LU8_OM_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU8_OM_textbox.Name = "LU8_OM_textbox";
             this.LU8_OM_textbox.Size = new System.Drawing.Size(86, 26);
@@ -907,7 +962,8 @@
             // 
             // LU2_OM_textbox
             // 
-            this.LU2_OM_textbox.Location = new System.Drawing.Point(538, 228);
+            this.LU2_OM_textbox.Enabled = false;
+            this.LU2_OM_textbox.Location = new System.Drawing.Point(15, 93);
             this.LU2_OM_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU2_OM_textbox.Name = "LU2_OM_textbox";
             this.LU2_OM_textbox.Size = new System.Drawing.Size(86, 26);
@@ -917,7 +973,7 @@
             // label_OM
             // 
             this.label_OM.AutoSize = true;
-            this.label_OM.Location = new System.Drawing.Point(533, 148);
+            this.label_OM.Location = new System.Drawing.Point(9, 13);
             this.label_OM.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label_OM.Name = "label_OM";
             this.label_OM.Size = new System.Drawing.Size(73, 20);
@@ -928,7 +984,7 @@
             // label_tillage
             // 
             this.label_tillage.AutoSize = true;
-            this.label_tillage.Location = new System.Drawing.Point(648, 148);
+            this.label_tillage.Location = new System.Drawing.Point(8, 15);
             this.label_tillage.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label_tillage.Name = "label_tillage";
             this.label_tillage.Size = new System.Drawing.Size(54, 20);
@@ -938,7 +994,7 @@
             // label_biot
             // 
             this.label_biot.AutoSize = true;
-            this.label_biot.Location = new System.Drawing.Point(764, 148);
+            this.label_biot.Location = new System.Drawing.Point(9, 12);
             this.label_biot.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label_biot.Name = "label_biot";
             this.label_biot.Size = new System.Drawing.Size(73, 20);
@@ -947,111 +1003,344 @@
             // 
             // LU1_OM_textbox
             // 
-            this.LU1_OM_textbox.Location = new System.Drawing.Point(538, 188);
+            this.LU1_OM_textbox.Enabled = false;
+            this.LU1_OM_textbox.Location = new System.Drawing.Point(15, 53);
             this.LU1_OM_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.LU1_OM_textbox.Name = "LU1_OM_textbox";
             this.LU1_OM_textbox.Size = new System.Drawing.Size(86, 26);
             this.LU1_OM_textbox.TabIndex = 58;
             this.LU1_OM_textbox.Text = "1";
             // 
+            // LU10_BioProt_textbox
+            // 
+            this.LU10_BioProt_textbox.Location = new System.Drawing.Point(364, 411);
+            this.LU10_BioProt_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.LU10_BioProt_textbox.Name = "LU10_BioProt_textbox";
+            this.LU10_BioProt_textbox.Size = new System.Drawing.Size(86, 26);
+            this.LU10_BioProt_textbox.TabIndex = 112;
+            this.LU10_BioProt_textbox.Text = "1";
+            // 
+            // LU9_BioProt_textbox
+            // 
+            this.LU9_BioProt_textbox.Location = new System.Drawing.Point(364, 371);
+            this.LU9_BioProt_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.LU9_BioProt_textbox.Name = "LU9_BioProt_textbox";
+            this.LU9_BioProt_textbox.Size = new System.Drawing.Size(86, 26);
+            this.LU9_BioProt_textbox.TabIndex = 111;
+            this.LU9_BioProt_textbox.Text = "1";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(353, 11);
+            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(107, 20);
+            this.label4.TabIndex = 110;
+            this.label4.Text = "Bio protection";
+            // 
+            // LU3_BioProt_textbox
+            // 
+            this.LU3_BioProt_textbox.Location = new System.Drawing.Point(364, 131);
+            this.LU3_BioProt_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.LU3_BioProt_textbox.Name = "LU3_BioProt_textbox";
+            this.LU3_BioProt_textbox.Size = new System.Drawing.Size(86, 26);
+            this.LU3_BioProt_textbox.TabIndex = 109;
+            this.LU3_BioProt_textbox.Text = "1";
+            // 
+            // LU4_BioProt_textbox
+            // 
+            this.LU4_BioProt_textbox.Location = new System.Drawing.Point(364, 171);
+            this.LU4_BioProt_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.LU4_BioProt_textbox.Name = "LU4_BioProt_textbox";
+            this.LU4_BioProt_textbox.Size = new System.Drawing.Size(86, 26);
+            this.LU4_BioProt_textbox.TabIndex = 108;
+            this.LU4_BioProt_textbox.Text = "1";
+            // 
+            // LU5_BioProt_textbox
+            // 
+            this.LU5_BioProt_textbox.Location = new System.Drawing.Point(364, 211);
+            this.LU5_BioProt_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.LU5_BioProt_textbox.Name = "LU5_BioProt_textbox";
+            this.LU5_BioProt_textbox.Size = new System.Drawing.Size(86, 26);
+            this.LU5_BioProt_textbox.TabIndex = 107;
+            this.LU5_BioProt_textbox.Text = "1";
+            // 
+            // LU6_BioProt_textbox
+            // 
+            this.LU6_BioProt_textbox.Location = new System.Drawing.Point(364, 251);
+            this.LU6_BioProt_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.LU6_BioProt_textbox.Name = "LU6_BioProt_textbox";
+            this.LU6_BioProt_textbox.Size = new System.Drawing.Size(86, 26);
+            this.LU6_BioProt_textbox.TabIndex = 106;
+            this.LU6_BioProt_textbox.Text = "1";
+            // 
+            // LU7_BioProt_textbox
+            // 
+            this.LU7_BioProt_textbox.Location = new System.Drawing.Point(364, 291);
+            this.LU7_BioProt_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.LU7_BioProt_textbox.Name = "LU7_BioProt_textbox";
+            this.LU7_BioProt_textbox.Size = new System.Drawing.Size(86, 26);
+            this.LU7_BioProt_textbox.TabIndex = 105;
+            this.LU7_BioProt_textbox.Text = "1";
+            // 
+            // LU8_BioProt_textbox
+            // 
+            this.LU8_BioProt_textbox.Location = new System.Drawing.Point(364, 331);
+            this.LU8_BioProt_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.LU8_BioProt_textbox.Name = "LU8_BioProt_textbox";
+            this.LU8_BioProt_textbox.Size = new System.Drawing.Size(86, 26);
+            this.LU8_BioProt_textbox.TabIndex = 104;
+            this.LU8_BioProt_textbox.Text = "1";
+            // 
+            // LU2_BioProt_textbox
+            // 
+            this.LU2_BioProt_textbox.Location = new System.Drawing.Point(364, 91);
+            this.LU2_BioProt_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.LU2_BioProt_textbox.Name = "LU2_BioProt_textbox";
+            this.LU2_BioProt_textbox.Size = new System.Drawing.Size(86, 26);
+            this.LU2_BioProt_textbox.TabIndex = 103;
+            this.LU2_BioProt_textbox.Text = "1";
+            // 
+            // LU1_BioProt_textbox
+            // 
+            this.LU1_BioProt_textbox.Location = new System.Drawing.Point(364, 51);
+            this.LU1_BioProt_textbox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.LU1_BioProt_textbox.Name = "LU1_BioProt_textbox";
+            this.LU1_BioProt_textbox.Size = new System.Drawing.Size(86, 26);
+            this.LU1_BioProt_textbox.TabIndex = 102;
+            this.LU1_BioProt_textbox.Text = "1";
+            // 
+            // panel1
+            // 
+            this.panel1.BackColor = System.Drawing.SystemColors.ScrollBar;
+            this.panel1.Controls.Add(this.LU10_BioProt_textbox);
+            this.panel1.Controls.Add(this.LU9_BioProt_textbox);
+            this.panel1.Controls.Add(this.LU3_BioProt_textbox);
+            this.panel1.Controls.Add(this.LU4_BioProt_textbox);
+            this.panel1.Controls.Add(this.LU5_BioProt_textbox);
+            this.panel1.Controls.Add(this.label4);
+            this.panel1.Controls.Add(this.LU6_BioProt_textbox);
+            this.panel1.Controls.Add(this.LU7_BioProt_textbox);
+            this.panel1.Controls.Add(this.LU8_BioProt_textbox);
+            this.panel1.Controls.Add(this.LU2_BioProt_textbox);
+            this.panel1.Controls.Add(this.LU1_BioProt_textbox);
+            this.panel1.Controls.Add(this.LU10_Evap_textbox);
+            this.panel1.Controls.Add(this.LU10_Inf_textbox);
+            this.panel1.Controls.Add(this.LU10_Ero_textbox);
+            this.panel1.Controls.Add(this.LU9_Evap_textbox);
+            this.panel1.Controls.Add(this.LU9_Inf_textbox);
+            this.panel1.Controls.Add(this.LU9_Ero_textbox);
+            this.panel1.Controls.Add(this.label13);
+            this.panel1.Controls.Add(this.LU3_Evap_textbox);
+            this.panel1.Controls.Add(this.LU4_Evap_textbox);
+            this.panel1.Controls.Add(this.LU5_Evap_textbox);
+            this.panel1.Controls.Add(this.LU6_Evap_textbox);
+            this.panel1.Controls.Add(this.LU7_Evap_textbox);
+            this.panel1.Controls.Add(this.LU8_Evap_textbox);
+            this.panel1.Controls.Add(this.LU2_Evap_textbox);
+            this.panel1.Controls.Add(this.LU1_Evap_textbox);
+            this.panel1.Controls.Add(this.LU3_Inf_textbox);
+            this.panel1.Controls.Add(this.LU4_Inf_textbox);
+            this.panel1.Controls.Add(this.LU5_Inf_textbox);
+            this.panel1.Controls.Add(this.LU6_Inf_textbox);
+            this.panel1.Controls.Add(this.LU7_Inf_textbox);
+            this.panel1.Controls.Add(this.LU8_Inf_textbox);
+            this.panel1.Controls.Add(this.LU2_Inf_textbox);
+            this.panel1.Controls.Add(this.LU1_Inf_textbox);
+            this.panel1.Controls.Add(this.LU3_Ero_textbox);
+            this.panel1.Controls.Add(this.LU4_Ero_textbox);
+            this.panel1.Controls.Add(this.LU5_Ero_textbox);
+            this.panel1.Controls.Add(this.LU6_Ero_textbox);
+            this.panel1.Controls.Add(this.LU7_Ero_textbox);
+            this.panel1.Controls.Add(this.LU8_Ero_textbox);
+            this.panel1.Controls.Add(this.LU2_Ero_textbox);
+            this.panel1.Controls.Add(this.label5);
+            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.LU1_Ero_textbox);
+            this.panel1.Location = new System.Drawing.Point(172, 148);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(464, 452);
+            this.panel1.TabIndex = 113;
+            // 
+            // panel2
+            // 
+            this.panel2.BackColor = System.Drawing.SystemColors.ScrollBar;
+            this.panel2.Controls.Add(this.LU10_OM_textbox);
+            this.panel2.Controls.Add(this.LU9_OM_textbox);
+            this.panel2.Controls.Add(this.LU3_OM_textbox);
+            this.panel2.Controls.Add(this.LU4_OM_textbox);
+            this.panel2.Controls.Add(this.LU5_OM_textbox);
+            this.panel2.Controls.Add(this.LU6_OM_textbox);
+            this.panel2.Controls.Add(this.LU7_OM_textbox);
+            this.panel2.Controls.Add(this.LU8_OM_textbox);
+            this.panel2.Controls.Add(this.LU2_OM_textbox);
+            this.panel2.Controls.Add(this.label_OM);
+            this.panel2.Controls.Add(this.LU1_OM_textbox);
+            this.panel2.Location = new System.Drawing.Point(681, 146);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(114, 453);
+            this.panel2.TabIndex = 114;
+            // 
+            // panel3
+            // 
+            this.panel3.BackColor = System.Drawing.SystemColors.ScrollBar;
+            this.panel3.Controls.Add(this.LU10_Till_textbox);
+            this.panel3.Controls.Add(this.LU9_Till_textbox);
+            this.panel3.Controls.Add(this.LU3_Till_textbox);
+            this.panel3.Controls.Add(this.LU4_Till_textbox);
+            this.panel3.Controls.Add(this.LU5_Till_textbox);
+            this.panel3.Controls.Add(this.LU6_Till_textbox);
+            this.panel3.Controls.Add(this.LU7_Till_textbox);
+            this.panel3.Controls.Add(this.LU8_Till_textbox);
+            this.panel3.Controls.Add(this.LU2_Till_textbox);
+            this.panel3.Controls.Add(this.LU1_Till_textbox);
+            this.panel3.Controls.Add(this.label_tillage);
+            this.panel3.Location = new System.Drawing.Point(842, 146);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(115, 452);
+            this.panel3.TabIndex = 115;
+            // 
+            // panel4
+            // 
+            this.panel4.BackColor = System.Drawing.SystemColors.ScrollBar;
+            this.panel4.Controls.Add(this.LU10_BiotR_textbox);
+            this.panel4.Controls.Add(this.LU9_BiotR_textbox);
+            this.panel4.Controls.Add(this.LU3_BiotR_textbox);
+            this.panel4.Controls.Add(this.LU4_BiotR_textbox);
+            this.panel4.Controls.Add(this.LU5_BiotR_textbox);
+            this.panel4.Controls.Add(this.LU6_BiotR_textbox);
+            this.panel4.Controls.Add(this.LU7_BiotR_textbox);
+            this.panel4.Controls.Add(this.LU8_BiotR_textbox);
+            this.panel4.Controls.Add(this.LU2_BiotR_textbox);
+            this.panel4.Controls.Add(this.LU1_BiotR_textbox);
+            this.panel4.Controls.Add(this.label_biot);
+            this.panel4.Location = new System.Drawing.Point(991, 146);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(112, 451);
+            this.panel4.TabIndex = 116;
+            // 
+            // panel5
+            // 
+            this.panel5.BackColor = System.Drawing.SystemColors.ScrollBar;
+            this.panel5.Controls.Add(this.LU10_RootC_textbox);
+            this.panel5.Controls.Add(this.LU9_RootC_textbox);
+            this.panel5.Controls.Add(this.label_RC);
+            this.panel5.Controls.Add(this.LU3_RootC_textbox);
+            this.panel5.Controls.Add(this.LU4_RootC_textbox);
+            this.panel5.Controls.Add(this.LU5_RootC_textbox);
+            this.panel5.Controls.Add(this.LU6_RootC_textbox);
+            this.panel5.Controls.Add(this.LU7_RootC_textbox);
+            this.panel5.Controls.Add(this.LU8_RootC_textbox);
+            this.panel5.Controls.Add(this.LU2_RootC_textbox);
+            this.panel5.Controls.Add(this.LU1_RootC_textbox);
+            this.panel5.Location = new System.Drawing.Point(1144, 146);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(117, 450);
+            this.panel5.TabIndex = 117;
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(337, 120);
+            this.label14.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(108, 20);
+            this.label14.TabIndex = 118;
+            this.label14.Text = "Water erosion";
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(681, 118);
+            this.label18.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(114, 20);
+            this.label18.TabIndex = 119;
+            this.label18.Text = "Organic matter";
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(871, 118);
+            this.label19.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(54, 20);
+            this.label19.TabIndex = 120;
+            this.label19.Text = "Tillage";
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(1000, 120);
+            this.label20.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(95, 20);
+            this.label20.TabIndex = 121;
+            this.label20.Text = "Bioturbation";
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(1156, 118);
+            this.label21.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(85, 20);
+            this.label21.TabIndex = 122;
+            this.label21.Text = "Landslides";
+            // 
+            // label22
+            // 
+            this.label22.AutoSize = true;
+            this.label22.Location = new System.Drawing.Point(57, 123);
+            this.label22.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(66, 20);
+            this.label22.TabIndex = 123;
+            this.label22.Text = "Process";
+            // 
             // Landuse_determinator
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1146, 706);
-            this.Controls.Add(this.LU10_RootC_textbox);
-            this.Controls.Add(this.LU10_BiotR_textbox);
-            this.Controls.Add(this.LU10_Till_textbox);
-            this.Controls.Add(this.LU10_OM_textbox);
-            this.Controls.Add(this.LU9_RootC_textbox);
-            this.Controls.Add(this.LU9_BiotR_textbox);
-            this.Controls.Add(this.LU9_Till_textbox);
-            this.Controls.Add(this.LU9_OM_textbox);
-            this.Controls.Add(this.label_RC);
-            this.Controls.Add(this.LU3_RootC_textbox);
-            this.Controls.Add(this.LU4_RootC_textbox);
-            this.Controls.Add(this.LU5_RootC_textbox);
-            this.Controls.Add(this.LU6_RootC_textbox);
-            this.Controls.Add(this.LU7_RootC_textbox);
-            this.Controls.Add(this.LU8_RootC_textbox);
-            this.Controls.Add(this.LU2_RootC_textbox);
-            this.Controls.Add(this.LU1_RootC_textbox);
-            this.Controls.Add(this.LU3_BiotR_textbox);
-            this.Controls.Add(this.LU4_BiotR_textbox);
-            this.Controls.Add(this.LU5_BiotR_textbox);
-            this.Controls.Add(this.LU6_BiotR_textbox);
-            this.Controls.Add(this.LU7_BiotR_textbox);
-            this.Controls.Add(this.LU8_BiotR_textbox);
-            this.Controls.Add(this.LU2_BiotR_textbox);
-            this.Controls.Add(this.LU1_BiotR_textbox);
-            this.Controls.Add(this.LU3_Till_textbox);
-            this.Controls.Add(this.LU4_Till_textbox);
-            this.Controls.Add(this.LU5_Till_textbox);
-            this.Controls.Add(this.LU6_Till_textbox);
-            this.Controls.Add(this.LU7_Till_textbox);
-            this.Controls.Add(this.LU8_Till_textbox);
-            this.Controls.Add(this.LU2_Till_textbox);
-            this.Controls.Add(this.LU1_Till_textbox);
-            this.Controls.Add(this.LU3_OM_textbox);
-            this.Controls.Add(this.LU4_OM_textbox);
-            this.Controls.Add(this.LU5_OM_textbox);
-            this.Controls.Add(this.LU6_OM_textbox);
-            this.Controls.Add(this.LU7_OM_textbox);
-            this.Controls.Add(this.LU8_OM_textbox);
-            this.Controls.Add(this.LU2_OM_textbox);
-            this.Controls.Add(this.label_OM);
-            this.Controls.Add(this.label_tillage);
-            this.Controls.Add(this.label_biot);
-            this.Controls.Add(this.LU1_OM_textbox);
+            this.ClientSize = new System.Drawing.Size(1320, 706);
+            this.Controls.Add(this.label22);
+            this.Controls.Add(this.label21);
+            this.Controls.Add(this.label20);
+            this.Controls.Add(this.label19);
+            this.Controls.Add(this.label18);
+            this.Controls.Add(this.label14);
+            this.Controls.Add(this.panel5);
+            this.Controls.Add(this.panel4);
+            this.Controls.Add(this.panel3);
+            this.Controls.Add(this.panel2);
             this.Controls.Add(this.landuse_ready_button);
-            this.Controls.Add(this.LU10_Evap_textbox);
-            this.Controls.Add(this.LU10_Inf_textbox);
-            this.Controls.Add(this.LU10_Ero_textbox);
-            this.Controls.Add(this.LU9_Evap_textbox);
-            this.Controls.Add(this.LU9_Inf_textbox);
-            this.Controls.Add(this.LU9_Ero_textbox);
             this.Controls.Add(this.label17);
             this.Controls.Add(this.label16);
             this.Controls.Add(this.label15);
-            this.Controls.Add(this.label13);
-            this.Controls.Add(this.LU3_Evap_textbox);
-            this.Controls.Add(this.LU4_Evap_textbox);
-            this.Controls.Add(this.LU5_Evap_textbox);
-            this.Controls.Add(this.LU6_Evap_textbox);
-            this.Controls.Add(this.LU7_Evap_textbox);
-            this.Controls.Add(this.LU8_Evap_textbox);
-            this.Controls.Add(this.LU2_Evap_textbox);
-            this.Controls.Add(this.LU1_Evap_textbox);
-            this.Controls.Add(this.LU3_Inf_textbox);
-            this.Controls.Add(this.LU4_Inf_textbox);
-            this.Controls.Add(this.LU5_Inf_textbox);
-            this.Controls.Add(this.LU6_Inf_textbox);
-            this.Controls.Add(this.LU7_Inf_textbox);
-            this.Controls.Add(this.LU8_Inf_textbox);
-            this.Controls.Add(this.LU2_Inf_textbox);
-            this.Controls.Add(this.LU1_Inf_textbox);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label8);
-            this.Controls.Add(this.LU3_Ero_textbox);
-            this.Controls.Add(this.LU4_Ero_textbox);
-            this.Controls.Add(this.LU5_Ero_textbox);
-            this.Controls.Add(this.LU6_Ero_textbox);
-            this.Controls.Add(this.LU7_Ero_textbox);
-            this.Controls.Add(this.LU8_Ero_textbox);
-            this.Controls.Add(this.LU2_Ero_textbox);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label6);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.LU1_Ero_textbox);
             this.Controls.Add(this.label1);
+            this.Controls.Add(this.panel1);
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "Landuse_determinator";
             this.Text = "LORICA Landuse determinator";
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
+            this.panel3.ResumeLayout(false);
+            this.panel3.PerformLayout();
+            this.panel4.ResumeLayout(false);
+            this.panel4.PerformLayout();
+            this.panel5.ResumeLayout(false);
+            this.panel5.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1149,5 +1438,27 @@
         public System.Windows.Forms.Label label_tillage;
         public System.Windows.Forms.Label label_biot;
         public System.Windows.Forms.TextBox LU1_OM_textbox;
+        public System.Windows.Forms.TextBox LU10_BioProt_textbox;
+        public System.Windows.Forms.TextBox LU9_BioProt_textbox;
+        public System.Windows.Forms.Label label4;
+        public System.Windows.Forms.TextBox LU3_BioProt_textbox;
+        public System.Windows.Forms.TextBox LU4_BioProt_textbox;
+        public System.Windows.Forms.TextBox LU5_BioProt_textbox;
+        public System.Windows.Forms.TextBox LU6_BioProt_textbox;
+        public System.Windows.Forms.TextBox LU7_BioProt_textbox;
+        public System.Windows.Forms.TextBox LU8_BioProt_textbox;
+        public System.Windows.Forms.TextBox LU2_BioProt_textbox;
+        public System.Windows.Forms.TextBox LU1_BioProt_textbox;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.Panel panel4;
+        private System.Windows.Forms.Panel panel5;
+        public System.Windows.Forms.Label label14;
+        public System.Windows.Forms.Label label18;
+        public System.Windows.Forms.Label label19;
+        public System.Windows.Forms.Label label20;
+        public System.Windows.Forms.Label label21;
+        public System.Windows.Forms.Label label22;
     }
 }

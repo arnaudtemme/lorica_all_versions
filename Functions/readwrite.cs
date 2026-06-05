@@ -1573,6 +1573,9 @@ namespace LORICA4
                 if (TryGetBool(d, "radio_ls_mix_2", ls_mix_radio_2.Checked, out b)) ls_mix_radio_2.Checked = b;
                 if (TryGetBool(d, "radio_ls_mix_3", ls_mix_radio_3.Checked, out b)) ls_mix_radio_3.Checked = b;
                 minimum_slope_for_movement_tan_textbox.Text = GetStr(d, "minimum_slope_for_movement_tan", minimum_slope_for_movement_tan_textbox.Text);
+                runout_ratio_textbox.Text = GetStr(d, "runout_ratio", runout_ratio_textbox.Text); //AleG
+                root_coh_box.Text = GetStr(d, "root_coh", root_coh_box.Text); //AleG
+
             });
 
             ApplySection("Creep", K("creep_active", "para_diffusivity"), d =>
@@ -1925,10 +1928,18 @@ namespace LORICA4
                     string eroder = GetStr(d, "LU" + i + "_Ero", null);
                     string inf = GetStr(d, "LU" + i + "_Inf", null);
                     string ev = GetStr(d, "LU" + i + "_Evap", null);
+                    string bpr = GetStr(d, "LU" + i + "_BioProt", null);
+                    string om = GetStr(d, "LU" + i + "_OM", null);
+                    string til = GetStr(d, "LU" + i + "_Till", null);
+                    string bt = GetStr(d, "LU" + i + "_Biot", null);
                     string rc = GetStr(d, "LU" + i + "_RootC", null);
                     if (eroder != null) (new[] { landuse_determinator.LU1_Ero_textbox, landuse_determinator.LU2_Ero_textbox, landuse_determinator.LU3_Ero_textbox, landuse_determinator.LU4_Ero_textbox, landuse_determinator.LU5_Ero_textbox, landuse_determinator.LU6_Ero_textbox, landuse_determinator.LU7_Ero_textbox, landuse_determinator.LU8_Ero_textbox, landuse_determinator.LU9_Ero_textbox, landuse_determinator.LU10_Ero_textbox })[i - 1].Text = eroder;
                     if (inf != null) (new[] { landuse_determinator.LU1_Inf_textbox, landuse_determinator.LU2_Inf_textbox, landuse_determinator.LU3_Inf_textbox, landuse_determinator.LU4_Inf_textbox, landuse_determinator.LU5_Inf_textbox, landuse_determinator.LU6_Inf_textbox, landuse_determinator.LU7_Inf_textbox, landuse_determinator.LU8_Inf_textbox, landuse_determinator.LU9_Inf_textbox, landuse_determinator.LU10_Inf_textbox })[i - 1].Text = inf;
                     if (ev != null) (new[] { landuse_determinator.LU1_Evap_textbox, landuse_determinator.LU2_Evap_textbox, landuse_determinator.LU3_Evap_textbox, landuse_determinator.LU4_Evap_textbox, landuse_determinator.LU5_Evap_textbox, landuse_determinator.LU6_Evap_textbox, landuse_determinator.LU7_Evap_textbox, landuse_determinator.LU8_Evap_textbox, landuse_determinator.LU9_Evap_textbox, landuse_determinator.LU10_Evap_textbox })[i - 1].Text = ev;
+                    if (bpr != null) (new[] { landuse_determinator.LU1_BioProt_textbox, landuse_determinator.LU2_BioProt_textbox, landuse_determinator.LU3_BioProt_textbox, landuse_determinator.LU4_BioProt_textbox, landuse_determinator.LU5_BioProt_textbox, landuse_determinator.LU6_BioProt_textbox, landuse_determinator.LU7_BioProt_textbox, landuse_determinator.LU8_BioProt_textbox, landuse_determinator.LU9_BioProt_textbox, landuse_determinator.LU10_BioProt_textbox })[i - 1].Text = bpr;
+                    if (om != null) (new[] { landuse_determinator.LU1_OM_textbox, landuse_determinator.LU2_OM_textbox, landuse_determinator.LU3_OM_textbox, landuse_determinator.LU4_OM_textbox, landuse_determinator.LU5_OM_textbox, landuse_determinator.LU6_OM_textbox, landuse_determinator.LU7_OM_textbox, landuse_determinator.LU8_OM_textbox, landuse_determinator.LU9_OM_textbox, landuse_determinator.LU10_OM_textbox })[i - 1].Text = om;
+                    if (til != null) (new[] { landuse_determinator.LU1_Till_textbox, landuse_determinator.LU2_Till_textbox, landuse_determinator.LU3_Till_textbox, landuse_determinator.LU4_Till_textbox, landuse_determinator.LU5_Till_textbox, landuse_determinator.LU6_Till_textbox, landuse_determinator.LU7_Till_textbox, landuse_determinator.LU8_Till_textbox, landuse_determinator.LU9_Till_textbox, landuse_determinator.LU10_Till_textbox })[i - 1].Text = til;
+                    if (bt != null) (new[] { landuse_determinator.LU1_BiotR_textbox, landuse_determinator.LU2_BiotR_textbox, landuse_determinator.LU3_BiotR_textbox, landuse_determinator.LU4_BiotR_textbox, landuse_determinator.LU5_BiotR_textbox, landuse_determinator.LU6_BiotR_textbox, landuse_determinator.LU7_BiotR_textbox, landuse_determinator.LU8_BiotR_textbox, landuse_determinator.LU9_BiotR_textbox, landuse_determinator.LU10_BiotR_textbox })[i - 1].Text = bt;
                     if (rc != null) (new[] { landuse_determinator.LU1_RootC_textbox, landuse_determinator.LU2_RootC_textbox, landuse_determinator.LU3_RootC_textbox, landuse_determinator.LU4_RootC_textbox, landuse_determinator.LU5_RootC_textbox, landuse_determinator.LU6_RootC_textbox, landuse_determinator.LU7_RootC_textbox, landuse_determinator.LU8_RootC_textbox, landuse_determinator.LU9_RootC_textbox, landuse_determinator.LU10_RootC_textbox })[i - 1].Text = rc;
                 }
             });
@@ -2026,6 +2037,7 @@ namespace LORICA4
                 xwriter.WriteElementString("radio_ls_mix_3", XmlConvert.ToString(ls_mix_radio_3.Checked));
                 xwriter.WriteElementString("minimum_slope_for_movement_tan", minimum_slope_for_movement_tan_textbox.Text);
                 xwriter.WriteElementString("runout_ratio", runout_ratio_textbox.Text);
+                xwriter.WriteElementString("root_coh", root_coh_box.Text); //AleG
                 xwriter.WriteEndElement();
 
                 xwriter.WriteStartElement("Creep");
@@ -2314,51 +2326,91 @@ namespace LORICA4
                 xwriter.WriteElementString("LU1_Ero", landuse_determinator.LU1_Ero_textbox.Text);
                 xwriter.WriteElementString("LU1_Inf", landuse_determinator.LU1_Inf_textbox.Text);
                 xwriter.WriteElementString("LU1_Evap", landuse_determinator.LU1_Evap_textbox.Text);
+                xwriter.WriteElementString("LU1_BioProt", landuse_determinator.LU1_BioProt_textbox.Text);
+                xwriter.WriteElementString("LU1_OM", landuse_determinator.LU1_OM_textbox.Text);
+                xwriter.WriteElementString("LU1_Till", landuse_determinator.LU1_Till_textbox.Text);
+                xwriter.WriteElementString("LU1_Biot", landuse_determinator.LU1_BiotR_textbox.Text);
                 xwriter.WriteElementString("LU1_RootC", landuse_determinator.LU1_RootC_textbox.Text);
 
                 xwriter.WriteElementString("LU2_Ero", landuse_determinator.LU2_Ero_textbox.Text);
                 xwriter.WriteElementString("LU2_Inf", landuse_determinator.LU2_Inf_textbox.Text);
-                xwriter.WriteElementString("LU2_Evap", landuse_determinator.LU2_Evap_textbox.Text);
+                xwriter.WriteElementString("LU2_Evap", landuse_determinator.LU2_Evap_textbox.Text); 
+                xwriter.WriteElementString("LU2_BioProt", landuse_determinator.LU2_BioProt_textbox.Text);
+                xwriter.WriteElementString("LU2_OM", landuse_determinator.LU2_OM_textbox.Text);
+                xwriter.WriteElementString("LU2_Till", landuse_determinator.LU2_Till_textbox.Text);
+                xwriter.WriteElementString("LU2_Biot", landuse_determinator.LU2_BiotR_textbox.Text);
                 xwriter.WriteElementString("LU2_RootC", landuse_determinator.LU2_RootC_textbox.Text);
 
                 xwriter.WriteElementString("LU3_Ero", landuse_determinator.LU3_Ero_textbox.Text);
                 xwriter.WriteElementString("LU3_Inf", landuse_determinator.LU3_Inf_textbox.Text);
                 xwriter.WriteElementString("LU3_Evap", landuse_determinator.LU3_Evap_textbox.Text);
+                xwriter.WriteElementString("LU3_BioProt", landuse_determinator.LU3_BioProt_textbox.Text);
+                xwriter.WriteElementString("LU3_OM", landuse_determinator.LU3_OM_textbox.Text);
+                xwriter.WriteElementString("LU3_Till", landuse_determinator.LU3_Till_textbox.Text);
+                xwriter.WriteElementString("LU3_Biot", landuse_determinator.LU3_BiotR_textbox.Text);
                 xwriter.WriteElementString("LU3_RootC", landuse_determinator.LU3_RootC_textbox.Text);
 
                 xwriter.WriteElementString("LU4_Ero", landuse_determinator.LU4_Ero_textbox.Text);
                 xwriter.WriteElementString("LU4_Inf", landuse_determinator.LU4_Inf_textbox.Text);
                 xwriter.WriteElementString("LU4_Evap", landuse_determinator.LU4_Evap_textbox.Text);
+                xwriter.WriteElementString("LU1_BioProt", landuse_determinator.LU4_BioProt_textbox.Text);
+                xwriter.WriteElementString("LU4_OM", landuse_determinator.LU4_OM_textbox.Text);
+                xwriter.WriteElementString("LU4_Till", landuse_determinator.LU4_Till_textbox.Text);
+                xwriter.WriteElementString("LU4_Biot", landuse_determinator.LU4_BiotR_textbox.Text);
                 xwriter.WriteElementString("LU4_RootC", landuse_determinator.LU4_RootC_textbox.Text);
 
                 xwriter.WriteElementString("LU5_Ero", landuse_determinator.LU5_Ero_textbox.Text);
                 xwriter.WriteElementString("LU5_Inf", landuse_determinator.LU5_Inf_textbox.Text);
                 xwriter.WriteElementString("LU5_Evap", landuse_determinator.LU5_Evap_textbox.Text);
+                xwriter.WriteElementString("LU5_BioProt", landuse_determinator.LU5_BioProt_textbox.Text);
+                xwriter.WriteElementString("LU5_OM", landuse_determinator.LU5_OM_textbox.Text);
+                xwriter.WriteElementString("LU5_Till", landuse_determinator.LU5_Till_textbox.Text);
+                xwriter.WriteElementString("LU5_Biot", landuse_determinator.LU5_BiotR_textbox.Text);
                 xwriter.WriteElementString("LU5_RootC", landuse_determinator.LU5_RootC_textbox.Text);
 
                 xwriter.WriteElementString("LU6_Ero", landuse_determinator.LU6_Ero_textbox.Text);
                 xwriter.WriteElementString("LU6_Inf", landuse_determinator.LU6_Inf_textbox.Text);
                 xwriter.WriteElementString("LU6_Evap", landuse_determinator.LU6_Evap_textbox.Text);
+                xwriter.WriteElementString("LU6_BioProt", landuse_determinator.LU6_BioProt_textbox.Text);
+                xwriter.WriteElementString("LU6_OM", landuse_determinator.LU6_OM_textbox.Text);
+                xwriter.WriteElementString("LU6_Till", landuse_determinator.LU6_Till_textbox.Text);
+                xwriter.WriteElementString("LU6_Biot", landuse_determinator.LU6_BiotR_textbox.Text);
                 xwriter.WriteElementString("LU6_RootC", landuse_determinator.LU6_RootC_textbox.Text);
 
                 xwriter.WriteElementString("LU7_Ero", landuse_determinator.LU7_Ero_textbox.Text);
                 xwriter.WriteElementString("LU7_Inf", landuse_determinator.LU7_Inf_textbox.Text);
                 xwriter.WriteElementString("LU7_Evap", landuse_determinator.LU7_Evap_textbox.Text);
+                xwriter.WriteElementString("LU7_BioProt", landuse_determinator.LU7_BioProt_textbox.Text);
+                xwriter.WriteElementString("LU7_OM", landuse_determinator.LU7_OM_textbox.Text);
+                xwriter.WriteElementString("LU7_Till", landuse_determinator.LU7_Till_textbox.Text);
+                xwriter.WriteElementString("LU7_Biot", landuse_determinator.LU7_BiotR_textbox.Text);
                 xwriter.WriteElementString("LU7_RootC", landuse_determinator.LU7_RootC_textbox.Text);
 
                 xwriter.WriteElementString("LU8_Ero", landuse_determinator.LU8_Ero_textbox.Text);
                 xwriter.WriteElementString("LU8_Inf", landuse_determinator.LU8_Inf_textbox.Text);
                 xwriter.WriteElementString("LU8_Evap", landuse_determinator.LU8_Evap_textbox.Text);
+                xwriter.WriteElementString("LU8_BioProt", landuse_determinator.LU8_BioProt_textbox.Text);
+                xwriter.WriteElementString("LU8_OM", landuse_determinator.LU8_OM_textbox.Text);
+                xwriter.WriteElementString("LU8_Till", landuse_determinator.LU8_Till_textbox.Text);
+                xwriter.WriteElementString("LU8_Biot", landuse_determinator.LU8_BiotR_textbox.Text);
                 xwriter.WriteElementString("LU8_RootC", landuse_determinator.LU8_RootC_textbox.Text);
 
                 xwriter.WriteElementString("LU9_Ero", landuse_determinator.LU9_Ero_textbox.Text);
                 xwriter.WriteElementString("LU9_Inf", landuse_determinator.LU9_Inf_textbox.Text);
                 xwriter.WriteElementString("LU9_Evap", landuse_determinator.LU9_Evap_textbox.Text);
+                xwriter.WriteElementString("LU9_BioProt", landuse_determinator.LU9_BioProt_textbox.Text);
+                xwriter.WriteElementString("LU9_OM", landuse_determinator.LU9_OM_textbox.Text);
+                xwriter.WriteElementString("LU9_Till", landuse_determinator.LU9_Till_textbox.Text);
+                xwriter.WriteElementString("LU9_Biot", landuse_determinator.LU9_BiotR_textbox.Text);
                 xwriter.WriteElementString("LU9_RootC", landuse_determinator.LU9_RootC_textbox.Text);
 
                 xwriter.WriteElementString("LU10_Ero", landuse_determinator.LU10_Ero_textbox.Text);
                 xwriter.WriteElementString("LU10_Inf", landuse_determinator.LU10_Inf_textbox.Text);
                 xwriter.WriteElementString("LU10_Evap", landuse_determinator.LU10_Evap_textbox.Text);
+                xwriter.WriteElementString("LU10_BioProt", landuse_determinator.LU10_BioProt_textbox.Text);
+                xwriter.WriteElementString("LU10_OM", landuse_determinator.LU10_OM_textbox.Text);
+                xwriter.WriteElementString("LU10_Till", landuse_determinator.LU10_Till_textbox.Text);
+                xwriter.WriteElementString("LU10_Biot", landuse_determinator.LU10_BiotR_textbox.Text);
                 xwriter.WriteElementString("LU10_RootC", landuse_determinator.LU10_RootC_textbox.Text);
 
                 xwriter.WriteEndElement();
