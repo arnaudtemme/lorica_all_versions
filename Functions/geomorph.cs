@@ -722,7 +722,7 @@ namespace LORICA4
                             } //Proglacial
                             total_meltwater_m += meltwater_value_m; //Proglacial
                             if (waterflow_m3[row, col] * dx * dx > timeseries.timeseries_waterflow_threshold) { wet_cells++; }
-                            if (check_space_landuse.Checked) //AleG 
+                            if (water_ero_active==true) //AleG 
                             {
                                 total_infil_m += infil[row, col];
                                 total_evap_m += evapotranspiration[row, col];
@@ -829,14 +829,14 @@ namespace LORICA4
                                     if (check_space_evap.Checked == true) { evap_value_m = evapotranspiration[row, col]; }
                                     if (check_space_rain.Checked == true) { rain_value_m = rain_m[row, col]; }
                                     if (check_space_infil.Checked == true) { infil_value_m = infil[row, col]; }
-                                    if (water_ero_active == true) { erodibility_value_m = K_fac[row, col]; }
+                                    
                                     if (Proglacial_checkbox.Checked == true) { meltwater_value_m = meltwater_m[row, col]; } // Glacier meltwater contribution //Sophie_new
 
-                                    if (check_space_landuse.Checked) // Land use adjustments for erosion, infiltration, and protection
+                                    if (water_ero_active == true) // Land use adjustments for erosion, infiltration, and protection
                                     {
                                         infil_value_m = infil[row, col];
                                         evap_value_m = evapotranspiration[row, col];
-                                        erodibility_value_m = K_fac[row, col]; // Adjust for erosion
+                                        erodibility_value_m = K_fac[row, col];
                                         bio_protection_constant = bio_protection[row, col];
                                     }
 
@@ -866,9 +866,9 @@ namespace LORICA4
                                         if (check_space_rain.Checked == true) { rain_value_m = rain_m[row, col]; }
                                         if (check_space_infil.Checked == true) { infil_value_m = infil[row, col]; }
 
-                                        if (water_ero_active == true) { erodibility_value_m = K_fac[row, col]; }
+                                        
 
-                                        if (check_space_landuse.Checked) // Land use adjustments for lake areas
+                                        if (water_ero_active==true) // Land use adjustments for lake areas
                                         {
                                             infil_value_m = infil[row, col];
                                             evap_value_m = evapotranspiration[row, col];
@@ -930,9 +930,8 @@ namespace LORICA4
                                 if (check_space_evap.Checked == true) { evap_value_m = evapotranspiration[row, col]; }//AleG 
                                 if (check_space_rain.Checked == true) { rain_value_m = rain_m[row, col]; }//AleG 
                                 if (check_space_infil.Checked == true) { infil_value_m = infil[row, col]; }//AleG 
-                                if (water_ero_active == true) { erodibility_value_m = K_fac[row, col]; } //AleG 
-
-                                if (check_space_landuse.Checked) //AleG 
+                                
+                                if (water_ero_active == true) //AleG 
                                 {
                                     infil_value_m = infil[row, col];//AleG 
                                     evap_value_m = evapotranspiration[row, col];//AleG 
@@ -960,9 +959,8 @@ namespace LORICA4
                                     if (check_space_evap.Checked == true) { evap_value_m = evapotranspiration[row, col]; }//AleG // not anymore switch
                                     if (check_space_rain.Checked == true) { rain_value_m = rain_m[row, col]; }//AleG 
                                     if (check_space_infil.Checked == true) { infil_value_m = infil[row, col]; }//AleG 
-                                    if (water_ero_active == true) { erodibility_value_m = K_fac[row, col]; } //AleG 
-
-                                    if (check_space_landuse.Checked) //AleG 
+                                    
+                                    if (water_ero_active == true) //AleG 
                                     {
                                         infil_value_m = infil[row, col];//AleG 
                                         evap_value_m = evapotranspiration[row, col];//AleG 

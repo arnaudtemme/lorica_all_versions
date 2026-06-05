@@ -6118,6 +6118,7 @@ namespace LORICA4
                     if (only_waterflow_checkbox.Checked == false)
                     {
                         K_fac = new double[nr, nc];
+                        infil = new double[nr, nc];
                         bio_protection = new double[nr, nc];
                         sediment_in_transport_kg = new double[nr, nc, n_texture_classes];
                         young_SOM_in_transport_kg = new double[nr, nc];
@@ -6208,7 +6209,7 @@ namespace LORICA4
                 {
                     hardlayeropenness_fraction = new float[nr, nc];
                 }
-                if (check_space_landuse.Checked) //AleG
+                if (water_ero_active==true) //AleG
                 {
                     root_cohesion_kPa_new = new double[nr, nc]; //AleG
                     infil = new double[nr, nc]; //AleG
