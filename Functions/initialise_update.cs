@@ -427,17 +427,17 @@ namespace LORICA4
                 read_integer(filename, landuse);
                 Debug.WriteLine("read landuse");
             }
-            if (check_space_evap.Checked && input_data_error == false)
+            if (check_space_infil.Checked && input_data_error == false) 
             {
                 filename = this.evap_input_filename_textbox.Text;
                 read_double(filename, evapotranspiration);
             }
-            if (check_space_infil.Checked && input_data_error == false)
+            if (check_space_infil.Checked && input_data_error == false) 
             {
                 filename = this.infil_input_filename_textbox.Text;
                 read_double(filename, infil);
             }
-            if (check_space_rain.Checked && input_data_error == false)
+            if (check_space_rain.Checked && input_data_error == false) 
             {
                 filename = this.rain_input_filename_textbox.Text;
                 read_double(filename, rain_m);
@@ -498,6 +498,10 @@ namespace LORICA4
                     {
                         if (dtm[row, col] != nodata_value)
                         {
+                            rain_m[row, col]= rain_value_m; //AleG_neww
+                            if (check_time_evap.Checked == false) { evapotranspiration[row, col] = evap_value_m; }
+                            if (check_time_infil.Checked == false) { infil[row, col] = infil_value_m; }
+
                             dz_soil[row, col] = 0;
                             if (Creep_Checkbox.Checked) { sum_creep_grid[row, col] = 0; creep[row, col] = 0; }
                             if (Water_ero_checkbox.Checked && only_waterflow_checkbox.Checked == false) { sum_water_erosion[row, col] = 0; total_sed_export = 0; }
