@@ -727,6 +727,86 @@ namespace LORICA4
             return (KsW); // units are m day-1 per the paper
 
         }
+        
+        public static double Ks_SaxtonRawls_m_d(double silt, double clay, double OM,
+            double coarse_mass, double finesoil_mass,
+            double coarse_density_g_cm3, double BD_g_cm3)
+
+        /// Calculates saturated hydraulic conductivity (Ksat) using the
+        /// Saxton & Rawls (2006) pedotransfer function (Eqs. 1, 2, 3, 5, 15, 16, 18),
+        /// with a gravel/rock-fragment correction applied via Eq. 22.
+        ///
+        /// topsoil from Ks_wosten is NOT used: the Saxton & Rawls chain derives
+        /// its own porosity (theta_S) and field capacity (theta_33) from silt,
+        /// clay and OM, and makes no topsoil/subsoil distinction.
+        ///
+        /// Additional inputs required for the Eq. 22 gravel correction:
+        ///   - coarse_mass: mass of rock fragments / gravel
+        ///   - finesoil_mass: mass of fine earth (silt+sand+clay+OM etc.), used
+        ///                    together with coarse_mass to compute R_w
+        ///   - coarse_density_g_cm3: density of the rock fragments (g/cm3),
+        ///                           typically ~2.65
+        ///   - BD_g_cm3: fine-earth bulk density (g/cm3), e.g. from
+        ///               BulkDensityCalcKgM3_SaxtonRawls / 1000. Used to compute
+        ///               alpha = BD_g_cm3 / coarse_density_g_cm3
+        /// </summary>
+        {
+            if (OM < 1) { OM = 1; }   // avoid degenerate/zero OM, consistent with Ks_wosten
+            if (silt < 1) { silt = 1; }
+
+            // Sand fraction (0-1) from silt + clay (in %)
+            double S = (100.0 - silt - clay) / 100.0;
+            double C = clay / 100.0;
+
+            // --- Eq. 2: theta_33 (field capacity) ---
+            double theta33t = -0.251 * S + 0.195 * C + 0.011 * OM
+                             + 0.006 * (S * OM) - 0.027 * (C * OM)
+                             + 0.452 * (S * C) + 0.299;
+
+            double theta33 = theta33t
+                            + (1.283 * theta33t * theta33t - 0.374 * theta33t - 0.015);
+
+            // --- Eq. 3: theta_(S-33) ---
+            double thetaS33t = 0.278 * S + 0.034 * C + 0.022 * OM
+                              - 0.018 * (S * OM) - 0.027 * (C * OM)
+                              - 0.584 * (S * C) + 0.078;
+
+            double thetaS33 = thetaS33t + (0.636 * thetaS33t - 0.107);
+
+            // --- Eq. 5: theta_S (saturated water content / porosity) ---
+            double thetaS = theta33 + thetaS33 - 0.097 * S + 0.043;
+
+            // --- Eq. 1: theta_1500 (wilting point) ---
+            double theta1500t = -0.024 * S + 0.487 * C + 0.006 * OM
+                               + 0.005 * (S * OM) - 0.013 * (C * OM)
+                               + 0.068 * (S * C) + 0.031;
+
+            double theta1500 = theta1500t + (0.14 * theta1500t - 0.02);
+
+            // --- Eq. 15/18: B and lambda (pore-size distribution index) ---
+            double B = (Math.Log(1500.0) - Math.Log(33.0)) / (Math.Log(theta33) - Math.Log(theta1500));
+            double lambda = 1.0 / B;
+
+            // --- Eq. 16: Ks (mm/h in the paper, 1930 * (theta_S - theta_33)^(3-lambda)) ---
+            double Ks_mm_h = 1930.0 * Math.Pow(thetaS - theta33, 3.0 - lambda);
+
+            // --- Eq. 22: gravel/rock-fragment correction, K_b/K_s ---
+            double total_mass = coarse_mass + finesoil_mass;
+            double R_w = (total_mass > 0) ? coarse_mass / total_mass : 0.0;
+            double alpha = (coarse_density_g_cm3 > 0) ? BD_g_cm3 / coarse_density_g_cm3 : 0.0;
+
+            double Kb_over_Ks = (1.0 - R_w) / (1.0 - R_w * (1.0 - 3.0 * alpha / 2.0));
+
+            Ks_mm_h *= Kb_over_Ks;
+
+            // Convert mm/h to m/day to match the units returned by Ks_wosten
+            double Ks_m_day = Ks_mm_h * 24.0 / 1000.0;
+
+            if (Double.IsNaN(Ks_m_day)) { Ks_m_day = 0; }
+
+            return Ks_m_day; // units are m day-1, consistent with Ks_wosten
+        }
+
 
         List<double> ponding(int row1, int col1, double inflow_m, int pday, int pmonth)
         {

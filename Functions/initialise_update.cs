@@ -1796,6 +1796,72 @@ namespace LORICA4
 
         }
 
+        
+        double bulk_density_calc_kg_m3_SaxtonRawls(
+        double coarse_mass,
+        double sand_mass,
+        double silt_mass,
+        double clay_mass,
+        double fine_clay_mass,
+        double OMo_mass,
+        double OMy_mass,
+        double depth)
+        {
+            //from Saxton and Rawls, 2006
+            //note that this code does not really use depth as an input. It's in this definition to ensure similar use to the other bd function
+            double bd; // kg/m3
+            double m_finesoil = sand_mass + silt_mass + clay_mass + fine_clay_mass;
+
+            if (m_finesoil > 0)
+            {
+                // --- Fractions for Saxton & Rawls equations ---
+                // S, C as fractions (0-1) of fine soil; fine_clay treated as part of clay
+                double S = sand_mass / m_finesoil;
+                double C = (clay_mass + fine_clay_mass) / m_finesoil;
+
+                // Organic matter as a percentage of fine soil + OM mass
+                double m_total_for_OM = m_finesoil + OMo_mass + OMy_mass;
+                double OM = (m_total_for_OM > 0)
+                    ? 100.0 * (OMo_mass + OMy_mass) / m_total_for_OM
+                    : 0.0;
+
+                // --- Eq. 2: theta_33 (field capacity) ---
+                double theta33t = -0.251 * S + 0.195 * C + 0.011 * OM
+                                 + 0.006 * (S * OM) - 0.027 * (C * OM)
+                                 + 0.452 * (S * C) + 0.299;
+
+                double theta33 = theta33t
+                                + (1.283 * theta33t * theta33t - 0.374 * theta33t - 0.015);
+
+                // --- Eq. 3: theta_(S-33) ---
+                double thetaS33t = 0.278 * S + 0.034 * C + 0.022 * OM
+                                  - 0.018 * (S * OM) - 0.027 * (C * OM)
+                                  - 0.584 * (S * C) + 0.078;
+
+                double thetaS33 = thetaS33t + (0.636 * thetaS33t - 0.107);
+
+                // --- Eq. 5: theta_S (saturated water content / porosity) ---
+                double thetaS = theta33 + thetaS33 - 0.097 * S + 0.043;
+
+                // --- Eq. 6: rho_N (normal bulk density, g/cm3) ---
+                double rhoN = (1.0 - thetaS) * 2.65;
+
+                // Convert to kg/m3 for the fine-soil component
+                double bd_finesoil = rhoN * 1000.0; // kg/m3
+
+                // --- Coarse fragment and SOM correction (as in original function) ---
+                bd = (coarse_mass + m_finesoil + OMo_mass + OMy_mass)
+                 / (((m_finesoil + OMo_mass + OMy_mass) / bd_finesoil) + (coarse_mass / 2700.0));
+            }
+        
+            else
+            {
+                bd = 2700;
+            }
+
+            return bd; // in kg/m3
+        }
+
         double thickness_calc(int rowwer, int coller, int lay1)
         {
             // Debug.WriteLine("tc1");
@@ -1810,7 +1876,7 @@ namespace LORICA4
             depth_m += layerthickness_m[rowwer, coller, lay1] / 2;
             // Debug.WriteLine("tc2");
             int i;
-            //first calculate total soil mass to calculate mass percentages for the size fractions
+            //first calculate total soOKil mass to calculate mass percentages for the size fractions
             for (i = 1; i < 5; i++)
             {
                 soil_mass += texture_kg[rowwer, coller, lay1, i];

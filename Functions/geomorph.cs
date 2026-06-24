@@ -1582,7 +1582,7 @@ namespace LORICA4
         {
             //dimensionless soil cohesion equals root cohesion plus soil cohesion (both in kPa) , divided by soil thickness, sat soil bulk density and gravitational constant
             //for ease, we take only topsoil cohesion into account
-            const double g_constant = 9.81;
+            const double g_constant = 9.807;
 
             //if (check_space_landuse.Checked == false ) { root_cohesion_kPa_new[row, col] = 1; } //AleG
 
@@ -1685,7 +1685,7 @@ namespace LORICA4
 
         void calc_saturated_density(double particle_density_kg_m3)
         {
-            //saturated density (a double 2D array will be calculated in two steps: 
+            //saturated density (a double 2D array) will be calculated in two steps: 
             //first porosity, from soil bulk density and particle density
             //then filling the pores with water to calculate sat bulk density
             //we'll do this for the entire soildepth
@@ -1711,7 +1711,7 @@ namespace LORICA4
                     double profile_dry_bd_kg_m3 = localmass_kg / (dx * dx * localdepth_m);
                     double porosity_fraction = 1 - (profile_dry_bd_kg_m3 / particle_density_kg_m3);
                     porosity_fraction = Math.Max(0.0, Math.Min(1.0, porosity_fraction)); // clamp
-                                                                                         //we know that with saturated bulk density, all this prosity is filled with water at 1000 kg m3, so:
+                    //we know that with saturated bulk density, all this prosity is filled with water at 1000 kg m3, so:
                     sat_bd_kg_m3[row, col] = porosity_fraction * water_density_kg_m3 + profile_dry_bd_kg_m3;
                     /*if(Double.IsNaN(sat_bd_kg_m3[row, col])){
                         Debug.WriteLine(" Saturated BD is NaN at " + row + " " + col);            
