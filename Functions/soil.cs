@@ -899,8 +899,8 @@ namespace LORICA4
                                 }
 
                                 //here we calculate the first quantity: how much bioturbation kg needs to happen in this location
-                                local_bioturbation_kg = potential_bt_mixing_kg_m2_y * (1 - Math.Exp(-bioturbation_decay_depth_m * total_soil_thickness_m)) * dx * dx * dt;
-                                if (local_bioturbation_kg < 0) // local_bt == 0 happens when soil is absent
+                                local_bioturbation_kg = potential_bt_mixing_kg_m2_y * (1 - Math.Exp(-total_soil_thickness_m / bioturbation_decay_depth_m)) * dx * dx * dt; //AleG_june26
+                                f(local_bioturbation_kg < 0) // local_bt == 0 happens when soil is absent
                                 {
                                     Debug.WriteLine(" error in local_bioturbation calculation : zero mass");
                                     Debug.WriteLine(" total soil thickness :" + total_soil_thickness_m + " at rc " + row + " " + col);
@@ -1247,7 +1247,7 @@ namespace LORICA4
                                     total_soil_thickness_m = total_soil_thickness(row, col);
 
                                     //here we calculate the first quantity: how much bioturbation kg needs to happen in this location
-                                    local_bioturbation_kg = potential_bt_mounding_kg_m2_y * (1 - Math.Exp(-bioturbation_decay_depth_m * total_soil_thickness_m)) * dx * dx * dt;
+                                    local_bioturbation_kg = potential_bt_mixing_kg_m2_y * (1 - Math.Exp(-total_soil_thickness_m / bioturbation_decay_depth_m)) * dx * dx * dt; //AleG_june26
                                     if (local_bioturbation_kg < 0) // local_bt == 0 happens when soil is absent
                                     {
                                         Debug.WriteLine(" error in local_bioturbation calculation : zero mass");
@@ -1304,7 +1304,7 @@ namespace LORICA4
                                 total_soil_thickness_m = total_soil_thickness(row, col);
 
                                 //here we calculate the first quantity: how much bioturbation kg needs to happen in this location
-                                local_bioturbation_kg = potential_bt_mounding_kg_m2_y * (1 - Math.Exp(-bioturbation_decay_depth_m * total_soil_thickness_m)) * dx * dx * dt;
+                                local_bioturbation_kg = potential_bt_mounding_kg_m2_y * (1 - Math.Exp(-total_soil_thickness_m / bioturbation_decay_depth_m)) * dx * dx * dt; //AleG_june26
                                 if (local_bioturbation_kg < 0) // local_bt == 0 happens when soil is absent
                                 {
                                     Debug.WriteLine(" error in local_bioturbation calculation : zero mass");
