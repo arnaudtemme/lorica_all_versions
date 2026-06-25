@@ -568,7 +568,7 @@ namespace LORICA4
                                     }
 
                                     //here we calculate the first quantity: how much bioturbation kg needs to happen in this location
-                                    local_bioturbation_kg = potential_bt_mixing_kg_m2_y * (1 - Math.Exp(-bioturbation_decay_depth_m * total_soil_thickness_m)) * dx * dx * dt;
+                                    local_bioturbation_kg = potential_bt_mixing_kg_m2_y * (1 - Math.Exp(- total_soil_thickness_m/ bioturbation_decay_depth_m)) * dx * dx * dt; //AleG_june26
                                     if (local_bioturbation_kg < 0) // local_bt == 0 happens when soil is absent
                                     {
                                         Debug.WriteLine(" error in local_bioturbation calculation : zero mass");
@@ -604,8 +604,8 @@ namespace LORICA4
                                             depth += layerthickness_m[row, col, layer] / 2;  ///ArT development needed
 
                                             double total_BT_depth_decay_index =
-                                                -1 / dd_bt_m * (Math.Exp(-dd_bt_m * (depth - 0)) - 1) + // upper part of the curve //Should this also be changed since dd_bt_m is now m instead of 1/m? AleG
-                                                -1 / dd_bt_m * (Math.Exp(-dd_bt_m * (total_soil_thickness_m - depth)) - 1); // lower part of the curve //Should this also be changed since dd_bt_m is now m instead of 1/m? AleG
+                                                -1 / dd_bt_m * (Math.Exp(- (depth - 0)/ dd_bt_m) - 1) +  //AleG_june26 // upper part of the curve //Should this also be changed since dd_bt_m is now m instead of 1/m? AleG
+                                                -1 / dd_bt_m * (Math.Exp(-(total_soil_thickness_m - depth)/ dd_bt_m) - 1);  //AleG_june26 // lower part of the curve //Should this also be changed since dd_bt_m is now m instead of 1/m? AleG
 
 
                                             otherdepth = 0; distance = 0;
@@ -1770,8 +1770,8 @@ namespace LORICA4
                 {
                     // Exponential
                     // bioturbation_depth_decay_constant = 6;
-                    layer_bio_activity_index = Math.Exp(-bioturbation_decay_depth_m * depth) - (Math.Exp(-bioturbation_decay_depth_m * (depth + layerthickness_m[row, col, layer])));
-                    total_bio_activity_index = 1 - (Math.Exp(-bioturbation_decay_depth_m * total_soil_thickness_m));
+                    layer_bio_activity_index = Math.Exp(-depth/bioturbation_decay_depth_m) - (Math.Exp(-(depth + layerthickness_m[row, col, layer])/ bioturbation_decay_depth_m)); //AleG_june26
+                    total_bio_activity_index = 1 - (Math.Exp(- total_soil_thickness_m/ bioturbation_decay_depth_m)); //AleG_june26
                 }
 
                 if (bt_depth_function == 1)
@@ -1935,8 +1935,8 @@ namespace LORICA4
 
                                         young_midpoint_m = layer_midpoint_m(young_OM_decomp_char_decay_depth_m, depth, depth + layerthickness_m[row, col, layer]);
                                         old_midpoint_m = layer_midpoint_m(old_OM_decomp_char_decay_depth_m, depth, depth + layerthickness_m[row, col, layer]);
-                                        young_decomposition_rate = potential_young_decomp_rate * Math.Exp(-young_OM_decomp_char_decay_depth_m * (depth + young_midpoint_m));
-                                        old_decomposition_rate = potential_old_decomp_rate * Math.Exp(-old_OM_decomp_char_decay_depth_m * (depth + old_midpoint_m));
+                                        young_decomposition_rate = potential_young_decomp_rate * Math.Exp(-(depth + young_midpoint_m) / young_OM_decomp_char_decay_depth_m); //AleG_june26
+                                        old_decomposition_rate = potential_old_decomp_rate * Math.Exp(-(depth + old_midpoint_m) / old_OM_decomp_char_decay_depth_m); //AleG_june26
 
 
                                         young_SOM_kg[row, col, layer] *= (1 - young_decomposition_rate);
@@ -1998,8 +1998,8 @@ namespace LORICA4
 
                                     young_midpoint_m = layer_midpoint_m(young_OM_decomp_char_decay_depth_m, depth, depth + layerthickness_m[row, col, layer]);
                                     old_midpoint_m = layer_midpoint_m(old_OM_decomp_char_decay_depth_m, depth, depth + layerthickness_m[row, col, layer]);
-                                    young_decomposition_rate = potential_young_decomp_rate * Math.Exp(-young_OM_decomp_char_decay_depth_m * (depth + young_midpoint_m));
-                                    old_decomposition_rate = potential_old_decomp_rate * Math.Exp(-old_OM_decomp_char_decay_depth_m * (depth + old_midpoint_m));
+                                    young_decomposition_rate = potential_young_decomp_rate * Math.Exp(-(depth + young_midpoint_m)/ young_OM_decomp_char_decay_depth_m); //AleG_june26
+                                    old_decomposition_rate = potential_old_decomp_rate * Math.Exp(-(depth + old_midpoint_m)/ old_OM_decomp_char_decay_depth_m ); //AleG_june26
 
 
                                     young_SOM_kg[row, col, layer] *= (1 - young_decomposition_rate);
