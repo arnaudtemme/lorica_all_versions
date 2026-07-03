@@ -482,8 +482,16 @@ namespace LORICA4
                                 }
 
                                 // clay neoformation
-                                fraction_neoform = neoform_constant * (Math.Exp(-Cfive * depth) - Math.Exp(-Csix * depth));
-                                if (fraction_neoform >= 1)
+                                // clay neoformation
+                                double z_top = depth;
+                                double z_bottom = depth + layerthickness_m[row, col, layer]; //AleG_june26
+                                double z_star = layer_effective_dep_point_m(chem_weath_decay_depth_m, z_top, z_bottom);//AleG_june26
+                                                                                                                       //fraction_neoform = neoform_constant * (Math.Exp(-Cfive * z_star) - Math.Exp(-Csix * z_star)); //AleG_june26 //when cfive and csix were inm-1
+
+                                if (Cfive > Csix) { Csix = Cfive; } //AleG_june26 
+                                fraction_neoform = neoform_constant * (Math.Exp(-z_star / Cfive) - Math.Exp(-z_star / Csix)); //AleG_june26
+
+                                //fraction_neoform = neoform_constant * (Math.Exp(-Cfive * depth) - Math.Exp(-Csix * depth));if (fraction_neoform >= 1)
                                 {
                                     Debug.WriteLine(" Warning: more than 100% of leached mass wants to become fine clay. This may indicate an error. Capping at 100%");
                                     fraction_neoform = 1;
