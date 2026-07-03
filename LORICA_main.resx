@@ -4622,6 +4622,9 @@ Reference: Temme et al, 1996. Computers and Geosciences
         omqvEDeCpJ1HXncEgaVSJ/30mRRZLDEM+xeuOPwfK+LGnQAAAABJRU5ErkJggg==
 </value>
   </data>
+  <metadata name="label37.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
   <data name="pictureBox6.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAALYAAACICAIAAADF4oaOAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6

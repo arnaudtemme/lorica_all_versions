@@ -1209,6 +1209,7 @@ namespace LORICA4
             System.Windows.Forms.Label label31;
             System.Windows.Forms.Label label32;
             System.Windows.Forms.Label label60;
+            System.Windows.Forms.Label label37;
             this.label36 = new System.Windows.Forms.Label();
             this.root_coh_box = new System.Windows.Forms.TextBox();
             this.label22 = new System.Windows.Forms.Label();
@@ -1628,6 +1629,7 @@ namespace LORICA4
             label31 = new System.Windows.Forms.Label();
             label32 = new System.Windows.Forms.Label();
             label60 = new System.Windows.Forms.Label();
+            label37 = new System.Windows.Forms.Label();
             Landsliding.SuspendLayout();
             this.groupBox18.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).BeginInit();
@@ -2165,18 +2167,18 @@ namespace LORICA4
             label30.AutoSize = true;
             label30.Location = new System.Drawing.Point(564, 106);
             label30.Name = "label30";
-            label30.Size = new System.Drawing.Size(123, 20);
+            label30.Size = new System.Drawing.Size(109, 20);
             label30.TabIndex = 53;
-            label30.Text = "constant 2 [m-1]";
+            label30.Text = "constant 2 [m]";
             // 
             // label31
             // 
             label31.AutoSize = true;
             label31.Location = new System.Drawing.Point(565, 76);
             label31.Name = "label31";
-            label31.Size = new System.Drawing.Size(88, 20);
+            label31.Size = new System.Drawing.Size(113, 20);
             label31.TabIndex = 52;
-            label31.Text = "constant 1 ";
+            label31.Text = "constant 1 [m] ";
             // 
             // label32
             // 
@@ -2190,7 +2192,7 @@ namespace LORICA4
             // label60
             // 
             label60.AutoSize = true;
-            label60.Location = new System.Drawing.Point(456, 31);
+            label60.Location = new System.Drawing.Point(456, 24);
             label60.Name = "label60";
             label60.Size = new System.Drawing.Size(164, 20);
             label60.TabIndex = 47;
@@ -4164,6 +4166,7 @@ namespace LORICA4
             // 
             // chemical
             // 
+            this.chemical.Controls.Add(label37);
             this.chemical.Controls.Add(this.clay_neoform_C2_textbox);
             this.chemical.Controls.Add(this.clay_neoform_C1_textbox);
             this.chemical.Controls.Add(this.clay_neoform_constant_textbox);
@@ -5921,6 +5924,15 @@ namespace LORICA4
             this.coarsemap_checkbox.TabIndex = 11;
             this.coarsemap_checkbox.Text = "Activate this process";
             this.coarsemap_checkbox.UseVisualStyleBackColor = true;
+            // 
+            // label37
+            // 
+            label37.AutoSize = true;
+            label37.Location = new System.Drawing.Point(456, 139);
+            label37.Name = "label37";
+            label37.Size = new System.Drawing.Size(184, 40);
+            label37.TabIndex = 54;
+            label37.Text = "if constant 2>constant 1,\r\nconstant 2=constant 1";
             // 
             // Mother_form
             // 
