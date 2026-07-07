@@ -21,7 +21,7 @@ namespace LORICA4
             return activity_fraction;
         }
 
-        public double layer_midpoint_m(double characteristic_depth_m, double layertop_m, double layerbottom_m)
+        public double layer_effective_dep_point_m(double characteristic_depth_m, double layertop_m, double layerbottom_m)
         {
             double c = characteristic_depth_m;
             double z_star = -c * Math.Log((Math.Exp(-layertop_m / c) + Math.Exp(-layerbottom_m / c)) / 2);
@@ -392,7 +392,15 @@ namespace LORICA4
                                     }
 
                                     // clay neoformation
-                                    fraction_neoform = neoform_constant * (Math.Exp(-Cfive * depth) - Math.Exp(-Csix * depth));
+                                    double z_top = depth;
+                                    double z_bottom = depth + layerthickness_m[row, col, layer]; //AleG_june26
+                                    double z_star = layer_effective_dep_point_m(chem_weath_decay_depth_m,z_top,z_bottom);//AleG_june26
+                                                                                                                         //fraction_neoform = neoform_constant * (Math.Exp(-Cfive * z_star) - Math.Exp(-Csix * z_star)); //AleG_june26 //when cfive and csix were inm-1
+
+                                    if (Cfive>Csix) { Csix = Cfive; } //AleG_june26 
+                                    fraction_neoform =neoform_constant *(Math.Exp(-z_star / Cfive) - Math.Exp(-z_star / Csix)); //AleG_june26
+
+                                    //fraction_neoform = neoform_constant * (Math.Exp(-Cfive * depth) - Math.Exp(-Csix * depth));
                                     if (fraction_neoform >= 1)
                                     {
                                         Debug.WriteLine(" Warning: more than 100% of leached mass wants to become fine clay. This may indicate an error. Capping at 100%");
@@ -474,8 +482,16 @@ namespace LORICA4
                                 }
 
                                 // clay neoformation
-                                fraction_neoform = neoform_constant * (Math.Exp(-Cfive * depth) - Math.Exp(-Csix * depth));
-                                if (fraction_neoform >= 1)
+                                // clay neoformation
+                                double z_top = depth;
+                                double z_bottom = depth + layerthickness_m[row, col, layer]; //AleG_june26
+                                double z_star = layer_effective_dep_point_m(chem_weath_decay_depth_m, z_top, z_bottom);//AleG_june26
+                                                                                                                       //fraction_neoform = neoform_constant * (Math.Exp(-Cfive * z_star) - Math.Exp(-Csix * z_star)); //AleG_june26 //when cfive and csix were inm-1
+
+                                if (Cfive > Csix) { Csix = Cfive; } //AleG_june26 
+                                fraction_neoform = neoform_constant * (Math.Exp(-z_star / Cfive) - Math.Exp(-z_star / Csix)); //AleG_june26
+
+                                //fraction_neoform = neoform_constant * (Math.Exp(-Cfive * depth) - Math.Exp(-Csix * depth));if (fraction_neoform >= 1)
                                 {
                                     Debug.WriteLine(" Warning: more than 100% of leached mass wants to become fine clay. This may indicate an error. Capping at 100%");
                                     fraction_neoform = 1;
@@ -1870,7 +1886,7 @@ namespace LORICA4
             {
                 double local_OM_input_kg, layer_OM_input_kg;
                 double young_decomposition_rate, old_decomposition_rate;
-                double young_midpoint_m, old_midpoint_m;
+                double young_eff_dep_point_m, old_eff_dep_point_m;
                 //Debug.WriteLine("succesfully read parameters for soil SOM");
                 double depth;
                 double total_soil_thickness;
@@ -1933,10 +1949,10 @@ namespace LORICA4
                                             Debug.WriteLine("err_cc2");
                                         }
 
-                                        young_midpoint_m = layer_midpoint_m(young_OM_decomp_char_decay_depth_m, depth, depth + layerthickness_m[row, col, layer]);
-                                        old_midpoint_m = layer_midpoint_m(old_OM_decomp_char_decay_depth_m, depth, depth + layerthickness_m[row, col, layer]);
-                                        young_decomposition_rate = potential_young_decomp_rate * Math.Exp(-(depth + young_midpoint_m) / young_OM_decomp_char_decay_depth_m); //AleG_june26
-                                        old_decomposition_rate = potential_old_decomp_rate * Math.Exp(-(depth + old_midpoint_m) / old_OM_decomp_char_decay_depth_m); //AleG_june26
+                                        young_eff_dep_point_m = layer_effective_dep_point_m(young_OM_decomp_char_decay_depth_m, depth, depth + layerthickness_m[row, col, layer]);
+                                        old_eff_dep_point_m = layer_effective_dep_point_m(old_OM_decomp_char_decay_depth_m, depth, depth + layerthickness_m[row, col, layer]);
+                                        young_decomposition_rate = potential_young_decomp_rate * Math.Exp(-(depth + young_eff_dep_point_m) / young_OM_decomp_char_decay_depth_m); //AleG_june26
+                                        old_decomposition_rate = potential_old_decomp_rate * Math.Exp(-(depth + old_eff_dep_point_m) / old_OM_decomp_char_decay_depth_m); //AleG_june26
 
 
                                         young_SOM_kg[row, col, layer] *= (1 - young_decomposition_rate);
@@ -1996,10 +2012,10 @@ namespace LORICA4
                                         Debug.WriteLine("err_cc2");
                                     }
 
-                                    young_midpoint_m = layer_midpoint_m(young_OM_decomp_char_decay_depth_m, depth, depth + layerthickness_m[row, col, layer]);
-                                    old_midpoint_m = layer_midpoint_m(old_OM_decomp_char_decay_depth_m, depth, depth + layerthickness_m[row, col, layer]);
-                                    young_decomposition_rate = potential_young_decomp_rate * Math.Exp(-(depth + young_midpoint_m)/ young_OM_decomp_char_decay_depth_m); //AleG_june26
-                                    old_decomposition_rate = potential_old_decomp_rate * Math.Exp(-(depth + old_midpoint_m)/ old_OM_decomp_char_decay_depth_m ); //AleG_june26
+                                    young_eff_dep_point_m = layer_effective_dep_point_m(young_OM_decomp_char_decay_depth_m, depth, depth + layerthickness_m[row, col, layer]);
+                                    old_eff_dep_point_m = layer_effective_dep_point_m(old_OM_decomp_char_decay_depth_m, depth, depth + layerthickness_m[row, col, layer]);
+                                    young_decomposition_rate = potential_young_decomp_rate * Math.Exp(-(depth + young_eff_dep_point_m)/ young_OM_decomp_char_decay_depth_m); //AleG_june26
+                                    old_decomposition_rate = potential_old_decomp_rate * Math.Exp(-(depth + old_eff_dep_point_m)/ old_OM_decomp_char_decay_depth_m ); //AleG_june26
 
 
                                     young_SOM_kg[row, col, layer] *= (1 - young_decomposition_rate);
