@@ -1632,7 +1632,7 @@ namespace LORICA4
                                 double lay_thick = layerthickness_m[row, col, layer];
                                 if (lay_thick <= 0.0) continue; // skip empty layer
 
-                                currentdepth_m += lay_thick;
+                                
 
                                 // Denominator for percentages (fine fraction only, as in your code)
                                 double fine_den = texture_kg[row, col, layer, 1] +
@@ -1655,7 +1655,9 @@ namespace LORICA4
                                     texture_kg[row, col, layer, 4],
                                     old_SOM_kg[row, col, layer],
                                     young_SOM_kg[row, col, layer],
-                                    currentdepth_m);
+                                    currentdepth_m, currentdepth_m + lay_thick);
+
+                                currentdepth_m += lay_thick;
 
                                 // Ks in m/day (do not divide by 24 if you want T in m^2/day)
                                 Ks_m_d = Ks_wosten(silt_perc, clay_perc, OM_perc, BD_kg_m3 / 1000.0, 1) ;

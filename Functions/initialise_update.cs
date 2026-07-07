@@ -962,9 +962,8 @@ namespace LORICA4
 
                                 if (layerthickness_m[row, col, soil_layer] != 0)
                                 {
-                                    depth_m += layerthickness_m[row, col, soil_layer] / 2;
-                                    location_bd = bulk_density_calc_kg_m3(coarsefrac, sandfrac, siltfrac, clayfrac, fclayfrac, yomfrac, oomfrac, depth_m); //AleG
-                                    depth_m += layerthickness_m[row, col, soil_layer] / 2;
+                                    location_bd = bulk_density_calc_kg_m3(coarsefrac, sandfrac, siltfrac, clayfrac, fclayfrac, yomfrac, oomfrac, depth_m, depth_m + layerthickness_m[row, col, soil_layer]); //AleG
+                                    depth_m += layerthickness_m[row, col, soil_layer];
                                     texture_kg[row, col, soil_layer, 0] = location_bd * layerthickness_m[row, col, soil_layer] * coarsefrac * dx * dx;   //  kg = kg/m3 * m * kg/kg * m * m
                                     texture_kg[row, col, soil_layer, 1] = location_bd * layerthickness_m[row, col, soil_layer] * sandfrac * dx * dx;
                                     texture_kg[row, col, soil_layer, 2] = location_bd * layerthickness_m[row, col, soil_layer] * siltfrac * dx * dx;
@@ -1130,9 +1129,8 @@ namespace LORICA4
                                 }
                                 if (layerthickness_m[row, col, soil_layer] > 0)
                                 {
-                                    depth_m += layerthickness_m[row, col, soil_layer] / 2;
-                                    location_bd = bulk_density_calc_kg_m3(coarsefrac, sandfrac, siltfrac, clayfrac, fclayfrac, yomfrac, oomfrac, depth_m); //AleG
-                                    depth_m += layerthickness_m[row, col, soil_layer] / 2;
+                                    location_bd = bulk_density_calc_kg_m3(coarsefrac, sandfrac, siltfrac, clayfrac, fclayfrac, yomfrac, oomfrac, depth_m, depth_m + layerthickness_m[row, col, soil_layer]); //AleG
+                                    depth_m += layerthickness_m[row, col, soil_layer] ;
                                     texture_kg[row, col, soil_layer, 0] = location_bd * layerthickness_m[row, col, soil_layer] * coarsefrac * dx * dx;   //  kg = kg/m3 * m * kg/kg * m * m
                                     texture_kg[row, col, soil_layer, 1] = location_bd * layerthickness_m[row, col, soil_layer] * sandfrac * dx * dx;
                                     texture_kg[row, col, soil_layer, 2] = location_bd * layerthickness_m[row, col, soil_layer] * siltfrac * dx * dx;
@@ -1773,26 +1771,31 @@ namespace LORICA4
             return sum_property_difference;
         }
 
-        double bulk_density_calc_kg_m3(double coarse_mass, double sand_mass, double silt_mass, double clay_mass, double fine_clay_mass, double OMo_mass, double OMy_mass, double depth)
+        double IdentricDepth_m(double z1_m, double z2_m)
         {
-            if (depth == 0) { depth = 0.001; } // reset values of 0 to a thickness of 1 micrometer, to avoid infinite numbers in the calculation of BD
-            double bd = 2700, combined_frac, m_finesoil;
+            if (z1_m <= 0) z1_m = 0.001; // same floor you already use for log10(0)
+            if (Math.Abs(z2_m - z1_m) < 1e-12) return z1_m; // degenerate zero-thickness layer
+            return (1.0 / Math.E) * Math.Pow(Math.Pow(z2_m, z2_m) / Math.Pow(z1_m, z1_m), 1.0 / (z2_m - z1_m));
+        }
+
+
+        double bulk_density_calc_kg_m3(double coarse_mass, double sand_mass, double silt_mass, double clay_mass, double fine_clay_mass, double OMo_mass, double OMy_mass, double topdepth_m, double bottomdepth_m)
+        {
+
+            double representativedepth_m = IdentricDepth_m(topdepth_m, bottomdepth_m);
+            double bd_kg_m3 = 2700, combined_frac, m_finesoil;
             m_finesoil = sand_mass + silt_mass + clay_mass + fine_clay_mass;
             if (m_finesoil > 0)
             {
                 combined_frac = sand_mass / m_finesoil + 0.76 * silt_mass / m_finesoil;
 
-                bd = 1000 * (1.35 + 0.00452 * 100 * combined_frac + Math.Pow(44.65 - 100 * combined_frac, 2) * -0.0000614 + 0.06 * Math.Log10(depth));  // in kg/m3
+                bd_kg_m3 = 1000 * (1.35 + 0.00452 * 100 * combined_frac + Math.Pow(44.65 - 100 * combined_frac, 2) * -0.0000614 + 0.06 * Math.Log10(representativedepth_m));  // in kg/m3
 
                 //now coarse fragment and SOM correction
-                bd = (coarse_mass + m_finesoil + OMo_mass + OMy_mass) / ((m_finesoil / bd) + (coarse_mass / 2700) + (OMo_mass + OMy_mass) / 224); // ooit through interface    
-            }
-            else
-            {
-                bd = 2700;
+                bd_kg_m3 = (coarse_mass + m_finesoil + OMo_mass + OMy_mass) / ((m_finesoil / bd_kg_m3) + (coarse_mass / 2700) + (OMo_mass + OMy_mass) / 224); // ooit through interface    
             }
 
-            return bd; // in kg/m3
+            return bd_kg_m3; // in kg/m3
 
         }
 
@@ -1873,10 +1876,10 @@ namespace LORICA4
             {
                 depth_m += layerthickness_m[rowwer, coller, lay_temp];
             }
-            depth_m += layerthickness_m[rowwer, coller, lay1] / 2;
+            
             // Debug.WriteLine("tc2");
             int i;
-            //first calculate total soOKil mass to calculate mass percentages for the size fractions
+            //first calculate total soil mass to calculate mass percentages for the size fractions
             for (i = 1; i < 5; i++)
             {
                 soil_mass += texture_kg[rowwer, coller, lay1, i];
@@ -1885,7 +1888,7 @@ namespace LORICA4
             // Debug.WriteLine("tc3");
             if (soil_mass > 0)
             {
-                bulkdensity[rowwer, coller, lay1] = bulk_density_calc_kg_m3(texture_kg[rowwer, coller, lay1, 0], texture_kg[rowwer, coller, lay1, 1], texture_kg[rowwer, coller, lay1, 2], texture_kg[rowwer, coller, lay1, 3], texture_kg[rowwer, coller, lay1, 4], old_SOM_kg[rowwer, coller, lay1], young_SOM_kg[rowwer, coller, lay1], depth_m);
+                bulkdensity[rowwer, coller, lay1] = bulk_density_calc_kg_m3(texture_kg[rowwer, coller, lay1, 0], texture_kg[rowwer, coller, lay1, 1], texture_kg[rowwer, coller, lay1, 2], texture_kg[rowwer, coller, lay1, 3], texture_kg[rowwer, coller, lay1, 4], old_SOM_kg[rowwer, coller, lay1], young_SOM_kg[rowwer, coller, lay1], depth_m, depth_m + layerthickness_m[rowwer, coller, lay1]);
             }
             else
             {
@@ -1927,7 +1930,8 @@ namespace LORICA4
             silt_fraction = textures_kg[2] / soil_mass_kg;
 
             //calculate bulk density
-            bulk_density = bulk_density_calc_kg_m3(textures_kg[0], textures_kg[1], textures_kg[2], textures_kg[3], textures_kg[4], oom_kg, yom_kg, 0.001); // MM depth of 1 micrometer, because a depth of 0 will result in infinite numbers 
+            //we assume this material is very near the surface to calculate a thickness:
+            bulk_density = bulk_density_calc_kg_m3(textures_kg[0], textures_kg[1], textures_kg[2], textures_kg[3], textures_kg[4], oom_kg, yom_kg, 0.001, 0.002); // MM depth of 1 millimetere, because a depth of 0 will result in infinite numbers 
 
             thickness_m = (soil_mass_kg + textures_kg[0]) / (dx * dx * bulk_density);  // thickness in m per unit area
 

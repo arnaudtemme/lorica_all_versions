@@ -340,7 +340,7 @@ namespace LORICA4
                             // if (lay == max_soil_layers) { Debugger.Break(); }
                             if (total_layer_mass_kg(row, col, lay) > 0)
                             {
-                                depth += layerthickness_m[row, col, lay] / 2;
+                                
 
                                 for (int text = 0; text < 5; text++)
                                 {
@@ -349,8 +349,8 @@ namespace LORICA4
                                 tex_topsoil[5] += young_SOM_kg[row, col, lay];
                                 tex_topsoil[5] += old_SOM_kg[row, col, lay];
 
-                                BD_topsoil.Add(bulk_density_calc_kg_m3(texture_kg[row, col, lay, 0], texture_kg[row, col, lay, 1], texture_kg[row, col, lay, 2], texture_kg[row, col, lay, 3], texture_kg[row, col, lay, 4], old_SOM_kg[row, col, lay], young_SOM_kg[row, col, lay], depth));
-                                depth += layerthickness_m[row, col, lay] / 2;
+                                BD_topsoil.Add(bulk_density_calc_kg_m3(texture_kg[row, col, lay, 0], texture_kg[row, col, lay, 1], texture_kg[row, col, lay, 2], texture_kg[row, col, lay, 3], texture_kg[row, col, lay, 4], old_SOM_kg[row, col, lay], young_SOM_kg[row, col, lay], depth, depth + layerthickness_m[row, col, lay]));
+                                depth += layerthickness_m[row, col, lay] ;
 
                             }
                             lay += 1;

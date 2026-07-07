@@ -900,7 +900,7 @@ namespace LORICA4
 
                                 //here we calculate the first quantity: how much bioturbation kg needs to happen in this location
                                 local_bioturbation_kg = potential_bt_mixing_kg_m2_y * (1 - Math.Exp(-total_soil_thickness_m / bioturbation_decay_depth_m)) * dx * dx * dt; //AleG_june26
-                                f(local_bioturbation_kg < 0) // local_bt == 0 happens when soil is absent
+                                if(local_bioturbation_kg < 0) // local_bt == 0 happens when soil is absent
                                 {
                                     Debug.WriteLine(" error in local_bioturbation calculation : zero mass");
                                     Debug.WriteLine(" total soil thickness :" + total_soil_thickness_m + " at rc " + row + " " + col);
