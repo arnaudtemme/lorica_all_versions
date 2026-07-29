@@ -397,7 +397,7 @@ namespace LORICA4
                                     double z_star = layer_effective_dep_point_m(chem_weath_decay_depth_m,z_top,z_bottom);//AleG_june26
                                                                                                                          //fraction_neoform = neoform_constant * (Math.Exp(-Cfive * z_star) - Math.Exp(-Csix * z_star)); //AleG_june26 //when cfive and csix were inm-1
 
-                                    if (Cfive>Csix) { Csix = Cfive; } //AleG_june26 
+                                    if (Csix > Cfive) { Csix = Cfive; } //AleG_june26
                                     fraction_neoform =neoform_constant *(Math.Exp(-z_star / Cfive) - Math.Exp(-z_star / Csix)); //AleG_june26
 
                                     //fraction_neoform = neoform_constant * (Math.Exp(-Cfive * depth) - Math.Exp(-Csix * depth));
