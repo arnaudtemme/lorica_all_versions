@@ -1714,9 +1714,9 @@ namespace LORICA4
             label75.AutoSize = true;
             label75.Location = new System.Drawing.Point(130, 145);
             label75.Name = "label75";
-            label75.Size = new System.Drawing.Size(83, 13);
+            label75.Size = new System.Drawing.Size(104, 13);
             label75.TabIndex = 63;
-            label75.Text = "decay depth [m]";
+            label75.Text = "distribution depth [m]";
             // 
             // label74
             // 
@@ -4501,7 +4501,7 @@ namespace LORICA4
             this.carbon_o_depth_decay_textbox.Name = "carbon_o_depth_decay_textbox";
             this.carbon_o_depth_decay_textbox.Size = new System.Drawing.Size(100, 20);
             this.carbon_o_depth_decay_textbox.TabIndex = 75;
-            this.carbon_o_depth_decay_textbox.Text = "0.125";
+            this.carbon_o_depth_decay_textbox.Text = "2";
             // 
             // carbon_y_depth_decay_textbox
             // 
@@ -4509,7 +4509,7 @@ namespace LORICA4
             this.carbon_y_depth_decay_textbox.Name = "carbon_y_depth_decay_textbox";
             this.carbon_y_depth_decay_textbox.Size = new System.Drawing.Size(100, 20);
             this.carbon_y_depth_decay_textbox.TabIndex = 73;
-            this.carbon_y_depth_decay_textbox.Text = "0.125";
+            this.carbon_y_depth_decay_textbox.Text = "1";
             // 
             // carbon_humification_fraction_textbox
             // 
@@ -4525,7 +4525,7 @@ namespace LORICA4
             this.carbon_depth_decay_textbox.Name = "carbon_depth_decay_textbox";
             this.carbon_depth_decay_textbox.Size = new System.Drawing.Size(100, 20);
             this.carbon_depth_decay_textbox.TabIndex = 61;
-            this.carbon_depth_decay_textbox.Text = "0.125";
+            this.carbon_depth_decay_textbox.Text = "1.5";
             // 
             // carbon_input_textbox
             // 
