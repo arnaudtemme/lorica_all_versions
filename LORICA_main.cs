@@ -4525,7 +4525,7 @@ namespace LORICA4
             this.carbon_depth_decay_textbox.Name = "carbon_depth_decay_textbox";
             this.carbon_depth_decay_textbox.Size = new System.Drawing.Size(100, 20);
             this.carbon_depth_decay_textbox.TabIndex = 61;
-            this.carbon_depth_decay_textbox.Text = "1.5";
+            this.carbon_depth_decay_textbox.Text = "0.125";
             // 
             // carbon_input_textbox
             // 
